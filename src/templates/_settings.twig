@@ -1,0 +1,10 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.selectField({
+    label: "Front end theme"|t('themes'),
+    first: true,
+    id: 'siteTheme',
+    name: 'siteTheme',
+    options: themes,
+    value: settings.siteTheme
+}) }}

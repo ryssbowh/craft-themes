@@ -1,0 +1,37 @@
+{
+  "name": "ryssbowh/craft-themes",
+  "description": "Themes engine",
+  "type": "craft-plugin",
+  "keywords": [
+    "cms",
+    "craftcms",
+    "themes"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Boris Blondin",
+      "homepage": "http://github.com/ryssbowh/craft-themes"
+    }
+  ],
+  "support": {
+  },
+  "require": {
+    "craftcms/cms": "^3.5",
+    "ryssbowh/craft-theme-installer-plugin": "^0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ryssbowh\\Themes\\": "src/"
+    }
+  },
+  "extra": {
+    "name": "Themes",
+    "handle": "themes",
+    "documentationUrl": "https://github.com/ryssbowh/craft-themes",
+    "class": "Ryssbowh\\Themes\\Themes",
+    "components": {
+      "themes": "Ryssbowh\\Themes\\services\\ThemesService"
+    }
+  }
+}
