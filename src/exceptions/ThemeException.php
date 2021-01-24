@@ -1,6 +1,6 @@
 <?php 
 
-namespace Ryssbowh\Themes\exceptions;
+namespace Ryssbowh\CraftThemes\exceptions;
 
 class ThemeException extends \Exception
 {

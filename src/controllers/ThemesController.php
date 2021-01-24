@@ -1,6 +1,6 @@
 <?php 
 
-namespace Ryssbowh\Themes\controllers;
+namespace Ryssbowh\CraftThemes\controllers;
 
 class ThemesController
 {

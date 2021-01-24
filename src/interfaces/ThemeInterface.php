@@ -1,6 +1,6 @@
 <?php 
 
-namespace Ryssbowh\Themes\interfaces;
+namespace Ryssbowh\CraftThemes\interfaces;
 
 interface ThemeInterface 
 {

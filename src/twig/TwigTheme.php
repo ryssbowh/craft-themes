@@ -1,8 +1,8 @@
 <?php
 
-namespace Ryssbowh\Themes\twig;
+namespace Ryssbowh\CraftThemes\twig;
 
-use Ryssbowh\Themes\Themes;
+use Ryssbowh\CraftThemes\Themes;
 use Twig\Extension\AbstractExtension;
 
 class TwigTheme extends AbstractExtension

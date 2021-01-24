@@ -1,10 +1,9 @@
 <?php
-namespace Ryssbowh\Themes;
+namespace Ryssbowh\CraftThemes;
 
 use Craft;
-use Inspire\Themes\models\Settings;
-use Inspire\Themes\services\ThemeRegistry;
-use Inspire\Themes\twig\TwigTheme;
+use Ryssbowh\CraftThemes\models\Settings;
+use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\TemplateEvent;
@@ -16,6 +15,8 @@ use yii\log\Logger;
 
 class Themes extends \craft\base\Plugin
 {
+    public static $plugin;
+    
     /**
      * @inheritdoc
      */

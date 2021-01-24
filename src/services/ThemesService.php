@@ -1,10 +1,10 @@
 <?php 
 
-namespace Ryssbowh\Themes\services;
+namespace Ryssbowh\CraftThemes\services;
 
-use Ryssbowh\Themes\Theme;
-use Ryssbowh\Themes\exceptions\ThemeException;
-use Ryssbowh\Themes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\Theme;
+use Ryssbowh\CraftThemes\exceptions\ThemeException;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 
 
 class ThemesService
@@ -90,7 +90,10 @@ class ThemesService
 
 	protected function getCache(): ?array
 	{
-		return \Craft::$app->cache->get(self::CACHE_KEY, null);
+		if (!\Craft::$app->cache->exists(self::CACHE_KEY)) {
+			return null;
+		}
+		return \Craft::$app->cache->get(self::CACHE_KEY);
 	}
 
 	protected function setCache(array $themes)

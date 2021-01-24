@@ -1,6 +1,6 @@
 <?php
 
-namespace Ryssbowh\Themes\models;
+namespace Ryssbowh\CraftThemes\models;
 
 use craft\base\Model;
 

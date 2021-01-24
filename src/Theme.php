@@ -1,9 +1,9 @@
 <?php 
 
-namespace Inspire\Themes;
+namespace Ryssbowh\CraftThemes;
 
-use Inspire\Themes\exceptions\ThemeException;
-use Inspire\Themes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\exceptions\ThemeException;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 
 abstract class Theme implements ThemeInterface
 {
