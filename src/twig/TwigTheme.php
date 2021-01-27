@@ -7,15 +7,21 @@ use Twig\Extension\AbstractExtension;
 
 class TwigTheme extends AbstractExtension
 {
+    /**
+     * inheritDoc
+     */
     public function getGlobals()
     {
-        $service = Themes::$plugin->registry;
+        $service = Themes::$plugin->themes;
         return array(
             'themes' => $service,
             'theme' => $service->getCurrent()
         );
     }
 
+    /**
+     * inheritDoc
+     */
     public function getFunctions()
     {
         return [
@@ -23,9 +29,11 @@ class TwigTheme extends AbstractExtension
         ];
     }
 
-    public function themeUrl($value)
+    /**
+     * inheritDoc
+     */
+    public function themeUrl($path)
     {
-        $value = '@themePath/'.trim($value, '/');
-        return \Craft::$app->assetManager->getPublishedUrl($value, true);
+        return Themes::$plugin->themes->getCurrent()->getAssetUrl($path);
     }
 }

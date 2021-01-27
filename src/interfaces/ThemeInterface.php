@@ -26,23 +26,16 @@ interface ThemeInterface
 	public function getTemplatePath(): string;
 
 	/**
-	 * Bundle assets to register
+	 * Absolute template paths, including those of the parent(s)
 	 * 
-	 * @return array
+	 * @return string
 	 */
-	public function getBundleAssets(): array;
+	public function getTemplatePaths(): array;
 
 	/**
-	 * Does this theme extends another one
-	 * 
-	 * @return ?string
+	 * Register this theme's assets in view for a specific path
 	 */
-	public function getExtends(): ?string;
-
-	/**
-	 * Register this theme's assets in view
-	 */
-	public function registerAssets();
+	public function registerAssetBundles(string $urlPath);
 
 	/**
 	 * Get theme parent
@@ -57,4 +50,12 @@ interface ThemeInterface
 	 * @return boolean
 	 */
 	public function hasParent(): bool;
+
+	/**
+	 * Get an url for an theme asset.
+	 * 
+	 * @param  string $path
+	 * @return string
+	 */
+	public function getAssetUrl(string $path): string;
 }

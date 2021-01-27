@@ -1,10 +1,10 @@
 {% import "_includes/forms" as forms %}
 
-{{ forms.selectField({
-    label: "Front end theme"|t('themes'),
-    first: true,
-    id: 'siteTheme',
-    name: 'siteTheme',
-    options: themes,
-    value: settings.siteTheme
-}) }}
+{% for site in sites %}
+	{{ forms.selectField({
+	    label: site.name,
+	    name: 'themes['~site.uid~']',
+	    options: themes,
+	    value: settings.getHandle(site.uid)
+	}) }}
+{% endfor %}

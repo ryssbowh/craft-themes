@@ -7,14 +7,9 @@ use craft\base\Model;
 class Settings extends Model
 {
     /**
-     * @var string|null
+     * @var array
      */
-    public $adminTheme;
-
-    /**
-     * @var string|null
-     */
-    public $siteTheme;
+    public $themes = [];
 
     /**
      * @inheritdoc
@@ -22,7 +17,18 @@ class Settings extends Model
     public function rules()
     {
         return [
-            [['siteTheme'], 'string']
+            ['themes', 'each', 'rule' => ['string']]
         ];
+    }
+
+    /**
+     * Get the theme handle for a site
+     * 
+     * @param  string $uid
+     * @return string
+     */
+    public function getHandle(string $uid): string
+    {
+        return $this->themes[$uid] ?? '';
     }
 }

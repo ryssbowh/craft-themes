@@ -3,11 +3,14 @@ namespace Ryssbowh\CraftThemes;
 
 use Craft;
 use Ryssbowh\CraftThemes\models\Settings;
+use Ryssbowh\CraftThemes\services\ThemesService;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
+use craft\events\RegisterCacheOptionsEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\TemplateEvent;
 use craft\helpers\App;
+use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
 use craft\web\View;
 use yii\base\Event;
@@ -39,61 +42,52 @@ class Themes extends \craft\base\Plugin
 
         self::$plugin = $this;
 
-        \Yii::setAlias('themesPath', '@root/themes');
-        \Yii::setAlias('themesPublicPath', '@webroot/themes');
+        \Yii::setAlias('@themesPath', '@root/themes');
+        \Yii::setAlias('@themesWebPath', '@webroot/themes');
+        \Yii::setAlias('@themesWeb', '@web/themes');
 
-        if (Craft::$app->request->getIsSiteRequest()) {
-            $current = $this->themes->getCurrent();
-            \Yii::setAlias('themePath', '@root/themes/'.$theme->getHandle());
-            \Yii::setAlias('themePublicPath', '@webroot/themes/'.$theme->getHandle());
-            Craft::$app->view->registerTwigExtension(new TwigTheme);
+        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
+            function (RegisterCacheOptionsEvent $event) {
+                $event->options[] = [
+                    'key' => 'themes-cache',
+                    'label' => Craft::t('themes', 'Themes cache'),
+                    'action' => function() {
+                        ThemesService::clearCaches();
+                    }
+                ];
+            }
+        );
+
+        if (!Craft::$app->request->getIsSiteRequest()) {
+            return ;
         }
 
+        $site = \Craft::$app->sites->getCurrentSite();
+        $theme = $this->themes->setCurrentFromSite($site);
+
+        if (!$theme) {
+            return;
+        }
+
+        Craft::$app->view->registerTwigExtension(new TwigTheme);
+
         //Register templates event hook
-        $_this = $this;
         Event::on(
             View::class,
             View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-            function(RegisterTemplateRootsEvent $event) use ($_this) {
-                $_this->registerSiteTemplates($event);
+            function(RegisterTemplateRootsEvent $event) use ($theme) {
+                $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
             }
         );
-        //Register assets event hook
+        //Register bundle assets event hook
         Event::on(
             View::class,
             View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            function(TemplateEvent $event) use ($_this) {
-                if ($event->templateMode == View::TEMPLATE_MODE_SITE) {
-                    $_this->registerSiteAssets($event);
-                }
+            function(TemplateEvent $event) use ($theme) {
+                $path = \Craft::$app->request->getPathInfo();
+                $theme->registerAssetBundles($path);
             }
         );
-    }
-
-    /**
-     * Add the current theme template paths to template roots
-     * @param $event
-     */
-    public function registerSiteTemplates($event)
-    {
-        $theme = $this->themes->getCurrent();
-        if ($theme) {
-            Craft::getLogger()->log('register theme templates', Logger::LEVEL_INFO, 'themes');
-            $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
-        }
-    }
-
-    /**
-     * Add the current theme assets
-     * @param $event
-     */
-    public function registerSiteAssets($event)
-    {
-        Craft::getLogger()->log('register theme assets', Logger::LEVEL_INFO, 'themes');
-        $theme = $this->themes->getCurrent();
-        if ($theme) {
-            $theme->registerAssets();
-        }
     }
 
     /**
@@ -101,12 +95,10 @@ class Themes extends \craft\base\Plugin
      */
     protected function settingsHtml(): string
     {
-        $settings = $this->getSettings();
-        $settings->validate();
-
         return Craft::$app->view->renderTemplate('themes/_settings', [
-            'settings' => $settings,
-            'themes' => ['' => 'Default (No theme)'] + $this->themes->getAsNames()
+            'settings' => $this->getSettings(),
+            'themes' => ['' => 'Default (No theme)'] + $this->themes->getAsNames(),
+            'sites' => \Craft::$app->sites->getAllSites()
         ]);
     }
 }
