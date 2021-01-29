@@ -99,6 +99,7 @@ class ThemesService
 		if ($set) {
 			\Yii::setAlias('@themePath', '@root/themes/' . $this->currentTheme->getHandle());
         	\Yii::setAlias('@themeWebPath', '@webroot/themes/' . $this->currentTheme->getHandle());
+        	\Craft::info("Theme has been set to : ".$this->currentTheme->getName(), __METHOD__);
 		}
 		return $this->currentTheme;
 	}

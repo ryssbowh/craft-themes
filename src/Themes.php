@@ -42,9 +42,10 @@ class Themes extends \craft\base\Plugin
 
         self::$plugin = $this;
 
+        \Craft::info('Loading themes plugin', __METHOD__);
+
         \Yii::setAlias('@themesPath', '@root/themes');
         \Yii::setAlias('@themesWebPath', '@webroot/themes');
-        \Yii::setAlias('@themesWeb', '@web/themes');
 
         Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
             function (RegisterCacheOptionsEvent $event) {
@@ -66,6 +67,7 @@ class Themes extends \craft\base\Plugin
         $theme = $this->themes->setCurrentFromSite($site);
 
         if (!$theme) {
+            \Craft::info("No theme defined for site ".$site->name, __METHOD__);
             return;
         }
 
@@ -97,7 +99,7 @@ class Themes extends \craft\base\Plugin
     {
         return Craft::$app->view->renderTemplate('themes/_settings', [
             'settings' => $this->getSettings(),
-            'themes' => ['' => 'Default (No theme)'] + $this->themes->getAsNames(),
+            'themes' => ['' => \Craft::t('themes', 'Default (No theme)')] + $this->themes->getAsNames(),
             'sites' => \Craft::$app->sites->getAllSites()
         ]);
     }
