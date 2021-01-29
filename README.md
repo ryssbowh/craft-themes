@@ -25,12 +25,12 @@ So if you call a template that isn't defined in your theme but exist in a parent
 
 You have access to two new variables in your templates :
 
-`themes` : `CraftThemesService` instance
+`themes` : `CraftThemesService` instance  
 `theme` : Current theme instance. This is not set if no theme is set.
 
 And one new function :
 
-Assets like images, fonts etc can be inherited through the function `theme_url`. 
+Assets like images, fonts etc can be inherited through the function `theme_url`.  
 If you have an `image.jpg` defined in your theme in the `images` folder, you can publish it with `theme_url('images/image.jpg')`
 
 If you require an asset and the file is not present in your theme, it will look in the parent theme (if defined).
@@ -63,8 +63,8 @@ Themes can extend each other with the property `$extends` of their Theme class.
 
 If you bundle a theme into a composer package, 2 things are required :
 
-- Your package must have the type `craft-theme`.
-- Your package must have a parameter `handle` in the `extra` section. If this is not present, your theme will have its package name as handle.
+- Your composer.json must have the type `craft-theme`.
+- Your composer.json must have a parameter `handle` in the `extra` section. If this is not present, your theme will have its package name as handle.
 
 Assuming your package is accessible through composer, you can require it like any other package, it will be installed in the `themes` folder.
 
@@ -76,11 +76,11 @@ You will need to empty the themes cache after installing a new theme, through th
 
 4 new aliases are set :
 
-`@themesPath` : Base directory for themes
+`@themesPath` : Base directory for themes  
 `@themePath` : Base directory of the current theme. This is not set if no theme is set.
 
-`@themesWebPath` : Web directory for themes.
-`@themeWebPath` : Web directory for current theme
+`@themesWebPath` : Web directory for themes  
+`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.
 
 ## Installation
 
