@@ -79,6 +79,8 @@ You will need to empty the themes cache after installing a new theme, through th
 `@themesPath` : Base directory for themes  
 `@themePath` : Base directory of the current theme. This is not set if no theme is set.
 
+And two that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
+
 `@themesWebPath` : Web directory for themes  
 `@themeWebPath` : Web directory for current theme. This is not set if no theme is set.
 
