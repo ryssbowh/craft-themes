@@ -2,8 +2,10 @@
 namespace Ryssbowh\CraftThemes;
 
 use Craft;
+use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\services\ThemesService;
+use Ryssbowh\CraftThemes\services\ThemesRegistry;
+use Ryssbowh\CraftThemes\services\ThemesRules;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\events\RegisterCacheOptionsEvent;
 use craft\events\RegisterTemplateRootsEvent;
@@ -42,6 +44,15 @@ class Themes extends \craft\base\Plugin
 
         self::$plugin = $this;
 
+        $this->setComponents([
+            'registry' => ThemesRegistry::class,
+            'rules' => [
+                'class' => ThemesRules::class,
+                'rules' => $this->getSettings()->rules,
+                'default' => $this->getSettings()->default
+            ]
+        ]);
+
         \Craft::info('Loading themes plugin', __METHOD__);
 
         \Yii::setAlias('@themesPath', '@root/themes');
@@ -53,7 +64,8 @@ class Themes extends \craft\base\Plugin
                     'key' => 'themes-cache',
                     'label' => Craft::t('themes', 'Themes cache'),
                     'action' => function() {
-                        ThemesService::clearCaches();
+                        ThemesRegistry::clearCaches();
+                        ThemesRules::clearCaches();
                     }
                 ];
             }
@@ -63,11 +75,10 @@ class Themes extends \craft\base\Plugin
             return ;
         }
 
-        $site = \Craft::$app->sites->getCurrentSite();
-        $theme = $this->themes->setCurrentFromSite($site);
+        $theme = $this->rules->resolveCurrentTheme();
 
         if (!$theme) {
-            \Craft::info("No theme defined for site ".$site->name, __METHOD__);
+            \Craft::info("No theme found for request ".\Craft::$app->request->getFullUri(), __METHOD__);
             return;
         }
 
@@ -92,15 +103,74 @@ class Themes extends \craft\base\Plugin
         );
     }
 
+    protected function parseSites(): array
+    {
+        $sites = [];
+        $languages = [];
+        foreach (\Craft::$app->sites->getAllSites() as $site) {
+            $sites[$site->uid] = $site->name;
+            $locale = $site->getLocale();
+            if ($locale->id and !in_array($locale->id, $languages)) {
+                $languages[$locale->id] = $locale->getDisplayName();
+            }
+        }
+        return [$sites, $languages];
+    }
+
     /**
      * @inheritdoc
      */
     protected function settingsHtml(): string
     {
+        \Craft::$app->view->registerAssetBundle(SettingsAssets::class);
+        $themes = $this->themes->getAsNames();
+        list($sites, $languages) = $this->parseSites();
+        $cols = [
+            'enabled' => [
+                'heading' => 'Enabled',
+                'type' => 'lightswitch',
+                'class' => 'thin enabled'
+            ],
+            'type' => [
+                'heading' => 'Type',
+                'type' => 'select',
+                'options' => [
+                    'site' => 'Site',
+                    'language' => 'Language',
+                    'url' => 'Url'
+                ],
+                'class' => 'type cell'
+            ],
+            'url' => [
+                'type' => 'type',
+                'heading' => 'Url',
+                'class' => 'url cell',
+                'placeholder' => 'Enter url here'
+            ],
+            'site' => [
+                'heading' => 'Site',
+                'type' => 'select',
+                'options' => $sites,
+                'class' => 'site cell'
+            ],
+            'language' => [
+                'heading' => 'Language',
+                'type' => 'select',
+                'options' => $languages,
+                'class' => 'language cell'
+            ],
+            'theme' => [
+                'heading' => 'Theme',
+                'type' => 'select',
+                'options' => $themes,
+                'class' => 'theme cell'
+            ]
+        ];
         return Craft::$app->view->renderTemplate('themes/_settings', [
             'settings' => $this->getSettings(),
-            'themes' => ['' => \Craft::t('themes', 'Default (No theme)')] + $this->themes->getAsNames(),
-            'sites' => \Craft::$app->sites->getAllSites()
+            'cols' => $cols,
+            'themes' => ['' => 'No theme'] + $themes,
+            'settings' => $this->getSettings()
         ]);
     }
 }

@@ -1,10 +1,24 @@
 {% import "_includes/forms" as forms %}
 
-{% for site in sites %}
-	{{ forms.selectField({
-	    label: site.name,
-	    name: 'themes['~site.uid~']',
-	    options: themes,
-	    value: settings.getHandle(site.uid)
-	}) }}
-{% endfor %}
+<h2 class="first">Themes rules</h2>
+<p>Rules will be handled from top to bottom, the first match will define the theme and the other rules will not be looked at.</p>
+
+{% set name = 'rules' %}
+{% set id = 'theme-rules' %}
+{% set initJs = false %}
+{% set rows = settings.rules %}
+{% set errors = settings.getErrors().rules ?? []  %}
+
+{% include "_includes/forms/editableTable" %}
+
+<h2>Default theme</h2>
+<p>Default theme when no rules match</p>
+{{ forms.selectField({
+    name: 'default',
+    options: themes,
+    value: settings.default
+}) }}
+
+{% js on ready %}
+	new Craft.Themes.SettingsTable('settings-{{ id }}', 'settings[rules]', {{ cols|json_encode|raw }}, {errors: {{ errors|json_encode|raw }} });
+{% endjs %}

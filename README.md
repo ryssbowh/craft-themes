@@ -19,7 +19,9 @@ And read on...
 
 Templates are inherited by default, that's the whole point isn't it ?
 
-So if you call a template that isn't defined in your theme but exist in a parent theme, the parent template will be loaded. If the template can't be found in any theme, Craft will then look in the root templates folder.
+So if you call a template that isn't defined in your theme but exist in a parent theme, the parent template will be loaded.
+
+If the template exists in the root template folder, it will bypass the theme engine and will be loaded first.
 
 ## Twig
 

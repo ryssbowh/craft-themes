@@ -6,10 +6,11 @@ use Ryssbowh\CraftThemes\Theme;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use craft\base\Component;
 use craft\models\Site;
 
 
-class ThemesService
+class ThemesRegistry extends Component
 {	
 	const CACHE_FILE = '@storage/runtime/themes/themes';
 

@@ -9,7 +9,12 @@ class Settings extends Model
     /**
      * @var array
      */
-    public $themes = [];
+    public $rules = [];
+
+    /**
+     * @var ?string
+     */
+    public $default;
 
     /**
      * @inheritdoc
@@ -17,7 +22,28 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['themes', 'each', 'rule' => ['string']]
+            ['rules', function ($attribute, $params, $validator) {
+                foreach ($this->rules as $index => $rule) {
+                    if ($rule['type'] == 'url' and trim($rule['url'] == '')) {
+                        $this->addError('rules', $index.':2');
+                    }
+                    switch ($rule['type']) {
+                        case 'url':
+                            unset($this->rules[$index]['site']);
+                            unset($this->rules[$index]['language']);
+                            break;
+                        case 'site':
+                            unset($this->rules[$index]['url']);
+                            unset($this->rules[$index]['language']);
+                            break;
+                        default:
+                            unset($this->rules[$index]['site']);
+                            unset($this->rules[$index]['url']);
+                            break;
+                    }
+                }
+            }],
+            ['default', 'string']
         ];
     }
 

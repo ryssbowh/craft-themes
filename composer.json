@@ -9,16 +9,16 @@
   ],
   "license": "MIT",
   "authors": [
-    {
-      "name": "Boris Blondin",
-      "homepage": "http://github.com/ryssbowh/craft-themes"
-    }
+      {
+          "name": "The Web Puzzlers",
+          "homepage": "https://github.com/ryssbowh"
+      }
   ],
   "support": {
   },
   "require": {
     "craftcms/cms": "^3.5",
-    "ryssbowh/craft-theme-installer-plugin": "^0.1"
+    "ryssbowh/craft-theme-installer-plugin": "^1.0"
   },
   "autoload": {
     "psr-4": {
