@@ -2,8 +2,11 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\base\Component;
+use craft\i18n\Locale;
+use craft\models\Site;
 
 class ThemesRules extends Component
 {
@@ -24,86 +27,123 @@ class ThemesRules extends Component
 	 */
 	public $cache;
 
+	/**
+	 * inheritDoc
+	 */
 	public function init()
 	{
 		$this->cache = \Craft::$app->cache->get(self::CACHE_KEY) ?? [];
 	}
 
+	/**
+	 * Resolve the theme for the current request, goes through the list of rules and returns
+	 * the first that match. Failing a matching rule, returns the default theme
+	 * 
+	 * @return ?ThemeInterface
+	 */
 	public function resolveCurrentTheme(): ?ThemeInterface
 	{
 		$path = \Craft::$app->request->getFullPath();
-		$url = $site->getBaseUrl().'/'.$path;
-		$themeName = $this->getCache($url);
-		if (is_string($themeName)) {
-			return $themeName ? Themes::$plugin->registry->getTheme($themeName) : null;
+		$currentSite = \Craft::$app->sites->getCurrentSite();
+		$currentUrl = $currentSite->getBaseUrl().$path;
+		$cached = $this->getCache($currentUrl);
+		if (is_string($cached)) {
+			return $cached ? Themes::$plugin->registry->getTheme($cached) : null;
 		}
-		$site = \Craft::$app->sites->getCurrentSite();
 		$themeName = '';
 		foreach ($this->rules as $rule) {
 			if (!$rule['enabled']) {
 				continue;
 			}
-			switch ($rule['type']) {
-				case 'site':
-					$themeName = $this->resolveSiteRule($rule, $site);
-					break;
-				case 'language':
-					$themeName = $this->resolveLanguageRule($rule, $site->getLocale());
-					break;
-				default:
-					$themeName = $this->resolveUrlRule($rule, $url, $path);
+
+			$site = $language = $url = false;
+			if ($site = $this->resolveSiteRule($rule['site'], $currentSite)) {
+				if ($language = $this->resolveLanguageRule($rule['language'], $currentSite->getLocale())) {
+					$url = $this->resolvePathRule($rule['url'], $path);
+				}
 			}
-			if ($themeName) {
+			
+			if ($site and $language and $url) {
+				$themeName = $rule['theme'];
 				break;
 			}
 		}
 		if (!$themeName and $this->default) {
 			$themeName = $this->default;
 		}
-		$this->setCache($url, $themeName);
+		$this->setCache($currentUrl, $themeName);
 		return $themeName ? Themes::$plugin->registry->getTheme($themeName) : null;
 	}
 
-	public static function clearCache()
+	/**
+	 * Clears rules cache
+	 */
+	public static function clearCaches()
 	{
-		$this->cache = [];
 		\Craft::$app->cache->delete(self::CACHE_KEY);
 	}
 
+	/**
+	 * Set the cache for the current url
+	 * 
+	 * @param string $url
+	 * @param string $themeName
+	 */
 	protected function setCache(string $url, string $themeName)
 	{
 		$this->cache[$url] = $themeName;
 		\Craft::$app->cache->set(self::CACHE_KEY, $this->cache);
 	}
 
+	/**
+	 * Get the cache for the current url
+	 * 
+	 * @param  string $url
+	 * @return ?string
+	 */
 	protected function getCache(string $url): ?string
 	{
 		return $this->cache[$url] ?? null;
 	}
 
-	protected function resolveSiteRule(array $rule, Site $site): string;
+	/**
+	 * Resolve the site part of a rule
+	 * 
+	 * @param  string $ruleSite
+	 * @param  Site   $site
+	 * @return bool
+	 */
+	protected function resolveSiteRule(string $ruleSite, Site $site): bool
 	{
-		return ($rule['site'] == $site->uid) ? $rule['theme'] : '';
+		return ($ruleSite == '' or $ruleSite == $site->uid);
 	}
 
-	protected function resolveLanguageRule(array $rule, Locale $locale): string;
+	/**
+	 * Reolsves the language part of a rule
+	 * 
+	 * @param  string $ruleLanguage
+	 * @param  Locale $locale
+	 * @return bool
+	 */
+	protected function resolveLanguageRule(string $ruleLanguage, Locale $locale): bool
 	{
-		return ($rule['language'] == $locale->id) ? $rule['theme'] : '';
+		return ($ruleLanguage == '' or $ruleLanguage == $locale->id);
 	}
 
-	protected function resolveUrlRule(array $rule, string $fullUrl, string $path): string;
+	/**
+	 * Resolve the path part of a rule
+	 * 
+	 * @param  string $ruleUrl
+	 * @param  string $path
+	 * @return bool
+	 */
+	protected function resolvePathRule(string $ruleUrl, string $path): bool
 	{
-		$match = false;
-		$ruleUrl = trim($rule['url'], '/');
-		if (substr($ruleUrl, 0, 4) == 'http') {
-			if ($ruleUrl == $fullUrl) {
-				$match = true;
-			}
-		} else if (substr($rule['url'], 0, 1) == '/' and substr($rule['url'], -1) == '/') {
-
-		} else if ($ruleUrl == $path) {
-			$match = true;
+		$trimmed = trim($ruleUrl, '/');
+		if (substr($ruleUrl, 0, 1) == '/' and substr($ruleUrl, -1) == '/' and $ruleUrl != '/') {
+			//Regular expression
+			return preg_match($ruleUrl, $path);
 		}
-		return $match ? $rule['theme'] : '';
+		return ($ruleUrl == '' or $trimmed == $path);
 	}
 }

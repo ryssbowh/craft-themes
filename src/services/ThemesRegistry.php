@@ -12,7 +12,7 @@ use craft\models\Site;
 
 class ThemesRegistry extends Component
 {	
-	const CACHE_FILE = '@storage/runtime/themes/themes';
+	const CACHE_FILE = '@vendor/ryssbowh/craft-themes/themes.php';
 
 	/**
 	 * @var ?array
@@ -22,20 +22,15 @@ class ThemesRegistry extends Component
 	/**
 	 * @var string
 	 */
-	protected $folder;
+	public $folder;
 
 	/**
 	 * @var null|ThemeInterface
 	 */
 	protected $currentTheme;
 
-	public function __construct()
+	public function init()
 	{
-		$this->folder = \Yii::getAlias('@themesPath');
-		$cacheFolder = dirname(self::getCachePath());
-		if (!is_dir($cacheFolder)) {
-			mkdir($cacheFolder, 0755, true);
-		}
 		$this->themes = $this->buildThemes();
 	}
 
@@ -101,23 +96,10 @@ class ThemesRegistry extends Component
 			\Yii::setAlias('@themePath', '@root/themes/' . $this->currentTheme->getHandle());
         	\Yii::setAlias('@themeWebPath', '@webroot/themes/' . $this->currentTheme->getHandle());
         	\Craft::info("Theme has been set to : ".$this->currentTheme->getName(), __METHOD__);
+		} else {
+			\Craft::info("No theme has been set fro the current request", __METHOD__);
 		}
 		return $this->currentTheme;
-	}
-
-	/**
-	 * Set current theme from a site
-	 * 
-	 * @param  Site $site
-	 * @return ?ThemeInterface
-	 */
-	public function setCurrentFromSite(Site $site): ?ThemeInterface
-	{
-        $handle = Themes::$plugin->getSettings()->getHandle($site->uid);
-        if ($handle) {
-            $this->setCurrent($handle);
-        }
-        return $this->currentTheme;
 	}
 
 	/**
@@ -167,7 +149,7 @@ class ThemesRegistry extends Component
 		if (!$this->hasCache()) {
 			return null;
 		}
-		$cached = json_decode(file_get_contents($this->getCachePath()), true);
+		$cached = require $this->getCachePath();
 		$themes = [];
 		foreach ($cached as $array) {
 			$class = $array['class'];
@@ -191,11 +173,13 @@ class ThemesRegistry extends Component
 				'handle' => $theme->getHandle()
 			];
 		}
-		file_put_contents($this->getCachePath(), json_encode($cache));
+		$str = "<?php\n\nreturn ".var_export($cache, true).";";
+		file_put_contents($this->getCachePath(), $str);
 	}
 
 	/**
-	 * Build all themes classes. Will keep the result in cache
+	 * Build all themes classes either from cache or from the disk. 
+	 * Will keep the result in cache.
 	 * 
 	 * @return array
 	 */

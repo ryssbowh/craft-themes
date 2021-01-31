@@ -29,9 +29,6 @@
     "name": "Themes",
     "handle": "themes",
     "documentationUrl": "https://github.com/ryssbowh/craft-themes",
-    "class": "Ryssbowh\\CraftThemes\\Themes",
-    "components": {
-      "themes": "Ryssbowh\\CraftThemes\\services\\ThemesService"
-    }
+    "class": "Ryssbowh\\CraftThemes\\Themes"
   }
 }

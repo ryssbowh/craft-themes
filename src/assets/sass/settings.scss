@@ -1,4 +1,4 @@
-#settings-theme-rules, .editablesorterhelper {
+#settings-theme-rules, .editabletablesorthelper {
 	border-collapse: collapse;
 	tr.disabled {
 		opacity: 0.5;
@@ -17,15 +17,15 @@
 			}
 		}
 		select {
-			background: none;
+			background: none !important;
 			width: 100%;
 			border-radius: 0;
 		}
 		.select {
 			&:after {
-				top: 12px;
-				width: 6px;
-				height: 6px;
+				top: 12px !important;
+				width: 6px !important;
+				height: 6px !important;
 			}
 			&.small {
 				width: 100%;

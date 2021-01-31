@@ -4,7 +4,7 @@ Tired of re-making your front-ends all over again when a lot of it could be reus
 
 This package allows you to create themes that can extend from each other and that can be used as composer packages.
 
-You can choose in the settings which theme is enabled for which site.
+A rule system allows you to set which theme will be used for which site, language or url path.
 
 ## Getting started
 
@@ -17,17 +17,28 @@ And read on...
 
 ## Templates 
 
-Templates are inherited by default, that's the whole point isn't it ?
+Templates are inherited, that's the whole point isn't it ?
 
 So if you call a template that isn't defined in your theme but exist in a parent theme, the parent template will be loaded.
 
-If the template exists in the root template folder, it will bypass the theme engine and will be loaded first.
+If the template exists in the Craft root template folder, it will bypass the theme engine and will be loaded first.
+
+## Rules settings
+
+Define rules in the settings to load the theme you want according to 3 parameters :
+- the current site
+- the current language
+- the current url path, this can also be a regular expression if enclosed in slashes. example `/^blog*/`. Enter `/` for the homepage.
+
+The first rule that match will define which theme will be used. Organise your rules to have the most specific first.
+
+If no rules match, the default theme will be used.
 
 ## Twig
 
 You have access to two new variables in your templates :
 
-`themes` : `CraftThemesService` instance  
+`themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance  
 `theme` : Current theme instance. This is not set if no theme is set.
 
 And one new function :
@@ -70,7 +81,7 @@ If you bundle a theme into a composer package, 2 things are required :
 
 Assuming your package is accessible through composer, you can require it like any other package, it will be installed in the `themes` folder.
 
-You will need to empty the themes cache after installing a new theme, through the backend or with `php craft clear-caches/themes-cache`
+You will need to empty the themes cache after creating a new theme, through the backend or with `php craft clear-caches/themes-cache`
 
 [See an example](https://github.com/ryssbowh/example-theme/blob/master/composer.json)
 
@@ -83,13 +94,13 @@ You will need to empty the themes cache after installing a new theme, through th
 
 And two that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
-`@themesWebPath` : Web directory for themes  
+`@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`
 `@themeWebPath` : Web directory for current theme. This is not set if no theme is set.
 
 ## Installation
 
 run `composer require ryssbowh/craft-themes`
-Enable a theme in the settings.
+Add a rule in the settings to load a theme or set a default theme.
 
 ## Requirements
 
@@ -99,4 +110,3 @@ Craft 3.5
 
 - bundleAssets as regular expressions paths
 - preprocess functions
-- more granularity to select themes, per page, per language maybe ?

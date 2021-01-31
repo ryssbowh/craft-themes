@@ -44,19 +44,20 @@ class Themes extends \craft\base\Plugin
 
         self::$plugin = $this;
 
+        \Yii::setAlias('@themesPath', '@root/themes');
+        \Yii::setAlias('@themesWebPath', '@webroot/themes');
+
         $this->setComponents([
-            'registry' => ThemesRegistry::class,
+            'registry' => [
+                'class' => ThemesRegistry::class,
+                'folder' => \Yii::getAlias('@themesPath'),
+            ],
             'rules' => [
                 'class' => ThemesRules::class,
                 'rules' => $this->getSettings()->rules,
                 'default' => $this->getSettings()->default
             ]
         ]);
-
-        \Craft::info('Loading themes plugin', __METHOD__);
-
-        \Yii::setAlias('@themesPath', '@root/themes');
-        \Yii::setAlias('@themesWebPath', '@webroot/themes');
 
         Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
             function (RegisterCacheOptionsEvent $event) {
@@ -71,14 +72,28 @@ class Themes extends \craft\base\Plugin
             }
         );
 
+        \Craft::info('Loaded themes plugin, handling current request...', __METHOD__);
+
         if (!Craft::$app->request->getIsSiteRequest()) {
             return ;
         }
 
+        $this->handleCurrentRequest();
+    }
+
+    public function afterSaveSettings()
+    {
+        ThemesRegistry::clearCaches();
+        ThemesRules::clearCaches();
+    }
+
+    protected function handleCurrentRequest()
+    {
         $theme = $this->rules->resolveCurrentTheme();
+        $this->registry->setCurrent($theme);
 
         if (!$theme) {
-            \Craft::info("No theme found for request ".\Craft::$app->request->getFullUri(), __METHOD__);
+            \Craft::info("No theme found for request ".\Craft::$app->request->getUrl(), __METHOD__);
             return;
         }
 
@@ -123,44 +138,34 @@ class Themes extends \craft\base\Plugin
     protected function settingsHtml(): string
     {
         \Craft::$app->view->registerAssetBundle(SettingsAssets::class);
-        $themes = $this->themes->getAsNames();
+        $themes = $this->registry->getAsNames();
         list($sites, $languages) = $this->parseSites();
         $cols = [
             'enabled' => [
-                'heading' => 'Enabled',
+                'heading' => \Craft::t('themes', 'Enabled'),
                 'type' => 'lightswitch',
                 'class' => 'thin enabled'
             ],
-            'type' => [
-                'heading' => 'Type',
-                'type' => 'select',
-                'options' => [
-                    'site' => 'Site',
-                    'language' => 'Language',
-                    'url' => 'Url'
-                ],
-                'class' => 'type cell'
-            ],
             'url' => [
                 'type' => 'type',
-                'heading' => 'Url',
+                'heading' => \Craft::t('themes', 'Path (or regex)'),
                 'class' => 'url cell',
-                'placeholder' => 'Enter url here'
+                'placeholder' => \Craft::t('themes', 'Enter path here')
             ],
             'site' => [
-                'heading' => 'Site',
+                'heading' => \Craft::t('themes', 'Site'),
                 'type' => 'select',
-                'options' => $sites,
+                'options' => ['' => \Craft::t('themes', 'Any')] + $sites,
                 'class' => 'site cell'
             ],
             'language' => [
-                'heading' => 'Language',
+                'heading' => \Craft::t('themes', 'Language'),
                 'type' => 'select',
-                'options' => $languages,
+                'options' => ['' => \Craft::t('themes', 'Any')] + $languages,
                 'class' => 'language cell'
             ],
             'theme' => [
-                'heading' => 'Theme',
+                'heading' => \Craft::t('themes', 'Theme'),
                 'type' => 'select',
                 'options' => $themes,
                 'class' => 'theme cell'
@@ -169,7 +174,7 @@ class Themes extends \craft\base\Plugin
         return Craft::$app->view->renderTemplate('themes/_settings', [
             'settings' => $this->getSettings(),
             'cols' => $cols,
-            'themes' => ['' => 'No theme'] + $themes,
+            'themes' => ['' => \Craft::t('themes', 'No theme')] + $themes,
             'settings' => $this->getSettings()
         ]);
     }

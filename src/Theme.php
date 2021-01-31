@@ -116,7 +116,7 @@ abstract class Theme implements ThemeInterface
 		if (!$this->extends) {
 			return null;
 		}
-		return Themes::$plugin->themes->getTheme($this->extends);
+		return Themes::$plugin->registry->getTheme($this->extends);
 	}
 
 	/**

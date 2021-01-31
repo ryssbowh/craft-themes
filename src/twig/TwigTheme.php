@@ -12,9 +12,9 @@ class TwigTheme extends AbstractExtension
      */
     public function getGlobals()
     {
-        $service = Themes::$plugin->themes;
+        $service = Themes::$plugin->registry;
         return array(
-            'themes' => $service,
+            'themesRegistry' => $service,
             'theme' => $service->getCurrent()
         );
     }
@@ -34,6 +34,6 @@ class TwigTheme extends AbstractExtension
      */
     public function themeUrl($path)
     {
-        return Themes::$plugin->themes->getCurrent()->getAssetUrl($path);
+        return Themes::$plugin->registry->getCurrent()->getAssetUrl($path);
     }
 }
