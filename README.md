@@ -8,9 +8,9 @@ A rule system allows you to set which theme will be used for which site, languag
 
 ## Getting started
 
-Create the folder `themes/{name}`
-Create the class `themes/{name}/Theme.php`, [an example here](https://github.com/ryssbowh/example-theme/blob/master/Theme.php), make sure it has a namespace
-Create the folder `themes/{name}/templates`
+Create the folder `themes/{name}`  
+Create the class `themes/{name}/Theme.php`, [an example here](https://github.com/ryssbowh/example-theme/blob/master/Theme.php), make sure it has a namespace  
+Create the folder `themes/{name}/templates`  
 
 That's enough to define a theme that you can enable in the backend.
 
@@ -40,12 +40,12 @@ If no rules match, the default theme will be used.
 You have access to two new variables in your templates :
 
 `themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance  
-`theme` : Current theme instance. This is not set if no theme is set.
+`theme` : Current theme instance. This is not set if no theme is set.  
 
 And one new function :
 
 Assets like images, fonts etc can be inherited through the function `theme_url`.  
-If you have an `image.jpg` defined in your theme in the `images` folder, you can publish it with `theme_url('images/image.jpg')`
+If you have an `image.jpg` defined in your theme in the `images` folder, you can publish it with `theme_url('images/image.jpg')`  
 
 If you require an asset and the file is not present in your theme, it will look in the parent theme (if defined).
 
@@ -95,13 +95,13 @@ You will need to empty the themes cache after creating a new theme, through the 
 
 And two that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
-`@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`
-`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.
+`@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
+`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.  
 
 ## Installation
 
-run `composer require ryssbowh/craft-themes`
-Add a rule in the settings to load a theme or set a default theme.
+run `composer require ryssbowh/craft-themes`  
+Add a rule in the settings to load a theme or set a default theme.  
 
 ## Requirements
 
@@ -109,5 +109,5 @@ Craft 3.5
 
 ## Roadmap
 
-- bundleAssets as regular expressions paths
-- preprocess functions
+- bundleAssets as regular expressions paths  
+- preprocess functions  
