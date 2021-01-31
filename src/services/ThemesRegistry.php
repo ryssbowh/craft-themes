@@ -97,7 +97,7 @@ class ThemesRegistry extends Component
         	\Yii::setAlias('@themeWebPath', '@webroot/themes/' . $this->currentTheme->getHandle());
         	\Craft::info("Theme has been set to : ".$this->currentTheme->getName(), __METHOD__);
 		} else {
-			\Craft::info("No theme has been set fro the current request", __METHOD__);
+			\Craft::info("No theme has been set for the current request", __METHOD__);
 		}
 		return $this->currentTheme;
 	}
@@ -179,7 +179,7 @@ class ThemesRegistry extends Component
 
 	/**
 	 * Build all themes classes either from cache or from the disk. 
-	 * Will keep the result in cache.
+	 * Will save the result in cache.
 	 * 
 	 * @return array
 	 */

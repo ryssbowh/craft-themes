@@ -8,7 +8,8 @@ A rule system allows you to set which theme will be used for which site, languag
 
 ## Getting started
 
-Create the folder `themes/{name}`, add a theme class to it, [an example here](https://github.com/ryssbowh/example-theme/blob/master/Theme.php)
+Create the folder `themes/{name}`
+Create the class `themes/{name}/Theme.php`, [an example here](https://github.com/ryssbowh/example-theme/blob/master/Theme.php), make sure it has a namespace
 Create the folder `themes/{name}/templates`
 
 That's enough to define a theme that you can enable in the backend.
