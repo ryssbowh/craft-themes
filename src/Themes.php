@@ -28,14 +28,6 @@ class Themes extends \craft\base\Plugin
     public $hasCpSettings = true;
 
     /**
-     * @inheritdoc
-     */
-    protected function createSettingsModel(): Settings
-    {
-        return new Settings();
-    }
-
-    /**
      * Initializes the plugin.
      */
     public function init()
@@ -81,12 +73,18 @@ class Themes extends \craft\base\Plugin
         $this->handleCurrentRequest();
     }
 
+    /**
+     * Clear rule cache adter saving settings
+     */
     public function afterSaveSettings()
     {
-        ThemesRegistry::clearCaches();
+        parent::afterSaveSettings();
         ThemesRules::clearCaches();
     }
 
+    /**
+     * Resolves current theme and registers aliases, templates & hooks
+     */
     protected function handleCurrentRequest()
     {
         $theme = $this->rules->resolveCurrentTheme();
@@ -118,6 +116,18 @@ class Themes extends \craft\base\Plugin
         );
     }
 
+    /**
+     * Parse all sites and languages, return an array
+     * [
+     *     [
+     *         'uid' => 'Site name'
+     *     ],
+     *     [
+     *         'en-GB' => 'English'
+     *     ]
+     * ]
+     * @return [type] [description]
+     */
     protected function parseSites(): array
     {
         $sites = [];
@@ -130,6 +140,14 @@ class Themes extends \craft\base\Plugin
             }
         }
         return [$sites, $languages];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function createSettingsModel(): Settings
+    {
+        return new Settings();
     }
 
     /**
