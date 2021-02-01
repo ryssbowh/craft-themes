@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes;
 
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\models\Layout;
 
 abstract class Theme implements ThemeInterface
 {
@@ -153,6 +154,11 @@ abstract class Theme implements ThemeInterface
 		foreach ($this->getAssetBundles($urlPath) as $asset) {
 			\Craft::$app->view->registerAssetBundle($asset);
 		}
+	}
+
+	public function getLayout(): Layout
+	{
+		return Themes::$plugin->blocks->getLayoutForTheme($this->getHandle());
 	}
 
 	/**

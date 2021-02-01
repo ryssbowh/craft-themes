@@ -1,0 +1,88 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% block contextMenu %}
+	{% if themes %}
+		<div>
+	        <button type="button" id="context-btn" class="btn menubtn themesbtn" data-icon="world">{{ selectedTheme ? selectedTheme.getName() }}</button>
+	        <div class="menu">
+                <ul class="padded">
+                    {% for handle, theme in themes %}
+                        <li><a{% if selectedTheme and selectedTheme.getHandle() == handle %} class="sel"{% endif %} data-theme-handle="{{ handle }}" href="{{ url('themes/blocks/'~handle) }}">{{ theme.getName() }}</a></li>
+                    {% endfor %}
+                </ul>
+	        </div>
+	    </div>
+	{% endif %}
+{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ url('themes/blocks/'~selectedTheme.getHandle()~'/save') }}" class="btn save submit">Save blocks</a>
+{% endblock %}
+
+{% block content %}
+	{% if themes %}
+		<div id="theme-blocks">
+			<div class="theme-sidebar">
+				<div class="heading">
+	                <h5>Blocks</h5>
+	            </div>
+				{% for provider in blockProviders %}
+					<h3>{{ provider.getName() }}</h3>
+					<ul class="block-list list">
+					{% for _block in provider.getBlocks() %}
+						<li class="block original" data-provider="{{ provider.getHandle() }}" data-handle="{{ _block.getHandle() }}">
+							<div class="description">
+								<div class="name">{{ _block.getName() }}</div>
+								<div class="provider">{{ provider.getName() }}</div>
+							</div>
+							{{ forms.lightswitch({
+							    name: 'enabled',
+							    on: true,
+							    class: 'enabled'
+							}) }}
+							<div class="move icon"></div>
+							<div class="delete icon"></div>
+						</li>
+					{% endfor %}
+					</ul>
+				{% endfor %}
+			</div>
+			<div class="theme-regions">
+				<div class="heading">
+	                <h5>Regions</h5>
+	            </div>
+	            <div class="regions-list">
+	            	{% set layout = selectedTheme.getLayout() %}
+	            	{% for region in selectedTheme.getRegions() %}
+	            		<div class="region" data-handle="{{ region.handle }}" style="{% if region.width is defined %}width:{{ region.width }};{% endif %}">
+	            			<div class="region-heading">
+				                <h5 class="region-title">{{ region.name }}</h5>
+				            </div>
+				            <ul class="region-blocks">
+				            	{% for _block in layout.regions[region.handle] ?? [] %}
+				            		<li class="block" data-provider="_block.blockProvider" data-id="_block.id" data-handle="_block.blockHandle" style="visibility: visible;">
+										<div class="description">
+											<div class="name">{{ _block.getBlock().getName() }}</div>
+											<div class="provider">{{ _block.getProvider().getName() }}</div>
+										</div>
+										{{ forms.lightswitch({
+										    name: 'enabled',
+										    on: _block.active,
+										    class: 'enabled'
+										}) }}
+										<div class="move icon"></div>
+										<div class="delete icon"></div>
+									</li>
+				            	{% endfor %}
+				            </ul>
+	            		</div>
+	            	{% endfor %}
+		        </div>
+			</div>
+		</div>
+	{% else %}
+		<h2>You don't have any theme installed</h2>		
+	{% endif %}
+{% endblock %}

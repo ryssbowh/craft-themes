@@ -58,4 +58,11 @@ interface ThemeInterface
 	 * @return string
 	 */
 	public function getAssetUrl(string $path): string;
+
+	/**
+	 * Get theme's regions
+	 * 
+	 * @return array
+	 */
+	public function getRegions(): array;
 }
