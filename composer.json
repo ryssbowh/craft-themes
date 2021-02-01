@@ -18,7 +18,7 @@
   },
   "require": {
     "craftcms/cms": "^3.5",
-    "ryssbowh/craft-theme-installer-plugin": "dev-master#1e215f1"
+    "ryssbowh/craft-theme-installer-plugin": "^1.0"
   },
   "autoload": {
     "psr-4": {
