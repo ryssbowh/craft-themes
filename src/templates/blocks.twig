@@ -18,7 +18,10 @@
 {% endblock %}
 
 {% block toolbar %}
-    <a href="{{ url('themes/blocks/'~selectedTheme.getHandle()~'/save') }}" class="btn save submit">Save blocks</a>
+	<div class="buttons">
+	    <a href="{{ url('themes/blocks/'~selectedTheme.getHandle()~'/save') }}" class="btn save submit">Save blocks</a>
+	    <div class="spinner"></div>
+	</div>
 {% endblock %}
 
 {% block content %}
@@ -62,7 +65,7 @@
 				            </div>
 				            <ul class="region-blocks">
 				            	{% for _block in layout.regions[region.handle] ?? [] %}
-				            		<li class="block" data-provider="_block.blockProvider" data-id="_block.id" data-handle="_block.blockHandle" style="visibility: visible;">
+				            		<li class="block" data-provider="{{ _block.blockProvider }}" data-id="{{ _block.id }}" data-handle="{{ _block.blockHandle }}" style="visibility: visible;">
 										<div class="description">
 											<div class="name">{{ _block.getBlock().getName() }}</div>
 											<div class="provider">{{ _block.getProvider().getName() }}</div>

@@ -5,9 +5,12 @@ use Craft;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\blockProviders\SystemBlockProvider;
 use Ryssbowh\CraftThemes\events\RegisterBlockProvidersEvent;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\models\Layout;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\BlockProvidersService;
 use Ryssbowh\CraftThemes\services\BlockService;
+use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ThemesRegistry;
 use Ryssbowh\CraftThemes\services\ThemesRules;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
@@ -56,16 +59,21 @@ class Themes extends \craft\base\Plugin
         \Yii::setAlias('@themesWebPath', '@webroot/themes');
 
         $this->registerServices();
-        $this->registerNavItem();
         $this->registerClearCacheEvent();
-        $this->registerCpRoutes();
         $this->registerBlockProviders();
         $this->registerProjectConfig();
 
         \Craft::info('Loaded themes plugin, handling current request...', __METHOD__);
 
         if (Craft::$app->request->getIsSiteRequest()) {
-            $this->handleCurrentRequest();
+            $theme = $this->handleCurrentRequest();
+            if ($theme) {
+                $this->registerPageTemplate($theme);
+            }
+        }
+        if (Craft::$app->request->getIsCpRequest()) {
+            $this->registerNavItem();
+            $this->registerCpRoutes();
         }
     }
 
@@ -76,6 +84,13 @@ class Themes extends \craft\base\Plugin
     {
         parent::afterSaveSettings();
         ThemesRules::clearCaches();
+    }
+
+    protected function registerPageTemplate(ThemeInterface $theme)
+    {
+        Event::on(View::class, View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE, function(TemplateEvent $event) use ($theme) {
+            $event->variables['layout'] = $theme->getPageLayout();
+        });
     }
 
     /**
@@ -112,7 +127,8 @@ class Themes extends \craft\base\Plugin
                 'default' => $this->getSettings()->default
             ],
             'blockProviders' => BlockProvidersService::class,
-            'blocks' => BlockService::class
+            'blocks' => BlockService::class,
+            'layouts' => LayoutService::class,
         ]);
     }
 
@@ -175,25 +191,26 @@ class Themes extends \craft\base\Plugin
     protected function registerProjectConfig()
     {
         Craft::$app->projectConfig
-            ->onAdd(BlockService::LAYOUTS_CONFIG_KEY.'.{uid}',      [$this->blocks,   'handleLayoutChanged'])
-            ->onUpdate(BlockService::LAYOUTS_CONFIG_KEY.'.{uid}',   [$this->blocks,   'handleLayoutChanged']);
+            ->onAdd(LayoutService::LAYOUTS_CONFIG_KEY.'.{uid}',      [$this->layouts,   'handleChanged'])
+            ->onUpdate(LayoutService::LAYOUTS_CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleChanged'])
+            ->onRemove(LayoutService::LAYOUTS_CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleDeleted']);
 
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $e) {
-            Themes::$plugin->blocks->rebuildLayoutConfig($e);
+            Themes::$plugin->layouts->rebuildLayoutConfig($e);
         });
     }
 
     /**
      * Resolves current theme and registers aliases, templates & hooks
      */
-    protected function handleCurrentRequest()
+    protected function handleCurrentRequest(): ?ThemeInterface
     {
         $theme = $this->rules->resolveCurrentTheme();
         $this->registry->setCurrent($theme);
 
         if (!$theme) {
             \Craft::info("No theme found for request ".\Craft::$app->request->getUrl(), __METHOD__);
-            return;
+            return null;
         }
 
         Craft::$app->view->registerTwigExtension(new TwigTheme);
@@ -215,6 +232,8 @@ class Themes extends \craft\base\Plugin
                 $theme->registerAssetBundles($path);
             }
         );
+
+        return $theme;
     }
 
     /**

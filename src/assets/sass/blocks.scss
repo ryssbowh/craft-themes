@@ -35,6 +35,12 @@
 
 #toolbar {
 	justify-content: end;
+	.spinner {
+		display: none;
+	}
+	.btn.loading + .spinner {
+		display: block;
+	}
 }
 
 .theme-block-drap-helper .block {

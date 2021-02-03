@@ -53,7 +53,7 @@ class LayoutLine extends Model
 		return Themes::$plugin->blockProviders->getByHandle($this->blockProvider);
 	}
 
-	public function getBlock(): BlockInterface
+	public function toBlock(): BlockInterface
 	{
 		return $this->getProvider()->getBlock($this->blockHandle);
 	}

@@ -19,6 +19,7 @@ class CpBlocksController extends Controller
 		$this->registry = Themes::$plugin->registry;
 		$this->blockProviders = Themes::$plugin->blockProviders;
 		$this->blocks = Themes::$plugin->blocks;
+		$this->layouts = Themes::$plugin->layouts;
 	}
 
 	public function actionIndex(?string $themeName = null)

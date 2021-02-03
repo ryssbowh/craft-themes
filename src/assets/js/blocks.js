@@ -2,16 +2,18 @@ if (typeof Craft.Themes === typeof undefined) {
     Craft.Themes = {};
 }
 
-Craft.Themes.Blocks = Garnish.Base.extend({
+Craft.Themes.Blocks = Garnish.Base.extend({ 
 	$blocks: null,
 	$targetRegions: null,
 	$regions: null,
+	$saveBtn: null,
 	isSaving: false,
 
 	init: function () {
 		this.$blocks = $('#theme-blocks .region-blocks .block, #theme-blocks .theme-sidebar .block');
 		this.$targetRegions = $('#theme-blocks .region-blocks');
-		this.$regions = $('#theme-blocks .region');
+		this.$regions = $('.theme-regions .region');
+		this.$saveBtn = $('#toolbar .submit');
 		let _this = this;
 		$.each(this.$targetRegions.find('.block'), function (block) {
 			_this._initEvents($(block));
@@ -31,7 +33,7 @@ Craft.Themes.Blocks = Garnish.Base.extend({
         	$(this).next().slideToggle('fast');
         	$(this).toggleClass('closed');
         });
-        $('#toolbar .submit').click(function(e){
+        this.$saveBtn.click(function(e){
         	e.preventDefault();
         	if (!_this.isSaving) {
         		_this._save($(this));
@@ -42,6 +44,7 @@ Craft.Themes.Blocks = Garnish.Base.extend({
 	_save: function (a) {
 		let _this = this;
 		this.isSaving = true;
+		this.$saveBtn.attr('disabled', true).addClass('loading');
 		let data = {regions: {}};
 		$.each(this.$regions, function (index, region) {
 			let regionName = $(region).data('handle');
@@ -59,24 +62,25 @@ Craft.Themes.Blocks = Garnish.Base.extend({
 			data.regions[regionName] = blocks;
 		});
 		Craft.sendActionRequest('POST', a.attr('href'), {data: data})
-			.then(function (data) {
-				console.log(data);
+			.then(function (response) {
+				Craft.cp.displayNotice(response.data.message);
+				_this._populateBlockIds(response.data.layout);
 			}).catch(function (error) {
 				Craft.cp.displayError(error);
 			}).finally(function(data){
 				_this.isSaving = false;
-				Craft.cp.displayNotice(data.message);
-				_this._populateBlockIds(data.layout);
+				_this.$saveBtn.attr('disabled', false).removeClass('loading');
 			});
 	},
 
 	_populateBlockIds: function (layout) {
-		Object.keys(layout.regions).forEach(function(region,index) {
-			let $region = this.$regions.find('[data-region='+region']');
+		let _this = this;
+		Object.keys(layout.regions).forEach(function (region) {
+			let $region = _this.$regions.filter('[data-handle='+region+']');
 			layout.regions[region].forEach(function (block, key) {
-				$region.find('.block:nth-child('+key+')').data('id', block.id);
+				$region.find('.block:nth-child('+(key + 1)+')').data('id', block.id);
 			});
-		}
+		});
 	},
 
 	_initEvents ($block) {
