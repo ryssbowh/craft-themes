@@ -46,7 +46,7 @@ class Themes extends \craft\base\Plugin
             ],
             'rules' => [
                 'class' => ThemesRules::class,
-                'rules' => $this->getSettings()->rules,
+                'rules' => $this->getSettings()->getRules(),
                 'default' => $this->getSettings()->default
             ]
         ]);

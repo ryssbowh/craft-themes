@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 1.0.2 - 2021-02-04
+### Fixed
+- Error when no rules are defined
+
 ## 1.0.1 - 2021-02-01
 ### Fixed
 - Composer 2 compatibility
