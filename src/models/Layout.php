@@ -14,7 +14,7 @@ class Layout extends Model
 	{
 		foreach ($data as $name => $lines) {
 			foreach ($lines as $line) {
-				$line['theme'] = $this->theme;
+				$line['theme'] = $this->theme->getHandle();
 				$this->regions[$name][] = new LayoutLine($line);
 			}
 		}
@@ -23,7 +23,7 @@ class Layout extends Model
 	public function loadFromDb(): Layout
 	{
 		$this->regions = [];
-		$lines = LayoutLineRecord::find()->where(['theme' => $this->theme])->orderBy('order')->all();
+		$lines = LayoutLineRecord::find()->where(['theme' => $this->theme->getHandle()])->orderBy('order')->all();
 		foreach ($lines as $line) {
 			$this->regions[$line->region][] = $line->toModel();
 		}

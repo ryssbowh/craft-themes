@@ -130,7 +130,7 @@ class LayoutService extends Component
         ]));
     }
 
-    public function getLayout(string $theme): Layout
+    public function getLayout(ThemeInterface $theme): Layout
     {
         return (new Layout([
             'theme' => $theme

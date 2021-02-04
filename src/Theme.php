@@ -60,6 +60,12 @@ abstract class Theme implements ThemeInterface
 	protected $inheritsAssets = true;
 
 	/**
+	 * Is the theme selectable in the backend.
+	 * @var boolean
+	 */
+	protected $selectable = true;
+
+	/**
 	 * Constructor
 	 * 
 	 * @param string $path
@@ -111,6 +117,16 @@ abstract class Theme implements ThemeInterface
 	}
 
 	/**
+	 * Is the theme selectable in the backend
+	 * 
+	 * @return boolean
+	 */
+	public function isSelectable(): bool
+	{
+		return $this->selectable;
+	}
+
+	/**
 	 * inheritDoc
 	 */
 	public function getParent(): ?ThemeInterface
@@ -155,6 +171,11 @@ abstract class Theme implements ThemeInterface
 		foreach ($this->getAssetBundles($urlPath) as $asset) {
 			\Craft::$app->view->registerAssetBundle($asset);
 		}
+	}
+
+	public function getLayout(): Layout
+	{
+		return Themes::$plugin->layouts->getLayout($this);
 	}
 
 	public function getPageLayout(): PageLayout

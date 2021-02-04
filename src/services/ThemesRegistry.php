@@ -113,6 +113,18 @@ class ThemesRegistry extends Component
 	}
 
 	/**
+	 * Get all selectable themes
+	 * 
+	 * @return array
+	 */
+	public function getSelectables(): array
+	{
+		return array_filter($this->getAll(), function ($theme) {
+			return $theme->isSelectable();
+		});
+	}
+
+	/**
 	 * Get all themes as names
 	 * 
 	 * @return array

@@ -126,9 +126,9 @@ class Themes extends \craft\base\Plugin
                 'rules' => $this->getSettings()->rules,
                 'default' => $this->getSettings()->default
             ],
-            'blockProviders' => BlockProvidersService::class,
-            'blocks' => BlockService::class,
             'layouts' => LayoutService::class,
+            'blockProviders' => BlockProvidersService::class,
+            'blocks' => BlockService::class
         ]);
     }
 
