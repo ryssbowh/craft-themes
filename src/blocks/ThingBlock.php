@@ -2,15 +2,11 @@
 
 namespace Ryssbowh\CraftThemes\blocks;
 
+use Ryssbowh\CraftThemes\models\Block;
+
 class ThingBlock extends Block
 {
-	public function getName(): string
-	{
-		return 'I\'m a thing';
-	}
+	public $name = 'Thing';
 
-	public function getHandle(): string
-	{
-		return 'thing';
-	}
+	public static $handle = 'thing';
 }

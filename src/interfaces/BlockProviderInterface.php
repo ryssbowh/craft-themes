@@ -2,23 +2,11 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+
 interface BlockProviderInterface 
 {
-	/**
-	 * Provider name
-	 * 
-	 * @return string
-	 */
-	public static function getName(): string;
+	public function addBlock(string $blockClass): BlockProviderInterface;
 
-	/**
-	 * Provider handle
-	 * 
-	 * @return string
-	 */
-	public static function getHandle(): string;
-
-	public function addBlock($block): BlockProviderInterface;
-
-	public function getBlocks(): array;
+	public function getBlock(string $handle, array $attributes = []): BlockInterface;
 }

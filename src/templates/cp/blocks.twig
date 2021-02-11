@@ -1,0 +1,20 @@
+{% extends "_layouts/cp" %}
+
+{% block contextMenu %}
+	<themes-context 
+		:theme="{{ theme|json_encode }}"
+		:themes="{{ themes|json_encode }}"
+	/>
+{% endblock %}
+
+{% block toolbar %}
+	<blocks-toolbar />
+{% endblock %}
+
+{% block content %}
+	<blocks
+		:initial-blocks="{{ blocks|json_encode }}"
+		:regions="{{ regions|json_encode }}"
+		:providers="{{ providers|json_encode }}"
+	/>
+{% endblock %}

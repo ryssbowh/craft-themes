@@ -2,15 +2,11 @@
 
 namespace Ryssbowh\CraftThemes\blocks;
 
+use Ryssbowh\CraftThemes\models\Block;
+
 class ContentBlock extends Block
 {
-	public function getName(): string
-	{
-		return 'Content';
-	}
+	public $name = 'Content';
 
-	public function getHandle(): string
-	{
-		return 'content';
-	}
+	public static $handle = 'content';
 }

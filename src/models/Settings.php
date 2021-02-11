@@ -25,4 +25,9 @@ class Settings extends Model
             ['default', 'string']
         ];
     }
+
+    public function getRules(): array
+    {
+        return $this->rules ? $this->rules : [];
+    }
 }

@@ -1,0 +1,5 @@
+<div class="region region-{{ region.handle }}">
+	{% for _block in region.blocks %}
+		{% include "blocks/block" %}
+	{% endfor %}
+</div>

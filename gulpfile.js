@@ -23,16 +23,25 @@ gulp.task('js-prod', function() {
     .pipe(gulp.dest('src/assets/dist'))
 });
 
-gulp.task('sass', function(){
+gulp.task('sass-dev', function(){
+  return gulp.src('src/assets/sass/*.scss')
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(cleanCSS({compatibility: 'ie8'}))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('src/assets/dist'))
+});
+
+gulp.task('sass-prod', function(){
   return gulp.src('src/assets/sass/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(cleanCSS({compatibility: 'ie8'}))
     .pipe(gulp.dest('src/assets/dist'))
 });
 
-gulp.task('prod', gulp.parallel('js-prod', 'sass'));
+gulp.task('prod', gulp.parallel('js-prod', 'sass-prod'));
 
 gulp.task('watch', function(){
-  gulp.watch('src/assets/sass/*.scss', gulp.parallel('sass'));
+  gulp.watch('src/assets/sass/*.scss', gulp.parallel('sass-dev'));
   gulp.watch('src/assets/js/*.js', gulp.parallel('js-dev'));
 })

@@ -2,31 +2,50 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
-use Ryssbowh\CraftThemes\records\LayoutLineRecord;
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\LayoutException;
+use Ryssbowh\CraftThemes\records\BlockRecord;
 use craft\base\Model;
 
 class Layout extends Model
 {
-	public $regions;
+	public $blocks = [];
 	public $theme;
+
+	public function init()
+	{
+		parent::init();
+		if ($this->theme === null) {
+			throw LayoutException::noTheme();
+		}
+		if (is_string($this->theme)) {
+			$this->theme = Themes::$plugin->registry->getTheme($this->theme);
+		}
+	}
 
 	public function buildRegionsFromRawData(array $data)
 	{
-		foreach ($data as $name => $lines) {
-			foreach ($lines as $line) {
-				$line['theme'] = $this->theme->getHandle();
-				$this->regions[$name][] = new LayoutLine($line);
+		foreach ($data as $handle => $region) {
+			if (!isset($this->regions[$handle])) {
+				continue;
+			}
+			foreach ($region['blocks'] as $blockData) {
+				if ($blockData['id'] ?? false) {
+					$block = Themes::$plugin->blocks->getById($blockData['id']);
+				} else {
+					$provider = Themes::$plugin->blockProviders->getByHandle($blockData['provider']);
+					$block = $provider->getBlock($blockData['handle'], $blockData);
+				}
+				unset($blockData['handle']);
+				$block->setAttributes($blockData);
+				$this->regions[$handle]->blocks[] = $block;
 			}
 		}
 	}
 
 	public function loadFromDb(): Layout
 	{
-		$this->regions = [];
-		$lines = LayoutLineRecord::find()->where(['theme' => $this->theme->getHandle()])->orderBy('order')->all();
-		foreach ($lines as $line) {
-			$this->regions[$line->region][] = $line->toModel();
-		}
+		$this->blocks = Themes::$plugin->blocks->getForTheme($this->theme);
 		return $this;
 	}
 }

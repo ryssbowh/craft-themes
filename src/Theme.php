@@ -6,8 +6,9 @@ use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Layout;
 use Ryssbowh\CraftThemes\models\PageLayout;
+use yii\base\Model;
 
-abstract class Theme implements ThemeInterface
+abstract class Theme extends Model implements ThemeInterface
 {
 	/**
 	 * Base path for this theme
@@ -192,5 +193,10 @@ abstract class Theme implements ThemeInterface
 	protected function getAssetBundles(string $urlPath): array
 	{
 		return array_merge($this->assetBundles['*'] ?? [], $this->assetBundles[$urlPath] ?? []);
+	}
+
+	public function fields()
+	{
+		return ['name', 'handle'];
 	}
 }

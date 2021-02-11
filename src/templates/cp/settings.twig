@@ -1,0 +1,104 @@
+{% import "_includes/forms" as forms %}
+
+<h2 class="first">{{ 'Themes rules'|t('themes') }}</h2>
+<p>{{ 'Rules will be handled from top to bottom, the first match will define the theme and the other rules will not be looked at.'|t('themes') }}</p>
+
+{% set name = 'rules' %}
+{% set id = 'theme-rules' %}
+{% set initJs = false %}
+{% set rows = settings.rules %}
+
+{% include "_includes/forms/editableTable" %}
+
+<h2>{{ 'Default theme'|t('themes') }}</h2>
+<p>{{ 'Default theme when no rules match'|t('themes') }}</p>
+{{ forms.selectField({
+    name: 'default',
+    options: themes,
+    value: settings.default
+}) }}
+
+{% js on ready %}
+	if (typeof Craft.Themes === typeof undefined) {
+	    Craft.Themes = {};
+	}
+	/** global: Craft */
+	Craft.Themes.SettingsTable = Craft.EditableTable.extend({
+		init: function(id, baseName, columns, settings) {
+			let _this = this;
+			settings.onAddRow = function (tr) {
+				_this.onAddRow(tr);
+			}
+	        Craft.EditableTable.prototype.init.call(this, id, baseName, columns, settings);
+	        this.checkAllRows();
+	    },
+
+	    checkAllRows: function() {
+	    	let _this = this;
+	    	$.each(this.$tbody.find('tr'), function() {
+	    		_this.onAddRow($(this));
+	    	});
+	    },
+
+	    disableRow: function (tr, enabled) {
+	    	if (enabled) {
+	    		tr.removeClass('disabled')
+	    	} else {
+	    		tr.addClass('disabled');
+	    	}
+	    },
+
+	    onAddRow: function (tr) {
+	    	let enabled = tr.find('td.enabled .lightswitch');
+	    	this.disableRow(tr, enabled.hasClass('on'));
+	    	let _this = this;
+	    	enabled.change(function () {
+	    		_this.disableRow(tr, enabled.hasClass('on'));
+	    	});
+	    }
+	});
+	new Craft.Themes.SettingsTable('settings-{{ id }}', 'settings[rules]', {{ cols|json_encode|raw }}, {});
+{% endjs %}
+
+{% css %}
+	#settings-theme-rules, .editabletablesorthelper {
+		border-collapse: collapse;
+		tr.disabled {
+			opacity: 0.5;
+		}
+		td { 
+			&.cell {
+				padding: 0;
+				text-align: left;
+			}
+			textarea, select {
+				height: 36px;
+				font-size: 14px !important;
+				&.disabled {
+					background: #f3f7fc;
+					font-style: italic;
+				}
+			}
+			select {
+				background: none !important;
+				width: 100%;
+				border-radius: 0;
+			}
+			.select {
+				&:after {
+					top: 12px !important;
+					width: 6px !important;
+					height: 6px !important;
+				}
+				&.small {
+					width: 100%;
+				}
+			}
+			textarea {
+				resize: none;
+				border-color: transparent; 
+			}
+		}
+	}
+{% endcss %}
+

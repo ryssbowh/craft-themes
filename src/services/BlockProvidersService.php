@@ -21,8 +21,13 @@ class BlockProvidersService extends Component
         $this->providers = $e->getProviders();
 	}
 
-	public function getAll(): array
+	public function getAll(bool $asArrays = false): array
 	{
+		if ($asArrays) {
+			return array_map(function ($provider) {
+				return $provider->toArray();
+			}, $this->providers);
+		}
 		return $this->providers;
 	}
 

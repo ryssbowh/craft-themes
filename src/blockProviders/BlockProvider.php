@@ -10,26 +10,58 @@ use craft\base\Component;
 
 abstract class BlockProvider extends Component implements BlockProviderInterface
 {
-	protected $blocks = [];
+	public $blocks = [];
 
-	public function getBlocks(): array
+	public $handle;
+
+	public $name;
+
+	public function init()
 	{
-		return array_map(function ($block) {
-			return BlockService::createBlock($block);
+		parent::init();
+		if (!$this->handle) {
+			throw BlockProviderException::noHandle(get_called_class());
+		}
+		if (!$this->name) {
+			throw BlockProviderException::noName(get_called_class());
+		}
+	}
+
+	public function getBlocksObjects(): array
+	{
+		$_this = $this;
+		return array_map(function ($class) use ($_this) {
+			return $_this->loadBlock($class);
 		}, $this->blocks);
 	}
 
-	public function getBlock(string $handle): BlockInterface
+	public function getBlock(string $handle, array $attributes = []): BlockInterface
 	{
-		if (!isset($this->blocks[$handle])) {
-			throw BlockProviderException::noBlock($this->getHandle(), $handle);
+		foreach ($this->blocks as $class) {
+			if ($class::$handle == $handle) {
+				return $this->loadBlock($class, $attributes);
+			}
 		}
-		return BlockService::createBlock($this->blocks[$handle]);
+		throw BlockProviderException::noBlock(get_called_class(), $handle);
 	}
 
-	public function addBlock($block): BlockProviderInterface
+	public function addBlock(string $blockClass): BlockProviderInterface
 	{
-		$this->blocks[$blockClass::getHandle()] = $block;
+		$this->blockClasses[] = $block;
+		if ($this->loaded) {
+			$this->loadBlock($blockClass);
+		}
 		return $this;
+	}
+
+	public function fields()
+	{
+		return array_merge(parent::fields(), ['blocksObjects']);
+	}
+
+	protected function loadBlock(string $class, $attributes = [])
+	{
+		$attributes['provider'] = $this->handle;
+		return BlockService::createBlock($class, $attributes);
 	}
 }

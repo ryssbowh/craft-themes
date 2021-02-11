@@ -2,15 +2,16 @@
 
 namespace Ryssbowh\CraftThemes\blocks;
 
+use Ryssbowh\CraftThemes\models\Block;
+
 class TestBlock extends Block
 {
-	public function getName(): string
-	{
-		return 'Test hello';
-	}
+	public $name = 'Test';
 
-	public function getHandle(): string
+	public static $handle = 'test';
+
+	public function getSettingsHtml(): string
 	{
-		return 'test_hello';
+		return \Craft::$app->view->renderTemplate('themes/test');
 	}
 }

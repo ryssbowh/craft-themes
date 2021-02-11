@@ -1,4 +1,1 @@
-/node_modules
-.gulp-scss-cache
 /themes.php
-/src/assets/dist/*.map

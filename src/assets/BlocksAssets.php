@@ -7,17 +7,20 @@ use verbb\base\assetbundles\CpAsset;
 
 class BlocksAssets extends AssetBundle
 {
-	public $sourcePath = __DIR__ . '/dist';
+	public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
 	public $js = [
-		'blocks.js'
-	];
-
-	public $css = [
-		'blocks.css'
+		'chunk-vendors.js',
+		'app.js'
 	];
 
 	public $depends = [
 		CpAsset::class
 	];
+
+	public function init()
+    {
+    	parent::init();
+    	$this->sourcePath = realpath($this->sourcePath);
+    }
 }

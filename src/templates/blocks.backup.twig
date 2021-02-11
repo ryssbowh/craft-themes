@@ -1,0 +1,171 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% block contextMenu %}
+	{% if themes %}
+		<div>
+	        <button type="button" id="context-btn" class="btn menubtn themesbtn" data-icon="world">{{ selectedTheme ? selectedTheme.getName() }}</button>
+	        <div class="menu">
+                <ul class="padded">
+                    {% for handle, theme in themes %}
+                        <li><a{% if selectedTheme and selectedTheme.handle == handle %} class="sel"{% endif %} data-theme-handle="{{ handle }}" href="{{ url('themes/blocks/'~handle) }}">{{ theme.getName() }}</a></li>
+                    {% endfor %}
+                </ul>
+	        </div>
+	    </div>
+	{% endif %}
+{% endblock %}
+
+{% block toolbar %}
+	<div class="buttons">
+	    <a href="{{ url('themes/blocks/'~selectedTheme.getHandle()~'/save') }}" class="btn save submit">Save blocks</a>
+	    <div class="spinner"></div>
+	</div>
+{% endblock %}
+
+{% block content %}
+	{% if themes %}
+		<div id="theme-blocks">
+			<div class="theme-sidebar">
+				<div class="heading">
+	                <h3>Blocks</h3>
+	            </div>
+				{% for provider in blockProviders %}
+					<h5 class="sub-heading slide">{{ provider.name }}</h3>
+					<ul class="block-list list">
+					{% for _block in provider.getBlocks() %}
+						<li class="block original" data-provider="{{ provider.handle }}" data-handle="{{ _block.handle }}">
+							<div class="description">
+								<div class="name">{{ _block.name }}</div>
+								<div class="provider">{{ provider.name }}</div>
+							</div>
+							{{ forms.lightswitch({
+							    name: 'enabled',
+							    on: true,
+							    class: 'enabled'
+							}) }}
+							<div class="move icon"></div>
+							<div class="delete icon"></div>
+						</li>
+					{% endfor %}
+					</ul>
+				{% endfor %}
+			</div>
+			<div class="theme-regions">
+				<div class="heading">
+	                <h3>Regions</h3>
+	            </div>
+	            <div class="regions-list">
+	            	{% for region in layout.regions %}
+	            		<div class="region" data-handle="{{ region.handle }}" style="{% if region.width is defined %}width:{{ region.width }};{% endif %}">
+	            			<div class="region-heading">
+				                <h5 class="region-title">{{ region.name }}</h5>
+				            </div>
+				            <ul class="region-blocks">
+				            	{% for _block in region.blocks %}
+				            		<li class="block" data-provider="{{ _block.provider }}" data-id="{{ _block.id }}" data-handle="{{ _block.handle }}" style="visibility: visible;">
+										<div class="description">
+											<div class="name">{{ _block.name }}</div>
+											<div class="provider">{{ _block.provider }}</div>
+										</div>
+										{{ forms.lightswitch({
+										    name: 'enabled',
+										    on: _block.active,
+										    class: 'enabled'
+										}) }}
+										<div class="move icon"></div>
+										<div class="delete icon"></div>
+									</li>
+				            	{% endfor %}
+				            </ul>
+	            		</div>
+	            	{% endfor %}
+		        </div>
+			</div>
+			<div class="theme-settings">
+				<div class="heading">
+	                <h3>Settings</h3>
+	            </div>
+	            <div class="settings">
+	            </div>
+			</div>
+
+			<div class="block-forms" style="display:none">
+				<form class="ignore-form">
+					<h5 class="sub-heading slide">Ignore on pages</h5>
+					<div class="inner">
+						{% if pages.entries.single is defined %}
+							<h6 class="big">Singles</h6>
+							{% for entries in pages.entries.single %}
+								{% for entry in entries %}
+									{{ forms.checkboxField({
+										name: "entry[]",
+										value: entry.id,
+										label: entry.title
+									}) }}
+								{% endfor %}
+							{% endfor %}
+						{% endif %}
+						{% if pages.entries.channel is defined %}
+							<h6 class="big">Channels</h6>
+							{% for type, entries in pages.entries.channel %}
+								<h6>{{ type }}</h6>
+								{% for entry in entries %}
+									{{ forms.checkboxField({
+										name: "entry[]",
+										value: entry.id,
+										label: entry.title
+									}) }}
+								{% endfor %}
+							{% endfor %}
+						{% endif %}
+						{% if pages.entries.structure is defined %}
+							<h6 class="big">Structures</h6>
+							{% for type, entries in pages.entries.structure %}
+								<h6>{{ type }}</h6>
+								{% for entry in entries %}
+									{{ forms.checkboxField({
+										name: "entry[]",
+										value: entry.id,
+										label: entry.title
+									}) }}
+								{% endfor %}
+							{% endfor %}
+						{% endif %}
+						{% if pages.categories is defined %}
+							<h6 class="big">Categories</h6>
+							{% for type, categories in pages.categories %}
+								<h6>{{ type }}</h6>
+								{% for category in categories %}
+									{{ forms.checkboxField({
+										name: "categories[]",
+										value: category.id,
+										label: category.title
+									}) }}
+								{% endfor %}
+							{% endfor %}
+						{% endif %}
+						{% if pages.routes|length %}
+							<h6 class="big">Routes</h6>
+							{% for route, array in pages.routes %}
+								{{ forms.checkboxField({
+									name: "routes[]",
+									value: route,
+									label: route
+								}) }}
+							{% endfor %}
+						{% endif %}
+					</div>
+				</form>
+
+				{% for provider in blockProviders %}
+					{% for _block in provider.getBlocks() %}
+					{% endfor %}
+				{% endfor %}
+			</div>
+		</div>
+	{% else %}
+		<h2>You don't have any theme installed</h2>		
+	{% endif %}
+{% endblock %}

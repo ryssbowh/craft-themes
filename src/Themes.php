@@ -68,7 +68,7 @@ class Themes extends \craft\base\Plugin
         if (Craft::$app->request->getIsSiteRequest()) {
             $theme = $this->handleCurrentRequest();
             if ($theme) {
-                $this->registerPageTemplate($theme);
+                $this->registerFrontTemplates($theme);
             }
         }
         if (Craft::$app->request->getIsCpRequest()) {
@@ -86,10 +86,13 @@ class Themes extends \craft\base\Plugin
         ThemesRules::clearCaches();
     }
 
-    protected function registerPageTemplate(ThemeInterface $theme)
+    protected function registerFrontTemplates(ThemeInterface $theme)
     {
         Event::on(View::class, View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE, function(TemplateEvent $event) use ($theme) {
             $event->variables['layout'] = $theme->getPageLayout();
+        });
+        Event::on(View::class, View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS, function (RegisterTemplateRootsEvent $event) {
+            $event->roots[''][] = __DIR__ . '/templates/front';
         });
     }
 
@@ -103,9 +106,9 @@ class Themes extends \craft\base\Plugin
                 $event->rules = array_merge($event->rules, [
                     'themes/config/<themeName:\w+>' => 'themes/cp-config',
                     'themes/display/<themeName:\w+>' => 'themes/cp-display',
-                    'themes/blocks' => 'themes/cp-blocks',
-                    'themes/blocks/<themeName:\w+>' => 'themes/cp-blocks',
-                    'themes/blocks/<themeName:\w+>/save' => 'themes/cp-blocks/save-layout',
+                    'themes/blocks' => 'themes/cp-layout',
+                    'themes/blocks/<themeName:\w+>' => 'themes/cp-layout',
+                    'themes/blocks/<themeName:\w+>/save' => 'themes/cp-layout/save',
                 ]);
             }
         });
@@ -123,7 +126,7 @@ class Themes extends \craft\base\Plugin
             ],
             'rules' => [
                 'class' => ThemesRules::class,
-                'rules' => $this->getSettings()->rules,
+                'rules' => $this->getSettings()->getRules(),
                 'default' => $this->getSettings()->default
             ],
             'layouts' => LayoutService::class,
@@ -191,12 +194,12 @@ class Themes extends \craft\base\Plugin
     protected function registerProjectConfig()
     {
         Craft::$app->projectConfig
-            ->onAdd(LayoutService::LAYOUTS_CONFIG_KEY.'.{uid}',      [$this->layouts,   'handleChanged'])
-            ->onUpdate(LayoutService::LAYOUTS_CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleChanged'])
-            ->onRemove(LayoutService::LAYOUTS_CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleDeleted']);
+            ->onAdd(BlockService::CONFIG_KEY.'.{uid}',      [$this->blocks,   'handleChanged'])
+            ->onUpdate(BlockService::CONFIG_KEY.'.{uid}',   [$this->blocks,   'handleChanged'])
+            ->onRemove(BlockService::CONFIG_KEY.'.{uid}',   [$this->blocks,   'handleDeleted']);
 
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $e) {
-            Themes::$plugin->layouts->rebuildLayoutConfig($e);
+            Themes::$plugin->blocks->rebuildLayoutConfig($e);
         });
     }
 
@@ -309,7 +312,7 @@ class Themes extends \craft\base\Plugin
                 'class' => 'theme cell'
             ]
         ];
-        return Craft::$app->view->renderTemplate('themes/_settings', [
+        return Craft::$app->view->renderTemplate('themes/cp/settings', [
             'settings' => $this->getSettings(),
             'cols' => $cols,
             'themes' => ['' => \Craft::t('themes', 'No theme')] + $themes,

@@ -8,19 +8,18 @@ use Ryssbowh\CraftThemes\blocks\ThingBlock;
 
 class SystemBlockProvider extends BlockProvider
 {
-	protected $blocks = [
-		'test_hello' => TestBlock::class,
-		'thing' => ThingBlock::class,
-		'content' => ContentBlock::class,
+	public $blocks = [
+		TestBlock::class,
+		ThingBlock::class,
+		ContentBlock::class,
 	];
+
+	public $handle = 'system';
+
+	public $name = 'System';
 
 	public static function getName(): string
 	{
 		return \Craft::t('themes', 'System');
-	}
-
-	public static function getHandle(): string
-	{
-		return 'system';
 	}
 }

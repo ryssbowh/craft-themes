@@ -19,7 +19,7 @@ class Install extends Migration
             'blockProvider' => $this->string(255)->notNull(),
         	'order' => $this->integer(11)->notNull(),
         	'active' => $this->boolean()->defaultValue(true),
-        	'options' => $this->text(),
+            'options' => $this->text(),
         	'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid()

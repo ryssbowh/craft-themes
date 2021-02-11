@@ -5,16 +5,23 @@ namespace Ryssbowh\CraftThemes\interfaces;
 interface BlockInterface 
 {
 	/**
-	 * Block name
+	 * Does this block define options
 	 * 
-	 * @return string
+	 * @return boolean
 	 */
-	public function getName(): string;
+	public function hasOptions(): bool;
 
 	/**
-	 * Block handle
+	 * Block settings html
 	 * 
 	 * @return string
 	 */
-	public function getHandle(): string;
+	public function getOptionsHtml(): string;
+
+	/**
+	 * Get full machine name
+	 * 
+	 * @return string
+	 */
+	public function getMachineName(): string;
 }

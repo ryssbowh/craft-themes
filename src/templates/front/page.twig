@@ -1,0 +1,13 @@
+{% extends "_base/html" %}
+
+{% if bodyClasses is not defined %}
+	{% set bodyClasses = [] %}
+{% endif %}
+
+{% block body %}
+	<body class="{{ bodyClasses|join(' ') }}">
+		{% for region in layout.regions %}
+			{% include "regions/region" %}
+		{% endfor %}
+	</body>
+{% endblock %}

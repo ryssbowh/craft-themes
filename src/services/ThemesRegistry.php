@@ -117,11 +117,17 @@ class ThemesRegistry extends Component
 	 * 
 	 * @return array
 	 */
-	public function getSelectables(): array
+	public function getSelectables(bool $asArrays = false): array
 	{
-		return array_filter($this->getAll(), function ($theme) {
+		$themes = array_filter($this->getAll(), function ($theme) {
 			return $theme->isSelectable();
 		});
+		if ($asArrays) {
+			return array_map(function ($theme) {
+				return $theme->toArray();
+			}, $themes);
+		}
+		return $themes;
 	}
 
 	/**

@@ -12,7 +12,7 @@ class RegisterBlockProvidersEvent extends Event
 
 	public function add(BlockProviderInterface $provider)
 	{
-		$this->providers[$provider::getHandle()] = $provider;
+		$this->providers[$provider->handle] = $provider;
 		return $this;
 	}
 

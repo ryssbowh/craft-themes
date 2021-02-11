@@ -8,25 +8,20 @@ use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\models\LayoutLine;
 use craft\db\ActiveRecord;
 
-class LayoutLineRecord extends ActiveRecord
+class BlockRecord extends ActiveRecord
 {
 	public static function tableName()
 	{
-		return '{{%theme_block_layouts}}';
-	}
-
-	public function toModel(): LayoutLine
-	{
-		return new LayoutLine($this->getAttributes());
+		return '{{%themes_blocks}}';
 	}
 
 	public function getProvider(): BlockProviderInterface
 	{
-		return Themes::$plugin->blockProviders->getByHandle($this->blockProvider);
+		return Themes::$plugin->blockProviders->getByHandle($this->provider);
 	}
 
-	public function toBlock(): BlockInterface
+	public function toModel(): BlockInterface
 	{
-		return $this->getProvider()->getBlock($this->blockHandle);
+		return $this->getProvider()->getBlock($this->handle, $this->getAttributes());
 	}
 }
