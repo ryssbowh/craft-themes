@@ -4,27 +4,10 @@ namespace Ryssbowh\CraftThemes;
 
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use craft\base\Plugin;
 
-abstract class Theme implements ThemeInterface
+abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
-	/**
-	 * Base path for this theme
-	 * @var string
-	 */
-	protected $basePath;
-
-	/**
-	 * Theme's handle
-	 * @var string
-	 */
-	protected $handle;
-
-	/**
-	 * parent theme's handle
-	 * @var ?string
-	 */
-	protected $extends;
-
 	/**
 	 * array of all the template paths (including those of the parents)
 	 * @var array
@@ -58,41 +41,6 @@ abstract class Theme implements ThemeInterface
 	protected $inheritsAssets = true;
 
 	/**
-	 * Constructor
-	 * 
-	 * @param string $path
-	 */
-	public function __construct(string $path, string $handle)
-	{
-		$this->basePath = $path;
-		$this->handle = $handle;
-	}
-
-	/**
-	 * inheritDoc
-	 */
-	public function getPath(): string
-	{
-		return $this->basePath;
-	}
-
-	/**
-	 * inheritDoc
-	 */
-	public function getHandle(): string
-	{
-		return $this->handle;
-	}
-
-	/**
-	 * inheritDoc
-	 */
-	public function getTemplatePath(): string
-	{
-		return 'templates';
-	}
-
-	/**
 	 * inheritDoc
 	 */
 	public function getTemplatePaths(): array
@@ -100,7 +48,7 @@ abstract class Theme implements ThemeInterface
 		if (!is_null($this->templatesPaths)) {
 			return $this->templatesPaths;
 		}
-		$paths = [$this->basePath . DIRECTORY_SEPARATOR . $this->getTemplatePath()];
+		$paths = [$this->getBasePath() . DIRECTORY_SEPARATOR . 'templates'];
 		if ($parent = $this->getParent()) {
 			$paths = array_merge($paths, $parent->getTemplatePaths());
 		}
@@ -111,20 +59,36 @@ abstract class Theme implements ThemeInterface
 	/**
 	 * inheritDoc
 	 */
-	public function getParent(): ?ThemeInterface
+	public function isPartial(): bool
 	{
-		if (!$this->extends) {
-			return null;
-		}
-		return Themes::$plugin->registry->getTheme($this->extends);
+		return false;
 	}
 
 	/**
 	 * inheritDoc
 	 */
-	public function hasParent(): bool
+	public function getExtends(): ?string
 	{
-		return ($this->getParent() !== null);
+		return null;
+	}
+
+	/**
+	 * inheritDoc
+	 */
+	public function getParent(): ?ThemeInterface
+	{
+		if (!$this->extends) {
+			return null;
+		}
+		return Themes::$plugin->registry->getTheme($this->getExtends());
+	}
+
+	/**
+	 * inheritDoc
+	 */
+	public function entends(): bool
+	{
+		return ($this->getExtends() !== null);
 	}
 
 	/**
@@ -132,11 +96,11 @@ abstract class Theme implements ThemeInterface
 	 */
 	public function getAssetUrl(string $path): string
 	{
-		$fullPath = $this->getPath() . DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
+		$fullPath = $this->getBasePath() . DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
 		if (file_exists($fullPath)) {
 			return \Craft::$app->view->assetManager->getPublishedUrl($fullPath, true);
 		}
-		if ($this->inheritsAssets and $this->hasParent()) {
+		if ($this->inheritsAssets and $this->entends()) {
 			return $this->getParent()->getAssetUrl($path);
 		}
 		return '';

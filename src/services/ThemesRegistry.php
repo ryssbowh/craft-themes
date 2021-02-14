@@ -7,62 +7,21 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\base\Component;
+use craft\base\PluginInterface;
 use craft\models\Site;
 
 
 class ThemesRegistry extends Component
 {	
-	const CACHE_FILE = '@vendor/ryssbowh/craft-themes/themes.php';
-
 	/**
 	 * @var ?array
 	 */
 	protected $themes;
 
 	/**
-	 * @var string
-	 */
-	public $folder;
-
-	/**
 	 * @var null|ThemeInterface
 	 */
 	protected $currentTheme;
-
-	public function init()
-	{
-		$this->themes = $this->buildThemes();
-	}
-
-	/**
-	 * Get cache file path
-	 * 
-	 * @return string
-	 */
-	public static function getCachePath(): string
-	{
-		return \Craft::getAlias(self::CACHE_FILE);
-	}
-
-	/**
-	 * Clear themes cache
-	 */
-	public static function clearCaches()
-	{
-		if (self::hasCache()) {
-			unlink(self::getCachePath());
-		}
-	}
-
-	/**
-	 * Does theme cache exists
-	 * 
-	 * @return boolean
-	 */
-	public static function hasCache(): bool
-	{
-		return file_exists(self::getCachePath());
-	}
 
 	/**
 	 * Get theme for the current site
@@ -91,11 +50,11 @@ class ThemesRegistry extends Component
 			$set = true;
 		} elseif ($theme === null) {
 			$this->currentTheme = null;
-		}
+		} 
 		if ($set) {
 			\Yii::setAlias('@themePath', '@root/themes/' . $this->currentTheme->getHandle());
         	\Yii::setAlias('@themeWebPath', '@webroot/themes/' . $this->currentTheme->getHandle());
-        	\Craft::info("Theme has been set to : ".$this->currentTheme->getName(), __METHOD__);
+        	\Craft::info("Theme has been set to : ".$this->currentTheme->name, __METHOD__);
 		} else {
 			\Craft::info("No theme has been set for the current request", __METHOD__);
 		}
@@ -109,6 +68,9 @@ class ThemesRegistry extends Component
 	 */
 	public function getAll(): array
 	{
+		if ($this->themes === null) {
+			$this->loadThemes();
+		}
 		return $this->themes;
 	}
 
@@ -120,8 +82,27 @@ class ThemesRegistry extends Component
 	public function getAsNames(): array
 	{
 		return array_map(function ($theme) {
-			return $theme->getName();
+			return $theme->name;
 		}, $this->getAll());
+	}
+
+	/**
+	 * Get all non partial themes
+	 * 
+	 * @param  boolean $asNames
+	 * @return array
+	 */
+	public function getNonPartials(bool $asNames = false): array
+	{
+		$themes = array_filter($this->getAll(), function ($theme) {
+			return !$theme->isPartial();
+		});
+		if ($asNames) {
+			return array_map(function ($theme) {
+				return $theme->name;
+			}, $themes);
+		}
+		return $themes;
 	}
 
 	/**
@@ -139,80 +120,15 @@ class ThemesRegistry extends Component
 		throw ThemeException::notDefined($handle);
 	}
 
-	/**
-	 * Get all themes cache
-	 * 
-	 * @return ?array
-	 */
-	protected function getCache(): ?array
+	protected function loadThemes()
 	{
-		if (!$this->hasCache()) {
-			return null;
-		}
-		$cached = require $this->getCachePath();
 		$themes = [];
-		foreach ($cached as $array) {
-			$class = $array['class'];
-			$themes[$array['handle']] = new $class($array['dir'], $array['handle']);
-		}
-		return $themes;
-	}
-
-	/**
-	 * Saves themes in cache
-	 * 
-	 * @param array $themes
-	 */
-	protected function setCache(array $themes)
-	{
-		$cache = [];
-		foreach ($themes as $theme) {
-			$cache[] = [
-				'class' => get_class($theme),
-				'dir' => $theme->getPath(),
-				'handle' => $theme->getHandle()
-			];
-		}
-		$str = "<?php\n\nreturn ".var_export($cache, true).";";
-		file_put_contents($this->getCachePath(), $str);
-	}
-
-	/**
-	 * Build all themes classes either from cache or from the disk. 
-	 * Will save the result in cache.
-	 * 
-	 * @return array
-	 */
-	protected function buildThemes(): array
-	{
-		$themes = $this->getCache();
-		if ($themes === null) {
-			$themes = $this->scanThemes();
-			$this->setCache($themes);
-		}
-		return $themes;
-	}
-
-	/**
-	 * Scan all themes from the disk
-	 * 
-	 * @return array
-	 */
-	protected function scanThemes(): array
-	{
-		$dirs = array_filter(glob($this->folder . DIRECTORY_SEPARATOR . '*'), 'is_dir');
-		$themes = [];
-		foreach ($dirs as $dir) {
-			$file = $dir . DIRECTORY_SEPARATOR . 'Theme.php';
-			if (file_exists($file)) {
-				if (preg_match('/^namespace\s+(.+?);/m', file_get_contents($file), $namespace)) {
-					$handle = basename($dir);
-					$class = $namespace[1].'\\Theme';
-					$theme = new $class($dir, $handle);
-					$themes[$handle] = $theme;
-				}
+		$plugins = \Craft::$app->plugins->getAllPlugins();
+		foreach ($plugins as $plugin) {
+			if ($plugin instanceof ThemeInterface) {
+				$themes[$plugin->getHandle()] = $plugin;
 			}
 		}
-		return $themes;
+		$this->themes = $themes;
 	}
 }
