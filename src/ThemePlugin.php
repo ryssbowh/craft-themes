@@ -40,16 +40,24 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 	 */
 	protected $inheritsAssets = true;
 
+    /**
+     * inheritDoc
+     */
+    public function getTemplatesFolder(): string
+    {
+        return 'templates';
+    }
+
 	/**
 	 * inheritDoc
 	 */
 	public function getTemplatePaths(): array
 	{
 		if (!is_null($this->templatesPaths)) {
-			return $this->templatesPaths;
+            return $this->templatesPaths;
 		}
-		$paths = [$this->getBasePath() . DIRECTORY_SEPARATOR . 'templates'];
-		if ($parent = $this->getParent()) {
+		$paths = [$this->getBasePath() . DIRECTORY_SEPARATOR . $this->getTemplatesFolder()];
+        if ($parent = $this->getParent()) {
 			$paths = array_merge($paths, $parent->getTemplatePaths());
 		}
 		$this->templatesPaths = $paths;

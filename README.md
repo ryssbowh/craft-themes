@@ -14,6 +14,9 @@ A rule system allows you to set which theme will be used for which site, languag
 - Main class must inherit `Ryssbowh\CraftThemes\ThemePlugin`
 - Main class method `getName()` has been removed
 - Main class method `getHandle()` has been removed
+- Main class method `getPath()` has been replaced by `getBasePath()`
+- Main class method `getTemplatePath()` replaced by `getTemplatesFolder()`
+- Main class parameter `extends` replaced by method `getExtends()`
 
 ## Getting started
 
@@ -40,6 +43,8 @@ When it's installed, enable it in the backend.
 
 It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
 
+A theme **cannot** override templates that have a namespace (ie other plugin templates), unless they register their templates root with the '' (empty string) key.
+
 ## Inheritance
 
 Themes can extend each other with the method `getExtends(): bool` of their main class.  
@@ -60,7 +65,7 @@ If you require an asset and the file is not present in your theme, it will look 
 
 This inheritance can be disabled with the property `$inheritsAssets` of your theme class.
 
-## Partial theme
+## Partial themes
 
 A partial theme will not be available to select in the backend, but it can be inherited from. Define a partial theme with the method `isPartial(): bool` of the main class.
 

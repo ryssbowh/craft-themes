@@ -34,7 +34,7 @@ class ThemesRegistry extends Component
 	}
 
 	/**
-	 * Set current theme
+	 * Sets current theme
 	 * 
 	 * @param  string|ThemeInterface|null $theme
 	 * @return ?ThemeInterface
@@ -51,13 +51,6 @@ class ThemesRegistry extends Component
 		} elseif ($theme === null) {
 			$this->currentTheme = null;
 		} 
-		if ($set) {
-			\Yii::setAlias('@themePath', '@root/themes/' . $this->currentTheme->getHandle());
-        	\Yii::setAlias('@themeWebPath', '@webroot/themes/' . $this->currentTheme->getHandle());
-            \Craft::info("Theme has been set to : " . $this->currentTheme->name, __METHOD__);
-		} else {
-			\Craft::info("No theme has been set for the current request", __METHOD__);
-		}
 		return $this->currentTheme;
 	}
 

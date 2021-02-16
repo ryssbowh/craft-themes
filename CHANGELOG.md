@@ -9,6 +9,13 @@
 
 ### Removed
 - Dependency to ryssbowh/craft-theme-installer-plugin
+- ThemeInterface::getName()
+- ThemeInterface::getHandle()
+- ThemeInterface::getTemplatePath()
+
+### Added
+- ThemeInterface::getTemplatesFolder()
+- ThemeInterface::isPartial()
 
 ## 1.0.2 - 2021-02-04
 ### Fixed

@@ -83,12 +83,13 @@ class Themes extends \craft\base\Plugin
             }
         );
 
-        \Craft::info('Loaded themes plugin, handling current request...', __METHOD__);
+        \Craft::info('Loaded themes plugin', __METHOD__);
 
         if (Craft::$app->request->getIsSiteRequest()) {
             $_this = $this;
-            Event::on(Plugins::class, Plugins::EVENT_AFTER_LOAD_PLUGINS, function ($e) use ($_this) {
-                $_this->handleCurrentRequest();
+            Event::on(View::class, View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS, function ($e) use ($_this) {
+                \Craft::info('Resolving current theme', __METHOD__);
+                $_this->resolveTheme($e);
             });
         }
     }
@@ -105,7 +106,7 @@ class Themes extends \craft\base\Plugin
     /**
      * Resolves current theme and registers aliases, templates & hooks
      */
-    protected function handleCurrentRequest()
+    protected function resolveTheme(RegisterTemplateRootsEvent $event)
     {
         $theme = $this->rules->resolveCurrentTheme();
         $this->registry->setCurrent($theme);
@@ -115,27 +116,20 @@ class Themes extends \craft\base\Plugin
             return;
         }
 
+        \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
+        \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
         Craft::$app->view->registerTwigExtension(new TwigTheme);
-
-        //Register templates event hook
-        Event::on(
-            View::class,
-            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-            function(RegisterTemplateRootsEvent $event) use ($theme) {
-                $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
-            }
-        );
-        //Register bundle assets event hook
-        Event::on(
-            View::class,
-            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            function(TemplateEvent $event) use ($theme) {
-                $path = \Craft::$app->request->getPathInfo();
-                $theme->registerAssetBundles($path);
-            }
-        );
+        $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
+        $path = \Craft::$app->request->getPathInfo();
+        $theme->registerAssetBundles($path);
+        \Craft::info("Theme has been set to : " . $theme->name, __METHOD__);
     }
 
+    /**
+     * Install parent theme
+     * 
+     * @param  PluginInterface $plugin
+     */
     protected function installDependency(PluginInterface $plugin)
     {
         if (!$plugin instanceof ThemeInterface) {

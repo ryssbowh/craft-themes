@@ -12,6 +12,13 @@ interface ThemeInterface
 	 */
 	public function getExtends(): ?string;
 
+    /**
+     * Folder where the templates are stored for this theme
+     * 
+     * @return string
+     */
+    public function getTemplatesFolder(): string;
+
 	/**
 	 * Absolute template paths, including those of the parent(s)
 	 * 
@@ -40,14 +47,14 @@ interface ThemeInterface
 
 	/**
 	 * Is this theme partial.
-	 * Partial themes can't be selected for front end, their purpose is to be inherited from
+	 * Partial themes can't be selected for front end, their purpose is only to be inherited from
 	 * 
 	 * @return boolean
 	 */
 	public function isPartial(): bool;
 
 	/**
-	 * Get an url for an theme asset.
+     * Get an url for an theme asset.
 	 * 
 	 * @param  string $path
 	 * @return string
