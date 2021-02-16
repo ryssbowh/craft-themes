@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\base\Component;
 use craft\i18n\Locale;
@@ -11,6 +12,8 @@ use craft\models\Site;
 class ThemesRules extends Component
 {
 	const CACHE_KEY = 'themes.rules';
+
+    const THEME_SET_EVENT = 'themes.set';
 
 	/**
 	 * @var array
@@ -36,43 +39,30 @@ class ThemesRules extends Component
 	}
 
 	/**
-	 * Resolve the theme for the current request, goes through the list of rules and returns
-	 * the first that match. Failing a matching rule, returns the default theme
+	 * Resolve the theme for the current request, get the theme either from cache
+     * or from defined theme rules
 	 * 
 	 * @return ?ThemeInterface
 	 */
 	public function resolveCurrentTheme(): ?ThemeInterface
 	{
-		$path = \Craft::$app->request->getFullPath();
-		$currentSite = \Craft::$app->sites->getCurrentSite();
-		$currentUrl = $currentSite->getBaseUrl().$path;
+        $path = \Craft::$app->request->getFullPath();
+        $currentSite = \Craft::$app->sites->getCurrentSite();
+        $currentUrl = $currentSite->getBaseUrl().$path;
 		$cached = $this->getCache($currentUrl);
+        $theme = null;
 		if (is_string($cached)) {
-			return $cached ? Themes::$plugin->registry->getTheme($cached) : null;
-		}
-		$themeName = '';
-		foreach ($this->rules as $rule) {
-			if (!$rule['enabled']) {
-				continue;
-			}
-
-			$site = $language = $url = false;
-			if ($site = $this->resolveSiteRule($rule['site'], $currentSite)) {
-				if ($language = $this->resolveLanguageRule($rule['language'], $currentSite->getLocale())) {
-					$url = $this->resolvePathRule($rule['url'], $path);
-				}
-			}
-			
-			if ($site and $language and $url) {
-				$themeName = $rule['theme'];
-				break;
-			}
-		}
-		if (!$themeName and $this->default) {
-			$themeName = $this->default;
-		}
-		$this->setCache($currentUrl, $themeName);
-		return $themeName ? Themes::$plugin->registry->getTheme($themeName) : null;
+			$theme = $cached ? Themes::$plugin->registry->getTheme($cached) : null;
+        } else {
+            $themeName = $this->resolveRules($path, $currentSite, $currentUrl);
+            if ($themeName) {
+                $theme = Themes::$plugin->registry->getTheme($themeName);
+            }
+        }
+		if ($theme) {
+            $this->trigger(self::THEME_SET_EVENT, new ThemeEvent(['theme' => $theme]));
+        }
+		return $theme;
 	}
 
 	/**
@@ -82,6 +72,36 @@ class ThemesRules extends Component
 	{
 		\Craft::$app->cache->delete(self::CACHE_KEY);
 	}
+
+    /**
+     * Resolve all defined rules, returns theme name
+     * 
+     * @return ?string
+     */
+    protected function resolveRules(string $path, Site $site, string $url): ?string
+    {
+        $themeName = null;
+        foreach ($this->rules as $rule) {
+            if (!$rule['enabled']) {
+                continue;
+            }
+            $site = $language = $url = false;
+            if ($site = $this->resolveSiteRule($rule['site'], $site)) {
+                if ($language = $this->resolveLanguageRule($rule['language'], $site->getLocale())) {
+                    $url = $this->resolvePathRule($rule['url'], $path);
+                }
+            }
+            if ($site and $language and $url) {
+                $themeName = $rule['theme'];
+                break;
+            }
+        }
+        if (!$themeName and $this->default) {
+            $themeName = $this->default;
+        }
+        $this->setCache($url, $themeName);
+        return $themeName;
+    }
 
 	/**
 	 * Set the cache for the current url

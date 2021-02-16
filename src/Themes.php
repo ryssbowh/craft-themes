@@ -3,15 +3,19 @@ namespace Ryssbowh\CraftThemes;
 
 use Craft;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\ThemesRegistry;
 use Ryssbowh\CraftThemes\services\ThemesRules;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
+use craft\base\PluginInterface;
+use craft\events\PluginEvent;
 use craft\events\RegisterCacheOptionsEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\TemplateEvent;
 use craft\helpers\App;
+use craft\services\Plugins;
 use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
 use craft\web\View;
@@ -35,15 +39,13 @@ class Themes extends \craft\base\Plugin
         parent::init();
 
         self::$plugin = $this;
+        $_this = $this;
 
         \Yii::setAlias('@themesPath', '@root/themes');
         \Yii::setAlias('@themesWebPath', '@webroot/themes');
 
         $this->setComponents([
-            'registry' => [
-                'class' => ThemesRegistry::class,
-                'folder' => \Yii::getAlias('@themesPath'),
-            ],
+            'registry' => ThemesRegistry::class,
             'rules' => [
                 'class' => ThemesRules::class,
                 'rules' => $this->getSettings()->getRules(),
@@ -57,20 +59,39 @@ class Themes extends \craft\base\Plugin
                     'key' => 'themes-cache',
                     'label' => Craft::t('themes', 'Themes cache'),
                     'action' => function() {
-                        ThemesRegistry::clearCaches();
                         ThemesRules::clearCaches();
                     }
                 ];
             }
         );
 
-        \Craft::info('Loaded themes plugin, handling current request...', __METHOD__);
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
+            function (PluginEvent $event) {
+                ThemesRules::clearCaches();
+            }
+        );
 
-        if (!Craft::$app->request->getIsSiteRequest()) {
-            return ;
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
+            function (PluginEvent $event) {
+                ThemesRules::clearCaches();
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
+            function (PluginEvent $event) use ($_this) {
+                $_this->installDependency($event->plugin);
+            }
+        );
+
+        \Craft::info('Loaded themes plugin', __METHOD__);
+
+        if (Craft::$app->request->getIsSiteRequest()) {
+            $_this = $this;
+            Event::on(View::class, View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS, function ($e) use ($_this) {
+                \Craft::info('Resolving current theme', __METHOD__);
+                $_this->resolveTheme($e);
+            });
         }
-
-        $this->handleCurrentRequest();
     }
 
     /**
@@ -85,7 +106,7 @@ class Themes extends \craft\base\Plugin
     /**
      * Resolves current theme and registers aliases, templates & hooks
      */
-    protected function handleCurrentRequest()
+    protected function resolveTheme(RegisterTemplateRootsEvent $event)
     {
         $theme = $this->rules->resolveCurrentTheme();
         $this->registry->setCurrent($theme);
@@ -95,25 +116,28 @@ class Themes extends \craft\base\Plugin
             return;
         }
 
+        \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
+        \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
         Craft::$app->view->registerTwigExtension(new TwigTheme);
+        $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
+        $path = \Craft::$app->request->getPathInfo();
+        $theme->registerAssetBundles($path);
+        \Craft::info("Theme has been set to : " . $theme->name, __METHOD__);
+    }
 
-        //Register templates event hook
-        Event::on(
-            View::class,
-            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-            function(RegisterTemplateRootsEvent $event) use ($theme) {
-                $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
-            }
-        );
-        //Register bundle assets event hook
-        Event::on(
-            View::class,
-            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            function(TemplateEvent $event) use ($theme) {
-                $path = \Craft::$app->request->getPathInfo();
-                $theme->registerAssetBundles($path);
-            }
-        );
+    /**
+     * Install parent theme
+     * 
+     * @param  PluginInterface $plugin
+     */
+    protected function installDependency(PluginInterface $plugin)
+    {
+        if (!$plugin instanceof ThemeInterface) {
+            return;
+        }
+        if ($parent = $plugin->getExtends()) {
+            \Craft::$app->plugins->installPlugin($parent);
+        }
     }
 
     /**
@@ -156,7 +180,7 @@ class Themes extends \craft\base\Plugin
     protected function settingsHtml(): string
     {
         \Craft::$app->view->registerAssetBundle(SettingsAssets::class);
-        $themes = $this->registry->getAsNames();
+        $themes = $this->registry->getNonPartials(true);
         list($sites, $languages) = $this->parseSites();
         $cols = [
             'enabled' => [
