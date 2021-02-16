@@ -4,9 +4,16 @@
 
 Tired of re-making your front-ends all over again when a lot of it could be reused ?
 
-A theme is just another Craft plugin, it can inherit another theme and has the same functions as any other plugin, settings, migrations etc.  
+A theme is just another Craft plugin, it can inherit another theme and has the same functions as any other plugin, settings, migrations etc. 
 
 A rule system allows you to set which theme will be used for which site, language or url path.
+
+## 2.0 breaking changes
+
+- composer.json type must be `craft-plugin`
+- Main class must inherit `Ryssbowh\CraftThemes\ThemePlugin`
+- Main class method `getName()` has been removed
+- Main class method `getHandle()` has been removed
 
 ## Getting started
 
@@ -55,7 +62,7 @@ This inheritance can be disabled with the property `$inheritsAssets` of your the
 
 ## Partial theme
 
-A partial theme will not be available to select in the backend, but it can be inherited from. Define a theme as partial with the method `isPartial(): bool` of the main class.
+A partial theme will not be available to select in the backend, but it can be inherited from. Define a partial theme with the method `isPartial(): bool` of the main class.
 
 ## Rules settings
 
@@ -117,4 +124,4 @@ Craft 3.5 or over
 ## Roadmap
 
 - bundleAssets as regular expressions paths  
-- preprocess functions  
+- preprocess functions

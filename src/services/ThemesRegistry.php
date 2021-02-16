@@ -54,7 +54,7 @@ class ThemesRegistry extends Component
 		if ($set) {
 			\Yii::setAlias('@themePath', '@root/themes/' . $this->currentTheme->getHandle());
         	\Yii::setAlias('@themeWebPath', '@webroot/themes/' . $this->currentTheme->getHandle());
-        	\Craft::info("Theme has been set to : ".$this->currentTheme->name, __METHOD__);
+            \Craft::info("Theme has been set to : " . $this->currentTheme->name, __METHOD__);
 		} else {
 			\Craft::info("No theme has been set for the current request", __METHOD__);
 		}
