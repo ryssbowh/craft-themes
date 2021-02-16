@@ -1,5 +1,30 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.0.0 - 2021-02-16
+
+> :warning: If you're updating from 1.x please read the breaking changes included in 2.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)
+
+### Changed
+- Themes are now regular plugins
+
+### Removed
+- Dependency to ryssbowh/craft-theme-installer-plugin
+- ThemeInterface::getName()
+- ThemeInterface::getHandle()
+- ThemeInterface::getTemplatePath()
+
+### Added
+- ThemeInterface::getTemplatesFolder()
+- ThemeInterface::isPartial()
+
+## 1.0.2 - 2021-02-04
+### Fixed
+- Error when no rules are defined
+
+## 1.0.1 - 2021-02-01
+### Fixed
+- Composer 2 compatibility
+
 ## 1.0.0 - 2021-01-31
 ### Added
 - Rule system

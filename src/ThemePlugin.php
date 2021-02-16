@@ -6,28 +6,10 @@ use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Layout;
 use Ryssbowh\CraftThemes\models\PageLayout;
-use yii\base\Model;
+use craft\base\Plugin;
 
-abstract class Theme extends Model implements ThemeInterface
+abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
-	/**
-	 * Base path for this theme
-	 * @var string
-	 */
-	protected $basePath;
-
-	/**
-	 * Theme's handle
-	 * @var string
-	 */
-	protected $handle;
-
-	/**
-	 * parent theme's handle
-	 * @var ?string
-	 */
-	protected $extends;
-
 	/**
 	 * array of all the template paths (including those of the parents)
 	 * @var array
@@ -60,57 +42,24 @@ abstract class Theme extends Model implements ThemeInterface
 	 */
 	protected $inheritsAssets = true;
 
-	/**
-	 * Is the theme selectable in the backend.
-	 * @var boolean
-	 */
-	protected $selectable = true;
-
-	/**
-	 * Constructor
-	 * 
-	 * @param string $path
-	 */
-	public function __construct(string $path, string $handle)
-	{
-		$this->basePath = $path;
-		$this->handle = $handle;
-	}
-
-	/**
-	 * inheritDoc
-	 */
-	public function getPath(): string
-	{
-		return $this->basePath;
-	}
-
-	/**
-	 * inheritDoc
-	 */
-	public function getHandle(): string
-	{
-		return $this->handle;
-	}
-
-	/**
-	 * inheritDoc
-	 */
-	public function getTemplatePath(): string
-	{
-		return 'templates';
-	}
+    /**
+     * inheritDoc
+     */
+    public function getTemplatesFolder(): string
+    {
+        return 'templates';
+    }
 
 	/**
 	 * inheritDoc
 	 */
 	public function getTemplatePaths(): array
-	{
+    {
 		if (!is_null($this->templatesPaths)) {
-			return $this->templatesPaths;
+            return $this->templatesPaths;
 		}
-		$paths = [$this->basePath . DIRECTORY_SEPARATOR . $this->getTemplatePath()];
-		if ($parent = $this->getParent()) {
+		$paths = [$this->getBasePath() . DIRECTORY_SEPARATOR . $this->getTemplatesFolder()];
+        if ($parent = $this->getParent()) {
 			$paths = array_merge($paths, $parent->getTemplatePaths());
 		}
 		$this->templatesPaths = $paths;
@@ -118,13 +67,19 @@ abstract class Theme extends Model implements ThemeInterface
 	}
 
 	/**
-	 * Is the theme selectable in the backend
-	 * 
-	 * @return boolean
+	 * inheritDoc
 	 */
-	public function isSelectable(): bool
+	public function isPartial(): bool
 	{
-		return $this->selectable;
+		return false;
+	}
+
+	/**
+	 * inheritDoc
+	 */
+	public function getExtends(): ?string
+	{
+		return null;
 	}
 
 	/**
@@ -135,15 +90,15 @@ abstract class Theme extends Model implements ThemeInterface
 		if (!$this->extends) {
 			return null;
 		}
-		return Themes::$plugin->registry->getTheme($this->extends);
+		return Themes::$plugin->registry->getTheme($this->getExtends());
 	}
 
 	/**
 	 * inheritDoc
 	 */
-	public function hasParent(): bool
+	public function entends(): bool
 	{
-		return ($this->getParent() !== null);
+		return ($this->getExtends() !== null);
 	}
 
 	/**
@@ -151,11 +106,11 @@ abstract class Theme extends Model implements ThemeInterface
 	 */
 	public function getAssetUrl(string $path): string
 	{
-		$fullPath = $this->getPath() . DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
+		$fullPath = $this->getBasePath() . DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
 		if (file_exists($fullPath)) {
 			return \Craft::$app->view->assetManager->getPublishedUrl($fullPath, true);
 		}
-		if ($this->inheritsAssets and $this->hasParent()) {
+		if ($this->inheritsAssets and $this->entends()) {
 			return $this->getParent()->getAssetUrl($path);
 		}
 		return '';

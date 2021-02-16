@@ -5,25 +5,19 @@ namespace Ryssbowh\CraftThemes\interfaces;
 interface ThemeInterface 
 {
 	/**
-	 * THeme name
+	 * Which other theme does this extends from.
+	 * Returns a plugin handle.
 	 * 
-	 * @return string
+	 * @return ?string
 	 */
-	public function getName(): string;
+	public function getExtends(): ?string;
 
-	/**
-	 * Theme handle
-	 * 
-	 * @return string
-	 */
-	public function getHandle(): string;
-
-	/**
-	 * Relative templates path
-	 * 
-	 * @return string
-	 */
-	public function getTemplatePath(): string;
+    /**
+     * Folder where the templates are stored for this theme
+     * 
+     * @return string
+     */
+    public function getTemplatesFolder(): string;
 
 	/**
 	 * Absolute template paths, including those of the parent(s)
@@ -49,10 +43,18 @@ interface ThemeInterface
 	 * 
 	 * @return boolean
 	 */
-	public function hasParent(): bool;
+	public function entends(): bool;
 
 	/**
-	 * Get an url for an theme asset.
+	 * Is this theme partial.
+	 * Partial themes can't be selected for front end, their purpose is only to be inherited from
+	 * 
+	 * @return boolean
+	 */
+	public function isPartial(): bool;
+
+	/**
+     * Get an url for an theme asset.
 	 * 
 	 * @param  string $path
 	 * @return string

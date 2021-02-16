@@ -8,4 +8,9 @@ class ThemeException extends \Exception
 	{
 		return new static("Theme $name is not defined");
 	}
+
+	public static function handleDefined(string $handle, string $class)
+	{
+		return new static("Theme's handle $handle is already defined by $class");
+	}
 }
