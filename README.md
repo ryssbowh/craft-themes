@@ -10,6 +10,8 @@ A rule system allows you to set which theme will be used for which site, languag
 
 ## 2.0 breaking changes
 
+Themes are now regular plugins, they will not be installed in the `themes` folder anymore.
+
 - composer.json type must be `craft-plugin`
 - Main class must inherit `Ryssbowh\CraftThemes\ThemePlugin`
 - Main class method `getName()` has been removed
@@ -43,7 +45,7 @@ When it's installed, enable it in the backend.
 
 It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
 
-A theme **cannot** override templates that have a namespace (ie other plugin templates), unless they register their templates root with the '' (empty string) key.
+A theme **cannot** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
 
 ## Inheritance
 
