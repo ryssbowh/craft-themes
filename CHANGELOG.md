@@ -1,11 +1,8 @@
-{::options parse_block_html="true" /}
-
 # ryssbowh/craft-themes Changelog
 
 ## 2.0.0 - 2021-02-16
 
-Please read the breaking changes included in 2.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)
-{: .alert .alert-danger}
+> :warning: If you're updating from 1.x please read the breaking changes included in 2.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)
 
 ### Changed
 - Themes are now regular plugins
