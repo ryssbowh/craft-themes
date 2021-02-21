@@ -2,15 +2,10 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
-interface BlockInterface 
-{
-	/**
-	 * Does this block define options
-	 * 
-	 * @return boolean
-	 */
-	public function hasOptions(): bool;
+use craft\base\Model;
 
+interface BlockInterface extends RenderableInterface
+{
 	/**
 	 * Block settings html
 	 * 
@@ -24,4 +19,11 @@ interface BlockInterface
 	 * @return string
 	 */
 	public function getMachineName(): string;
+
+    /**
+     * Model that defines this block's options 
+     * 
+     * @return Model
+     */
+    public function getOptionsModel(): Model;
 }

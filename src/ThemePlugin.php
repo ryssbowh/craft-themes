@@ -7,9 +7,12 @@ use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Layout;
 use Ryssbowh\CraftThemes\models\PageLayout;
 use craft\base\Plugin;
+use yii\base\ArrayableTrait;
 
 abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
+    use ArrayableTrait;
+    
 	/**
 	 * array of all the template paths (including those of the parents)
 	 * @var array
@@ -134,11 +137,6 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 		return Themes::$plugin->layouts->getLayout($this);
 	}
 
-	public function getPageLayout(): PageLayout
-	{
-		return Themes::$plugin->layouts->getPageLayout($this);
-	}
-
 	/**
 	 * Get bundle assets for a url path
 	 * 
@@ -152,6 +150,11 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 
 	public function fields()
 	{
-		return ['name', 'handle'];
+		return ['name', 'handle', 'regions'];
 	}
+
+    public function getRegions(): array
+    {
+        return [];
+    }
 }

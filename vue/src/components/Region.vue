@@ -36,24 +36,18 @@ export default {
         return this.region.handle == block.region;
       }), 'order');
     },
-    ...mapState(['blockCount', 'blocks', 'theme']),
+    ...mapState(['blocks', 'theme', 'element']),
   },
   props: {
     region: Object
   },
-  data: function () {
-    return {};
-  },
-  created () {
-  },
   methods: {
     changed: function (evt) {
       if (evt.added) {
-        let block = evt.added.element;
+        let block = {...evt.added.element};
         block.region = this.region.handle;
         block.order = evt.added.newIndex;
-        if (typeof block.index === 'undefined') {
-          block.theme = this.theme.handle;
+        if (block.index === undefined) {
           block.active = true;
           this.addBlock(block);
         } else {
@@ -61,7 +55,7 @@ export default {
         }
       }
     },
-    ...mapMutations(['addBlock', 'updateBlock', 'removeBlock']),
+    ...mapMutations(['addBlock', 'removeBlock', 'updateBlock']),
     ...mapActions([])
   },
   mixins: [Mixin],
@@ -84,6 +78,7 @@ export default {
     min-height: 56px;
     margin-top: 5px;
     box-shadow: 0 0 0 1px rgba(31, 41, 51, 0.1), 0 2px 5px -2px rgba(31, 41, 51, 0.2);
+    border-radius: 3px;
     &.drop-active {
       padding-bottom: 58px;
     }

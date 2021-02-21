@@ -2,28 +2,32 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\SuggestsTemplates;
+use Ryssbowh\CraftThemes\models\NoOptions;
 use craft\base\Model;
+use zz\Html\HTMLMinify;
 
 abstract class Block extends Model implements BlockInterface, SuggestsTemplates
 {
 	public static $handle;
 	public $name = '';
-	public $defaultOptions = [];
+    public $smallDescription = '';
+	public $hasOptions = false;
+    private $_options = [];
 
 	public $id;
 	public $region;
-	public $theme;
+    public $layout;
 	public $provider;
 	public $order;
-	public $ignore;
 	public $active;
-	public $options;
-	public $dateCreated;
-	public $dateUpdated;
-	public $uid;
+	public $options = [];
+    public $dateCreated;
+    public $dateUpdated;
+    public $uid;
 
 	public function init()
 	{
@@ -47,22 +51,29 @@ abstract class Block extends Model implements BlockInterface, SuggestsTemplates
 	public function getConfig(): array
 	{
 		return [
+            'layout' => $this->layout()->uid,
 			'region' => $this->region,
 			'handle' => $this->handle,
 			'provider' => $this->provider,
-			'order' => $this->order,
-			'theme' => $this->theme,
-			'active' => $this->active
+            'order' => $this->order,
+			'active' => $this->active,
+            'options' => $this->options
 		];
 	}
+
+    public function layout(): Layout
+    {
+        return Themes::$plugin->layouts->getById($this->layout);
+    }
 
 	public function rules()
 	{
 		return [
-			[['region', 'handle', 'provider', 'order', 'active', 'theme'], 'required'],
-			[['region', 'handle', 'provider', 'theme'], 'string'],
+			[['region', 'handle', 'provider', 'order', 'active', 'layout'], 'required'],
+			[['region', 'handle', 'provider'], 'string'],
 			['active', 'boolean'],
-			['order', 'number']
+			[['order', 'layout'], 'number'],
+            ['options', function(){}]
 		];
 	}
 
@@ -81,11 +92,6 @@ abstract class Block extends Model implements BlockInterface, SuggestsTemplates
 		return $this->provider . '_' . $this::$handle;
 	}
 
-	public function hasOptions(): bool
-	{
-		return sizeof($this->hasSettings) > 0;
-	}
-
 	public function getOptionsHtml(): string
 	{
 		return '';
@@ -98,6 +104,27 @@ abstract class Block extends Model implements BlockInterface, SuggestsTemplates
 
 	public function fields()
 	{
-		return array_merge(parent::fields(), ['handle']);
+		return array_merge(parent::fields(), ['handle', 'hasOptions', 'optionsHtml']);
 	}
+
+    public function getOptions(): Model
+    {
+        return \Yii::configure($this->getOptionsModel(), $this->_options);
+    }
+
+    public function setOptions($options)
+    {
+        $this->options = $options;
+        if (is_string($options)) {
+            $options = json_decode($options, true);
+        } elseif ($options instanceof Model) {
+            $options = $options->getAttributes();
+        }
+        $this->_options = $options;
+    }
+
+    public function getOptionsModel(): Model
+    {
+        return new NoOptions;
+    }
 }

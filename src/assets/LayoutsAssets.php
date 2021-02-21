@@ -5,7 +5,7 @@ namespace Ryssbowh\CraftThemes\assets;
 use craft\web\AssetBundle;
 use verbb\base\assetbundles\CpAsset;
 
-class BlocksAssets extends AssetBundle
+class LayoutsAssets extends AssetBundle
 {
 	public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
@@ -15,7 +15,8 @@ class BlocksAssets extends AssetBundle
 	];
 
 	public $depends = [
-		CpAsset::class
+		CpAsset::class,
+        JquerySerializeJSON::class
 	];
 
 	public function init()

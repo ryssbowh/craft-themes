@@ -68,24 +68,6 @@ class ThemesRegistry extends Component
 	}
 
 	/**
-	 * Get all selectable themes
-	 * 
-	 * @return array
-	 */
-	public function getSelectables(bool $asArrays = false): array
-	{
-		$themes = array_filter($this->getAll(), function ($theme) {
-			return $theme->isSelectable();
-		});
-		if ($asArrays) {
-			return array_map(function ($theme) {
-				return $theme->toArray();
-			}, $themes);
-		}
-		return $themes;
-	}
-
-	/**
 	 * Get all themes as names
 	 * 
 	 * @return array
@@ -103,7 +85,7 @@ class ThemesRegistry extends Component
 	 * @param  boolean $asNames
 	 * @return array
 	 */
-	public function getNonPartials(bool $asNames = false): array
+	public function getNonPartials(bool $asNames = false, bool $asArray = false): array
 	{
 		$themes = array_filter($this->getAll(), function ($theme) {
 			return !$theme->isPartial();
@@ -112,7 +94,11 @@ class ThemesRegistry extends Component
 			return array_map(function ($theme) {
 				return $theme->name;
 			}, $themes);
-		}
+		} elseif ($asArray) {
+            return array_map(function ($theme) {
+                return $theme->toArray();
+            }, $themes);
+        }
 		return $themes;
 	}
 

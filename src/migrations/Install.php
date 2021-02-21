@@ -11,16 +11,29 @@ class Install extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('{{%theme_block_layouts}}', [
+        $this->createTable('{{%themes_blocks}}', [
         	'id' => $this->primaryKey(),
         	'region' => $this->string(255)->notNull(),
-            'theme' => $this->string(255)->notNull(),
-        	'blocHandle' => $this->string(255)->notNull(),
-            'blockProvider' => $this->string(255)->notNull(),
-        	'order' => $this->integer(11)->notNull(),
+            'layout' => $this->integer(11)->unsigned()->notNull(),
+        	'handle' => $this->string(255)->notNull(),
+            'provider' => $this->string(255)->notNull(),
+        	'order' => $this->integer(11)->unsigned()->notNull(),
         	'active' => $this->boolean()->defaultValue(true),
             'options' => $this->text(),
         	'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid()
+        ]);
+
+        $this->createTable('{{%themes_layouts}}', [
+            'id' => $this->primaryKey(),
+            'theme' => $this->string(255)->notNull(),
+            'type' => $this->string(255)->notNull(),
+            'element' => $this->string(255)->notNull(),
+            'default_entry' => $this->boolean()->defaultValue(false),
+            'default_category' => $this->boolean()->defaultValue(false),
+            'default_route' => $this->boolean()->defaultValue(false),
+            'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid()
         ]);
@@ -31,6 +44,7 @@ class Install extends Migration
      */
     public function safeDown()
     {
-        $this->dropTableIfExists('{{%theme_block_layouts}}');
+        $this->dropTableIfExists('{{%themes_blocks}}');
+        $this->dropTableIfExists('{{%themes_blocks_layouts}}');
     }
 }

@@ -1,0 +1,19 @@
+{% extends "_layouts/cp" %}
+
+{% block contextMenu %}
+	<layouts-context 
+		:initial-theme="'{{ theme }}'"
+		:themes="{{ themes|json_encode }}"
+        :initial-layout="{{ layout }}"
+        :all-layouts="{{ allLayouts|json_encode }}"
+        :available-layouts="{{ availableLayouts|json_encode }}"
+	/>
+{% endblock %}
+
+{% block toolbar %}
+	<layouts-toolbar />
+{% endblock %}
+
+{% block content %}
+	<layout-blocks/>
+{% endblock %}

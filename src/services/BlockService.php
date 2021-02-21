@@ -4,9 +4,10 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\events\BlockEvent;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
+use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\Layout;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
@@ -14,32 +15,71 @@ use craft\helpers\StringHelper;
 
 class BlockService extends Service
 {
-	const EVENT_BEFORE_SAVE_BLOCK = 1;
-	const EVENT_AFTER_SAVE_BLOCK = 2;
-	const EVENT_BEFORE_APPLY_DELETE_BLOCK = 3;
-	const EVENT_AFTER_DELETE_BLOCK = 4;
-    const EVENT_BEFORE_DELETE_BLOCK = 5;
+	const EVENT_BEFORE_SAVE = 1;
+	const EVENT_AFTER_SAVE = 2;
+	const EVENT_BEFORE_APPLY_DELETE = 3;
+	const EVENT_AFTER_DELETE = 4;
+    const EVENT_BEFORE_DELETE = 5;
     const CONFIG_KEY = 'themes.blocks';
 
-	public static function createBlock(string $blockClass, array $attributes = []): BlockInterface
-	{
-		unset($attributes['handle']);
-		return new $blockClass($attributes);
-	}
+    /**
+     * @var array
+     */
+    protected $blocks;
 
+    /**
+     * Get all blocks
+     * 
+     * @return array
+     */
+    public function getAll(): array
+    {
+        if (is_null($this->blocks)) {
+            $blocks = [];
+            foreach (BlockRecord::find()->all() as $record) {
+                try {
+                    $blocks[$record->id] = $record->toModel();
+                } catch (BlockProviderException $e) {}
+            }
+            $this->blocks = $blocks;
+        }
+        return $this->blocks;
+    }
+    
+    /**
+     * Get block by id
+     * 
+     * @param  int    $id
+     * @return ?BlockInterface
+     */
 	public function getById(int $id): ?BlockInterface
 	{
-		$block = BlockRecord::find()->where(['id' => $id])->one();
-        return $block ? $block->toModel() : null;
+		foreach ($this->getAll() as $block) {
+            if ($block->id == $id) {
+                return $block;
+            }
+        }
+        return null;
 	}
 
-	public function getForTheme(ThemeInterface $theme): array
+    /**
+     * Get blocks for a layout
+     * 
+     * @param  int    $layout
+     * @return array
+     */
+	public function forLayout(int $layout): array
 	{
-		return array_map(function ($record) {
-			return $record->toModel();
-		}, BlockRecord::find()->where(['theme' => $theme->getHandle()])->all());
-	}
+        return array_filter($this->getAll(), function ($block) use ($layout) {
+            return $layout == $block->layout;
+        });
+    }
 
+    /**
+     * Rebuild block config
+     * 
+     * @param  RebuildConfigEvent $e
+     */
 	public function rebuildBlocksConfig(RebuildConfigEvent $e)
     {
     	$parts = explode('.', self::CONFIG_KEY);
@@ -48,25 +88,31 @@ class BlockService extends Service
         }
     }
 
-    public function getAllBlocks(): array
-	{
-		$blocks = [];
-        foreach (BlockRecord::find()->all() as $record) {
-            $blocks[$record->id] = $record->toModel();
-        }
-		return $blocks;
-	}
-
+    /**
+     * Get block record by uid or a new one if not found
+     * 
+     * @param  string $uid
+     * @return BlockRecord
+     */
 	public function getRecordByUid(string $uid): BlockRecord
 	{
 		return BlockRecord::findOne(['uid' => $uid]) ?? new BlockRecord;
 	}
 
-    public function saveBlocks(array $blocks, string $theme, $validate = true): bool
+    /**
+     * Save blocks
+     * 
+     * @param  array   $blocks
+     * @param  Layout  $layout
+     * @param  bool    $validate
+     * @return bool
+     */
+    public function saveBlocks(array $blocks, Layout $layout, bool $validate = true): bool
     {   
         $ids = [];
         $hasErrors = false;
         foreach ($blocks as $block) {
+            $block->layout = $layout->id;
             if ($validate) {
                 if ($block->validate()) {
                     $ids[] = $this->saveBlock($block)->id;
@@ -78,20 +124,29 @@ class BlockService extends Service
             }
         }
         if (!$hasErrors) {
-            $toDelete = BlockRecord::find(['theme' => $theme])->where(['not in', 'id', $ids])->all();
+            $toDelete = BlockRecord::find()
+                ->where(['layout' => $layout->id])
+                ->andWhere(['not in', 'id', $ids])
+                ->all();
             foreach ($toDelete as $block) {
-                $this->blockService()->deleteBlock($block);
+                $this->deleteBlock($block);
             }
         }
         return !$hasErrors;
     }
 
+    /**
+     * Saves one block
+     * 
+     * @param  Block  $block
+     * @return Block
+     */
 	public function saveBlock(Block $block): Block
     {
         $isNew = !is_int($block->id);
         $uid = $isNew ? StringHelper::UUID() : $block->uid;
 
-        $this->triggerEvent(self::EVENT_BEFORE_SAVE_BLOCK, new BlockEvent([
+        $this->triggerEvent(self::EVENT_BEFORE_SAVE, new BlockEvent([
             'block' => $block
         ]));
 
@@ -101,27 +156,35 @@ class BlockService extends Service
         $projectConfig->set($configPath, $configData);
 
         $record = $this->getRecordByUid($uid);
-        $record->ignore = $block->ignore;
         $record->save(false);
         
         if ($isNew) {
-            $block->id = $record->id;
-            $block->dateCreated = $record->dateCreated;
-            $block->dateUpdated = $record->dateUpdated;
+            $block->setAttributes($record->getAttributes(), false);
         }
 
         return $block;
     }
 
+    /**
+     * Deletes one block
+     * 
+     * @param  BlockRecord $record
+     * @return bool
+     */
     public function deleteBlock(BlockRecord $record): bool
     {
-        $this->triggerEvent(self::EVENT_BEFORE_DELETE_BLOCK, new BlockEvent([
+        $this->triggerEvent(self::EVENT_BEFORE_DELETE, new BlockEvent([
             'block' => $record
         ]));
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $record->uid);
         return true;
     }
 
+    /**
+     * Handles block config change
+     * 
+     * @param  ConfigEvent $event
+     */
     public function handleChanged(ConfigEvent $event)
     {
         $uid = $event->tokenMatches[0];
@@ -134,11 +197,12 @@ class BlockService extends Service
 
             $block->uid = $uid;
             $block->region = $data['region'];
-            $block->theme = $data['theme'];
+            $block->layout = $this->layoutService()->getRecordByUid($data['layout'])->id;
             $block->handle = $data['handle'];
             $block->provider = $data['provider'];
             $block->order = $data['order'];
             $block->active = $data['active'];
+            $block->options = $data['options'] ?? [];
             
             $block->save(false);
             $transaction->commit();
@@ -147,12 +211,17 @@ class BlockService extends Service
             throw $e;
         }
 
-        $this->triggerEvent(self::EVENT_AFTER_SAVE_BLOCK, new BlockEvent([
+        $this->triggerEvent(self::EVENT_AFTER_SAVE, new BlockEvent([
             'block' => $block,
             'isNew' => $isNew,
         ]));
     }
 
+    /**
+     * Hanles block config deletion
+     * 
+     * @param  ConfigEvent $event
+     */
     public function handleDeleted(ConfigEvent $event)
     {
         $uid = $event->tokenMatches[0];
@@ -162,7 +231,7 @@ class BlockService extends Service
             return;
         }
 
-        $this->triggerEvent(self::EVENT_BEFORE_APPLY_DELETE_BLOCK, new BlockEvent([
+        $this->triggerEvent(self::EVENT_BEFORE_APPLY_DELETE, new BlockEvent([
             'block' => $block
         ]));
 
@@ -170,27 +239,33 @@ class BlockService extends Service
             ->delete(BlockRecord::tableName(), ['uid' => $uid])
             ->execute();
 
-        $this->triggerEvent(self::EVENT_AFTER_DELETE_BLOCK, new BlockEvent([
+        $this->triggerEvent(self::EVENT_AFTER_DELETE, new BlockEvent([
             'block' => $block
         ]));
     }
 
+    /**
+     * Create or fetch block from raw data
+     * 
+     * @param  array  $data
+     * @return Block
+     * @throws BlockException
+     */
     public function fromData(array $data): Block
     {
-        unset($data['index']);
+        if (!isset($data['handle'])) {
+            throw BlockException::noHandleInData(__METHOD__);
+        }
+        $handle = $data['handle'];
+        unset($data['handle']);
         if ($data['id'] ?? false) {
             $block = $this->getById($data['id']);
-            unset($data['handle']);
             $block->setAttributes($data);
             return $block;
         }
         if (!isset($data['provider'])) {
             throw BlockException::noProviderInData(__METHOD__);
         }
-        if (!isset($data['handle'])) {
-            throw BlockException::noHandleInData(__METHOD__);
-        }
-        $provider = $this->providerService()->getByHandle($data['provider']); 
-        return $provider->getBlock($data['handle'], $data);
+        return $this->providerService()->getByHandle($data['provider'])->getBlock($handle, $data); 
     }
 }

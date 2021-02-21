@@ -1,0 +1,79 @@
+<template>
+  <div class="btngroup">
+    <button v-if="theme" type="button" class="btn menubtn" data-icon="brush">{{ themes[theme].name }}</button>
+    <div v-if="theme" class="menu">
+      <ul class="padded">
+        <li v-for="theme2 in themes" v-bind:key="theme2.handle"><a :class="{sel: theme == theme2.handle}" href="#" @click.prevent="checkAndSetTheme(theme2.handle)">{{ theme2.name }}</a></li>
+      </ul>
+    </div>
+
+    <button v-if="layout" type="button" class="btn menubtn" data-icon="section">{{ layout.description }}</button>
+    <div class="menu" v-if="layouts">
+      <ul class="padded">
+        <li v-for="elem, index in layouts" v-bind:key="index">
+            <a :class="{sel: elem == layout}" href="#" @click.prevent="checkAndSetLayout(index)">{{ elem.description }}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapMutations, mapState, mapActions } from 'vuex';
+import Mixin from '../mixin';
+
+export default {
+  computed: {
+    ...mapState(['layouts', 'layout', 'theme', 'hasChanged'])
+  },
+  props: {
+    initialTheme: String,
+    initialLayout: Number,
+    themes: Object,
+    availableLayouts: Object,
+    allLayouts: Object
+  },
+  created () {
+    this.setThemes(this.themes);
+    this.setAllLayouts(this.allLayouts);
+    this.setAvailableLayouts(this.availableLayouts);
+    if (this.initialTheme) {
+        this.setTheme(this.initialTheme);
+    }
+    if (this.initialLayout) {
+        this.setLayoutById(this.initialLayout);
+    }
+    let _this = this;
+    window.addEventListener('popstate', () => {
+      const url = document.location.pathname.split('/');
+      let i = url.findIndex(e => e == 'layouts');
+      if (i !== -1) {
+        _this.checkAndSetTheme(url[i+1], url[i+2]);
+      }
+    });
+  },
+  methods: {
+    checkAndSetTheme: function (theme) {
+      if (this.hasChanged) {
+        if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
+          this.setThemeAndFetch(theme);
+        }
+      } else {
+        this.setThemeAndFetch(theme);
+      }
+    },
+    checkAndSetLayout: function (index) {
+        if (this.hasChanged) {
+            if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
+                this.setLayout(index);
+            }
+        } else {
+            this.setLayout(index);
+        }
+    },
+    ...mapMutations(['setThemes', 'setAllLayouts', 'setAvailableLayouts', 'setTheme']),
+    ...mapActions(['setLayoutById', 'setLayout', 'setThemeAndFetch']),
+  },
+  mixins: [Mixin],
+};
+</script>

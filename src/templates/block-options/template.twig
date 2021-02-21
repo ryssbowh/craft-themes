@@ -1,0 +1,11 @@
+{% import "_includes/forms" as forms %}
+
+{{ 
+    forms.textField({
+        name: 'template',
+        label: 'Template Path',
+        required: true,
+        value: options.template,
+        inputAttributes: {'required': true}
+    })
+ }}

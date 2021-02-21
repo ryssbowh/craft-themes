@@ -3,15 +3,15 @@
 namespace Ryssbowh\CraftThemes\blockProviders;
 
 use Ryssbowh\CraftThemes\blocks\ContentBlock;
-use Ryssbowh\CraftThemes\blocks\TestBlock;
-use Ryssbowh\CraftThemes\blocks\ThingBlock;
+use Ryssbowh\CraftThemes\blocks\TemplateBlock;
+use Ryssbowh\CraftThemes\blocks\TwigBlock;
 
 class SystemBlockProvider extends BlockProvider
 {
 	public $blocks = [
-		TestBlock::class,
-		ThingBlock::class,
+        TemplateBlock::class,
 		ContentBlock::class,
+        TwigBlock::class,
 	];
 
 	public $handle = 'system';

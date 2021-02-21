@@ -1,14 +1,14 @@
 import { createApp } from 'vue'
-import BlocksToolbar from './components/BlocksToolbar.vue';
-import ThemesContext from './components/ThemesContext.vue';
-import Blocks from './components/Blocks.vue';
+import LayoutsToolbar from './components/LayoutsToolbar.vue';
+import LayoutsContext from './components/LayoutsContext.vue';
+import LayoutBlocks from './components/LayoutBlocks.vue';
 import { store } from './stores/BlocksStore.js';
 
 const app = createApp({
   components: {
-    Blocks,
-    ThemesContext,
-    BlocksToolbar
+    LayoutBlocks,
+    LayoutsContext,
+    LayoutsToolbar
   }
 });
 app.use(store);

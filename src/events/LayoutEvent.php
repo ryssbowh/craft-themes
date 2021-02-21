@@ -7,4 +7,5 @@ use yii\base\Event;
 class LayoutEvent extends Event
 {
 	public $layout;
+    public $isNew;
 }

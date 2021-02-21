@@ -61,7 +61,8 @@ abstract class BlockProvider extends Component implements BlockProviderInterface
 
 	protected function loadBlock(string $class, $attributes = [])
 	{
+        unset($attributes['handle']);
 		$attributes['provider'] = $this->handle;
-		return BlockService::createBlock($class, $attributes);
+        return new $class($attributes);
 	}
 }
