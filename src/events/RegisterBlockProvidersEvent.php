@@ -8,16 +8,30 @@ use yii\base\Event;
 
 class RegisterBlockProvidersEvent extends Event
 {
-	protected $providers = [];
+    /**
+     * @var array
+     */
+    protected $providers = [];
 
-	public function add(BlockProviderInterface $provider)
-	{
-		$this->providers[$provider->handle] = $provider;
-		return $this;
-	}
+    /**
+     * Add a block provider
+     * 
+     * @param  BlockProviderInterface $provider
+     * @return RegisterBlockProvidersEvent
+     */
+    public function add(BlockProviderInterface $provider)
+    {
+        $this->providers[$provider->handle] = $provider;
+        return $this;
+    }
 
-	public function getProviders(): array
-	{
-		return $this->providers;
-	}
+    /**
+     * Get all providers
+     * 
+     * @return array
+     */
+    public function getProviders(): array
+    {
+        return $this->providers;
+    }
 }

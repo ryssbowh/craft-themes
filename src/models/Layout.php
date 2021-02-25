@@ -10,22 +10,79 @@ use craft\base\Model;
 
 class Layout extends Model
 {
-	public $blocks = [];
+    /**
+     * @var array
+     */
+    public $blocks = [];
+
+    /**
+     * @var array
+     */
     public $regions = [];
-	public $id;
+
+    /**
+     * @var id
+     */
+    public $id;
+
+    /**
+     * @var string
+     */
     public $type = 'default';
+
+    /**
+     * @var int
+     */
     public $theme;
+
+    /**
+     * @var string
+     */
     public $element;
+
+    /**
+     * @var bool
+     */
     public $default_entry;
+
+    /**
+     * @var bool
+     */
     public $default_category;
+
+    /**
+     * @var bool
+     */
     public $default_route;
+
+    /**
+     * @var DateTime
+     */
     public $dateCreated;
+
+    /**
+     * @var DateTime
+     */
     public $dateUpdated;
+
+    /**
+     * @var string
+     */
     public $uid;
 
+    /**
+     * @var boolean
+     */
     protected $loaded = false;
+
+    /**
+     * @var string|Entry|Category
+     */
     protected $_element;
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -37,24 +94,36 @@ class Layout extends Model
         }
     }
 
-    public static function create(array $args)
+    /**
+     * Create a layout
+     * 
+     * @param  array  $args
+     * @return Layout
+     * @throws LayoutException
+     */
+    public static function create(array $args): Layout
     {
         if (!isset($args['type'])) {
             throw LayoutException::noType();
         }
         switch ($args['type']) {
-            case 'default':
-                return new Layout($args);
-            case 'route':
-                return new RouteLayout($args);
-            case 'category':
-                return new CategoryLayout($args);
-            case 'entry':
-                return new EntryLayout($args);
+        case 'default':
+            return new Layout($args);
+        case 'route':
+            return new RouteLayout($args);
+        case 'category':
+            return new CategoryLayout($args);
+        case 'entry':
+            return new EntryLayout($args);
         }
         throw LayoutException::unknownType($args['type']);
     }
 
+    /**
+     * Get theme object
+     * 
+     * @return ThemeInterface
+     */
     public function getTheme(): ThemeInterface
     {
         if (!$this->theme) {
@@ -63,6 +132,11 @@ class Layout extends Model
         return Themes::$plugin->registry->getTheme($this->theme);
     }
 
+    /**
+     * Get project config
+     * 
+     * @return array
+     */
     public function getConfig(): array
     {
         return [
@@ -72,11 +146,22 @@ class Layout extends Model
         ];
     }
 
+    /**
+     * Get description
+     * 
+     * @return string
+     */
     public function getDescription(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
+    /**
+     * Get element assoicated to that layout, could be en entry
+     * a category, a route string definition, or nothing for the default layout
+     * 
+     * @return string|Entry|Category
+     */
     public function getElement()
     {
         if ($this->_element == null) {
@@ -85,11 +170,20 @@ class Layout extends Model
         return $this->_element;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
-        return array_merge(parent::fields(), ['description']);
+        return array_merge(parent::fields(), ['description', 'handle']);
     }
 
+    /**
+     * Load blocks from database
+     * 
+     * @param  boolean $force
+     * @return Layout
+     */
     public function loadBlocks($force = false): Layout
     {
         if ($this->loaded and !$force) {
@@ -104,8 +198,21 @@ class Layout extends Model
         return $this;
     }
 
+    /**
+     * Load element
+     */
     protected function loadElement()
     {
         $this->_element = '';
+    }
+
+    /**
+     * get handle
+     * 
+     * @return string
+     */
+    public function getHandle(): string
+    {
+        return 'default';
     }
 }

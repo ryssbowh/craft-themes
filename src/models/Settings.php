@@ -26,6 +26,9 @@ class Settings extends Model
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRules(): array
     {
         return $this->rules ? $this->rules : [];

@@ -5,7 +5,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../mixin';
+import Mixin from '../../mixin';
 
 export default {
   computed: {

@@ -11,7 +11,7 @@ class LayoutsAssets extends AssetBundle
 
 	public $js = [
 		'chunk-vendors.js',
-		'app.js'
+		'layouts.js'
 	];
 
 	public $depends = [

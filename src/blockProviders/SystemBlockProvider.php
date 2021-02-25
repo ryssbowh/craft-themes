@@ -8,18 +8,18 @@ use Ryssbowh\CraftThemes\blocks\TwigBlock;
 
 class SystemBlockProvider extends BlockProvider
 {
-	public $blocks = [
+    public $blocks = [
         TemplateBlock::class,
-		ContentBlock::class,
+        ContentBlock::class,
         TwigBlock::class,
-	];
+    ];
 
-	public $handle = 'system';
+    public $handle = 'system';
 
-	public $name = 'System';
+    public $name = 'System';
 
-	public static function getName(): string
-	{
-		return \Craft::t('themes', 'System');
-	}
+    public static function getName(): string
+    {
+        return \Craft::t('themes', 'System');
+    }
 }

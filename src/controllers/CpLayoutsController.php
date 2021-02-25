@@ -8,12 +8,19 @@ use Ryssbowh\CraftThemes\models\Layout;
 
 class CpLayoutsController extends Controller
 {
-	public function actionIndex(?string $themeName = null, ?int $layout = null)
-	{
-		$themes = $this->registry->getNonPartials(false, true);
+    /**
+     * Layouts index
+     * 
+     * @param  string|null $themeName
+     * @param  int|null    $layout
+     * @return Response
+     */
+    public function actionIndex(?string $themeName = null, ?int $layout = null)
+    {
+        $themes = $this->registry->getNonPartials(false, true);
         $theme = null;
 
-		if ($themeName == null) {
+        if ($themeName == null) {
             if (sizeof($themes)) {
                 $keys = array_keys($themes);
                 $themeName = $keys[0];
@@ -31,19 +38,25 @@ class CpLayoutsController extends Controller
             $layout = $this->layouts->getById($layout);
         }
 
-		$this->view->registerAssetBundle(LayoutsAssets::class);
+        $this->view->registerAssetBundle(LayoutsAssets::class);
 
         // dd($layout, $this->layouts->getAllAsArray(['id', 'theme']), $this->layouts->getAvailableAsArray(['id', 'element', 'description']));
-		return $this->renderTemplate('themes/cp/layout', [
-			'title' => \Craft::t('themes', 'Layouts'),
-			'themes' => $themes,
-			'theme' => $themeName,
+        return $this->renderTemplate('themes/cp/layouts', [
+            'title' => \Craft::t('themes', 'Layouts'),
+            'themes' => $themes,
+            'theme' => $themeName,
             'layout' => $layout ? $layout->id : null,
             'allLayouts' => $this->layouts->allIndexedByTheme(true),
             'availableLayouts' => $this->layouts->getAvailable(true)
-		]);
-	}
+        ]);
+    }
 
+    /**
+     * Delete a layout by id
+     * 
+     * @param  int    $id
+     * @return Response
+     */
     public function actionDelete(int $id)
     {
         $this->requirePostRequest();
@@ -57,7 +70,12 @@ class CpLayoutsController extends Controller
         ]);
     }
 
-	public function actionSave()
+    /**
+     * Save blocks
+     * 
+     * @return Response
+     */
+    public function actionSave()
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();

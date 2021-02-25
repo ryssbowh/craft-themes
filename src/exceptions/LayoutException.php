@@ -4,10 +4,10 @@ namespace Ryssbowh\CraftThemes\exceptions;
 
 class LayoutException extends \Exception
 {
-	public static function noTheme(string $class)
-	{
-		return new static("Can't get layout's theme, it's not defined.");
-	}
+    public static function noTheme(string $class)
+    {
+        return new static("Can't get layout's theme, it's not defined.");
+    }
 
     public static function noType()
     {

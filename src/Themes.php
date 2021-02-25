@@ -12,6 +12,7 @@ use Ryssbowh\CraftThemes\services\BlockService;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ThemesRegistry;
 use Ryssbowh\CraftThemes\services\ThemesRules;
+use Ryssbowh\CraftThemes\services\ViewModeService;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
 use craft\events\PluginEvent;
@@ -21,6 +22,7 @@ use craft\events\RegisterCpNavItemsEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\TemplateEvent;
+use craft\helpers\UrlHelper;
 use craft\services\Plugins;
 use craft\services\ProjectConfig;
 use craft\utilities\ClearCaches;
@@ -88,6 +90,21 @@ class Themes extends \craft\base\Plugin
         ThemesRules::clearCaches();
     }
 
+    /**
+     * Redirects settings request to custom page
+     * 
+     * @return Response
+     */
+    public function getSettingsResponse ()
+    {
+        \Craft::$app->controller->redirect(
+            UrlHelper::cpUrl('themes/settings')
+        );
+    }
+
+    /**
+     * Registers plugins related events
+     */
     protected function registerPluginsEvents()
     {
         Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
@@ -118,8 +135,12 @@ class Themes extends \craft\base\Plugin
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
                 $event->rules = array_merge($event->rules, [
+                    'themes/settings' => 'themes/cp-settings',
+                    'themes' => 'themes/cp-themes',
                     'themes/layouts' => 'themes/cp-layouts',
                     'themes/layouts/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-layouts',
+                    'themes/display' => 'themes/cp-display',
+                    'themes/ajax/view-modes/<theme:[\w-]+>/<layout:[\w-]+>' => 'themes/cp-display/view-modes',
                     'themes/ajax/layouts/save' => 'themes/cp-layouts/save',
                     'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-layouts/delete',
                     'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-blocks/blocks',
@@ -143,10 +164,14 @@ class Themes extends \craft\base\Plugin
             ],
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
-            'blocks' => BlockService::class
+            'blocks' => BlockService::class,
+            'viewModes' => ViewModeService::class,
         ]);
     }
 
+    /**
+     * Registers the system block provider
+     */
     protected function registerBlockProviders()
     {
         Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProvidersEvent $event) {
@@ -180,9 +205,13 @@ class Themes extends \craft\base\Plugin
             Event::on(Cp::class, Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) use ($_this){
                 if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
                     $event->navItems[] = [
-                        'url' => 'themes/layouts',
+                        'url' => 'themes',
                         'label' => \Craft::t('themes', 'Theming'),
                         'subnav' => [
+                            'themes' => [
+                                'url' => 'themes',
+                                'label' => \Craft::t('themes', 'Themes'),
+                            ],
                             'themes-layouts' => [
                                 'url' => 'themes/layouts',
                                 'label' => \Craft::t('themes', 'Layouts'),
@@ -190,6 +219,10 @@ class Themes extends \craft\base\Plugin
                             'themes-display' => [
                                 'url' => 'themes/display',
                                 'label' => \Craft::t('themes', 'Display'),
+                            ],
+                            'themes-settings' => [
+                                'url' => 'themes/settings',
+                                'label' => \Craft::t('themes', 'Settings'),
                             ]
                         ]
                     ];
@@ -198,6 +231,9 @@ class Themes extends \craft\base\Plugin
         }
     }
 
+    /**
+     * Registers project config events
+     */
     protected function registerProjectConfig()
     {
         Craft::$app->projectConfig
@@ -206,11 +242,15 @@ class Themes extends \craft\base\Plugin
             ->onRemove(BlockService::CONFIG_KEY.'.{uid}',   [$this->blocks,   'handleDeleted'])
             ->onAdd(LayoutService::CONFIG_KEY.'.{uid}',      [$this->layouts,   'handleChanged'])
             ->onUpdate(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleChanged'])
-            ->onRemove(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleDeleted']);
+            ->onRemove(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleDeleted'])
+            ->onAdd(ViewModeService::CONFIG_KEY.'.{uid}',      [$this->viewModes,   'handleChanged'])
+            ->onUpdate(ViewModeService::CONFIG_KEY.'.{uid}',   [$this->viewModes,   'handleChanged'])
+            ->onRemove(ViewModeService::CONFIG_KEY.'.{uid}',   [$this->viewModes,   'handleDeleted']);
 
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $e) {
             Themes::$plugin->blocks->rebuildLayoutConfig($e);
             Themes::$plugin->layouts->rebuildLayoutConfig($e);
+            Themes::$plugin->viewModes->rebuildLayoutConfig($e);
         });
     }
 
@@ -236,7 +276,7 @@ class Themes extends \craft\base\Plugin
         \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
         Craft::$app->view->registerTwigExtension(new TwigTheme);
         $event->roots[''][] = __DIR__ . '/templates/front';
-        $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
+        $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots['']);
         $path = \Craft::$app->request->getPathInfo();
         $theme->registerAssetBundles($path);
         \Craft::info("Theme has been set to : " . $theme->name, __METHOD__);
@@ -245,7 +285,7 @@ class Themes extends \craft\base\Plugin
     /**
      * Install parent theme
      * 
-     * @param  PluginInterface $plugin
+     * @param PluginInterface $plugin
      */
     protected function installDependency(PluginInterface $plugin)
     {
@@ -258,83 +298,10 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Parse all sites and languages, returns an array
-     * [
-     *     [
-     *         'uid' => 'Site name'
-     *     ],
-     *     [
-     *         'en-GB' => 'English'
-     *     ]
-     * ]
-     * @return [type] [description]
-     */
-    protected function parseSites(): array
-    {
-        $sites = [];
-        $languages = [];
-        foreach (\Craft::$app->sites->getAllSites() as $site) {
-            $sites[$site->uid] = $site->name;
-            $locale = $site->getLocale();
-            if ($locale->id and !in_array($locale->id, $languages)) {
-                $languages[$locale->id] = $locale->getDisplayName();
-            }
-        }
-        return [$sites, $languages];
-    }
-
-    /**
      * @inheritdoc
      */
     protected function createSettingsModel(): Settings
     {
         return new Settings();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function settingsHtml(): string
-    {
-        \Craft::$app->view->registerAssetBundle(SettingsAssets::class);
-        $themes = $this->registry->getNonPartials(true);
-        list($sites, $languages) = $this->parseSites();
-        $cols = [
-            'enabled' => [
-                'heading' => \Craft::t('themes', 'Enabled'),
-                'type' => 'lightswitch',
-                'class' => 'thin enabled'
-            ],
-            'url' => [
-                'type' => 'type',
-                'heading' => \Craft::t('themes', 'Path (or regex)'),
-                'class' => 'url cell',
-                'placeholder' => \Craft::t('themes', 'Enter path here')
-            ],
-            'site' => [
-                'heading' => \Craft::t('themes', 'Site'),
-                'type' => 'select',
-                'options' => ['' => \Craft::t('themes', 'Any')] + $sites,
-                'class' => 'site cell'
-            ],
-            'language' => [
-                'heading' => \Craft::t('themes', 'Language'),
-                'type' => 'select',
-                'options' => ['' => \Craft::t('themes', 'Any')] + $languages,
-                'class' => 'language cell'
-            ],
-            'theme' => [
-                'heading' => \Craft::t('themes', 'Theme'),
-                'type' => 'select',
-                'options' => $themes,
-                'class' => 'theme cell'
-            ]
-        ];
-        return Craft::$app->view->renderTemplate('themes/cp/settings', [
-            'settings' => $this->getSettings(),
-            'cols' => $cols,
-            'themes' => ['' => \Craft::t('themes', 'No theme')] + $themes,
-            'settings' => $this->getSettings()
-        ]);
     }
 }

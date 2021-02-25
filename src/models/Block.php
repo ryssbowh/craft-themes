@@ -5,113 +5,205 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-use Ryssbowh\CraftThemes\interfaces\SuggestsTemplates;
+use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
 use Ryssbowh\CraftThemes\models\NoOptions;
 use craft\base\Model;
-use zz\Html\HTMLMinify;
 
-abstract class Block extends Model implements BlockInterface, SuggestsTemplates
+abstract class Block extends Model implements BlockInterface, RenderableInterface
 {
-	public static $handle;
-	public $name = '';
+    /**
+     * @var string
+     */
+    public static $handle;
+
+    /**
+     * @var string
+     */
+    public $name = '';
+
+    /**
+     * @var string
+     */
     public $smallDescription = '';
-	public $hasOptions = false;
+
+    /**
+     * @var boolean
+     */
+    public $hasOptions = false;
+
+    /**
+     * @var array
+     */
     private $_options = [];
 
-	public $id;
-	public $region;
+    /**
+     * @var int
+     */
+    public $id;
+
+    /**
+     * @var string
+     */
+    public $region;
+
+    /**
+     * @var int
+     */
     public $layout;
-	public $provider;
-	public $order;
-	public $active;
-	public $options = [];
+
+    /**
+     * @var string
+     */
+    public $provider;
+
+    /**
+     * @var int
+     */
+    public $order;
+
+    /**
+     * @var bool
+     */
+    public $active;
+
+    /**
+     * @var array
+     */
+    public $options = [];
+
+    /**
+     * @var DateTime
+     */
     public $dateCreated;
+
+    /**
+     * @var DateTime
+     */
     public $dateUpdated;
+
+    /**
+     * @var string
+     */
     public $uid;
 
-	public function init()
-	{
-		parent::init();
-		if (!$this::$handle) {
-			throw BlockException::noHandle(get_called_class());
-		}
-		if (!$this->provider) {
-			throw BlockException::noProvider(get_called_class());
-		}
-		if (!$this->name) {
-			throw BlockException::noName(get_called_class());
-		}
-	}
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+        if (!$this::$handle) {
+            throw BlockException::noHandle(get_called_class());
+        }
+        if (!$this->provider) {
+            throw BlockException::noProvider(get_called_class());
+        }
+        if (!$this->name) {
+            throw BlockException::noName(get_called_class());
+        }
+    }
 
-	/**
-	 * Project config to be saved
-	 * 
-	 * @return array
-	 */
-	public function getConfig(): array
-	{
-		return [
+    /**
+     * Project config to be saved
+     * 
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return [
             'layout' => $this->layout()->uid,
-			'region' => $this->region,
-			'handle' => $this->handle,
-			'provider' => $this->provider,
+            'region' => $this->region,
+            'handle' => $this->handle,
+            'provider' => $this->provider,
             'order' => $this->order,
-			'active' => $this->active,
+            'active' => $this->active,
             'options' => $this->options
-		];
-	}
+        ];
+    }
 
+    /**
+     * @inheritDoc
+     */
     public function layout(): Layout
     {
         return Themes::$plugin->layouts->getById($this->layout);
     }
 
-	public function rules()
-	{
-		return [
-			[['region', 'handle', 'provider', 'order', 'active', 'layout'], 'required'],
-			[['region', 'handle', 'provider'], 'string'],
-			['active', 'boolean'],
-			[['order', 'layout'], 'number'],
+    /**
+     * @inheritDoc
+     */
+    public function rules()
+    {
+        return [
+            [['region', 'handle', 'provider', 'order', 'active', 'layout'], 'required'],
+            [['region', 'handle', 'provider'], 'string'],
+            ['active', 'boolean'],
+            [['order', 'layout'], 'number'],
             ['options', function(){}]
-		];
-	}
+        ];
+    }
 
-	public function getProvider(): BlockProviderInterface
-	{
-		return Themes::$plugin->blockProviders->getByHandle($this->provider);
-	}
+    /**
+     * @inheritDoc
+     */
+    public function provider(): BlockProviderInterface
+    {
+        return Themes::$plugin->blockProviders->getByHandle($this->provider);
+    }
 
-	public function getHandle(): string
-	{
-		return $this::$handle;
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getHandle(): string
+    {
+        return $this::$handle;
+    }
 
-	public function getMachineName(): string
-	{
-		return $this->provider . '_' . $this::$handle;
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getMachineName(): string
+    {
+        return $this->provider . '_' . $this::$handle;
+    }
 
-	public function getOptionsHtml(): string
-	{
-		return '';
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsHtml(): string
+    {
+        return '';
+    }
 
-	public function getTemplateSuggestions(): array
-	{
-		return ['blocks/block-' . $this->getMachineName(), 'blocks/block'];
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getTemplateSuggestions(): array
+    {
+        return ['blocks/block-' . $this->getMachineName(), 'blocks/block'];
+    }
 
-	public function fields()
-	{
-		return array_merge(parent::fields(), ['handle', 'hasOptions', 'optionsHtml']);
-	}
+    /**
+     * @inheritDoc
+     */
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['handle', 'hasOptions', 'optionsHtml']);
+    }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptions(): Model
     {
         return \Yii::configure($this->getOptionsModel(), $this->_options);
     }
 
+    /**
+     * Set options
+     * 
+     * @param Model|array|string $options
+     */
     public function setOptions($options)
     {
         $this->options = $options;
@@ -123,6 +215,9 @@ abstract class Block extends Model implements BlockInterface, SuggestsTemplates
         $this->_options = $options;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new NoOptions;

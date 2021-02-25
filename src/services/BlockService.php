@@ -15,10 +15,10 @@ use craft\helpers\StringHelper;
 
 class BlockService extends Service
 {
-	const EVENT_BEFORE_SAVE = 1;
-	const EVENT_AFTER_SAVE = 2;
-	const EVENT_BEFORE_APPLY_DELETE = 3;
-	const EVENT_AFTER_DELETE = 4;
+    const EVENT_BEFORE_SAVE = 1;
+    const EVENT_AFTER_SAVE = 2;
+    const EVENT_BEFORE_APPLY_DELETE = 3;
+    const EVENT_AFTER_DELETE = 4;
     const EVENT_BEFORE_DELETE = 5;
     const CONFIG_KEY = 'themes.blocks';
 
@@ -52,15 +52,15 @@ class BlockService extends Service
      * @param  int    $id
      * @return ?BlockInterface
      */
-	public function getById(int $id): ?BlockInterface
-	{
-		foreach ($this->getAll() as $block) {
+    public function getById(int $id): ?BlockInterface
+    {
+        foreach ($this->getAll() as $block) {
             if ($block->id == $id) {
                 return $block;
             }
         }
         return null;
-	}
+    }
 
     /**
      * Get blocks for a layout
@@ -68,8 +68,8 @@ class BlockService extends Service
      * @param  int    $layout
      * @return array
      */
-	public function forLayout(int $layout): array
-	{
+    public function forLayout(int $layout): array
+    {
         return array_filter($this->getAll(), function ($block) use ($layout) {
             return $layout == $block->layout;
         });
@@ -80,9 +80,9 @@ class BlockService extends Service
      * 
      * @param  RebuildConfigEvent $e
      */
-	public function rebuildBlocksConfig(RebuildConfigEvent $e)
+    public function rebuildBlocksConfig(RebuildConfigEvent $e)
     {
-    	$parts = explode('.', self::CONFIG_KEY);
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->getAllBlockRecords() as $block) {
             $e->config[$parts[0]][$parts[1]][$block->uid] = $block->getConfig();
         }
@@ -94,10 +94,10 @@ class BlockService extends Service
      * @param  string $uid
      * @return BlockRecord
      */
-	public function getRecordByUid(string $uid): BlockRecord
-	{
-		return BlockRecord::findOne(['uid' => $uid]) ?? new BlockRecord;
-	}
+    public function getRecordByUid(string $uid): BlockRecord
+    {
+        return BlockRecord::findOne(['uid' => $uid]) ?? new BlockRecord;
+    }
 
     /**
      * Save blocks
@@ -141,7 +141,7 @@ class BlockService extends Service
      * @param  Block  $block
      * @return Block
      */
-	public function saveBlock(Block $block): Block
+    public function saveBlock(Block $block): Block
     {
         $isNew = !is_int($block->id);
         $uid = $isNew ? StringHelper::UUID() : $block->uid;
@@ -183,7 +183,7 @@ class BlockService extends Service
     /**
      * Handles block config change
      * 
-     * @param  ConfigEvent $event
+     * @param ConfigEvent $event
      */
     public function handleChanged(ConfigEvent $event)
     {
@@ -220,7 +220,7 @@ class BlockService extends Service
     /**
      * Hanles block config deletion
      * 
-     * @param  ConfigEvent $event
+     * @param ConfigEvent $event
      */
     public function handleDeleted(ConfigEvent $event)
     {

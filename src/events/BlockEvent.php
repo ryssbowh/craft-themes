@@ -6,6 +6,13 @@ use yii\base\Event;
 
 class BlockEvent extends Event
 {
-	public $block;
-	public $isNew;
+    /**
+     * @var BlockInterface|BlockRecord
+     */
+    public $block;
+
+    /**
+     * @var bool
+     */
+    public $isNew;
 }

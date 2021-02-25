@@ -6,11 +6,23 @@ use Ryssbowh\CraftThemes\models\Block;
 
 class ContentBlock extends Block
 {
-	public $name = 'Content';
+    /**
+     * @var string
+     */
+    public $name = 'Content';
 
-	public static $handle = 'content';
+    /**
+     * @var string
+     */
+    public static $handle = 'content';
 
+    /**
+     * @var string
+     */
     public $smallDescription = 'Main page content';
 
+    /**
+     * @var string
+     */
     public $longDescription = 'The main page content, should be present on each block layout';
 }

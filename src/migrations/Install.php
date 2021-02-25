@@ -37,6 +37,17 @@ class Install extends Migration
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid()
         ]);
+
+        $this->createTable('{{%themes_view_modes}}', [
+            'id' => $this->primaryKey(),
+            'handle' => $this->string(255)->notNull(),
+            'name' => $this->string(255)->notNull(),
+            'layout' => $this->string(255)->notNull(),
+            'theme' => $this->string(255)->notNull(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid()
+        ]);
     }
 
     /**
@@ -46,5 +57,6 @@ class Install extends Migration
     {
         $this->dropTableIfExists('{{%themes_blocks}}');
         $this->dropTableIfExists('{{%themes_blocks_layouts}}');
+        $this->dropTableIfExists('{{%themes_view_modes}}');
     }
 }

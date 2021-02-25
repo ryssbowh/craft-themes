@@ -59,7 +59,7 @@ import Block from './Block.vue';
 import BlockOptions from './BlockOptions.vue';
 import Region from './Region.vue';
 import Draggable from 'vuedraggable';
-import Mixin from '../mixin';
+import Mixin from '../../mixin';
 import { reduce } from 'lodash';
 
 export default {

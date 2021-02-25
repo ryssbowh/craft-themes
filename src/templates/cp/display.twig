@@ -1,0 +1,31 @@
+{% extends "_layouts/cp" %}
+
+{% set selectedSubnavItem = 'themes-display' %}
+
+{% set tabs = {dummy: 'dummy'} %}
+
+{% block contextMenu %}
+	<display-context 
+        :initial-theme="'{{ theme }}'"
+        :themes="{{ themes|json_encode }}"
+    />
+{% endblock %}
+
+{% block toolbar %}
+    <display-toolbar />
+{% endblock %}
+
+{% block tabs %}
+    <display-tabs />
+{% endblock %}
+
+{% block sidebar %}
+    <display-menu
+        :all-layouts="{{ allLayouts|json_encode }}"
+        :current-layout="'{{ layout }}'"
+    />
+{% endblock %}
+
+{% block content %}
+    <display-fields />
+{% endblock %}

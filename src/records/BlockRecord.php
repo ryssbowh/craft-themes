@@ -10,18 +10,18 @@ use craft\db\ActiveRecord;
 
 class BlockRecord extends ActiveRecord
 {
-	public static function tableName()
-	{
-		return '{{%themes_blocks}}';
-	}
+    public static function tableName()
+    {
+        return '{{%themes_blocks}}';
+    }
 
-	public function getProvider(): BlockProviderInterface
-	{
-		return Themes::$plugin->blockProviders->getByHandle($this->provider);
-	}
+    public function getProvider(): BlockProviderInterface
+    {
+        return Themes::$plugin->blockProviders->getByHandle($this->provider);
+    }
 
-	public function toModel(): BlockInterface
-	{
-		return $this->getProvider()->getBlock($this->handle, $this->getAttributes());
-	}
+    public function toModel(): BlockInterface
+    {
+        return $this->getProvider()->getBlock($this->handle, $this->getAttributes());
+    }
 }

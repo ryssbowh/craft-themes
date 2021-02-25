@@ -6,6 +6,13 @@ use yii\base\Event;
 
 class LayoutEvent extends Event
 {
-	public $layout;
+    /**
+     * @var Layout|LayoutRecord
+     */
+    public $layout;
+
+    /**
+     * @var bool
+     */
     public $isNew;
 }

@@ -2,20 +2,36 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
 use craft\base\Model;
 
-class Region extends Model
-{
-	public $handle = '';
+class Region extends Model implements RenderableInterface
+{   
+    /**
+     * @var string
+     */
+    public $handle = '';
 
-	public $name = '';
+    /**
+     * @var string
+     */
+    public $name = '';
 
-	public $width = '100%';
+    /**
+     * @var string
+     */
+    public $width = '100%';
 
-	public $blocks = [];
+    /**
+     * @var array
+     */
+    public $blocks = [];
 
-	public function getTemplateSuggestions(): array
-	{
-		return ['regions/region-' . $this->handle, 'regions/region'];
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getTemplateSuggestions(): array
+    {
+        return ['regions/region-' . $this->handle, 'regions/region'];
+    }
 }

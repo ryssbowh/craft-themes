@@ -7,17 +7,41 @@ use craft\web\Controller as CraftController;
 
 class Controller extends CraftController
 {
-	protected $registry;
-	protected $blockProviders;
-	protected $blocks;
-	protected $layouts;
+    /**
+     * @var ThemesRegistry
+     */
+    protected $registry;
 
-	public function init()
-	{
-		parent::init();
-		$this->registry = Themes::$plugin->registry;
-		$this->blockProviders = Themes::$plugin->blockProviders;
-		$this->blocks = Themes::$plugin->blocks;
-		$this->layouts = Themes::$plugin->layouts;
-	}
+    /**
+     * @var BlockProvidersService
+     */
+    protected $blockProviders;
+
+    /**
+     * @var BlockService
+     */
+    protected $blocks;
+
+    /**
+     * @var LayoutService
+     */
+    protected $layouts;
+
+    /**
+     * @var ViewModeService
+     */
+    protected $viewModes;
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->registry = Themes::$plugin->registry;
+        $this->blockProviders = Themes::$plugin->blockProviders;
+        $this->blocks = Themes::$plugin->blocks;
+        $this->layouts = Themes::$plugin->layouts;
+        $this->viewModes = Themes::$plugin->viewModes;
+    }
 }

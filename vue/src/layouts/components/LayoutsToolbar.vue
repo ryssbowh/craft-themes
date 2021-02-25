@@ -17,7 +17,7 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex';
-import Mixin from '../mixin';
+import Mixin from '../../mixin';
 import { reduce } from 'lodash';
 
 export default {

@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\assets;
 
 use craft\web\AssetBundle;
+use craft\web\assets\cp\CpAsset;
 
 class SettingsAssets extends AssetBundle
 {
@@ -15,4 +16,8 @@ class SettingsAssets extends AssetBundle
 	public $css = [
 		'settings.css'
 	];
+
+    public $depends = [
+        CpAsset::class
+    ];
 }

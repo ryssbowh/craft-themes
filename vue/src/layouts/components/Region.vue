@@ -27,7 +27,7 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 import { filter, sortBy } from 'lodash';
 import Block from './Block.vue';
 import Draggable from 'vuedraggable';
-import Mixin from '../mixin';
+import Mixin from '../../mixin';
 
 export default {
   computed: {

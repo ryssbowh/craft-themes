@@ -8,25 +8,46 @@ use craft\base\Model;
 
 class TemplateBlock extends Block
 {
-	public $name = 'Template';
+    /**
+     * @var string
+     */
+    public $name = 'Template';
 
+    /**
+     * @var string
+     */
     public $smallDescription = 'A custom template';
 
+    /**
+     * @var string
+     */
     public $longDescription = 'Define the template rendering this block in the options';
 
-	public static $handle = 'template';
+    /**
+     * @var string
+     */
+    public static $handle = 'template';
 
+    /**
+     * @var boolean
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new BlockTemplateOptions;
     }
 
-	public function getOptionsHtml(): string
-	{
-		return \Craft::$app->view->renderTemplate('themes/block-options/template', [
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsHtml(): string
+    {
+        return \Craft::$app->view->renderTemplate('themes/block-options/template', [
             'options' => $this->getOptions(),
         ]);
-	}
+    }
 }
