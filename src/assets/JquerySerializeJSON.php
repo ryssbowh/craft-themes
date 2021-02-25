@@ -7,13 +7,13 @@ use verbb\base\assetbundles\CpAsset;
 
 class JquerySerializeJSON extends AssetBundle
 {
-	public $sourcePath = __DIR__ . '/dist';
+    public $sourcePath = __DIR__ . '/dist';
 
-	public $js = [
+    public $js = [
         'jquery.serializejson.js'
-	];
+    ];
 
-	public $depends = [
-		CpAsset::class
-	];
+    public $depends = [
+        CpAsset::class
+    ];
 }

@@ -7,21 +7,21 @@ use verbb\base\assetbundles\CpAsset;
 
 class LayoutsAssets extends AssetBundle
 {
-	public $sourcePath = __DIR__ . '/../../vue/dist/js';
+    public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
-	public $js = [
-		'chunk-vendors.js',
-		'layouts.js'
-	];
+    public $js = [
+        'chunk-vendors.js',
+        'layouts.js'
+    ];
 
-	public $depends = [
-		CpAsset::class,
+    public $depends = [
+        CpAsset::class,
         JquerySerializeJSON::class
-	];
+    ];
 
-	public function init()
+    public function init()
     {
-    	parent::init();
-    	$this->sourcePath = realpath($this->sourcePath);
+        parent::init();
+        $this->sourcePath = realpath($this->sourcePath);
     }
 }
