@@ -1,13 +1,13 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes\blockProviders;
+namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use craft\base\Component;
+use craft\base\Model;
 
-abstract class BlockProvider extends Component implements BlockProviderInterface
+abstract class BlockProvider extends Model implements BlockProviderInterface
 {
     /**
      * @var array

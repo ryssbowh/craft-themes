@@ -1,10 +1,9 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes\blocks;
+namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockTemplateOptions;
-use Ryssbowh\CraftThemes\models\BlockTwigOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\BlockTwigOptions;
 use craft\base\Model;
 
 class TwigBlock extends Block

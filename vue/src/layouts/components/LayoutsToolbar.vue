@@ -4,7 +4,7 @@
       <button href="#" class="btn submit menubtn" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
       <div class="menu" data-align="right">
         <ul>
-          <li v-for="elem in selectableLayouts">
+          <li v-for="elem in layoutsWithoutBlocks">
               <a href="#" @click.prevent="checkAndCopy(elem)">{{ elem.description }}</a>
           </li>
         </ul>
@@ -30,17 +30,8 @@ export default {
         canCopy: function () {
             return (!this.isSaving && !this.isLoading);
         },
-        selectableLayouts: function () {
-            let layouts = [];
-            for (let layout of this.availableLayouts) {
-                let defined = this.layouts.filter(layout2 => {
-                    return (layout.type == layout2.type && layout.element == layout2.element);
-                });
-                if (!defined.length) {
-                    layouts.push(layout);
-                }
-            }
-            return layouts;
+        layoutsWithoutBlocks: function () {
+            return this.layouts.filter(layout => !layout.hasBlocks);
         },
         canSave: function () {
             return (!this.isSaving && !this.isLoading && this.hasChanged && !this.hasErrors);
@@ -64,14 +55,14 @@ export default {
         checkAndCopy: function(layout) {
             if (this.hasChanged) {
                 if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                    this.copy(layout);
+                    this.copy(layout.id);
                 }
             } else {
-                this.copy(layout);
+                this.copy(layout.id);
             }
         },
         checkAndDelete() {
-            if (confirm(this.t('Are you sure you want to delete this layout ?'))) {
+            if (confirm(this.t('Are you sure you want to delete all blocks in this layout ?'))) {
                 this.deleteLayout();
             }
         },

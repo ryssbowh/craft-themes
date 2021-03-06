@@ -3,20 +3,20 @@
 namespace Ryssbowh\CraftThemes\records;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\models\Layout;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Model;
 use craft\db\ActiveRecord;
 
 class LayoutRecord extends ActiveRecord
 {
-	public static function tableName()
-	{
-		return '{{%themes_layouts}}';
-	}
+    public static function tableName()
+    {
+        return '{{%themes_layouts}}';
+    }
 
-	public function toModel(): Model
-	{
+    public function toModel(): Model
+    {
         $attributes = $this->getAttributes();
-		return Layout::create($attributes);
-	}
+        return Layout::create($attributes);
+    }
 }

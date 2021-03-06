@@ -2,12 +2,12 @@
 
 {% set selectedSubnavItem = 'themes-display' %}
 
-{% set tabs = {dummy: 'dummy'} %}
-
 {% block contextMenu %}
 	<display-context 
         :initial-theme="'{{ theme }}'"
         :themes="{{ themes|json_encode }}"
+        :all-layouts="{{ allLayouts|json_encode }}"
+        :current-layout="{{ layout }}"
     />
 {% endblock %}
 
@@ -16,16 +16,16 @@
 {% endblock %}
 
 {% block tabs %}
-    <display-tabs />
+    <display-tabs>
+    </display-tabs>
 {% endblock %}
 
 {% block sidebar %}
     <display-menu
-        :all-layouts="{{ allLayouts|json_encode }}"
-        :current-layout="'{{ layout }}'"
     />
 {% endblock %}
 
 {% block content %}
-    <display-fields />
+    <display-fields>
+    </display-fields>
 {% endblock %}

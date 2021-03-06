@@ -33,6 +33,11 @@ class Controller extends CraftController
     protected $viewModes;
 
     /**
+     * @var FieldsService
+     */
+    protected $fields;
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -43,5 +48,6 @@ class Controller extends CraftController
         $this->blocks = Themes::$plugin->blocks;
         $this->layouts = Themes::$plugin->layouts;
         $this->viewModes = Themes::$plugin->viewModes;
+        $this->fields = Themes::$plugin->fields;
     }
 }

@@ -1,10 +1,10 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes\blockProviders;
+namespace Ryssbowh\CraftThemes\models;
 
-use Ryssbowh\CraftThemes\blocks\ContentBlock;
-use Ryssbowh\CraftThemes\blocks\TemplateBlock;
-use Ryssbowh\CraftThemes\blocks\TwigBlock;
+use Ryssbowh\CraftThemes\models\blocks\ContentBlock;
+use Ryssbowh\CraftThemes\models\blocks\TemplateBlock;
+use Ryssbowh\CraftThemes\models\blocks\TwigBlock;
 
 class SystemBlockProvider extends BlockProvider
 {

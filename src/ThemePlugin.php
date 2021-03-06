@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes;
 
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
-use Ryssbowh\CraftThemes\models\Layout;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\models\PageLayout;
 use craft\base\Plugin;
 use yii\base\ArrayableTrait;
@@ -143,17 +143,6 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     }
 
     /**
-     * Get bundle assets for a url path
-     * 
-     * @param  string $urlPath
-     * @return array
-     */
-    protected function getAssetBundles(string $urlPath): array
-    {
-        return array_merge($this->assetBundles['*'] ?? [], $this->assetBundles[$urlPath] ?? []);
-    }
-
-    /**
      * @inheritDoc
      */
     public function fields()
@@ -162,12 +151,29 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     }
 
     /**
-     * get regions defined by this theme
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getRegions(): array
     {
         return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterSet()
+    {
+
+    }
+
+    /**
+     * Get bundle assets for a url path
+     * 
+     * @param  string $urlPath
+     * @return array
+     */
+    protected function getAssetBundles(string $urlPath): array
+    {
+        return array_merge($this->assetBundles['*'] ?? [], $this->assetBundles[$urlPath] ?? []);
     }
 }

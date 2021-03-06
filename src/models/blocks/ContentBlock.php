@@ -1,6 +1,6 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes\blocks;
+namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
 

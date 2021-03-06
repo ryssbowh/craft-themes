@@ -1,6 +1,6 @@
 <?php
 
-namespace Ryssbowh\CraftThemes\models;
+namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
@@ -41,19 +41,14 @@ class Layout extends Model
     public $element;
 
     /**
-     * @var bool
+     * @var boolean
      */
-    public $default_entry;
+    public $hasBlocks = false;
 
     /**
-     * @var bool
+     * @var boolean
      */
-    public $default_category;
-
-    /**
-     * @var bool
-     */
-    public $default_route;
+    protected $_hasFields = false;
 
     /**
      * @var DateTime
@@ -120,6 +115,16 @@ class Layout extends Model
     }
 
     /**
+     * Can this layout define fields
+     * 
+     * @return bool
+     */
+    public function getHasFields(): bool
+    {
+        return $this->_hasFields;
+    }
+
+    /**
      * Get theme object
      * 
      * @return ThemeInterface
@@ -143,6 +148,7 @@ class Layout extends Model
             'theme' => $this->theme,
             'type' => $this->type,
             'element' => $this->element,
+            'hasBlocks' => $this->hasBlocks
         ];
     }
 
@@ -162,10 +168,10 @@ class Layout extends Model
      * 
      * @return string|Entry|Category
      */
-    public function getElement()
+    public function element()
     {
         if ($this->_element == null) {
-            $this->loadElement();
+            $this->_element = $this->loadElement();
         }
         return $this->_element;
     }
@@ -175,7 +181,7 @@ class Layout extends Model
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['description', 'handle']);
+        return array_merge(parent::fields(), ['description', 'handle', 'hasFields']);
     }
 
     /**
@@ -203,7 +209,7 @@ class Layout extends Model
      */
     protected function loadElement()
     {
-        $this->_element = '';
+        return '';
     }
 
     /**

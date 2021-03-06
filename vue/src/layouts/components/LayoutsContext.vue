@@ -8,10 +8,10 @@
     </div>
 
     <button v-if="layout" type="button" class="btn menubtn" data-icon="section">{{ layout.description }}</button>
-    <div class="menu" v-if="layouts">
+    <div class="menu" v-if="layoutsWithBlocks">
       <ul class="padded">
-        <li v-for="elem, index in layouts" v-bind:key="index">
-            <a :class="{sel: elem == layout}" href="#" @click.prevent="checkAndSetLayout(index)">{{ elem.description }}</a>
+        <li v-for="elem, index in layoutsWithBlocks" v-bind:key="index">
+            <a :class="{sel: elem == layout}" href="#" @click.prevent="checkAndSetLayout(elem.id)">{{ elem.description }}</a>
         </li>
       </ul>
     </div>
@@ -24,6 +24,9 @@ import Mixin from '../../mixin';
 
 export default {
   computed: {
+    layoutsWithBlocks: function () {
+      return this.layouts.filter(layout => layout.hasBlocks);
+    },
     ...mapState(['layouts', 'layout', 'theme', 'hasChanged'])
   },
   props: {
@@ -36,12 +39,11 @@ export default {
   created () {
     this.setThemes(this.themes);
     this.setAllLayouts(this.allLayouts);
-    this.setAvailableLayouts(this.availableLayouts);
     if (this.initialTheme) {
         this.setTheme(this.initialTheme);
     }
     if (this.initialLayout) {
-        this.setLayoutById(this.initialLayout);
+        this.setLayoutAndFetch(this.initialLayout);
     }
     let _this = this;
     window.addEventListener('popstate', () => {
@@ -65,14 +67,14 @@ export default {
     checkAndSetLayout: function (index) {
         if (this.hasChanged) {
             if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                this.setLayout(index);
+                this.setLayoutAndFetch(index);
             }
         } else {
-            this.setLayout(index);
+            this.setLayoutAndFetch(index);
         }
     },
     ...mapMutations(['setThemes', 'setAllLayouts', 'setAvailableLayouts', 'setTheme']),
-    ...mapActions(['setLayoutById', 'setLayout', 'setThemeAndFetch']),
+    ...mapActions(['setLayoutById', 'setLayoutAndFetch', 'setThemeAndFetch']),
   },
   mixins: [Mixin],
 };

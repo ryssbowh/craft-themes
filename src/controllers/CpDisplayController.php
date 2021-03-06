@@ -28,34 +28,29 @@ class CpDisplayController extends Controller
             $theme = $this->registry->getTheme($themeName);
         }
 
-        $layouts = $this->layouts->getAvailable(true);
-        if ($layout == null) {
-            $layout = $layouts[0]['handle'] ?? null;
-        }
-
         $this->view->registerAssetBundle(DisplayAssets::class);
 
         return $this->renderTemplate('themes/cp/display', [
             'title' => \Craft::t('themes', 'Display'),
             'themes' => $themes,
             'theme' => $themeName,
-            'allLayouts' => $layouts,
-            'layout' => $layout
+            'allLayouts' => $this->layouts->getLayoutsByTheme(true),
+            'layout' => $layout ? $layout : 0
         ]);
     }
 
     /**
      * Get view modes for a theme and a layout as json
      * 
-     * @param  string $theme
-     * @param  string $layout
+     * @param  int $layout
      * @return Response
      */
-    public function actionViewModes(string $theme, string $layout)
+    public function actionViewModes(int $layout)
     {
         $this->requireAcceptsJson();
+        $layout = $this->layouts->getById($layout);
         return $this->asJson([
-            'viewModes' => $this->viewModes->forLayout($theme, $layout)
+            'viewModes' => $this->viewModes->forLayout($layout)
         ]);
     }
 }

@@ -3,7 +3,9 @@
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\events\ViewModeEvent;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\ViewMode;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use craft\events\ConfigEvent;
 use craft\helpers\StringHelper;
@@ -31,23 +33,42 @@ class ViewModeService extends Service
             foreach (ViewModeRecord::find()->all() as $record) {
                 $this->viewModes[] = $record->toModel();
             }
-            $this->createDefaults();
         }
         return $this->viewModes;
     }
 
     /**
+     * Get view mode by id
+     * 
+     * @param  int    $id
+     * @return ViewMode
+     * @throws ViewModeException
+     */
+    public function getById(int $id): ViewMode
+    {
+        foreach ($this->getAll() as $viewMode) {
+            if ($viewMode->id == $id) {
+                return $viewMode;
+            }
+        }
+        throw ViewModeException::noId($id);
+    }
+
+    /**
      * Get all view modes for a layout
      * 
-     * @param  string $theme
-     * @param  string $layout
+     * @param  Layout $layout
      * @return array
      */
-    public function forLayout(string $theme, string $layout): array
+    public function forLayout(Layout $layout): array
     {
-        return array_values(array_filter($this->forTheme($theme), function ($viewMode) use ($layout) {
-            return ($viewMode->layout == $layout);
+        $viewModes = array_values(array_filter($this->getAll(), function ($viewMode) use ($layout) {
+            return ($viewMode->layout == $layout->id);
         }));
+        if (!$viewModes) {
+            $viewModes[] = $this->create($layout, 'deault');
+        }
+        return $viewModes;
     }
 
     /**
@@ -81,16 +102,37 @@ class ViewModeService extends Service
     }
 
     /**
-     * Get all view modes for a theme
+     * Get view mode from array of data
      * 
-     * @param  string $theme
-     * @return array
+     * @param  array  $data
+     * @return ViewMode
      */
-    public  function forTheme(string $theme): array
+    public function fromData(array $data): ViewMode
     {
-        return array_values(array_filter($this->getAll(), function ($viewMode) use ($theme) {
-            return ($viewMode->theme == $theme);
-        }));
+        unset($data['uid']);
+        if (isset($data['id'])) {
+            $viewMode = $this->getById($data['id']);
+            $viewMode->name = $data['name'];
+        } else {
+            $viewMode = new ViewMode($data);
+        }
+        return $viewMode;
+    }
+
+    /**
+     * Delete all view modes which id is not in $toKeep for a layout
+     * 
+     * @param array $toKeep
+     * @param int   $layoutId
+     */
+    public function deleteForLayout(array $toKeep, int $layoutId)
+    {
+        $layouts = array_filter($this->viewModes, function ($viewMode) use ($toKeep, $layoutId) {
+            return ($viewMode->layout === $layoutId and !in_array($viewMode->id, $toKeep));
+        });
+        foreach ($layouts as $layout) {
+            $this->delete($layout);
+        }
     }
 
     /**
@@ -118,6 +160,7 @@ class ViewModeService extends Service
         
         if ($isNew) {
             $viewMode->setAttributes($record->getAttributes(), false);
+            $this->viewModes[] = $viewMode;
         }
 
         return $viewMode;
@@ -150,6 +193,12 @@ class ViewModeService extends Service
             'viewMode' => $viewMode
         ]));
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $viewMode->uid);
+
+        foreach ($this->viewModes as $index => $viewMode2) {
+            if ($viewMode2->id === $viewMode->id) {
+                unset($this->viewModes[$index]);
+            }
+        }
         return true;
     }
 
@@ -170,8 +219,7 @@ class ViewModeService extends Service
 
             $viewMode->uid = $uid;
             $viewMode->handle = $data['handle'];
-            $viewMode->theme = $data['theme'];
-            $viewMode->layout = $data['layout'];
+            $viewMode->layout = $this->layoutService()->getRecordByUid($data['layout'])->id;
             $viewMode->name = $data['name'];
             
             $viewMode->save(false);
@@ -215,33 +263,19 @@ class ViewModeService extends Service
     }
 
     /**
-     * Creates defaults view modes for all themes/layouts
-     */
-    protected function createDefaults()
-    {
-        foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            foreach ($this->layoutService()->getAvailable() as $layout) {
-                if (!$this->getDefault($theme->handle, $layout->handle)) {
-                    $this->createDefault($theme->handle, $layout->handle);
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates the default view mode for a theme and a layout
+     * Creates a view mode for a layout
      * 
-     * @param  string $theme
-     * @param  string $layout
+     * @param  Layout $layout
+     * @param  string $handle
+     * @param  string $name
      * @return ViewMode
      */
-    protected function createDefault(string $theme, string $layout): ViewMode
+    public function create(Layout $layout, string $handle = 'default', string $name = 'Default'): ViewMode
     {
         $viewMode = new ViewMode([
-            'handle' => 'default',
-            'name' => \Craft::t('themes', 'Default'),
-            'layout' => $layout,
-            'theme' => $theme
+            'handle' => $handle,
+            'name' => $name,
+            'layout' => $layout->id
         ]);
         $this->save($viewMode);
         $viewModes = $this->viewModes;

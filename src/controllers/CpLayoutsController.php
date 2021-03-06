@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\LayoutsAssets;
-use Ryssbowh\CraftThemes\models\Layout;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 
 class CpLayoutsController extends Controller
 {
@@ -40,14 +40,13 @@ class CpLayoutsController extends Controller
 
         $this->view->registerAssetBundle(LayoutsAssets::class);
 
-        // dd($layout, $this->layouts->getAllAsArray(['id', 'theme']), $this->layouts->getAvailableAsArray(['id', 'element', 'description']));
+        // dd($this->layouts->getLayoutsByTheme(true));
         return $this->renderTemplate('themes/cp/layouts', [
             'title' => \Craft::t('themes', 'Layouts'),
             'themes' => $themes,
             'theme' => $themeName,
             'layout' => $layout ? $layout->id : null,
-            'allLayouts' => $this->layouts->allIndexedByTheme(true),
-            'availableLayouts' => $this->layouts->getAvailable(true)
+            'allLayouts' => $this->layouts->getLayoutsByTheme(true)
         ]);
     }
 
@@ -63,10 +62,13 @@ class CpLayoutsController extends Controller
         $this->requireAcceptsJson();
 
         $layout = $this->layouts->getById($id);
-        $this->layouts->delete($layout);
+        $layout->hasBlocks = 0;
+        $this->layouts->save($layout);
+        $this->blocks->deleteLayoutBlocks($layout);
 
         return $this->asJson([
             'message' => \Craft::t('themes', 'Layout deleted successfully.'),
+            'layout' => $layout
         ]);
     }
 
@@ -84,9 +86,10 @@ class CpLayoutsController extends Controller
         $themeName = $this->request->getRequiredParam('theme');
         $layoutData = $this->request->getRequiredParam('layout');
 
-        $layout = Layout::create($layoutData);
+        $layout = $this->layouts->getById($layoutData['id']);
 
-        if (!$layout->id) {
+        if (!$layout->hasBlocks) {
+            $layout->hasBlocks = 1;
             $this->layouts->save($layout);
         }
 

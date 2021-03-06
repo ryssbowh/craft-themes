@@ -51,7 +51,6 @@ const store = createStore({
 			layouts: [],
 			layout: {},
 			allLayouts: {},
-			availableLayouts: {},
 			layoutIndex: null,
 			regions: {},
 			hasChanged: false,
@@ -105,26 +104,27 @@ const store = createStore({
 				state.blocks[i].index = i;
 			}
 		},
-        addLayout(state, layout) {
-            state.allLayouts[state.theme].push(layout);
+        updateLayout(state, layout) {
+            for (let i in state.layouts) {
+				if (state.layouts[i].id == layout.id) {
+					state.layouts[i] = layout;
+				}
+			}
         },
 		setLayouts(state, value) {
 			state.layouts = value;
 		},
-		setLayout(state, index) {
-			state.layout = state.layouts[index];
-            setWindowUrl(state.theme, state.layout.id);
+		setLayout(state, id) {
+			for (let i in state.layouts) {
+				if (state.layouts[i].id == id) {
+					state.layout = state.layouts[i];
+				}
+			}
+            setWindowUrl(state.theme, id);
             state.isCopying = false;
-		},
-		setLayoutByObject(state, layout) {
-			state.layout = layout;
-            state.hasChanged = true;
 		},
 		setAllLayouts(state, value) {
 			state.allLayouts = value;
-		},
-		setAvailableLayouts(state, value) {
-			state.availableLayouts = value;
 		},
         deleteLayout(state, layoutId) {
             let layouts = state.allLayouts[state.theme].filter(layout => {
@@ -150,7 +150,7 @@ const store = createStore({
 		}
 	},
 	actions: {
-		save({commit, state}) {
+		save({commit, state, dispatch}) {
 			commit('setIsSaving', true);
 			axios({
 				method: 'post',
@@ -163,8 +163,7 @@ const store = createStore({
 				commit('setBlocks', cloneDeep(res.data.blocks));
 				commit('setHasChanged', false);
                 if (state.isCopying) {
-                    commit('addLayout', res.data.layout);
-                    commit('setLayout', state.layouts.length-1);
+                    commit('updateLayout', res.data.layout);
                     commit('setIsCopying', false);
                 }
 				Craft.cp.displayNotice(res.data.message);
@@ -239,26 +238,20 @@ const store = createStore({
 				commit('setIsFetching', {key: 'providers', value: false});
 			});
 		},
-		setLayout({dispatch, commit}, layout) {
-			commit('setLayout', layout);
+		setLayoutAndFetch({dispatch, commit}, id) {
+			commit('setLayout', id);
 			dispatch('fetchBlocks');
 		},
         setThemeAndFetch({state, commit, dispatch}, theme) {
             commit('setTheme', theme);
-            commit('setLayout', 0);
+            let layout = state.layouts[0];
+            commit('setLayout', layout.id);
             dispatch('fetchBlocks');
         },
-		setLayoutById({state, commit, dispatch}, layoutId) {
-			for (let i in state.layouts) {
-				if (state.layouts[i].id == layoutId) {
-					dispatch('setLayout', i);
-				}
-			}
-		},
-        copy({state, commit, dispatch}, layout) {
-            layout.theme = state.theme;
-            commit('setLayoutByObject', layout);
+        copy({state, commit, dispatch}, id) {
+            commit('setLayout', id);
             commit('setIsCopying', true);
+            commit('setHasChanged', true);
             dispatch('resetBlocks', state.blocks);
         },
         deleteLayout({state, commit, dispatch}) {
@@ -268,8 +261,9 @@ const store = createStore({
             return axios.post(Craft.getCpUrl('themes/ajax/layouts/delete/'+state.layout.id), data)
             .then((response) => {
                 Craft.cp.displayNotice(response.data.message);
-                commit('deleteLayout', state.layout.id);
-                dispatch('setLayout', 0);
+                commit('updateLayout', response.data.layout);
+                let layout = state.layouts[0];
+                dispatch('setLayoutAndFetch', layout.id);
             })
             .catch((err) => {
                 handleError(err);

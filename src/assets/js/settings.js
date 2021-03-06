@@ -36,3 +36,24 @@ Craft.Themes.SettingsTable = Craft.EditableTable.extend({
         });
     }
 });
+
+function repair(btn) {
+    btn.attr('disabled', true);
+    btn.next().show();
+    $.ajax({
+        method: 'post',
+        url: btn.attr('href'),
+        dataType: 'json'
+    }).done((res) => {
+        Craft.cp.displayNotice(res.message)
+    }).fail((res) => {
+        console.log(res);
+    })
+}
+
+$(function() {
+    $('.repair').click(function (e) {
+        e.preventDefault();
+        repair($(this));
+    });
+});

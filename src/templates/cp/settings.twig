@@ -26,6 +26,13 @@
             value: settings.default
         }) }}
     {% endnamespace %}
+    <h2>{{ 'Repair zone'|t('themes') }}</h2>
+    <p>{{ 'Create missing layouts and delete orphans.' }}</p>
+    <button href="{{ url('themes/ajax/repair-layouts') }}" class="btn submit repair">{{ 'Repair Layouts'|t('themes') }}</button>
+    <div class="spinner layouts-spinner" style="display:none"></div>
+    <p>{{ 'Create missing fields and delete orphans.' }}</p>
+    <button href="{{ url('themes/ajax/repair-layouts') }}" class="btn submit repair">{{ 'Repair Fields'|t('themes') }}</button>
+    <div class="spinner fields-spinner" style="display:none"></div>
 
     {% js on ready %}
         new Craft.Themes.SettingsTable('settings-{{ id }}', 'settings[rules]', {{ cols|json_encode|raw }}, {});

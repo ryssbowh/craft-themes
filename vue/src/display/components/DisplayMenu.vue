@@ -1,8 +1,8 @@
 <template>
     <nav id="notification-nav">
         <ul>
-            <li v-for="layout2 in allLayouts" v-bind:key="layout2.handle">
-                <a href="#" :class="{'sel': layout === layout2.handle}" @click.prevent="setLayout(layout2.handle)">{{ layout2.description }}</a>
+            <li v-for="layout2 in themeLayouts" v-bind:key="layout2.id">
+                <a href="#" :class="{'sel': layout.id === layout2.id}" @click.prevent="setLayoutAndFetch(layout2.id)">{{ layout2.description }}</a>
             </li>
         </ul>
     </nav>
@@ -14,20 +14,20 @@ import Mixin from '../../mixin';
 
 export default {
     computed: {
-        ...mapState(['layout'])
+        themeLayouts: function () {
+            return this.layouts.filter(layout => layout.hasFields);
+        },
+        ...mapState(['layout', 'layouts'])
     },
     props: {
-        allLayouts: Object,
-        currentLayout: String
+        
     },
     created () {
-        if (this.currentLayout) {
-            this.setLayout(this.currentLayout);
-        }
+
     },
     methods: {
-        ...mapMutations([]),
-        ...mapActions(['setLayout']),
+        ...mapMutations(['setAllLayouts']),
+        ...mapActions(['setLayoutAndFetch']),
     },
     mixins: [Mixin],
 };

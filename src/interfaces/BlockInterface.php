@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use Ryssbowh\CraftThemes\models\Layout;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Model;
 
 interface BlockInterface extends RenderableInterface

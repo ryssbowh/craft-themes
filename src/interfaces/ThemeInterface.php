@@ -67,4 +67,9 @@ interface ThemeInterface
      * @return array
      */
     public function getRegions(): array;
+
+    /**
+     * Callback after the theme has been set for a request
+     */
+    public function afterSet();
 }

@@ -1,0 +1,9 @@
+{% import "_includes/forms" as forms %}
+
+{{
+    forms.lightswitchField({
+        value: options.linked,
+        name: 'linked',
+        label: 'Output as links'|t('themes')
+    })
+}}

@@ -1,9 +1,9 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes\blocks;
+namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockTemplateOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\BlockTemplateOptions;
 use craft\base\Model;
 
 class TemplateBlock extends Block

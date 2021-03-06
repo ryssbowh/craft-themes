@@ -5,7 +5,6 @@ namespace Ryssbowh\CraftThemes\records;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use Ryssbowh\CraftThemes\models\LayoutLine;
 use craft\db\ActiveRecord;
 
 class BlockRecord extends ActiveRecord

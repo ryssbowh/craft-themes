@@ -7,7 +7,7 @@ use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\Layout;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
@@ -38,7 +38,7 @@ class BlockService extends Service
             $blocks = [];
             foreach (BlockRecord::find()->all() as $record) {
                 try {
-                    $blocks[$record->id] = $record->toModel();
+                    $blocks[] = $record->toModel();
                 } catch (BlockProviderException $e) {}
             }
             $this->blocks = $blocks;
@@ -163,6 +163,29 @@ class BlockService extends Service
         }
 
         return $block;
+    }
+
+    /**
+     * Delete all blocks for a layout
+     * 
+     * @param Layout $layout
+     */
+    public function deleteLayoutBlocks(Layout $layout)
+    {
+        $res = true;
+        foreach ($this->forLayout($layout->id) as $block) {
+            $res = ($res and $this->deleteBlockModel($block));
+        }
+        return $res;
+    }
+
+    public function deleteBlockModel(Block $block): bool
+    {
+        $record = BlockRecord::find()->where(['id' => $block->id]);
+        if ($record) {
+            return $this->deleteBlock($record);
+        }
+        return false;
     }
 
     /**

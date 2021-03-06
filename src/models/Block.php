@@ -5,8 +5,10 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
-use Ryssbowh\CraftThemes\models\NoOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\NoOptions;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Model;
 
 abstract class Block extends Model implements BlockInterface, RenderableInterface

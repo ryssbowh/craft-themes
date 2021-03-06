@@ -15,7 +15,8 @@ class DisplayAssets extends AssetBundle
     ];
 
     public $depends = [
-        CpAsset::class
+        CpAsset::class,
+        JquerySerializeJSON::class
     ];
 
     public function init()

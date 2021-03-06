@@ -30,9 +30,7 @@ class Install extends Migration
             'theme' => $this->string(255)->notNull(),
             'type' => $this->string(255)->notNull(),
             'element' => $this->string(255)->notNull(),
-            'default_entry' => $this->boolean()->defaultValue(false),
-            'default_category' => $this->boolean()->defaultValue(false),
-            'default_route' => $this->boolean()->defaultValue(false),
+            'hasBlocks' => $this->boolean()->defaultValue(false),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid()
@@ -42,8 +40,24 @@ class Install extends Migration
             'id' => $this->primaryKey(),
             'handle' => $this->string(255)->notNull(),
             'name' => $this->string(255)->notNull(),
-            'layout' => $this->string(255)->notNull(),
-            'theme' => $this->string(255)->notNull(),
+            'layout' => $this->integer(11)->unsigned()->notNull(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid()
+        ]);
+
+        $this->createTable('{{%themes_fields}}', [
+            'id' => $this->primaryKey(),
+            'viewMode' => $this->integer(11)->unsigned()->notNull(),
+            'field' => $this->string(255)->notNull(),
+            'layout' => $this->integer(11)->unsigned()->notNull(),
+            'displayerHandle' => $this->string(255)->notNull(),
+            'labelHidden' => $this->boolean()->defaultValue(false),
+            'labelVisuallyHidden' => $this->boolean()->defaultValue(false),
+            'hidden' => $this->boolean()->defaultValue(false),
+            'visuallyHidden' => $this->boolean()->defaultValue(false),
+            'order' => $this->boolean()->defaultValue(false),
+            'options' => $this->text(),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid()
@@ -58,5 +72,6 @@ class Install extends Migration
         $this->dropTableIfExists('{{%themes_blocks}}');
         $this->dropTableIfExists('{{%themes_blocks_layouts}}');
         $this->dropTableIfExists('{{%themes_view_modes}}');
+        $this->dropTableIfExists('{{%themes_fields}}');
     }
 }

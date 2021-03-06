@@ -1,6 +1,6 @@
 <?php
 
-namespace Ryssbowh\CraftThemes\models;
+namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use craft\base\Model;
 

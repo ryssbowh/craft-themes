@@ -2,6 +2,8 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Model;
 
 class ViewMode extends Model
@@ -12,12 +14,7 @@ class ViewMode extends Model
     public $id;
 
     /**
-     * @var string
-     */
-    public $theme;
-
-    /**
-     * @var string
+     * @var int
      */
     public $layout;
 
@@ -52,7 +49,8 @@ class ViewMode extends Model
     public function rules()
     {
         return [
-            [['theme', 'layout', 'name', 'handle'], 'string']
+            [['name', 'handle'], 'string'],
+            ['layout', 'integer']
         ];
     }
 
@@ -64,10 +62,19 @@ class ViewMode extends Model
     public function getConfig(): array
     {
         return [
-            'theme' => $this->theme,
-            'layout' => $this->layout,
+            'layout' => $this->layout()->uid,
             'name' => $this->name,
             'handle' => $this->handle,
         ];
+    }
+
+    /**
+     * Get layout object
+     * 
+     * @return Layout
+     */
+    public function layout(): Layout
+    {
+        return Themes::$plugin->layouts->getById($this->layout);
     }
 }

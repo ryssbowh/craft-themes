@@ -8,4 +8,9 @@ class ViewModeException extends \Exception
     {
         return new static("Default view mode can't be deleted");
     }
+
+    public static function noId(int $id)
+    {
+        return new static("View mode with id $id couldn't be found");
+    }
 }
