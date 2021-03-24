@@ -34,23 +34,8 @@ class CpDisplayController extends Controller
             'title' => \Craft::t('themes', 'Display'),
             'themes' => $themes,
             'theme' => $themeName,
-            'allLayouts' => $this->layouts->getLayoutsByTheme(true),
+            'allLayouts' => $this->layouts->getLayoutsByTheme(true, true, false),
             'layout' => $layout ? $layout : 0
-        ]);
-    }
-
-    /**
-     * Get view modes for a theme and a layout as json
-     * 
-     * @param  int $layout
-     * @return Response
-     */
-    public function actionViewModes(int $layout)
-    {
-        $this->requireAcceptsJson();
-        $layout = $this->layouts->getById($layout);
-        return $this->asJson([
-            'viewModes' => $this->viewModes->forLayout($layout)
         ]);
     }
 }

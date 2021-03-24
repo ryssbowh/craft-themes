@@ -1,0 +1,25 @@
+{% extends "fields/_field" %}
+
+{% macro link(asset, options) %}
+    <a href="{{ asset.url }}" {% if options.newTab %}target="_blank"{% endif %} {% if options.download %}download{% endif %}>
+        {% if options.label == 'title' %}
+            {{ asset.title }}
+        {% else %}
+            {{ options.custom }}
+        {% endif %}
+    </a>
+{% endmacro %}
+
+{% block content %}
+    {% if value|length %}
+        {% if craftField.limit == '1' %}
+            {{ _self.link(value.0, options) }}
+        {% else %}
+            <ul class="asset-list">
+                {% for asset in value %}
+                    <li class="asset-list-item">{{ _self.link(asset, options) }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endif %}
+{% endblock %}

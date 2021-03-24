@@ -9,15 +9,13 @@ use craft\fieldlayoutelements\TitleField;
 
 class DefaultTitle extends FieldDisplayer
 {
-    public $handle = 'default_title';
+    public $handle = 'title_default';
 
     public $isDefault = true;
 
     public $hasOptions = true;
 
-    public $name = 'Default';
-
-    public function getName()
+    public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
@@ -27,14 +25,14 @@ class DefaultTitle extends FieldDisplayer
         return TitleField::class;
     }
 
-    public function getOptionsModel(): ?Model
+    public function getOptionsModel(): Model
     {
         return new DefaultTitleOptions;
     }
 
     public function getOptionsHtml(): string
     {
-        return \Craft::$app->view->renderTemplate('themes/cp/fieldDisplayers/default-title', [
+        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
             'options' => $this->getOptions()
         ]);
     }

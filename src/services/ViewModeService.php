@@ -18,6 +18,7 @@ class ViewModeService extends Service
     const EVENT_AFTER_DELETE = 4;
     const EVENT_BEFORE_DELETE = 5;
     const CONFIG_KEY = 'themes.viewModes';
+    const DEFAULT_HANDLE = 'default';
 
     protected $viewModes;
 
@@ -63,37 +64,51 @@ class ViewModeService extends Service
     public function forLayout(Layout $layout): array
     {
         $viewModes = array_values(array_filter($this->getAll(), function ($viewMode) use ($layout) {
-            return ($viewMode->layout == $layout->id);
+            return ($viewMode->layout_id == $layout->id);
         }));
         if (!$viewModes) {
-            $viewModes[] = $this->create($layout, 'deault');
+            $viewModes[] = $this->create($layout, ViewModeService::DEFAULT_HANDLE);
         }
         return $viewModes;
     }
 
     /**
+     * Delete all view modes which id is not in $toKeep for a layout
+     * 
+     * @param array  $toKeep
+     * @param Layout $layout
+     */
+    public function deleteForLayout(Layout $layout, array $toKeep = [])
+    {
+        $viewModes = ViewModeRecord::find()->where([
+            'layout_id' => $layout->id
+        ])->andWhere(['not in', 'id', $toKeep])->all();
+        foreach ($viewModes as $viewMode) {
+            $this->delete($viewMode->toModel());
+        }
+    }
+
+    /**
      * Get a default view mode
      * 
-     * @param  string $theme
-     * @param  string $layout
+     * @param  Layout $layout
      * @return array
      */
-    public function getDefault(string $theme, string $layout): ?ViewMode
+    public function getDefault(Layout $layout): ?ViewMode
     {
-        return $this->get($theme, $layout, 'default');
+        return $this->get($layout);
     }
 
     /**
      * Get a view mode
      * 
-     * @param  string $theme
-     * @param  string $layout
+     * @param  Layout $layout
      * @param  string $handle
      * @return array
      */
-    public function get(string $theme, string $layout, string $handle): ?ViewMode
+    public function get(Layout $layout, string $handle = self::DEFAULT_HANDLE): ?ViewMode
     {
-        foreach ($this->forLayout($theme, $layout) as $viewMode) {
+        foreach ($this->forLayout($layout) as $viewMode) {
             if ($viewMode->handle == $handle) {
                 return $viewMode;
             }
@@ -119,19 +134,13 @@ class ViewModeService extends Service
         return $viewMode;
     }
 
-    /**
-     * Delete all view modes which id is not in $toKeep for a layout
-     * 
-     * @param array $toKeep
-     * @param int   $layoutId
-     */
-    public function deleteForLayout(array $toKeep, int $layoutId)
+    public function deleteAll(array $toKeep = [])
     {
-        $layouts = array_filter($this->viewModes, function ($viewMode) use ($toKeep, $layoutId) {
-            return ($viewMode->layout === $layoutId and !in_array($viewMode->id, $toKeep));
+        $viewModes = array_filter($this->viewModes, function ($viewMode) use ($toKeep) {
+            return (!$viewMode->handle == 'default' and !in_array($viewMode->id, $toKeep));
         });
-        foreach ($layouts as $layout) {
-            $this->delete($layout);
+        foreach ($viewModes as $viewMode) {
+            $this->delete($viewMode);
         }
     }
 
@@ -186,7 +195,7 @@ class ViewModeService extends Service
      */
     public function delete(ViewMode $viewMode): bool
     {
-        if ($viewMode->handle == 'default') {
+        if ($viewMode->handle == ViewModeService::DEFAULT_HANDLE) {
             throw ViewModeException::defaultUndeletable();
         }
         $this->triggerEvent(self::EVENT_BEFORE_DELETE, new ViewModeEvent([
@@ -219,7 +228,7 @@ class ViewModeService extends Service
 
             $viewMode->uid = $uid;
             $viewMode->handle = $data['handle'];
-            $viewMode->layout = $this->layoutService()->getRecordByUid($data['layout'])->id;
+            $viewMode->layout_id = $this->layoutService()->getRecordByUid($data['layout_id'])->id;
             $viewMode->name = $data['name'];
             
             $viewMode->save(false);
@@ -270,12 +279,12 @@ class ViewModeService extends Service
      * @param  string $name
      * @return ViewMode
      */
-    public function create(Layout $layout, string $handle = 'default', string $name = 'Default'): ViewMode
+    public function create(Layout $layout, string $handle = ViewModeService::DEFAULT_HANDLE, string $name = 'Default'): ViewMode
     {
         $viewMode = new ViewMode([
             'handle' => $handle,
-            'name' => $name,
-            'layout' => $layout->id
+            'name' => \Craft::t('themes', $name),
+            'layout_id' => $layout->id
         ]);
         $this->save($viewMode);
         $viewModes = $this->viewModes;

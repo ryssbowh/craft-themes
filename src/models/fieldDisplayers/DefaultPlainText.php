@@ -9,13 +9,13 @@ use craft\fields\PlainText;
 
 class DefaultPlainText extends FieldDisplayer
 {
-    public $handle = 'default_plain_text';
+    public $handle = 'plain_text_default';
 
     public $isDefault = true;
 
-    public $name = 'Default';
+    public $hasOptions = true;
 
-    public function getName()
+    public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
@@ -25,8 +25,15 @@ class DefaultPlainText extends FieldDisplayer
         return PlainText::class;
     }
 
-    public function getOptionsModel(): ?Model
+    public function getOptionsModel(): Model
     {
-        return new DefaultPlainTextOptions($this->field ? $this->field->options : []);
+        return new DefaultPlainTextOptions;
+    }
+
+    public function getOptionsHtml(): string
+    {
+        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
+            'options' => $this->getOptions()
+        ]);
     }
 }

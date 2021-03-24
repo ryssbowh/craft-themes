@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use craft\base\Model;
 
 class Settings extends Model
@@ -17,12 +18,25 @@ class Settings extends Model
     public $default;
 
     /**
+     * @var boolean
+     */
+    public $devMode = false;
+
+    /**
+     * @var boolean
+     */
+    public $eagerLoad = true;
+
+    public $memoryLoading = true;
+
+    /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            ['default', 'string']
+            ['default', 'string'],
+            [['eagerLoad', 'devMode', 'memoryLoading'], 'boolean']
         ];
     }
 
@@ -32,5 +46,13 @@ class Settings extends Model
     public function getRules(): array
     {
         return $this->rules ? $this->rules : [];
+    }
+
+    public function getDevModeEnabled(): bool
+    {
+        if (getenv('ENVIRONMENT') != 'production') {
+            return $this->devMode;
+        }
+        return false;
     }
 }

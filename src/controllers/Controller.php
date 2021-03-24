@@ -38,6 +38,16 @@ class Controller extends CraftController
     protected $fields;
 
     /**
+     * @var FieldDisplayerService
+     */
+    protected $fieldDisplayers;
+
+    /**
+     * @var DisplayService
+     */
+    protected $display;
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -45,9 +55,10 @@ class Controller extends CraftController
         parent::init();
         $this->registry = Themes::$plugin->registry;
         $this->blockProviders = Themes::$plugin->blockProviders;
+        $this->fieldDisplayers = Themes::$plugin->fieldDisplayers;
         $this->blocks = Themes::$plugin->blocks;
         $this->layouts = Themes::$plugin->layouts;
         $this->viewModes = Themes::$plugin->viewModes;
-        $this->fields = Themes::$plugin->fields;
+        $this->display = Themes::$plugin->display;
     }
 }

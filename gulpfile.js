@@ -9,7 +9,7 @@ gulp.task('js-dev', function() {
   return gulp
     .src('src/assets/js/*.js')
     .pipe(sourcemaps.init())
-    .pipe(babel({ presets: ['@babel/env'] }))
+    .pipe(babel({ presets: ['@babel/preset-env'] }))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('src/assets/dist'))
@@ -18,7 +18,7 @@ gulp.task('js-dev', function() {
 gulp.task('js-prod', function() {
   return gulp
     .src('src/assets/js/*.js')
-    .pipe(babel({ presets: ['@babel/env'] }))
+    .pipe(babel({ presets: ['@babel/preset-env'] }))
     .pipe(uglify())
     .pipe(gulp.dest('src/assets/dist'))
 });

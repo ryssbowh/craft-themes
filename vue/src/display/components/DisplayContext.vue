@@ -36,14 +36,17 @@ export default {
             this.setLayoutAndFetch(this.findFirstLayout());
         }
         window.addEventListener('popstate', () => {
-            // const url = document.location.pathname.split('/');
-        // let i = url.findIndex(e => e == 'display');
+            const url = document.location.pathname.split('/');
+            let i = url.findIndex(e => e == 'display');
+            if (i !== -1 && typeof url[i+1] != 'undefined') {
+                this.setLayoutAndFetch(url[i+1]);
+            }
         });
     },
     methods: {
         findFirstLayout: function () {
             for (let layout of this.layouts) {
-                if (layout.hasFields) {
+                if (layout.hasDisplays) {
                     return layout.id;
                 }
             }

@@ -17,6 +17,22 @@ class Service extends Component
     }
 
     /**
+     * @return BlockService
+     */
+    protected function fieldsService(): FieldsService
+    {
+        return Themes::$plugin->fields;
+    }
+
+    /**
+     * @return BlockService
+     */
+    protected function fieldDisplayersService(): FieldDisplayerService
+    {
+        return Themes::$plugin->fieldDisplayers;
+    }
+
+    /**
      * @return ThemesRegistry
      */
     protected function themesRegistry(): ThemesRegistry
@@ -43,9 +59,25 @@ class Service extends Component
     /**
      * @return BlockProvidersService
      */
-    protected function providerService(): BlockProvidersService
+    protected function blockProviderService(): BlockProvidersService
     {
         return Themes::$plugin->blockProviders;
+    }
+
+    /**
+     * @return CacheService
+     */
+    protected function cacheService(): CacheService
+    {
+        return Themes::$plugin->cache;
+    }
+
+    /**
+     * @return DisplayService
+     */
+    protected function displayService(): DisplayService
+    {
+        return Themes::$plugin->display;
     }
 
     /**

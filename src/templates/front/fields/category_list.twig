@@ -1,0 +1,17 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% for cat in value %}
+        <ul class="category-list">
+            <li class="category-list-item">
+                {% if options.linked and cat.url %}
+                    <a href="{{ cat.url }}">
+                        {{ cat.title }}
+                    </a>
+                {% else %}
+                    {{ cat.title }}
+                {% endif %}
+            </li>
+        </ul>
+    {% endfor %}
+{% endblock %}

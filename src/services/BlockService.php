@@ -68,10 +68,10 @@ class BlockService extends Service
      * @param  int    $layout
      * @return array
      */
-    public function forLayout(int $layout): array
+    public function forLayout(Layout $layout): array
     {
         return array_filter($this->getAll(), function ($block) use ($layout) {
-            return $layout == $block->layout;
+            return $layout->id == $block->layout_id;
         });
     }
 
@@ -112,7 +112,7 @@ class BlockService extends Service
         $ids = [];
         $hasErrors = false;
         foreach ($blocks as $block) {
-            $block->layout = $layout->id;
+            $block->layout_id = $layout->id;
             if ($validate) {
                 if ($block->validate()) {
                     $ids[] = $this->saveBlock($block)->id;
@@ -125,7 +125,7 @@ class BlockService extends Service
         }
         if (!$hasErrors) {
             $toDelete = BlockRecord::find()
-                ->where(['layout' => $layout->id])
+                ->where(['layout_id' => $layout->id])
                 ->andWhere(['not in', 'id', $ids])
                 ->all();
             foreach ($toDelete as $block) {
@@ -220,7 +220,7 @@ class BlockService extends Service
 
             $block->uid = $uid;
             $block->region = $data['region'];
-            $block->layout = $this->layoutService()->getRecordByUid($data['layout'])->id;
+            $block->layout_id = $this->layoutService()->getRecordByUid($data['layout_id'])->id;
             $block->handle = $data['handle'];
             $block->provider = $data['provider'];
             $block->order = $data['order'];
@@ -289,6 +289,6 @@ class BlockService extends Service
         if (!isset($data['provider'])) {
             throw BlockException::noProviderInData(__METHOD__);
         }
-        return $this->providerService()->getByHandle($data['provider'])->getBlock($handle, $data); 
+        return $this->blockProviderService()->getByHandle($data['provider'])->getBlock($handle, $data); 
     }
 }

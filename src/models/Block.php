@@ -51,7 +51,7 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     /**
      * @var int
      */
-    public $layout;
+    public $layout_id;
 
     /**
      * @var string
@@ -113,7 +113,7 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     public function getConfig(): array
     {
         return [
-            'layout' => $this->layout()->uid,
+            'layout_id' => $this->layout->uid,
             'region' => $this->region,
             'handle' => $this->handle,
             'provider' => $this->provider,
@@ -126,9 +126,9 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     /**
      * @inheritDoc
      */
-    public function layout(): Layout
+    public function getLayout(): Layout
     {
-        return Themes::$plugin->layouts->getById($this->layout);
+        return Themes::$plugin->layouts->getById($this->layout_id);
     }
 
     /**
@@ -137,10 +137,10 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     public function rules()
     {
         return [
-            [['region', 'handle', 'provider', 'order', 'active', 'layout'], 'required'],
+            [['region', 'handle', 'provider', 'order', 'active', 'layout_id'], 'required'],
             [['region', 'handle', 'provider'], 'string'],
             ['active', 'boolean'],
-            [['order', 'layout'], 'number'],
+            [['order', 'layout_id'], 'number'],
             ['options', function(){}]
         ];
     }
@@ -223,5 +223,15 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     public function getOptionsModel(): Model
     {
         return new NoOptions;
+    }
+
+    public function render(): string
+    {
+        return Themes::$plugin->view->renderBlock($this);
+    }
+
+    public function __toString()
+    {
+        return $this->render();
     }
 }

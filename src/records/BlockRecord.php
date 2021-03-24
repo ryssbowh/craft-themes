@@ -23,4 +23,9 @@ class BlockRecord extends ActiveRecord
     {
         return $this->getProvider()->getBlock($this->handle, $this->getAttributes());
     }
+
+    public function getLayout()
+    {
+        return $this->hasOne(LayoutRecord::className(), ['layout_id' => 'id']);
+    }
 }

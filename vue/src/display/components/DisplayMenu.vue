@@ -15,7 +15,7 @@ import Mixin from '../../mixin';
 export default {
     computed: {
         themeLayouts: function () {
-            return this.layouts.filter(layout => layout.hasFields);
+            return this.layouts.filter(layout => layout.hasDisplays);
         },
         ...mapState(['layout', 'layouts'])
     },

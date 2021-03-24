@@ -2,6 +2,8 @@
 
 namespace Ryssbowh\CraftThemes\exceptions;
 
+use Ryssbowh\CraftThemes\models\layouts\Layout;
+
 class LayoutException extends \Exception
 {
     public static function noTheme(string $class)
@@ -32,5 +34,15 @@ class LayoutException extends \Exception
     public static function defaultUndeletable()
     {
         return new static("Default layout can't be deleted");
+    }
+
+    public static function notLoaded(Layout $layout, string $method)
+    {
+        return new static("$method can't be called unless the layout (".get_class($layout).") is loaded");
+    }
+
+    public static function noRegion(string $region)
+    {
+        return new static("Region $handle doesn't exist in this layout");
     }
 }

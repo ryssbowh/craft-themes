@@ -1,0 +1,18 @@
+{% import "_includes/forms" as forms %}
+
+{{
+    forms.textField({
+        type: 'number',
+        value: options.trimmed,
+        name: 'trimmed',
+        label: 'Trimmed'|t('themes'),
+        placeholder: 'Character limit'|t('themes')
+    })
+}}
+{{
+    forms.textField({
+        name: 'ellipsis',
+        value: options.ellipsis,
+        label: 'Ellipsis'|t('theme')
+    })
+}}

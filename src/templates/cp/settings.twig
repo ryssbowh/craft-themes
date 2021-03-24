@@ -2,6 +2,7 @@
 {% extends "_layouts/cp" %}
 {% set title = title %}
 {% set selectedSubnavItem = 'themes-settings' %}
+{% set fullPageForm = true %}
 
 {% block content %}
     <input type="hidden" name="action" value="plugins/save-plugin-settings">
@@ -19,20 +20,35 @@
         {% include "_includes/forms/editableTable" %}
 
         <h2>{{ 'Default theme'|t('themes') }}</h2>
-        <p>{{ 'Default theme when no rules match'|t('themes') }}</p>
         {{ forms.selectField({
             name: 'default',
             options: themes,
-            value: settings.default
+            value: settings.default,
+            instructions: 'Default theme when no rules match'|t('themes')
         }) }}
+
+        <h2>{{ 'Settings' }}</h2>
+        {{ 
+            forms.lightswitchField({
+                label: 'Devel mode'|t('themes'),
+                name: 'devMode',
+                on: settings.devMode,
+                instructions: 'Devel mode will show all the available templates and variables on the front end as Html comments. Always off on production no matter what is chosen here.'|t('themes')
+            }) 
+        }}
+        {{ 
+            forms.lightswitchField({
+                label: 'Eager loading'|t('themes'),
+                name: 'eagerLoad',
+                on: settings.eagerLoad,
+                instructions: 'Eager load all visible fields automatically.'|t('themes')
+            }) 
+        }}
     {% endnamespace %}
     <h2>{{ 'Repair zone'|t('themes') }}</h2>
-    <p>{{ 'Create missing layouts and delete orphans.' }}</p>
-    <button href="{{ url('themes/ajax/repair-layouts') }}" class="btn submit repair">{{ 'Repair Layouts'|t('themes') }}</button>
+    <p>{{ 'Create missing layouts and fields and delete orphans.' }}</p>
+    <button href="{{ url('themes/ajax/repair') }}" class="btn submit repair">{{ 'Repair'|t('themes') }}</button>
     <div class="spinner layouts-spinner" style="display:none"></div>
-    <p>{{ 'Create missing fields and delete orphans.' }}</p>
-    <button href="{{ url('themes/ajax/repair-layouts') }}" class="btn submit repair">{{ 'Repair Fields'|t('themes') }}</button>
-    <div class="spinner fields-spinner" style="display:none"></div>
 
     {% js on ready %}
         new Craft.Themes.SettingsTable('settings-{{ id }}', 'settings[rules]', {{ cols|json_encode|raw }}, {});

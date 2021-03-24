@@ -1,51 +1,66 @@
 <template>
-    <div class="display-fields">
+    <div class="themes-displays">
         <div class="spinner-wrapper" v-if="isLoading">
           <div class="spinner"></div>
         </div>
-        <h2>{{ t('Fields') }}</h2>
-        <table class="fullwidth data" v-if="visibleFields.length">
-            <thead>
-                <tr>
-                    <td>{{ t('Title') }}</td>
-                    <td>{{ t('Handle') }}</td>
-                    <td>{{ t('Type') }}</td>
-                    <td>{{ t('Label') }}</td>
-                    <td>{{ t('Visibility') }}</td>
-                    <td>{{ t('Displayer') }}</td>
-                    <td>{{ t('Actions') }}</td>
-                </tr>
-            </thead>
-            <tbody>
-                <display-field v-for="field in visibleFields" 
-                    :field="field"
-                />
-            </tbody>
-        </table>
-        <p v-if="visibleFields.length == 0">
+        <h2>{{ t('Displays') }}</h2>
+        <div class="fullwidth display-table" v-if="visibleDisplays.length">
+            <div class="line head">
+                <div class="handle col"></div>
+                <div class="title col">{{ t('Title') }}</div>
+                <div class="handle col">{{ t('Handle') }}</div>
+                <div class="type col">{{ t('Type') }}</div>
+                <div class="label col">{{ t('Label') }}</div>
+                <div class="visibility col">{{ t('Visibility') }}</div>
+                <div class="displayer col">{{ t('Displayer') }}</div>
+                <div class="options col">{{ t('Options') }}</div>
+            </div>
+            <div class="body">
+                <draggable
+                    item-key="id"
+                    :list="visibleDisplays"
+                    group="displays"
+                    handle=".move"
+                    @change="visibleChanged"
+                    >
+                    <template #item="{element}">
+                        <display-field v-if="element.type == 'field'" :display="element" @changedVisibility="rebuildOrders" />
+                    </template>
+                </draggable>
+            </div>
+        </div>
+        <p v-if="visibleDisplays.length == 0">
             {{ t('There are no visible fields') }}
         </p>
         <h2>{{ t('Hidden') }}</h2>
-        <table class="fullwidth data" v-if="hiddenFields.length">
-            <thead>
-                <tr>
-                    <td>{{ t('Title') }}</td>
-                    <td>{{ t('Handle') }}</td>
-                    <td>{{ t('Type') }}</td>
-                    <td>{{ t('Label') }}</td>
-                    <td>{{ t('Visibility') }}</td>
-                    <td>{{ t('Displayer') }}</td>
-                    <td>{{ t('Actions') }}</td>
-                </tr>
-            </thead>
-            <tbody>
-                <display-field v-for="field in hiddenFields" 
-                    :field="field"
-                />
-            </tbody>
-        </table>
-        <p v-if="hiddenFields.length == 0">
-            {{ t('There are no hidden fields') }}
+        <div class="fullwidth display-table" v-if="hiddenDisplays.length">
+            <div class="line head">
+                <div class="handle col"></div>
+                <div class="title col">{{ t('Title') }}</div>
+                <div class="handle col">{{ t('Handle') }}</div>
+                <div class="type col">{{ t('Type') }}</div>
+                <div class="label col">{{ t('Label') }}</div>
+                <div class="visibility col">{{ t('Visibility') }}</div>
+                <div class="displayer col">{{ t('Displayer') }}</div>
+                <div class="options col">{{ t('Options') }}</div>
+            </div>
+            <div class="body">
+                <draggable
+                    item-key="id"
+                    :list="hiddenDisplays"
+                    group="displays"
+                    handle=".move"
+                    :sort="false"
+                    @change="hiddenChanged"
+                    >
+                    <template #item="{element}">
+                        <display-field v-if="element.type == 'field'" :display="element" @changedVisibility="rebuildOrders" />
+                    </template>
+                </draggable>
+            </div>
+        </div>
+        <p v-if="hiddenDisplays.length == 0">
+            {{ t('There are no hidden displays') }}
         </p>
     </div>
 </template>
@@ -54,7 +69,10 @@
 import { mapMutations, mapState, mapActions } from 'vuex';
 import Mixin from '../../mixin';
 import DisplayField from './DisplayField';
-import { reduce } from 'lodash';
+import DisplayGroup from './DisplayGroup';
+import DisplayMatrix from './DisplayMatrix';
+import { reduce, filter, sortBy } from 'lodash';
+import Draggable from 'vuedraggable';
 
 export default {
     computed: {
@@ -66,27 +84,22 @@ export default {
         currentViewMode: function () {
             return this.viewModes[this.viewMode];
         },
-        viewModeFields: function () {
+        viewModeDisplays: function () {
             if (!this.currentViewMode) {
                 return [];
             }
-            return this.fields.filter(field => field.viewMode === this.currentViewMode.id || field.viewMode === this.currentViewMode.handle);
+            return sortBy(filter(this.displays, display => display.viewMode_id === this.currentViewMode.id || display.viewMode_id === this.currentViewMode.handle), 'order');
         },
-        hiddenFields: function () {
-            return this.viewModeFields.filter(field => field.hidden == 1);
+        hiddenDisplays: function () {
+            return filter(this.viewModeDisplays, display => display.hidden == 1);
         },
-        visibleFields: function () {
-            return this.viewModeFields.filter(field => !field.hidden == 1 && field.availableDisplayers.length);
+        visibleDisplays: function () {
+            return filter(this.viewModeDisplays, display => display.hidden == 0);
         },
-        ...mapState(['fields', 'isSaving', 'isFetching', 'viewModes', 'viewMode'])
-    },
-    props: {
-    },
-    created () {
-        
+        ...mapState(['displays', 'isSaving', 'isFetching', 'viewModes', 'viewMode'])
     },
     watch: {
-        fields: {
+        displays: {
             deep: true,
             handler() {
                 this.checkChanges();
@@ -94,21 +107,85 @@ export default {
         }
     },
     methods: {
-        ...mapMutations([]),
+        visibleChanged: function (e) {
+            if (e.added) {
+                let data = {
+                    hidden: false,
+                    visuallyHidden: false
+                };
+                e.moved = e.added;
+                this.updateDisplay({id: e.added.element.id, data: data});
+            }
+            this.rebuildOrders(e);
+        },
+        hiddenChanged: function (e) {
+            if (e.added) {
+                let data = {
+                    order: this.visibleDisplays.length + 1,
+                    hidden: false,
+                    visuallyHidden: false
+                };
+                this.updateDisplay({id: e.added.element.id, data: data});
+            }
+            this.rebuildOrders(e);
+        },
+        rebuildOrders: function (e) {
+            let displays = this.visibleDisplays;
+            let newOrder = 0;
+            for (let i in displays) {
+                let display = displays[i];
+                if (e.moved && newOrder == e.moved.newIndex) {
+                    newOrder++;
+                }
+                if (e.moved && display.id == e.moved.element.id) {
+                    continue;
+                }
+                this.updateDisplay({id: display.id, data: {order: newOrder}});
+                newOrder++;
+            }
+            if (e.moved) {
+                this.updateDisplay({id: e.moved.element.id, data: {order: e.moved.newIndex}});
+            }
+            displays = this.hiddenDisplays;
+            for (let i in displays) {
+                let display = displays[i];
+                this.updateDisplay({id: display.id, data: {order: newOrder}});
+                newOrder++;
+            }
+        },
+        ...mapMutations(['updateDisplay']),
         ...mapActions(['checkChanges']),
     },
     mixins: [Mixin],
     components: {
-        DisplayField
+        DisplayField,
+        DisplayMatrix,
+        DisplayGroup,
+        Draggable
     }
 };
 </script>
 
-<style lang="scss" scoped>
-thead td {
-    font-weight: bold
+<style lang="scss">
+.display-table {
+    .head {
+        font-weight: bold;
+        background: #f3f7fc;
+        border-radius: 5px;
+    }
+    .line {
+        display: grid;
+        grid-template-columns: 2% 12% 12% 12% 17% 17% 17% 11%;
+        align-items: center;
+        margin: 0;
+    }
+    .col {
+        padding: 7px 10px;
+    }
+    .sortable-chosen {
+    }
 }
-.display-fields {
+.themes-displays {
     position: relative;
 }
 .spinner-wrapper {

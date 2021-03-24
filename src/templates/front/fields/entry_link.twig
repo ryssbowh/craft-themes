@@ -1,0 +1,25 @@
+{% extends "fields/_field" %}
+
+{% macro entryLink(entry, options) %}
+    {% if entry.url %}
+        <a href="{{ entry.url }}" {% if options.newTab %}target="_blank"{% endif %}>
+    {% endif %}
+    {{ options.label == 'title' ? entry.title : options.custom }}
+    {% if entry.url %}
+        </a>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {% if craftField.limit == 1 %}
+        {{ _self.entryLink(value.0, options) }}
+    {% else %}
+        {% for entry in value %}
+            <ul class="category-list">
+                <li class="category-list-item">
+                    {{ _self.entryLink(entry, options) }}
+                </li>
+            </ul>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

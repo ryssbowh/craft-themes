@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\services\Routes;
 
 class RouteLayout extends Layout
@@ -9,12 +10,7 @@ class RouteLayout extends Layout
     /**
      * @var string
      */
-    public $type = 'route';
-
-    /**
-     * @var boolean
-     */
-    protected $_hasFields = false;
+    public $type = LayoutService::ROUTE_HANDLE;
 
     /**
      * @inheritDoc
@@ -22,6 +18,11 @@ class RouteLayout extends Layout
     protected function loadElement()
     {
         return \Craft::$app->projectConfig->get(Routes::CONFIG_ROUTES_KEY)[$this->element];
+    }
+
+    public function getElementMachineName(): string
+    {
+        return md5($this->element()['uriPattern']);
     }
 
     /**
@@ -37,6 +38,6 @@ class RouteLayout extends Layout
      */
     public function getHandle(): string
     {
-        return 'route_' . $this->element;
+        return $this->type . '_' . $this->element;
     }
 }

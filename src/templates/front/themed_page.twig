@@ -1,0 +1,11 @@
+{% extends "_includes/html" %}
+
+{% if bodyClasses is not defined %}
+	{% set bodyClasses = [] %}
+{% endif %}
+
+{% block body %}
+	<body class="{{ bodyClasses|join(' ') }}">
+		{{ layout.render(element)|raw }}
+	</body>
+{% endblock %}

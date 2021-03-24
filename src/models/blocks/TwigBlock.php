@@ -47,7 +47,7 @@ class TwigBlock extends Block
     public function getOptionsHtml(): string
     {
         return \Craft::$app->view->renderTemplate(
-            'themes/block-options/twig', [
+            'themes/cp/block-options/twig', [
                 'options' => $this->getOptions(),
             ]
         );

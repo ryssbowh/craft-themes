@@ -46,7 +46,7 @@ class TemplateBlock extends Block
      */
     public function getOptionsHtml(): string
     {
-        return \Craft::$app->view->renderTemplate('themes/block-options/template', [
+        return \Craft::$app->view->renderTemplate('themes/cp/block-options/template', [
             'options' => $this->getOptions(),
         ]);
     }

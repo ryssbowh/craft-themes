@@ -16,7 +16,7 @@ class ViewMode extends Model
     /**
      * @var int
      */
-    public $layout;
+    public $layout_id;
 
     /**
      * @var name
@@ -43,14 +43,17 @@ class ViewMode extends Model
      */
     public $uid;
 
+    private $_layout;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
+            [['name', 'handle', 'layout_id'], 'required'],
             [['name', 'handle'], 'string'],
-            ['layout', 'integer']
+            ['layout_id', 'integer']
         ];
     }
 
@@ -62,7 +65,7 @@ class ViewMode extends Model
     public function getConfig(): array
     {
         return [
-            'layout' => $this->layout()->uid,
+            'layout_id' => $this->layout->uid,
             'name' => $this->name,
             'handle' => $this->handle,
         ];
@@ -73,8 +76,11 @@ class ViewMode extends Model
      * 
      * @return Layout
      */
-    public function layout(): Layout
+    public function getLayout(): Layout
     {
-        return Themes::$plugin->layouts->getById($this->layout);
+        if (is_null($this->_layout)) {
+            $this->_layout = Themes::$plugin->layouts->getById($this->layout_id);
+        }
+        return $this->_layout;
     }
 }

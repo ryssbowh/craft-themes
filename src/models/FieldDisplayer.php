@@ -2,8 +2,11 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
+use Ryssbowh\CraftThemes\models\displayerOptions\NoOptions;
 use craft\base\Model;
+use craft\fields\BaseRelationField;
 
 abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 {
@@ -13,31 +16,33 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 
     public $hasOptions = false;
 
-    public $name;
-
     public $handle;
-
-    public function isDefault(): bool
-    {
-        return false;
-    }
 
     public function getOptions(): Model
     {
-        if (!$this->hasOptions) {
-            throw FieldDisplayerException::noOptions(get_called_class());
-        }
         $model = $this->getOptionsModel();
         if ($this->field) {
-            $options = json_decode($this->field->options, true);
-            $model->setAttributes($options, false);
+            $model->setAttributes($this->field->options, false);
         }
         return $model;
     }
 
+    public function eagerLoad(): array
+    {
+        if ($this->field->craftField instanceof BaseRelationField) {
+            return [$this->field->craftField->handle];
+        }
+        return [];
+    }
+
     public function fields()
     {
-        return ['name', 'handle', 'isDefault', 'options', 'hasOptions'];
+        return array_merge(parent::fields(), ['name', 'options']);
+    }
+
+    public function getOptionsModel(): Model
+    {
+        return new NoOptions;
     }
 
     public function getOptionsHtml(): string

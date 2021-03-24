@@ -4,16 +4,20 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
+use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\records\BlockRecord;
+use Ryssbowh\CraftThemes\services\DisplayService;
+use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\services\ViewModeService;
+use craft\base\Element;
 use craft\base\Model;
 
 class Layout extends Model
 {
-    /**
-     * @var array
-     */
-    public $blocks = [];
+    const RENDERING_MODE_REGIONS = 'regions';
+    const RENDERING_MODE_DISPLAYS = 'displays';
 
     /**
      * @var array
@@ -28,7 +32,7 @@ class Layout extends Model
     /**
      * @var string
      */
-    public $type = 'default';
+    public $type = LayoutService::DEFAULT_HANDLE;
 
     /**
      * @var int
@@ -43,12 +47,12 @@ class Layout extends Model
     /**
      * @var boolean
      */
-    public $hasBlocks = false;
+    public $hasBlocks = 0;
 
     /**
      * @var boolean
      */
-    protected $_hasFields = false;
+    protected $_hasDisplays = false;
 
     /**
      * @var DateTime
@@ -65,15 +69,31 @@ class Layout extends Model
      */
     public $uid;
 
+    public $viewModes;
+
+    public $blocks;
+
+    /**
+     * Rendering mode, 'regions' or 'fields'
+     * @var string
+     */
+    protected $_renderingMode = self::RENDERING_MODE_REGIONS;
+
     /**
      * @var boolean
      */
-    protected $loaded = false;
+    protected $_loaded = false;
 
     /**
      * @var string|Entry|Category
      */
     protected $_element;
+
+    /**
+     * Displays indexed by view mode
+     * @var array
+     */
+    protected $_displays = [];
 
     /**
      * @inheritDoc
@@ -101,27 +121,39 @@ class Layout extends Model
         if (!isset($args['type'])) {
             throw LayoutException::noType();
         }
+
         switch ($args['type']) {
-        case 'default':
+        case LayoutService::DEFAULT_HANDLE:
             return new Layout($args);
-        case 'route':
+        case LayoutService::ROUTE_HANDLE:
             return new RouteLayout($args);
-        case 'category':
+        case LayoutService::CATEGORY_HANDLE:
             return new CategoryLayout($args);
-        case 'entry':
+        case LayoutService::ENTRY_HANDLE:
             return new EntryLayout($args);
         }
         throw LayoutException::unknownType($args['type']);
     }
 
+    public function eagerLoadFields(Element $element, string $viewMode)
+    {
+        $with = [];
+        foreach ($this->getVisibleFields($viewMode) as $field) {
+            if ($fields = $field->item->displayer->eagerLoad()) {
+                $with = array_merge($with, $fields);
+            }
+        }
+        \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
+    }
+
     /**
-     * Can this layout define fields
+     * Can this layout define displays
      * 
      * @return bool
      */
-    public function getHasFields(): bool
+    public function getHasDisplays(): bool
     {
-        return $this->_hasFields;
+        return $this->_hasDisplays;
     }
 
     /**
@@ -176,32 +208,105 @@ class Layout extends Model
         return $this->_element;
     }
 
+
+    public function getElementMachineName(): string
+    {
+        return '';
+    }
+
     /**
      * @inheritDoc
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['description', 'handle', 'hasFields']);
+        return array_merge(parent::fields(), ['description', 'handle', 'hasDisplays']);
     }
 
     /**
-     * Load blocks from database
+     * Load blocks from database.
+     * If this layout doesn't define blocks it will load its blocks from the default layout
      * 
      * @param  boolean $force
      * @return Layout
      */
-    public function loadBlocks($force = false): Layout
+    public function loadBlocks(bool $force = false): Layout
     {
-        if ($this->loaded and !$force) {
+        if ($this->_loaded and !$force) {
             return $this;
         }
         $this->regions = $this->getTheme()->getRegions();
-        $this->blocks = Themes::$plugin->blocks->getForLayout($this->theme, $this->id);
-        foreach ($this->blocks as $block) {
-            $this->regions[$block->region]->addBlock($block);
+        if (!$this->hasBlocks) {
+            $default = Themes::$plugin->layouts->getDefault($this->theme);
+            $this->blocks = Themes::$plugin->blocks->forLayout($default);
+        } else {
+            $this->blocks = Themes::$plugin->blocks->forLayout($this);
         }
-        $this->loaded = true;
+        foreach ($this->blocks as $block) {
+            $this->getRegion($block->region, false)->addBlock($block);
+        }
+        $this->_loaded = true;
         return $this;
+    }
+
+    public function getRegion(string $handle, bool $checkLoaded = true): Region
+    {
+        if ($checkLoaded and !$this->_loaded) {
+            throw LayoutException::notLoaded($this, __METHOD__);
+        }
+        foreach ($this->regions as $region) {
+            if ($region->handle == $handle) {
+                return $region;
+            }
+        }
+        if (!$this->_loaded) {
+            throw LayoutException::noRegion($handle);
+        }
+    }
+
+    public function findBlock(string $machineName): ?BlockInterface
+    {
+        if (!$this->_loaded) {
+            throw LayoutException::notLoaded($this, __METHOD__);
+        }
+        foreach ($this->blocks as $block) {
+            if ($block->getMachineName() == $machineName) {
+                return $block;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get all displays
+     * 
+     * @return array
+     */
+    public function getDisplays(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
+    {
+        if (!isset($this->_displays[$viewMode])) {
+            $viewModeObject = Themes::$plugin->viewModes->get($this, $viewMode);
+            $this->_displays[$viewMode] = Themes::$plugin->display->getForViewMode($viewModeObject);
+        }
+        return $this->_displays[$viewMode];
+    }
+
+    /**
+     * Get all visible displays
+     * 
+     * @return array
+     */
+    public function getVisibleDisplays(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
+    {
+        return array_filter($this->getDisplays($viewMode), function ($display) {
+            return $display->hidden == 0;
+        });
+    }
+
+    public function getVisibleFields(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
+    {
+        return array_filter($this->getVisibleDisplays($viewMode), function ($display) {
+            return $display->type == DisplayService::TYPE_FIELD or $display->type == DisplayService::TYPE_MATRIX;
+        });
     }
 
     /**
@@ -219,6 +324,47 @@ class Layout extends Model
      */
     public function getHandle(): string
     {
-        return 'default';
+        return LayoutService::DEFAULT_HANDLE;
+    }
+
+    public function getViewModes(): array
+    {
+        if (is_null($this->viewModes)) {
+            $this->viewModes = Themes::$plugin->viewModes->forLayout($this); 
+        }
+        return $this->viewModes;
+    }
+
+    public function getBlocks(): array
+    {
+        if (is_null($this->blocks)) {
+            $this->blocks = Themes::$plugin->blocks->forLayout($this); 
+        }
+        return $this->blocks;
+    }
+
+    public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string
+    {
+        return Themes::$plugin->view->renderLayout($this, $viewMode, $element);
+    }
+
+    public function __toString()
+    {
+        return $this->render();
+    }
+
+    public function getRenderingMode(): string
+    {
+        return $this->_renderingMode;
+    }
+
+    public function setRegionsRenderingMode()
+    {
+        $this->_renderingMode = self::RENDERING_MODE_REGIONS;
+    }
+
+    public function setDisplaysRenderingMode()
+    {
+        $this->_renderingMode = self::RENDERING_MODE_DISPLAYS;
     }
 }

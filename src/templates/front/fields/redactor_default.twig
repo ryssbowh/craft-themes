@@ -1,0 +1,14 @@
+{% import "_includes/macros" as macros %}
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% if options.stripped %}
+        {% set value = value|striptags %}
+    {% endif %}
+
+    {% if options.truncated %}
+        {% set value = macros.truncateChars(value, options.truncated, options.ellipsis) %}
+    {% else %}
+        {{ value }}
+    {% endif %}
+{% endblock %}

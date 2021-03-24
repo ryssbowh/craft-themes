@@ -1,0 +1,24 @@
+{% import "_includes/forms" as forms %}
+
+{{
+    forms.lightswitchField({
+        on: options.showPrefix,
+        name: 'showPrefix',
+        label: 'Show prefix'|t('themes')
+    })
+}}
+{{
+    forms.lightswitchField({
+        on: options.showSuffix,
+        name: 'showSuffix',
+        label: 'Show suffix'|t('themes')
+    })
+}}
+{{
+    forms.textField({
+        type: 'number',
+        name: 'decimals',
+        value: options.decimals,
+        label: 'Decimals'|t('theme')
+    })
+}}

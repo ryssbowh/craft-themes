@@ -1,0 +1,15 @@
+<div class="{{ classes|raw }}" {{ attributes|raw }} {% if display.visuallyHidden %}display="none"{% endif %}>
+    {% block label %}
+        {% if not display.labelHidden %}
+            <label class="field-label" {% if display.labelVisuallyHidden %}display="none"{% endif %}>
+                {{ field.name }}
+            </label>
+        {% endif %}
+    {% endblock %}
+
+    <div class="field-content">
+        {% block content %}
+            {{ value }}
+        {% endblock %}
+    </div>
+</div>

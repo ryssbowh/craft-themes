@@ -1,4 +1,4 @@
-if (typeof Craft.Themes === typeof undefined) {
+if (Craft.Themes == null) {
     Craft.Themes = {};
 }
 /** global: Craft */
@@ -42,16 +42,22 @@ function repair(btn) {
     btn.next().show();
     $.ajax({
         method: 'post',
-        url: btn.attr('href'),
-        dataType: 'json'
+        url: btn.attr('href'), 
+        dataType: 'json',
+        headers: {
+            'X-CSRF-Token': Craft.csrfTokenValue
+        }
     }).done((res) => {
-        Craft.cp.displayNotice(res.message)
+        Craft.cp.displayNotice(res.message);
     }).fail((res) => {
-        console.log(res);
+        Craft.cp.displayError(res.responseJSON.error);
+    }).always(() => {
+        btn.next().hide();
+        btn.attr('disabled', false);
     })
 }
 
-$(function() {
+$(function() { 
     $('.repair').click(function (e) {
         e.preventDefault();
         repair($(this));

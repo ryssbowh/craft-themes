@@ -1,0 +1,11 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% for tag in value %}
+        <ul class="tag-list">
+            <li class="tag-list-item">
+                {{ tag.title }}
+            </li>
+        </ul>
+    {% endfor %}
+{% endblock %}

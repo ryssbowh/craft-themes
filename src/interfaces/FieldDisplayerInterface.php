@@ -14,13 +14,6 @@ interface FieldDisplayerInterface
     public function getFieldTarget(): string;
 
     /**
-     * Is this displayer the default for the field it displays
-     * 
-     * @return bool
-     */
-    public function isDefault(): bool;
-
-    /**
      * Get options model
      * 
      * @return Model
@@ -38,4 +31,8 @@ interface FieldDisplayerInterface
      * @return string
      */
     public function getOptionsHtml(): string;
+
+    public function getName(): string;
+
+    public function eagerLoad(): array;
 }

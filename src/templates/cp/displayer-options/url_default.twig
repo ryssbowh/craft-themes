@@ -1,0 +1,9 @@
+{% import "_includes/forms" as forms %}
+
+{{
+    forms.lightswitchField({
+        on: options.newTab,
+        name: 'newTab',
+        label: 'Open in new tab'|t('themes')
+    })
+}}

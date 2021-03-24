@@ -1,0 +1,15 @@
+{% macro truncateChars(text, length, suffix) %}
+    {% spaceless %}
+    {% autoescape false %}
+    {% if text and length %}
+        {% set text = text|striptags %}
+        {% set suffix = suffix|default('') %}
+        {% set stringy = create(
+            "Stringy\\Stringy",
+            [text]
+        ) %}
+        {{ stringy.safeTruncate(length, suffix) }}
+    {% endif %}
+    {% endautoescape %}
+    {% endspaceless %}
+{% endmacro %}

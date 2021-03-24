@@ -2,7 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\records;
 
-use Ryssbowh\CraftThemes\models\Field;
+use Ryssbowh\CraftThemes\models\DisplayField;
 use craft\db\ActiveRecord;
 
 class FieldRecord extends ActiveRecord
@@ -12,8 +12,10 @@ class FieldRecord extends ActiveRecord
         return '{{%themes_fields}}';
     }
 
-    public function toModel(): Field
+    public function toModel(): DisplayField
     {
-        return new Field($this->getAttributes());
+        $model = new DisplayField($this->getAttributes());
+        $model->options = json_decode($this->options, true);
+        return $model;
     }
 }

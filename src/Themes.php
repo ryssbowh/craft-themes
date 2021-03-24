@@ -2,38 +2,27 @@
 namespace Ryssbowh\CraftThemes;
 
 use Craft;
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\events\FieldDisplayerEvent;
 use Ryssbowh\CraftThemes\events\RegisterBlockProvidersEvent;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\models\SystemBlockProvider;
-use Ryssbowh\CraftThemes\services\BlockProvidersService;
-use Ryssbowh\CraftThemes\services\BlockService;
-use Ryssbowh\CraftThemes\services\FieldsService;
-use Ryssbowh\CraftThemes\services\LayoutService;
-use Ryssbowh\CraftThemes\services\ThemesRegistry;
-use Ryssbowh\CraftThemes\services\ThemesRules;
-use Ryssbowh\CraftThemes\services\ViewModeService;
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, FieldsService, LayoutService, ThemesRules, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService};
+use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
-use craft\events\PluginEvent;
-use craft\events\RebuildConfigEvent;
-use craft\events\RegisterCacheOptionsEvent;
-use craft\events\RegisterCpNavItemsEvent;
-use craft\events\RegisterTemplateRootsEvent;
-use craft\events\RegisterUrlRulesEvent;
-use craft\events\TemplateEvent;
+use craft\events\{PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
 use craft\helpers\UrlHelper;
-use craft\services\Categories;
-use craft\services\Plugins;
-use craft\services\ProjectConfig;
-use craft\services\Routes;
-use craft\services\Sections;
+use craft\services\Fields;
+use craft\services\{Categories, Plugins, ProjectConfig, Routes, Sections};
 use craft\utilities\ClearCaches;
+use craft\web\Application;
 use craft\web\UrlManager;
 use craft\web\View;
 use craft\web\twig\variables\Cp;
+use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 
 class Themes extends \craft\base\Plugin
@@ -61,7 +50,6 @@ class Themes extends \craft\base\Plugin
         parent::init();
 
         self::$plugin = $this;
-        $_this = $this;
 
         \Yii::setAlias('@themesPath', '@root/themes');
         \Yii::setAlias('@themesWebPath', '@webroot/themes');
@@ -71,12 +59,25 @@ class Themes extends \craft\base\Plugin
         $this->registerBlockProviders();
         $this->registerProjectConfig();
         $this->registerPluginsEvents();
-        $this->registerElementsEvents();
+        $this->registerCraftConfigEvents();
+        $this->registerTwigVariables();
 
         if (Craft::$app->request->getIsSiteRequest()) {
-            Event::on(View::class, View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS, function ($e) use ($_this) {
-                $_this->resolveTheme($e);
-            });
+            Event::on(
+                Application::class, 
+                Application::EVENT_BEFORE_REQUEST, 
+                [$this->rules, 'resolveCurrentTheme']
+            );
+            Event::on(
+                View::class, 
+                View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
+                [$this->registry, 'registerCurrentThemeTemplates']
+            );
+            Event::on(
+                View::class, 
+                View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+                [$this->view, 'beforeRenderPage']
+            );
         }
 
         if (Craft::$app->request->getIsCpRequest()) {
@@ -93,7 +94,7 @@ class Themes extends \craft\base\Plugin
     public function afterSaveSettings()
     {
         parent::afterSaveSettings();
-        ThemesRules::clearCaches();
+        $this->cache->flush();
     }
 
     /**
@@ -108,24 +109,37 @@ class Themes extends \craft\base\Plugin
         );
     }
 
+    protected function registerTwigVariables()
+    {
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (Event $event) {
+                $variable = $event->sender;
+                $variable->set('themes', ThemesVariable::class);
+            }
+        );
+    }
+
     /**
      * Registers plugins related events
      */
     protected function registerPluginsEvents()
     {
+        $_this = $this;
+
         Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
-            function (PluginEvent $event) {
-                ThemesRules::clearCaches();
+            function (PluginEvent $event) use ($_this) {
+                $_this->cache->flush();
             }
         );
 
         Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
-            function (PluginEvent $event) {
-                ThemesRules::clearCaches();
+            function (PluginEvent $event) use ($_this) {
+                $_this->cache->flush();
             }
         );
 
-        $_this = $this;
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
             function (PluginEvent $event) use ($_this) {
                 $_this->installDependency($event->plugin);
@@ -141,20 +155,27 @@ class Themes extends \craft\base\Plugin
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
                 $event->rules = array_merge($event->rules, [
-                    'themes/settings' => 'themes/cp-settings',
                     'themes' => 'themes/cp-themes',
+                    'themes/settings' => 'themes/cp-settings',
                     'themes/layouts' => 'themes/cp-layouts',
                     'themes/layouts/<themeName:[\w-]+>' => 'themes/cp-layouts',
                     'themes/layouts/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-layouts',
                     'themes/display' => 'themes/cp-display',
-                    'themes/ajax/fields/<layout:\d+>' => 'themes/cp-fields',
-                    'themes/ajax/fields/save' => 'themes/cp-fields/save',
-                    'themes/ajax/view-modes/<layout:\d+>' => 'themes/cp-display/view-modes',
-                    'themes/ajax/layouts/save' => 'themes/cp-layouts/save',
-                    'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-layouts/delete',
-                    'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-blocks/blocks',
-                    'themes/ajax/providers' => 'themes/cp-blocks/providers',
-                    'themes/ajax/field-options' => 'themes/cp-fields/options'
+                    'themes/display/<themeName:[\w-]+>' => 'themes/cp-display',
+                    'themes/display/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-display',
+
+                    'themes/ajax/displays/<layout:\d+>' => 'themes/cp-ajax/displays',
+                    'themes/ajax/displays/save' => 'themes/cp-ajax/save-displays',
+                    'themes/ajax/view-modes/<layout:\d+>' => 'themes/cp-ajax/view-modes',
+                    'themes/ajax/layouts/save' => 'themes/cp-ajax/save-layout',
+                    'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-ajax/delete-layout',
+                    'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-ajax/blocks',
+                    'themes/ajax/providers' => 'themes/cp-ajax/providers',
+                    'themes/ajax/display-options' => 'themes/cp-ajax/display-options',
+                    'themes/ajax/display-options/validate' => 'themes/cp-ajax/validate-display-options',
+                    'themes/ajax/repair' => 'themes/cp-ajax/repair',
+
+                    'themes/test' => 'themes/cp-repair/test'
                 ]);
             }
         });
@@ -177,6 +198,17 @@ class Themes extends \craft\base\Plugin
             'blocks' => BlockService::class,
             'viewModes' => ViewModeService::class,
             'fields' => FieldsService::class,
+            'fieldDisplayers' => FieldDisplayerService::class,
+            'view' => [
+                'class' => ViewService::class,
+                'devMode' => $this->getSettings()->devModeEnabled,
+                'eagerLoad' => $this->getSettings()->eagerLoad
+            ],
+            'cache' => CacheService::class,
+            'display' => [
+                'class' => DisplayService::class,
+                'memoryLoading' => $this->getSettings()->memoryLoading
+            ]
         ]);
     }
 
@@ -200,7 +232,7 @@ class Themes extends \craft\base\Plugin
                 'key' => 'themes-cache',
                 'label' => Craft::t('themes', 'Themes cache'),
                 'action' => function() {
-                    ThemesRules::clearCaches();
+                    Themes::$plugin->cache->flush();
                 }
             ];
         });
@@ -209,15 +241,21 @@ class Themes extends \craft\base\Plugin
     /**
      * Listens to Entries/Categories/Routes deletions and additions
      */
-    protected function registerElementsEvents()
+    protected function registerCraftConfigEvents()
     {
         Craft::$app->projectConfig
-            ->onRemove(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}',     [$this->layouts, 'onElementDeleted'])
+            ->onRemove(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}',     [$this->layouts, 'onCraftElementDeleted'])
             ->onAdd(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}',        [$this->layouts, 'onEntryTypeAdded'])
-            ->onRemove(Routes::CONFIG_ROUTES_KEY.'.{uid}',     [$this->layouts, 'onElementDeleted'])
-            ->onAdd(Routes::CONFIG_ROUTES_KEY.'.{uid}',        [$this->layouts, 'onRouteAdded'])
-            ->onRemove(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}', [$this->layouts, 'onElementDeleted'])
-            ->onAdd(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}',    [$this->layouts, 'onCategoryAdded']);
+            ->onAdd(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}',        [$this->display, 'onCraftElementChanged'])
+            ->onUpdate(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}',     [$this->display, 'onCraftElementChanged'])
+            ->onRemove(Routes::CONFIG_ROUTES_KEY.'.{uid}',           [$this->layouts, 'onCraftElementDeleted'])
+            ->onAdd(Routes::CONFIG_ROUTES_KEY.'.{uid}',              [$this->layouts, 'onRouteAdded'])
+            ->onUpdate(Routes::CONFIG_ROUTES_KEY.'.{uid}',           [$this->layouts, 'onRouteUpdated'])
+            ->onRemove(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}', [$this->layouts, 'onCraftElementDeleted'])
+            ->onAdd(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}',    [$this->layouts, 'onCategoryAdded'])
+            ->onAdd(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}',    [$this->display, 'onCraftElementChanged'])
+            ->onUpdate(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}', [$this->display, 'onCraftElementChanged'])
+            ->onRemove(Fields::CONFIG_FIELDS_KEY.'.{uid}',           [$this->display, 'onCraftFieldDeleted']);
     }
 
     /**
@@ -271,9 +309,12 @@ class Themes extends \craft\base\Plugin
             ->onAdd(ViewModeService::CONFIG_KEY.'.{uid}',    [$this->viewModes, 'handleChanged'])
             ->onUpdate(ViewModeService::CONFIG_KEY.'.{uid}', [$this->viewModes, 'handleChanged'])
             ->onRemove(ViewModeService::CONFIG_KEY.'.{uid}', [$this->viewModes, 'handleDeleted'])
+            ->onAdd(DisplayService::CONFIG_KEY.'.{uid}',     [$this->display,   'handleChanged'])
+            ->onUpdate(DisplayService::CONFIG_KEY.'.{uid}',  [$this->display,   'handleChanged'])
+            ->onRemove(DisplayService::CONFIG_KEY.'.{uid}',  [$this->display,   'handleDeleted'])
+
             ->onAdd(FieldsService::CONFIG_KEY.'.{uid}',      [$this->fields,    'handleChanged'])
-            ->onUpdate(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleChanged'])
-            ->onRemove(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleDeleted']);
+            ->onUpdate(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleChanged']);
 
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $e) {
             Themes::$plugin->blocks->rebuildLayoutConfig($e);
@@ -281,35 +322,6 @@ class Themes extends \craft\base\Plugin
             Themes::$plugin->viewModes->rebuildLayoutConfig($e);
             Themes::$plugin->fields->rebuildLayoutConfig($e);
         });
-    }
-
-    /**
-     * Resolves current theme and registers aliases, templates & hooks
-     */
-    protected function resolveTheme(RegisterTemplateRootsEvent $event)
-    {
-        \Craft::info('Resolving current theme', __METHOD__);
-        $theme = $this->rules->resolveCurrentTheme();
-        $this->registry->setCurrent($theme);
-
-        if (!$theme) {
-            \Craft::info("No theme found for request ".\Craft::$app->request->getUrl(), __METHOD__);
-            return null;
-        }
-
-        Event::on(View::class, View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE, function(TemplateEvent $event) use ($theme) {
-            $event->variables['layout'] = $theme->getLayout();
-        });
-
-        \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
-        \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
-        Craft::$app->view->registerTwigExtension(new TwigTheme);
-        $event->roots[''][] = __DIR__ . '/templates/front';
-        $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots['']);
-        $path = \Craft::$app->request->getPathInfo();
-        $theme->registerAssetBundles($path);
-        $theme->afterSet();
-        \Craft::info("Theme has been set to : " . $theme->name, __METHOD__);
     }
 
     /**
@@ -341,5 +353,12 @@ class Themes extends \craft\base\Plugin
     protected function afterInstall()
     {
         $this->layouts->createAll();
+        $this->display->createAll();
+    }
+
+    protected function afterUninstall()
+    {
+        $projectConfig = \Craft::$app->getProjectConfig();
+        $projectConfig->remove('themes');
     }
 }

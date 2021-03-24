@@ -1,40 +1,41 @@
 <template>
-    <tr :class="{field: true, visuallyHidden: field.visuallyHidden}">
-        <td>{{ field.name }}</td>
-        <td>{{ field.field }}</td>
-        <td>{{ field.type }}</td>
-        <td>
+    <div :class="{line: true, display: true, visuallyHidden: display.visuallyHidden}">
+        <div class="handle col"><div class="move icon"></div></div>
+        <div class="title col">{{ field.name }}</div>
+        <div class="handle col">{{ field.handle }}</div>
+        <div class="type col">{{ field.type }}</div>
+        <div class="label col">
             <div class="select">
-                <select>
-                    <option value="hidden" :selected="field.labelHidden">{{ t('Hidden') }}</option>
-                    <option value="visuallyHidden" :selected="field.labelVisuallyHidden">{{ t('Visually hidden') }}</option>
-                    <option value="visible" :selected="visible">{{ t('Visible') }}</option>
+                <select @change="updateLabelVisibility">
+                    <option value="hidden" :selected="display.labelHidden">{{ t('Hidden') }}</option>
+                    <option value="visuallyHidden" :selected="display.labelVisuallyHidden">{{ t('Visually hidden') }}</option>
+                    <option value="visible" :selected="labelVisible">{{ t('Visible') }}</option>
                 </select>
             </div>
-        </td>
-        <td>
+        </div>
+        <div class="visibility col">
             <div class="select">
                 <select @change="updateVisibility">
-                    <option value="hidden" :selected="field.hidden">{{ t('Hidden') }}</option>
-                    <option v-if="hasDisplayers" value="visuallyHidden" :selected="field.visuallyHidden">{{ t('Visually hidden') }}</option>
+                    <option value="hidden" :selected="display.hidden">{{ t('Hidden') }}</option>
+                    <option v-if="hasDisplayers" value="visuallyHidden" :selected="display.visuallyHidden">{{ t('Visually hidden') }}</option>
                     <option v-if="hasDisplayers" value="visible" :selected="visible">{{ t('Visible') }}</option>
                 </select>
             </div>
-        </td>
-        <td>
+        </div>
+        <div class="displayer col">
             <div class="select" v-if="hasDisplayers">
                 <select @change="updateDisplayer">
                     <option v-if="!displayer">{{ t('Select') }}</option>
-                    <option v-for="displayer2 in field.availableDisplayers" :selected="displayer && displayer.handle == displayer2.handle" :value="displayer2.handle">{{ displayer2.name }}</option>
+                    <option v-for="displayer2 in field.availableDisplayers" :key="displayer.handle" :selected="displayer && displayer.handle == displayer2.handle" :value="displayer2.handle">{{ displayer2.name }}</option>
                 </select>
             </div>
             <span v-if="!hasDisplayers">{{ t('None available') }}</span>
-        </td>
-        <td>
+        </div>
+        <div class="options col">
             <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="showModal = true">{{ t('Options') }}</a>
-            <options-modal v-if="displayer && displayer.hasOptions" :field="field" :show-modal="showModal" @closeModal="onCloseModal"/>
-        </td>
-    </tr>
+            <options-modal v-if="displayer && displayer.hasOptions" :display="display" :show-modal="showModal" @saveModal="onSaveModal" @closeModal="showModal = false"/>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -52,7 +53,10 @@ export default {
             }
         },
         visible: function () {
-            return !this.field.visuallyHidden && !this.field.hidden
+            return !this.display.visuallyHidden && !this.display.hidden
+        },
+        labelVisible: function () {
+            return !this.display.labelVisuallyHidden && !this.display.labelHidden
         },
         hasDisplayers: function () {
             return this.field.availableDisplayers.length > 0;
@@ -60,17 +64,35 @@ export default {
         ...mapState([])
     },
     props: {
-        field: Object
+        display: Object
     },
     data() {
         return {
-            showModal: false
+            showModal: false,
+            field: {}
         }
     },
+    created() {
+        this.field = this.display.item;
+    },
     methods: {
-        onCloseModal: function (data) {
-            this.updateField(data);
+        onSaveModal: function (data) {
+            this.updateDisplay(data);
             this.showModal = false;
+        },
+        updateLabelVisibility: function (e) {
+            let val = e.originalTarget.value;
+            let data = {
+                labelHidden: false,
+                labelVisuallyHidden: false
+            };
+            if (val == 'hidden') {
+                data.labelHidden = true;
+            } else if (val == 'visuallyHidden') {
+                data.labelHidden = false;
+                data.labelVisuallyHidden = true;
+            }
+            this.updateDisplay({id: this.display.id, data: data});
         },
         updateVisibility: function (e) {
             let val = e.originalTarget.value;
@@ -84,20 +106,22 @@ export default {
                 data.hidden = false;
                 data.visuallyHidden = true;
             }
-            this.updateField({id: this.field.id, data: data});
+            this.updateDisplay({id: this.display.id, data: data});
+            this.$emit('changedVisibility', {id: this.display.id});
         },
         updateDisplayer: function(e) {
-            this.updateField({id: this.field.id, data: {displayerHandle: e.originalTarget.value}});
+            this.updateDisplay({id: this.display.id, data: {item: {displayerHandle: e.originalTarget.value}}});
         },
-        ...mapMutations(['updateField']),
+        ...mapMutations(['updateDisplay']),
         ...mapActions([]),
     },
     mixins: [Mixin],
-    components: {OptionsModal}
+    components: {OptionsModal},
+    emits: ['changedVisibility'],
 };
 </script>
 <style lang="scss" scoped>
-.field {
+.display {
     &.visuallyHidden {
         opacity: 0.8;
     }

@@ -1,0 +1,24 @@
+{% import "_includes/forms" as forms %}
+
+{{
+    forms.selectField({
+        options: options.getLabelsOptions,
+        value: options.label,
+        name: 'label',
+        label: 'Label'|t('themes')
+    })
+}}
+{{
+    forms.textField({
+        name: 'custom',
+        value: options.custom,
+        label: 'Custom'|t('theme')
+    })
+}}
+{{
+    forms.lightswitchField({
+        on: options.newTab,
+        name: 'newTab',
+        label: 'Open in new tab'|t('themes')
+    })
+}}

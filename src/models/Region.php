@@ -2,6 +2,8 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
 use craft\base\Model;
 
@@ -27,11 +29,18 @@ class Region extends Model implements RenderableInterface
      */
     public $blocks = [];
 
-    /**
-     * @inheritDoc
-     */
-    public function getTemplateSuggestions(): array
+    public function addBlock(BlockInterface $block)
     {
-        return ['regions/region-' . $this->handle, 'regions/region'];
+        $this->blocks[] = $block;
+    }
+
+    public function render(): string
+    {
+        return Themes::$plugin->view->renderRegion($this);
+    }
+
+    public function __toString()
+    {
+        return $this->render();
     }
 }

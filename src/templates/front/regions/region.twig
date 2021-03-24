@@ -1,5 +1,5 @@
-<div class="region region-{{ region.handle }}">
+<div class="{{ classes|raw }}" {{ attributes|raw }}>
 	{% for _block in region.blocks %}
-		{% include "blocks/block" %}
+        {{ _block|raw }}
 	{% endfor %}
 </div>

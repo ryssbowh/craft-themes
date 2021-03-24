@@ -3,7 +3,9 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
+use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Field as CraftField;
@@ -11,7 +13,7 @@ use craft\base\Model;
 use craft\fieldlayoutelements\TitleField;
 use craft\models\FieldLayout;
 
-class Field extends Model
+class Field extends Model implements RenderableInterface
 {
     public $id;
     public $viewMode;
@@ -27,6 +29,8 @@ class Field extends Model
     public $dateCreated;
     public $dateUpdated;
     public $uid;
+
+    private $_displayer;
 
     public function rules()
     {
@@ -69,7 +73,7 @@ class Field extends Model
         return $this->layout()->element()->getFieldLayout();
     }
 
-    public function field(): ?CraftField
+    public function craftField(): ?CraftField
     {
         if ($this->field == 'title') {
             return null;
@@ -84,10 +88,13 @@ class Field extends Model
 
     public function getDisplayer(): ?FieldDisplayerInterface
     {
+        if (!is_null($this->_displayer)) {
+            return $this->_displayer;
+        }
         if (!$this->displayerHandle) {
             return null;
         }
-        $displayer = Themes::$plugin->fields->getDisplayerByHandle($this->displayerHandle);
+        $displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle);
         $displayer->field = $this;
         return $displayer;
     }
@@ -97,9 +104,9 @@ class Field extends Model
         if ($this->field == 'title') {
             $class = TitleField::class;
         } else {
-            $class = get_class($this->field());
+            $class = get_class($this->craftField());
         }
-        return Themes::$plugin->fields->getDisplayers($class);
+        return Themes::$plugin->fieldDisplayers->getForField($class);
     }
 
     public function getName()
@@ -107,7 +114,7 @@ class Field extends Model
         if ($this->field == 'title') {
             return \Craft::t('themes', 'Title');
         }
-        return $this->field()->name;
+        return $this->craftField()->name;
     }
 
     public function fields()
@@ -125,6 +132,19 @@ class Field extends Model
         if ($this->field == 'title') {
             return \Craft::t('themes', 'Title');
         }
-        return $this->field()::displayName();
+        return $this->craftField()::displayName();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(): string
+    {
+        return Themes::$plugin->view->renderField($this);
+    }
+
+    public function __toString()
+    {
+        return $this->render();
     }
 }

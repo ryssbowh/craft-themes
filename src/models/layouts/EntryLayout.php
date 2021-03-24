@@ -2,17 +2,19 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\services\LayoutService;
+
 class EntryLayout extends Layout
 {
     /**
      * @var string
      */
-    public $type = 'entry';
+    public $type = LayoutService::ENTRY_HANDLE;
 
     /**
      * @var boolean
      */
-    protected $_hasFields = true;
+    protected $_hasDisplays = true;
 
     /**
      * @inheritDoc
@@ -25,6 +27,11 @@ class EntryLayout extends Layout
             }
         }
         return null;
+    }
+
+    public function getElementMachineName(): string
+    {
+        return $this->element()->handle;
     }
 
     /**
@@ -40,6 +47,6 @@ class EntryLayout extends Layout
      */
     public function getHandle(): string
     {
-        return 'entry_' . $this->element;
+        return $this->type . '_' . $this->element;
     }
 }

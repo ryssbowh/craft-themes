@@ -9,13 +9,13 @@ use craft\fields\Categories;
 
 class CategoryList extends FieldDisplayer
 {
-    public $handle = 'category_lists';
+    public $handle = 'category_list';
 
     public $hasOptions = true;
 
-    public $name = 'List';
+    public $isDefault = true;
 
-    public function getName()
+    public function getName(): string
     {
         return \Craft::t('themes', 'List');
     }
@@ -25,14 +25,14 @@ class CategoryList extends FieldDisplayer
         return Categories::class;
     }
 
-    public function getOptionsModel(): ?Model
+    public function getOptionsModel(): Model
     {
         return new CategoryListOptions;
     }
 
     public function getOptionsHtml(): string
     {
-        return \Craft::$app->view->renderTemplate('themes/cp/fieldDisplayers/category-list', [
+        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
             'options' => $this->getOptions()
         ]);
     }

@@ -4,15 +4,19 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Theme;
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
-use craft\base\Component;
+use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
+use craft\events\RegisterTemplateRootsEvent;
 use craft\models\Site;
 
 
-class ThemesRegistry extends Component
+class ThemesRegistry extends Service
 {   
+    const THEME_SET_EVENT = 'themes.set';
+
     /**
      * @var ?array
      */
@@ -41,17 +45,40 @@ class ThemesRegistry extends Component
      */
     public function setCurrent($theme): ?ThemeInterface
     {
-        $set = false;
         if (is_string($theme)) {
             $this->currentTheme = $this->getTheme($theme);
-            $set = true;
         } elseif ($theme instanceof ThemeInterface) {
             $this->currentTheme = $theme;
-            $set = true;
         } elseif ($theme === null) {
             $this->currentTheme = null;
-        } 
+        }
+        if ($this->currentTheme) {
+            \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
+            \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
+            \Craft::$app->view->registerTwigExtension(new TwigTheme);
+            $path = \Craft::$app->request->getPathInfo();
+            $this->currentTheme->registerAssetBundles($path);
+            $this->currentTheme->afterSet();
+        }
+        $this->triggerEvent(
+            self::THEME_SET_EVENT, 
+            new ThemeEvent(['theme' => $this->currentTheme])
+        );
+        if (!$this->currentTheme) {
+            \Craft::info("No theme found for request ".\Craft::$app->request->getUrl(), __METHOD__);
+        } else {
+            \Craft::info("Theme has been set to : " . $this->currentTheme->name, __METHOD__);
+        }
         return $this->currentTheme;
+    }
+
+    public function registerCurrentThemeTemplates(RegisterTemplateRootsEvent $event)
+    {
+        if (!$this->currentTheme) {
+            return;
+        }
+        $event->roots[''][] = __DIR__ . '/../templates/front';
+        $event->roots[''] = array_merge($this->currentTheme->getTemplatePaths(), $event->roots['']);#
     }
 
     /**

@@ -9,5 +9,5 @@ interface RenderableInterface
      * 
      * @return array
      */
-    public function getTemplateSuggestions(): array;
+    public function render(): string;
 }

@@ -10,9 +10,7 @@ use craft\models\Site;
 
 class ThemesRules extends Service
 {
-    const CACHE_KEY = 'themes.rules';
-
-    const THEME_SET_EVENT = 'themes.set';
+    const CACHE_KEY_PREFIX = 'themes.rules.';
 
     /**
      * @var array
@@ -25,54 +23,29 @@ class ThemesRules extends Service
     public $default;
 
     /**
-     * @var array
-     */
-    public $cache;
-
-    /**
-     * inheritDoc
-     */
-    public function init()
-    {
-        $this->cache = \Craft::$app->cache->get(self::CACHE_KEY) ?? [];
-    }
-
-    /**
-     * Resolve the theme for the current request, get the theme either from cache
-     * or from defined theme rules
+     * Resolve the theme for the current request, 
+     * get the theme either from cache or from defined theme rules
      * 
      * @return ?ThemeInterface
      */
-    public function resolveCurrentTheme(): ?ThemeInterface
+    public function resolveCurrentTheme($event): ?ThemeInterface
     {
         $path = \Craft::$app->request->getFullPath();
         $currentSite = \Craft::$app->sites->getCurrentSite();
         $currentUrl = $currentSite->getBaseUrl().$path;
-        $cached = $this->getCache($currentUrl);
+        $cached = $this->cacheService()->get(self::CACHE_KEY_PREFIX . $currentUrl);
         $theme = null;
         if (is_string($cached)) {
             $theme = $cached ? Themes::$plugin->registry->getTheme($cached) : null;
         } else {
             $themeName = $this->resolveRules($path, $currentSite, $currentUrl);
+            $this->cacheService()->set(self::CACHE_KEY_PREFIX . $currentUrl, $themeName);
             if ($themeName) {
                 $theme = Themes::$plugin->registry->getTheme($themeName);
             }
         }
-        if ($theme) {
-            $this->triggerEvent(
-                self::THEME_SET_EVENT, 
-                new ThemeEvent(['theme' => $theme])
-            );
-        }
+        $this->themesRegistry()->setCurrent($theme);
         return $theme;
-    }
-
-    /**
-     * Clears rules cache
-     */
-    public static function clearCaches()
-    {
-        \Craft::$app->cache->delete(self::CACHE_KEY);
     }
 
     /**
@@ -80,7 +53,7 @@ class ThemesRules extends Service
      * 
      * @return ?string
      */
-    protected function resolveRules(string $path, Site $site, string $url): ?string
+    protected function resolveRules(string $path, Site $site): ?string
     {
         $themeName = null;
         foreach ($this->rules as $rule) {
@@ -101,31 +74,7 @@ class ThemesRules extends Service
         if (!$themeName and $this->default) {
             $themeName = $this->default;
         }
-        $this->setCache($url, $themeName);
         return $themeName;
-    }
-
-    /**
-     * Set the cache for the current url
-     * 
-     * @param string $url
-     * @param string $themeName
-     */
-    protected function setCache(string $url, string $themeName)
-    {
-        $this->cache[$url] = $themeName;
-        \Craft::$app->cache->set(self::CACHE_KEY, $this->cache);
-    }
-
-    /**
-     * Get the cache for the current url
-     * 
-     * @param  string $url
-     * @return ?string
-     */
-    protected function getCache(string $url): ?string
-    {
-        return $this->cache[$url] ?? null;
     }
 
     /**

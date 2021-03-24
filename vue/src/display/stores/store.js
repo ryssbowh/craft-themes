@@ -1,9 +1,9 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep, isEqual, merge } from 'lodash';
 
-function sanitizeFields(fields) {
-    return fields;
+function sanitizeDisplays(displays) {
+    return displays;
 }
 
 function handleError(err) {
@@ -12,6 +12,17 @@ function handleError(err) {
     } else {
         Craft.cp.displayError(err);
     }
+}
+
+function setWindowUrl(theme, layout) {
+    let url = document.location.pathname.split('/');
+    let i = url.findIndex(e => e == 'display');
+    if (i === -1) {
+        return;
+    }
+    url[i+1] = theme;
+    url[i+2] = layout;
+    window.history.pushState({}, '', url.join('/'));
 }
 
 const store = createStore({
@@ -27,8 +38,8 @@ const store = createStore({
             viewModes: [],
             originalViewModes: [],
             viewMode: 0,
-            fields: [],
-            originalFields: [],
+            displays: [],
+            originalDisplays: [],
             optionsHtml: {}
         }
     },
@@ -41,6 +52,7 @@ const store = createStore({
             for (let i in state.layouts) {
                 if (state.layouts[i].id == id) {
                     state.layout = state.layouts[i];
+                    setWindowUrl(state.theme, id);
                     break;
                 }
             }
@@ -67,36 +79,36 @@ const store = createStore({
         deleteViewMode(state, index) {
             let viewMode = state.viewModes[index];
             let toDelete = [];
-            for (let i in state.fields) {
-                let field = state.fields[i];
-                if (viewMode.id && viewMode.id === field.viewMode) {
+            for (let i in state.displays) {
+                let display = state.displays[i];
+                if (viewMode.id && viewMode.id === display.viewMode) {
                     toDelete.push(i);
                 }
-                if (viewMode.handle === field.viewMode) {
+                if (viewMode.handle === display.viewMode) {
                     toDelete.push(i);   
                 }
             }
-            state.fields = state.fields.filter((field, index) => !toDelete.includes(index));
+            state.displays = state.displays.filter((display, index) => !toDelete.includes(index));
             state.viewModes = state.viewModes.filter((viewMode, index2) => index != index2);
             if (state.viewMode == index) {
                 state.viewMode = 0;
             }
         },
-        setFields(state, fields) {
-            state.fields = fields;
-            state.originalFields = cloneDeep(fields);
+        setDisplays(state, displays) {
+            state.displays = displays;
+            state.originalDisplays = cloneDeep(displays);
         },
-        addField(state, field) {
-            state.fields.push(field);
+        addDisplay(state, display) {
+            state.displays.push(display);
         },
-        updateField(state, {id, data}) {
-            for (let i in state.fields) {
-                if (state.fields[i].id == id) {
-                    for (let j in data) {
-                        state.fields[i][j] = data[j];
-                    }
-                    return;
+        updateDisplay(state, {id, data}) {
+            let display;
+            for (let i in state.displays) {
+                display = state.displays[i];
+                if (display.id != id) {
+                    continue;
                 }
+                state.displays[i] = merge(display, data);
             }
         },
         setOptionsHtml(state, {id, html}) {
@@ -113,18 +125,16 @@ const store = createStore({
         setThemeAndFetch ({commit, dispatch}, theme) {
             commit('setTheme', theme);
             dispatch('fetchViewModes');
-            dispatch('fetchFields');
+            dispatch('fetchDisplays');
         },
         setLayoutAndFetch ({commit, dispatch}, id) {
             commit('setLayout', id);
             dispatch('fetchViewModes');
-            dispatch('fetchFields');
+            dispatch('fetchDisplays');
         },
         fetchViewModes({state, commit}) {
-            let data = {};
-            data[Craft.csrfTokenName] = Craft.csrfTokenValue;
             commit('setIsFetching', {key: 'viewModes', value: true});
-            return axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+state.layout.id), data)
+            return axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+state.layout.id))
             .then((response) => {
                 commit('setViewModes', response.data.viewModes);
                 commit('setViewMode', 0);
@@ -136,36 +146,34 @@ const store = createStore({
                 commit('setIsFetching', {key: 'viewModes', value: false});
             });
         },
-        fetchFields({state, commit}) {
+        fetchDisplays({state, commit}) {
             let data = {
                 viewMode: state.viewModes[state.viewMode]
             };
-            data[Craft.csrfTokenName] = Craft.csrfTokenValue;
-            commit('setIsFetching', {key: 'fields', value: true});
-            return axios.post(Craft.getCpUrl('themes/ajax/fields/'+state.layout.id), data)
+            commit('setIsFetching', {key: 'displays', value: true});
+            return axios.post(Craft.getCpUrl('themes/ajax/displays/'+state.layout.id), data)
             .then((response) => {
-                commit('setFields', cloneDeep(response.data.fields));
+                commit('setDisplays', cloneDeep(response.data.displays));
             })
             .catch((err) => {
                 handleError(err);
             })
             .finally(() => {
-                commit('setIsFetching', {key: 'fields', value: false});
+                commit('setIsFetching', {key: 'displays', value: false});
             });
         },
         checkChanges({state, commit}) {
-            commit('setHasChanged', !isEqual(state.originalFields, state.fields) || !isEqual(state.originalViewModes, state.viewModes));
+            commit('setHasChanged', !isEqual(state.originalDisplays, state.displays) || !isEqual(state.originalViewModes, state.viewModes));
         },
         save({commit, state}) {
             commit('setIsSaving', true);
             axios({
                 method: 'post',
-                url: Craft.getCpUrl('themes/ajax/fields/save'),
-                data: {fields: sanitizeFields(state.fields), layout: state.layout.id, viewModes: state.viewModes},
-                headers: {'X-CSRF-Token': Craft.csrfTokenValue}
+                url: Craft.getCpUrl('themes/ajax/displays/save'),
+                data: {displays: sanitizeDisplays(state.displays), layout: state.layout.id, viewModes: state.viewModes},
             })
             .then(res => {
-                commit('setFields', cloneDeep(res.data.fields));
+                commit('setDisplays', cloneDeep(res.data.displays));
                 commit('setViewModes', res.data.viewModes);
                 commit('setHasChanged', false);
                 Craft.cp.displayNotice(res.data.message);
@@ -180,15 +188,15 @@ const store = createStore({
         addViewMode({commit, state, dispatch}, viewMode) {
             let current = state.viewModes[state.viewMode];
             commit('addViewMode', viewMode);
-            for (let i in state.fields) {
-                let field = state.fields[i];
-                if (field.viewMode !== current.id && field.viewMode !== current.handle) {
+            for (let i in state.displays) {
+                let display = state.displays[i];
+                if (display.viewMode !== current.id && display.viewMode !== current.handle) {
                     continue;
                 }
-                field = cloneDeep(field);
-                field.viewMode = viewMode.handle;
-                field.id = null;
-                commit('addField', field);
+                display = cloneDeep(display);
+                display.viewMode = viewMode.handle;
+                display.id = null;
+                commit('addDisplay', display);
             }
             commit('setViewMode', state.viewModes.length - 1);
             dispatch('checkChanges');

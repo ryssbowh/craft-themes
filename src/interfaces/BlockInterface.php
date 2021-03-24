@@ -48,7 +48,7 @@ interface BlockInterface extends RenderableInterface
      * 
      * @return Layout
      */
-    public function layout(): Layout;
+    public function getLayout(): Layout;
 
     /**
      * Get provider object

@@ -16,4 +16,9 @@ class ViewModeRecord extends ActiveRecord
 	{
 		return new ViewMode($this->getAttributes());
 	}
+
+    public function getLayout()
+    {
+        return $this->hasOne(LayoutRecord::className(), ['layout_id' => 'id']);
+    }
 }
