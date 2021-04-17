@@ -9,7 +9,9 @@ use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
 use Ryssbowh\CraftThemes\models\blockOptions\NoOptions;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
+use craft\base\Element;
 use craft\base\Model;
+use craft\helpers\StringHelper;
 
 abstract class Block extends Model implements BlockInterface, RenderableInterface
 {
@@ -113,35 +115,38 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     public function getConfig(): array
     {
         return [
-            'layout_id' => $this->layout->uid,
             'region' => $this->region,
             'handle' => $this->handle,
             'provider' => $this->provider,
             'order' => $this->order,
             'active' => $this->active,
-            'options' => $this->options
+            'options' => $this->options,
+            'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
 
     /**
      * @inheritDoc
      */
-    public function getLayout(): Layout
+    public function getLayout(): ?Layout
     {
+        if (!$this->layout_id) {
+            return null;
+        }
         return Themes::$plugin->layouts->getById($this->layout_id);
     }
 
     /**
      * @inheritDoc
      */
-    public function rules()
+    public function defineRules(): array
     {
         return [
             [['region', 'handle', 'provider', 'order', 'active', 'layout_id'], 'required'],
             [['region', 'handle', 'provider'], 'string'],
             ['active', 'boolean'],
             [['order', 'layout_id'], 'number'],
-            ['options', function(){}]
+            [['dateCreated', 'dateUpdated', 'uid', 'id', 'safe'], 'safe']
         ];
     }
 
@@ -204,16 +209,10 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     /**
      * Set options
      * 
-     * @param Model|array|string $options
+     * @param array $options
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
-        $this->options = $options;
-        if (is_string($options)) {
-            $options = json_decode($options, true);
-        } elseif ($options instanceof Model) {
-            $options = $options->getAttributes();
-        }
         $this->_options = $options;
     }
 
@@ -225,9 +224,9 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
         return new NoOptions;
     }
 
-    public function render(): string
+    public function render(Element $element): string
     {
-        return Themes::$plugin->view->renderBlock($this);
+        return Themes::$plugin->view->renderBlock($this, $element);
     }
 
     public function __toString()

@@ -16,8 +16,14 @@ class DisplayRecord extends ActiveRecord
     public function toModel(): Display
     {
         $model = new Display($this->getAttributes());
-        $model->viewMode = $this->viewMode->toModel();
-        $model->item = $this->item->toModel();
+        if ($this->isRelationPopulated('viewMode')) {
+            $model->viewMode = $this->viewMode->toModel();
+        }
+        if ($this->isRelationPopulated('group')) {
+            $model->item = $this->group->toModel();
+        } else if ($this->isRelationPopulated('field')) {
+            $model->item = $this->field->toModel();
+        }
         return $model;
     }
 
@@ -34,20 +40,5 @@ class DisplayRecord extends ActiveRecord
     public function getGroup()
     {
         return $this->hasOne(GroupRecord::className(), ['display_id' => 'id']);
-    }
-
-    public function getMatrix()
-    {
-        return $this->hasOne(MatrixRecord::className(), ['display_id' => 'id']);
-    }
-
-    public function getItem()
-    {
-        if  ($this->type == DisplayService::TYPE_FIELD) {
-            return $this->field;
-        } elseif ($this->type == DisplayService::TYPE_MATRIX) {
-            return $this->matrix;
-        }
-        return $this->group;
     }
 }

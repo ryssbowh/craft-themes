@@ -14,18 +14,6 @@ class LayoutRecord extends ActiveRecord
         return '{{%themes_layouts}}';
     }
 
-    public function toModel(): Model
-    {
-        $attributes = $this->getAttributes();
-        $attributes['viewModes'] = array_map(function ($record) {
-            return $record->toModel();
-        }, $this->viewModes);
-        $attributes['blocks'] = array_map(function ($record) {
-            return $record->toModel();
-        }, $this->blocks);
-        return Layout::create($attributes);
-    }
-
     public function getViewModes()
     {
         return $this->hasMany(ViewModeRecord::className(), ['layout_id' => 'id']);

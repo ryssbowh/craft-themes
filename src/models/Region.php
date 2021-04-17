@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
+use craft\base\Element;
 use craft\base\Model;
 
 class Region extends Model implements RenderableInterface
@@ -34,9 +35,9 @@ class Region extends Model implements RenderableInterface
         $this->blocks[] = $block;
     }
 
-    public function render(): string
+    public function render(Element $element): string
     {
-        return Themes::$plugin->view->renderRegion($this);
+        return Themes::$plugin->view->renderRegion($this, $element);
     }
 
     public function __toString()

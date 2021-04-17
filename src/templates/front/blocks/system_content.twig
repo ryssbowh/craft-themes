@@ -1,5 +1,5 @@
 <div class="{{ classes|raw }}" {{ attributes|raw }}>
-    {% for display in layout.displays %}
-        {{ display|raw }}
+    {% for display in layout.visibleDisplays %}
+        {{ display.render(element)|raw }}
     {% endfor %}
 </div>

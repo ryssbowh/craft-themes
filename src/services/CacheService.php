@@ -20,8 +20,11 @@ class CacheService extends Service
 
     public function set(string $key, $value)
     {
-        $this->keys[$key] = $value;
-        $this->cacheKeys($key);
+        $this->cache->set($key, $value);
+        if (!in_array($key, $this->keys)) {
+            $this->keys[] = $key;
+            $this->cacheKeys();
+        }
     }
 
     public function get(string $key)
@@ -31,8 +34,9 @@ class CacheService extends Service
 
     public function delete(string $key)
     {
-        if (isset($this->keys[$key])) {
-            unset($this->keys[$key]);
+        $this->cache->delete($key);
+        if ($i = array_search($key, $this->keys) !== false) {
+            unset($this->keys[$i]);
             $this->cacheKeys();
         }
     }
@@ -48,6 +52,6 @@ class CacheService extends Service
 
     protected function cacheKeys()
     {
-        $this->cache->set(self::CACHE_KEYS, array_keys($this->keys));
+        $this->cache->set(self::CACHE_KEYS, $this->keys);
     }
 }

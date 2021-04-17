@@ -2,8 +2,8 @@
 
 namespace Ryssbowh\CraftThemes\records;
 
-use Ryssbowh\CraftThemes\models\DisplayField;
 use craft\db\ActiveRecord;
+use paulzi\jsonBehavior\JsonBehavior;
 
 class FieldRecord extends ActiveRecord
 {
@@ -12,10 +12,26 @@ class FieldRecord extends ActiveRecord
         return '{{%themes_fields}}';
     }
 
-    public function toModel(): DisplayField
+    public function getAttribute($name)
     {
-        $model = new DisplayField($this->getAttributes());
-        $model->options = json_decode($this->options, true);
-        return $model;
+        $value = parent::getAttribute($name);
+        if ($name == 'options') {
+            return json_decode($value, true);
+        }
+        return $value;
+    }
+
+    public function getAttributes($names = null, $except = [])
+    {
+        $values = parent::getAttributes($names, $except);
+        if (isset($values['options'])) {
+            $values['options'] = $this->getAttribute('options');
+        }
+        return $values;
+    }
+
+    public function getDisplay()
+    {
+        return $this->hasOne(DisplayRecord::className(), ['id' => 'display_id']);
     }
 }

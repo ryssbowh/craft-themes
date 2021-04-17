@@ -2,6 +2,8 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use craft\base\Element;
+
 interface RenderableInterface
 {
     /**
@@ -9,5 +11,5 @@ interface RenderableInterface
      * 
      * @return array
      */
-    public function render(): string;
+    public function render(Element $element): string;
 }

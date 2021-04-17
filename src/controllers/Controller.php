@@ -33,11 +33,6 @@ class Controller extends CraftController
     protected $viewModes;
 
     /**
-     * @var FieldsService
-     */
-    protected $fields;
-
-    /**
      * @var FieldDisplayerService
      */
     protected $fieldDisplayers;
@@ -46,6 +41,11 @@ class Controller extends CraftController
      * @var DisplayService
      */
     protected $display;
+
+    /**
+     * @var FieldsService
+     */
+    protected $fields;
 
     /**
      * @inheritDoc
@@ -60,5 +60,6 @@ class Controller extends CraftController
         $this->layouts = Themes::$plugin->layouts;
         $this->viewModes = Themes::$plugin->viewModes;
         $this->display = Themes::$plugin->display;
+        $this->fields = Themes::$plugin->fields;
     }
 }

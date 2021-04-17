@@ -14,7 +14,7 @@ module.exports = {
     },
     configureWebpack: {
         entry: {
-            layouts: "./vue/src/layouts/main.js",
+            blocks: "./vue/src/blocks/main.js",
             display: "./vue/src/display/main.js"
         },
         output: {

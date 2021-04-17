@@ -1,0 +1,34 @@
+{% import "_includes/forms" as forms %}
+{% extends "_layouts/cp" %}
+{% set title = title %}
+{% set selectedSubnavItem = 'themes-rules' %}
+{% set fullPageForm = true %}
+{% set mainFormAttributes = {
+    action: url('themes/save-rules')
+} %}
+
+{% block content %}
+    {% namespace namespace %}
+        <h2 class="first">{{ 'Themes rules'|t('themes') }}</h2>
+        <p>{{ 'Rules will be handled from top to bottom, the first match will define the theme and the other rules will not be looked at.'|t('themes') }}</p>
+
+        {% set name = 'rules' %}
+        {% set id = 'theme-rules' %}
+        {% set initJs = false %}
+        {% set rows = settings.rules %}
+        {% include "_includes/forms/editableTable" %}
+
+        <h2>{{ 'Default theme'|t('themes') }}</h2>
+        {{ forms.selectField({
+            name: 'default',
+            options: themes,
+            value: settings.default,
+            instructions: 'Default theme when no rules match'|t('themes')
+        }) }}
+    {% endnamespace %}
+
+    {% js on ready %}
+        new Craft.Themes.RulesTable('settings-{{ id }}', 'settings[rules]', {{ cols|json_encode|raw }}, {});
+    {% endjs %}
+{% endblock %}
+

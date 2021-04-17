@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\models\FieldLayout;
 
 class CategoryLayout extends Layout
 {
@@ -10,11 +11,6 @@ class CategoryLayout extends Layout
      * @var string
      */
     public $type = LayoutService::CATEGORY_HANDLE;
-
-    /**
-     * @var boolean
-     */
-    protected $_hasDisplays = true;
         
     /**
      * @inheritDoc
@@ -27,6 +23,11 @@ class CategoryLayout extends Layout
     public function getElementMachineName(): string
     {
         return $this->element()->handle;
+    }
+
+    public function hasDisplays(): bool
+    {
+        return true;
     }
 
     /**
@@ -43,5 +44,10 @@ class CategoryLayout extends Layout
     public function getHandle(): string
     {
         return $this->type . '_' . $this->element;
+    }
+
+    public function getFieldLayout(): FieldLayout
+    {
+        return $this->element()->getFieldLayout();
     }
 }

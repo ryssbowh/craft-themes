@@ -5,26 +5,28 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\events\DisplayEvent;
 use Ryssbowh\CraftThemes\exceptions\DisplayException;
 use Ryssbowh\CraftThemes\models\Display;
-use Ryssbowh\CraftThemes\models\DisplayField;
-use Ryssbowh\CraftThemes\models\DisplayGroup;
-use Ryssbowh\CraftThemes\models\DisplayMatrix;
 use Ryssbowh\CraftThemes\models\ViewMode;
+use Ryssbowh\CraftThemes\models\fields\Title;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\GroupRecord;
+use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use craft\base\Field;
+use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
+use craft\events\EntryTypeEvent;
 use craft\fieldlayoutelements\TitleField;
+use craft\fields\Matrix;
 use craft\helpers\StringHelper;
+use craft\models\MatrixBlockType;
 
 class DisplayService extends Service
 {
     const TYPE_FIELD = 'field';
-    const TYPE_MATRIX = 'matrix';
     const TYPE_GROUP = 'group';
-    const TYPES = [self::TYPE_FIELD, self::TYPE_GROUP, self::TYPE_MATRIX];
+    const TYPES = [self::TYPE_FIELD, self::TYPE_GROUP];
 
     const EVENT_BEFORE_SAVE = 1;
     const EVENT_AFTER_SAVE = 2;
@@ -34,63 +36,82 @@ class DisplayService extends Service
 
     const CONFIG_KEY = 'themes.display';
 
-    public $memoryLoading;
+    private $_displays;
 
-    private $_displays = [];
-
-    public function createAll()
+    public function all()
     {
-        $viewModesIds = $displayIds = [];
-        foreach ($this->layoutService()->getAll(true) as $layout) {
-            list($vmIds, $dIds) = $this->createLayoutDisplays($layout);
-            $viewModesIds = array_merge($viewModesIds, $vmIds);
-            $displayIds = array_merge($displayIds, $dIds);
+        if ($this->_displays === null) {
+            $records = DisplayRecord::find()->all();
+            $this->_displays = collect();
+            foreach ($records as $record) {
+                $this->_displays->push($this->create($record));
+            }
         }
-        $this->viewModeService()->deleteAll($viewModesIds);
-        $this->deleteAll($displayIds);
+        return $this->_displays;
     }
 
-    public function get(ViewMode $viewMode, string $type): ?Display
+    public function create($config): Display
     {
-        if (!in_array($type, self::TYPES)) {
-            throw DisplayException::typeInvalid($type, self::TYPES);
+        if ($config instanceof ActiveRecord) {
+            $config = $config->getAttributes();
         }
-        $record = DisplayRecord::find()->with($type)->where([
-            'viewMode_id' => $viewMode->id,
-            'type' => $type
-        ]);
-        return $record ? $record->toModel() : null;
+        $itemData = $config['item'] ?? null;
+        $display = new Display;
+        $attributes = $display->safeAttributes();
+        $config = array_intersect_key($config, array_flip($attributes));
+        $display->setAttributes($config);
+        if ($itemData) {
+            $display->item = $this->fieldsService()->create($itemData);
+        }
+        return $display;
+    }
+
+    public function install()
+    {
+        foreach ($this->layoutService()->withDisplays() as $layout) {
+            $this->installLayoutDisplays($layout);
+        }
     }
 
     public function getById(int $id): ?Display
     {
-        $record = DisplayRecord::find()->where([
-            'id' => $id
-        ])->with(['viewMode'])->one();
-        return $record ? $record->toModel() : null;
+        return $this->all()->firstWhere('id', $id);
     }
 
-    public function getForField(string $fieldUid, ?ViewMode $viewMode = null): array
+    public function getForCraftField(?int $fieldId = null, ViewMode $viewMode): ?Display
     {
-        $records = DisplayRecord::find()
-            ->joinWith(self::TYPE_FIELD)
-            ->where(['in' , 'type' , [self::TYPE_FIELD]])
-            ->andWhere([FieldRecord::tableName() . '.fieldUid' => $fieldUid]);
-        if ($viewMode) {
-            $records->andWhere(['viewMode_id' => $viewMode->id]);
-        }
-        return array_map(function ($record) {
-            return $record->toModel();
-        }, $records->all());
+        return $this->all()
+            ->where('type', self::TYPE_FIELD)
+            ->where('item.craft_field_id', $fieldId)
+            ->firstWhere('viewMode_id', $viewMode->id);
     }
 
-    public function getForlayout(Layout $layout): array
+    public function getAllForCraftField(int $fieldId): array
     {
-        $displays = [];
-        foreach ($layout->viewModes as $viewMode) {
-            $displays = array_merge($displays, $this->getForViewMode($viewMode));
-        }
-        return $displays;
+        return $this->all()
+            ->where('type', self::TYPE_FIELD)
+            ->where('item.craft_field_id', $fieldId)
+            ->values()
+            ->all();
+    }
+
+    public function getForTitleField(ViewMode $viewMode = null): ?Display
+    {
+        return $this->all()
+            ->where('type', self::TYPE_FIELD)
+            ->where('viewMode_id', $viewMode->id)
+            ->firstWhere('item.type', FieldsService::TYPE_TITLE);
+    }
+
+    public function getForLayout(Layout $layout): array
+    {
+        $viewModes = array_map(function ($viewMode) {
+            return $viewMode->id;
+        }, $layout->viewModes);
+        return $this->all()
+            ->whereIn('viewMode_id', $viewModes)
+            ->values()
+            ->all();
     }
 
     /**
@@ -101,124 +122,10 @@ class DisplayService extends Service
      */
     public function getForViewMode(ViewMode $viewMode): array
     {
-        $records = DisplayRecord::find()->where([
-            'viewMode_id' => $viewMode->id
-        ])->with(['viewMode', 'field', 'group', 'matrix'])->orderBy(['order' => SORT_ASC])->all();
-        return array_map(function  ($record) {
-            return $record->toModel();
-        }, $records);
-    }
-
-    public function getFieldById(int $id): ?DisplayField
-    {
-        $record = FieldRecord::find()->with('display')->where(['id' => $id])->one();
-        return $record ? $record->toModel() : null;
-    }
-
-    public function getGroupById(int $id): ?DisplayGroup
-    {
-        $record = GroupRecord::find()->where(['id' => $id])->one();
-        return $record ? $record->toModel() : null;
-    }
-
-    public function getMatrixById(int $id): DisplayMatrix
-    {
-        $record = MatrixRecord::find()->where(['id' => $id])->one();
-        return $record ? $record->toModel() : null;
-    }
-
-    /**
-     * Get field record by uid or a new one if not found
-     * 
-     * @param  string $uid
-     * @return DisplayRecord
-     */
-    public function getRecordByUid(string $uid): DisplayRecord
-    {
-        return DisplayRecord::findOne(['uid' => $uid]) ?? new DisplayRecord;
-    }
-
-    public function getFieldRecordByUid(string $uid): ?FieldRecord
-    {
-        return FieldRecord::find()->where(['uid' => $uid])->one() ?? new FieldRecord;
-    }
-
-    public function getMatrixRecordByUid(string $uid): ?MatrixRecord
-    {
-        return MatrixRecord::find()->where(['uid' => $uid])->one() ?? new MatrixRecord;
-    }
-
-    public function getGroupRecordByUid(string $uid): ?GroupRecord
-    {
-        return GroupRecord::find()->where(['uid' => $uid])->one() ?? new GroupRecord;
-    }
-
-    /**
-     * Create all displays for a layout.
-     * Go through all craft fields defined on the section/category and create display fields for it.
-     * 
-     * @param  Layout $layout
-     */
-    protected function createLayoutDisplays(Layout $layout)
-    {
-        $viewModesIds = $displayIds = [];
-        foreach ($layout->viewModes as $viewMode) {
-            $viewModeIds[] = $viewMode->id;
-            $order = $this->getMaxOrder($viewMode) ?? 0;
-            if (!$display = $this->getForField('title', $viewMode)[0] ?? null) {
-                $order++;
-                $display = $this->createTitleField($viewMode, $order);
-            }
-            $displayIds[] = $display->id;
-            foreach ($layout->element()->getFieldLayout()->getFields() as $craftField) {
-                if (!$display = $this->getForField($craftField->uid, $viewMode)[0] ?? null) {
-                    $order++;
-                    $display = $this->createField($viewMode, $craftField, $order);
-                }
-                $displayIds[] = $display->id;
-            }
-        }
-        return [$viewModeIds, $displayIds];
-    }
-
-    /**
-     * Get max order in displays for a view mode
-     * 
-     * @param  ViewMode $viewMode
-     * @return int
-     */
-    public function getMaxOrder(ViewMode $viewMode): ?int
-    {
-        $size = sizeof($this->getForViewMode($viewMode));
-        if ($size > 0) {
-            return $this->getForViewMode($viewMode)[$size - 1]->order;
-        }
-        return null;
-    }
-
-    /**
-     * Build a field from raw data
-     * 
-     * @param  array  $data
-     * @return Field
-     */
-    public function fromData(array $data): Display
-    {
-        unset($data['availableDisplayers']);
-        unset($data['uid']);
-        unset($data['name']);
-        $itemData = $data['item'];
-        unset($data['item']);
-        $data['viewMode'] = $this->viewModeService()->getById($data['viewMode_id']);
-        if (isset($data['id'])) {
-            $display = $this->getById($data['id']);
-            $display->setAttributes($data);
-            $display->item->setAttributes($itemData);
-        } else {
-            $display = new DisplayField($data);
-            $display->item->setAttributes($itemData);
-        }
-        return $display;
+        return $this->all()
+            ->where('viewMode_id', $viewMode->id)
+            ->values()
+            ->all();
     }
 
     /**
@@ -229,13 +136,14 @@ class DisplayService extends Service
      */
     public function deleteForLayout(Layout $layout, array $toKeep = [])
     {
-        $displays = DisplayRecord::find()
-            ->joinWith('viewMode')
-            ->where([ViewModeRecord::tableName().'.layout_id' => $layout->id])
-            ->andWhere(['not in', DisplayRecord::tableName().'.id', $toKeep])
-            ->all();
+        $viewModeIds = array_map(function ($viewMode) {
+            return $viewMode->id;
+        }, $layout->viewModes);
+        $displays = $this->all()
+            ->whereIn('viewMode_id', $viewModeIds)
+            ->whereNotIn('id', $toKeep);
         foreach ($displays as $display) {
-            $this->delete($display->toModel());
+            $this->delete($display);
         }
     }
 
@@ -248,7 +156,7 @@ class DisplayService extends Service
     public function save(Display $display, bool $validate = true): bool
     {
         if ($validate and !($display->validate() and $display->item->validate())) {
-            return false;
+            throw DisplayException::onSave($display);
         }
         
         $isNew = !is_int($display->id);
@@ -264,9 +172,13 @@ class DisplayService extends Service
         $projectConfig->set($configPath, $configData);
 
         $record = $this->getRecordByUid($uid);
-        $display->setAttributes($record->getAttributes(), false);
-        $display->item->setAttributes($record->item->getAttributes(), false);
-        
+        $display->setAttributes($record->getAttributes());
+        $display->item = null;
+
+        if ($isNew) {
+            $this->_displays->push($display);
+        }
+                
         return true;
     }
 
@@ -279,23 +191,23 @@ class DisplayService extends Service
     {
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //For some reason I don't understand, deleting a display config during an install will trigger an update event and end up here
+            //with a null config. It might be because the transaction is not committed yet I'm not sure.
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $display = $this->getRecordByUid($uid);
             $isNew = $display->getIsNewRecord();
 
             $display->uid = $uid;
-            $display->viewMode_id = $this->viewModeService()->getRecordByUid($data['viewMode_id'])->id;
+            $display->viewMode_id = $this->viewModesService()->getRecordByUid($data['viewMode_id'])->id;
             $display->type = $data['type'];
             $display->order = $data['order'];
             $display->save(false);
 
-            // example method getFieldRecordByUid for field
-            $method = 'get' . ucfirst($data['type']) . 'RecordByUid';
-            $item = $this->$method($data['item']['uid']);
-            $item->setAttributes($data['item'], false);
-            $item->display_id = $display->id;
-            $item->save(false);
+            $this->fieldsService()->handleChanged($display->id, $data['item']);
 
             $transaction->commit();
         } catch (\Throwable $e) {
@@ -315,6 +227,8 @@ class DisplayService extends Service
             'display' => $display
         ]));
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
+
+        $this->_displays = $this->all()->where('id', '!=', $display->id);
 
         return true;
     }
@@ -349,14 +263,13 @@ class DisplayService extends Service
     /**
      * Creates a entry type or category layout displays
      * 
-     * @param ConfigEvent $event
+     * @param EntryTypeEvent $event
      */
-    public function onCraftElementChanged(ConfigEvent $event)
+    public function onCraftElementSaved(string $type, string $uid)
     {
-        $uid = $event->tokenMatches[0];
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $layout = $this->layoutService()->get($theme->handle, $uid);
-            $this->createLayoutDisplays($layout);
+            $layout = $this->layoutService()->get($theme->handle, $type, $uid);
+            $this->installLayoutDisplays($layout);
         }
     }
 
@@ -365,59 +278,89 @@ class DisplayService extends Service
      * 
      * @param  ConfigEvent $event
      */
-    public function onCraftFieldDeleted(ConfigEvent $event)
+    public function onCraftFieldDeleted(CraftField $field)
     {
-        $uid = $event->tokenMatches[0];
-        foreach ($this->getForField($uid) as $display) {
+        foreach ($this->getAllForCraftField($field->id) as $display) {
             $this->delete($display);
         }
     }
 
-    protected function deleteAll(array $toKeep = [])
+    public function onCraftFieldSaved(CraftField $craftField)
     {
-        $displays = DisplayRecord::find()
-            ->with(['viewMode'])
-            ->where(['not in', DisplayRecord::tableName() . '.id', $toKeep])
-            ->all();
-        foreach ($displays as $record) {
-            $this->delete($record->toModel());
+        $displays = $this->getAllForCraftField($craftField->id);
+        if ($event->oldValue['type'] !== $event->newValue['type']) {
+            foreach ($displays as $oldDisplay) {
+                $viewMode = $oldDisplay->viewMode;
+                $order = $oldDisplay->order;
+                $this->delete($oldDisplay);
+                $display = $this->createDisplay($viewMode, $craftField, $order);
+                $this->save($display);
+            }
         }
     }
 
-    protected function createField(ViewMode $viewMode, Field $craftField, int $order = 0): Display
+    /**
+     * Create all displays for a layout.
+     * Go through all craft fields defined on the section/category and create display fields for it.
+     * 
+     * @param  Layout $layout
+     */
+    protected function installLayoutDisplays(Layout $layout)
     {
-        $class = get_class($craftField);
-        $displayer = $this->fieldDisplayersService()->getDefault($class);
-        $display = new Display([
-            'type' => self::TYPE_FIELD,
-            'viewMode_id' => $viewMode->id,
-            'order' => $order,
-            'hidden' => ($displayer == null),
-            'item' => new DisplayField([
-                'fieldUid' => $craftField->uid,
-                'displayerHandle' => $displayer ? $displayer->handle : '',
-                'options' => $displayer ? $displayer->getOptions()->toArray() : []
-            ])
-        ]);
-        $this->save($display);
-        return $display;
+        $displayIds = [];
+        foreach ($layout->viewModes as $viewMode) {
+            $order = $this->getMaxOrder($viewMode) ?? 0;
+            if (!$display = $this->getForTitleField($viewMode)) {
+                $order++;
+                $display = $this->create([
+                    'type' => self::TYPE_FIELD,
+                    'viewMode_id' => $viewMode->id,
+                    'order' => $order,
+                ]);
+                $display->item = $this->fieldsService()->createTitleField();
+                $this->save($display);
+            }
+            $displayIds[] = $display->id;
+            foreach ($layout->getFieldLayout()->getFields() as $craftField) {
+                if (!$display = $this->getForCraftField($craftField->id, $viewMode)) {
+                    $order++;
+                    $display = $this->create([
+                        'type' => self::TYPE_FIELD,
+                        'viewMode_id' => $viewMode->id,
+                        'order' => $order,
+                    ]);
+                    $display->item = $this->fieldsService()->createField($craftField);
+                    $this->save($display);
+                }
+                $displayIds[] = $display->id;
+            }
+        }
+        $this->deleteForLayout($layout, $displayIds);
     }
 
-    protected function createTitleField(ViewMode $viewMode, int $order = 0): Display
+    /**
+     * Get max order in displays for a view mode
+     * 
+     * @param  ViewMode $viewMode
+     * @return int
+     */
+    protected function getMaxOrder(ViewMode $viewMode): ?int
     {
-        $displayer = $this->fieldDisplayersService()->getDefault(TitleField::class);
-        $display = new Display([
-            'type' => self::TYPE_FIELD,
-            'viewMode_id' => $viewMode->id,
-            'order' => $order,
-            'hidden' => ($displayer == null),
-            'item' => new DisplayField([
-                'displayerHandle' => $displayer ? $displayer->handle : '',
-                'options' => $displayer ? $displayer->getOptions()->toArray() : [],
-                'fieldUid' => 'title'
-            ])
-        ]);
-        $this->save($display);
-        return $display;
+        $size = sizeof($this->getForViewMode($viewMode));
+        if ($size > 0) {
+            return $this->getForViewMode($viewMode)[$size - 1]->order;
+        }
+        return null;
+    }
+
+    /**
+     * Get field record by uid or a new one if not found
+     * 
+     * @param  string $uid
+     * @return DisplayRecord
+     */
+    protected function getRecordByUid(string $uid): DisplayRecord
+    {
+        return DisplayRecord::findOne(['uid' => $uid]) ?? new DisplayRecord;
     }
 }

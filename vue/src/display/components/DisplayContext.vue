@@ -4,7 +4,7 @@
         <div v-if="theme" class="menu">
             <ul class="padded">
                 <li v-for="theme2 in themes" v-bind:key="theme2.handle">
-                    <a :class="{sel: theme == theme2.handle}" href="#" @click.prevent="setTheme(theme2.handle)">{{ theme2.name }}</a>
+                    <a :class="{sel: theme == theme2.handle}" href="#" @click.prevent="changeTheme(theme2.handle)">{{ theme2.name }}</a>
                 </li>
             </ul>
         </div>
@@ -17,7 +17,7 @@ import Mixin from '../../mixin';
 
 export default {
     computed: {
-        ...mapState(['theme', 'layouts'])
+        ...mapState(['theme', 'layouts', 'layout'])
     },
     props: {
         initialTheme: String,
@@ -33,7 +33,7 @@ export default {
         if (this.currentLayout) {
             this.setLayoutAndFetch(this.currentLayout);
         } else {
-            this.setLayoutAndFetch(this.findFirstLayout());
+            this.setLayoutAndFetch(this.layouts[0].id);
         }
         window.addEventListener('popstate', () => {
             const url = document.location.pathname.split('/');
@@ -44,12 +44,16 @@ export default {
         });
     },
     methods: {
-        findFirstLayout: function () {
-            for (let layout of this.layouts) {
-                if (layout.hasDisplays) {
-                    return layout.id;
+        changeTheme: function (theme) {
+            let layoutElement = this.layout.element;
+            this.setTheme(theme);
+            for (let i in this.layouts) {
+                if (this.layouts[i].element === layoutElement) {
+                    this.setLayoutAndFetch(this.layouts[i].id);
+                    return;
                 }
             }
+            this.setLayoutAndFetch(this.layouts[0].id);
         },
         ...mapMutations(['setTheme', 'setAllLayouts']),
         ...mapActions(['setLayoutAndFetch']),

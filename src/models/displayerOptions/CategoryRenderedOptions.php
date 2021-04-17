@@ -12,15 +12,15 @@ class CategoryRenderedOptions extends FieldDisplayerOptions
 
     public function getTheme()
     {
-        return $this->_field->layout()->theme;
+        return $this->field->layout->theme;
     }
 
     public function getViewModes(): array
     {
-        $source = $this->_field->craftField()->source;
+        $source = $this->field->craftField->source;
         $elems = explode(':', $source);
         $group = \Craft::$app->categories->getGroupByUid($elems[1]);
-        $layout = Themes::$plugin->layouts->get($this->getTheme(), $group->uid);
+        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::CATEGORY_HANDLE, $group->uid);
         $viewModes = [];
         foreach ($layout->getViewModes() as $viewMode) {
             $viewModes[$viewMode->handle] = $viewMode->name;

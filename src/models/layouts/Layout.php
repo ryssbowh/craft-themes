@@ -50,11 +50,6 @@ class Layout extends Model
     public $hasBlocks = 0;
 
     /**
-     * @var boolean
-     */
-    protected $_hasDisplays = false;
-
-    /**
      * @var DateTime
      */
     public $dateCreated;
@@ -68,10 +63,6 @@ class Layout extends Model
      * @var string
      */
     public $uid;
-
-    public $viewModes;
-
-    public $blocks;
 
     /**
      * Rendering mode, 'regions' or 'fields'
@@ -95,55 +86,35 @@ class Layout extends Model
      */
     protected $_displays = [];
 
-    /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-        if ($this->type === null) {
-            throw LayoutException::noType();
-        }
-        if ($this->element === null) {
-            throw LayoutException::noElement();
-        }
-    }
+    protected $_viewModes;
 
-    /**
-     * Create a layout
-     * 
-     * @param  array  $args
-     * @return Layout
-     * @throws LayoutException
-     */
-    public static function create(array $args): Layout
-    {
-        if (!isset($args['type'])) {
-            throw LayoutException::noType();
-        }
+    protected $_blocks;
 
-        switch ($args['type']) {
-        case LayoutService::DEFAULT_HANDLE:
-            return new Layout($args);
-        case LayoutService::ROUTE_HANDLE:
-            return new RouteLayout($args);
-        case LayoutService::CATEGORY_HANDLE:
-            return new CategoryLayout($args);
-        case LayoutService::ENTRY_HANDLE:
-            return new EntryLayout($args);
-        }
-        throw LayoutException::unknownType($args['type']);
+    public function defineRules(): array
+    {
+        return [
+            [['type', 'theme', 'element'], 'required'],
+            ['type', 'in', 'range' => LayoutService::TYPES],
+            [['theme', 'element'], 'string'],
+            ['hasBlocks', 'boolean'],
+            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe']
+        ];
     }
 
     public function eagerLoadFields(Element $element, string $viewMode)
     {
         $with = [];
-        foreach ($this->getVisibleFields($viewMode) as $field) {
-            if ($fields = $field->item->displayer->eagerLoad()) {
+        foreach ($this->getVisibleDisplays($viewMode) as $display) {
+            if ($fields = $display->item->displayer->eagerLoad()) {
                 $with = array_merge($with, $fields);
             }
         }
         \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
+    }
+
+    public function canHaveUrls(): bool
+    {
+        return true;
     }
 
     /**
@@ -151,9 +122,9 @@ class Layout extends Model
      * 
      * @return bool
      */
-    public function getHasDisplays(): bool
+    public function hasDisplays(): bool
     {
-        return $this->_hasDisplays;
+        return false;
     }
 
     /**
@@ -180,7 +151,13 @@ class Layout extends Model
             'theme' => $this->theme,
             'type' => $this->type,
             'element' => $this->element,
-            'hasBlocks' => $this->hasBlocks
+            'hasBlocks' => $this->hasBlocks,
+            'viewModes' => array_map(function ($viewMode) {
+                return $viewMode->getConfig();
+            }, $this->viewModes),
+            'blocks' => array_map(function ($block) {
+                return $block->getConfig();
+            }, $this->blocks)
         ];
     }
 
@@ -208,6 +185,31 @@ class Layout extends Model
         return $this->_element;
     }
 
+    public function getViewModes(): array
+    {
+        if ($this->_viewModes === null) {
+            $this->_viewModes = Themes::$plugin->viewModes->forLayout($this);
+        }
+        return $this->_viewModes;
+    }
+
+    public function setViewModes(?array $viewModes)
+    {
+        $this->_viewModes = $viewModes;
+    }
+
+    public function getBlocks(): array
+    {
+        if ($this->_blocks === null) {
+            $this->_blocks = Themes::$plugin->blocks->getForLayout($this);
+        }
+        return $this->_blocks;
+    }
+
+    public function setBlocks(?array $blocks)
+    {
+        $this->_blocks = $blocks;
+    }
 
     public function getElementMachineName(): string
     {
@@ -219,7 +221,7 @@ class Layout extends Model
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['description', 'handle', 'hasDisplays']);
+        return array_merge(parent::fields(), ['description', 'handle', 'viewModes']);
     }
 
     /**
@@ -277,7 +279,7 @@ class Layout extends Model
     }
 
     /**
-     * Get all displays
+     * Get all displays for a view mode
      * 
      * @return array
      */
@@ -298,16 +300,16 @@ class Layout extends Model
     public function getVisibleDisplays(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
     {
         return array_filter($this->getDisplays($viewMode), function ($display) {
-            return $display->hidden == 0;
+            return $display->item->isVisible();
         });
     }
 
-    public function getVisibleFields(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
-    {
-        return array_filter($this->getVisibleDisplays($viewMode), function ($display) {
-            return $display->type == DisplayService::TYPE_FIELD or $display->type == DisplayService::TYPE_MATRIX;
-        });
-    }
+    // public function getVisibleFields(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
+    // {
+    //     return array_filter($this->getVisibleDisplays($viewMode), function ($display) {
+    //         return $display->type == DisplayService::TYPE_FIELD or $display->type == DisplayService::TYPE_MATRIX;
+    //     });
+    // }
 
     /**
      * Load element
@@ -325,22 +327,6 @@ class Layout extends Model
     public function getHandle(): string
     {
         return LayoutService::DEFAULT_HANDLE;
-    }
-
-    public function getViewModes(): array
-    {
-        if (is_null($this->viewModes)) {
-            $this->viewModes = Themes::$plugin->viewModes->forLayout($this); 
-        }
-        return $this->viewModes;
-    }
-
-    public function getBlocks(): array
-    {
-        if (is_null($this->blocks)) {
-            $this->blocks = Themes::$plugin->blocks->forLayout($this); 
-        }
-        return $this->blocks;
     }
 
     public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string

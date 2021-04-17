@@ -12,7 +12,7 @@ class EntryRenderedOptions extends FieldDisplayerOptions
 
     public function getTheme()
     {
-        return $this->_field->layout()->theme;
+        return $this->field->layout()->theme;
     }
 
     public function rules()
@@ -24,7 +24,7 @@ class EntryRenderedOptions extends FieldDisplayerOptions
 
     public function getViewModes(): array
     {
-        $sources = $this->_field->craftField()->sources;
+        $sources = $this->field->craftField()->sources;
         if ($sources == '*') {
             return $this->getAllSectionsViewModes();
         }
@@ -46,7 +46,7 @@ class EntryRenderedOptions extends FieldDisplayerOptions
         $viewModes = [];
         foreach ($sections as $section) {
             foreach ($section->getEntryTypes() as $type) {
-                $layout = Themes::$plugin->layouts->get($this->getTheme(), $type->uid);
+                $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
                 $viewModes2 = [];
                 foreach ($layout->getViewModes() as $viewMode) {
                     $viewModes2[$viewMode->handle] = $viewMode->name;
@@ -66,7 +66,7 @@ class EntryRenderedOptions extends FieldDisplayerOptions
         $viewModes = [];
         foreach ($sections as $section) {
             $type = $section->getEntryTypes()[0];
-            $layout = Themes::$plugin->layouts->get($this->getTheme(), $type->uid);
+            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
             $viewModes2 = [];
             foreach ($layout->getViewModes() as $viewMode) {
                 $viewModes2[$viewMode->handle] = $viewMode->name;
@@ -83,7 +83,7 @@ class EntryRenderedOptions extends FieldDisplayerOptions
     {
         $section = \Craft::$app->sections->getSectionByUid($uid);
         $type = $section->getEntryTypes()[0];
-        $layout = Themes::$plugin->layouts->get($this->getTheme(), $type->uid);
+        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
         $viewModes = [];
         foreach ($layout->getViewModes() as $viewMode) {
             $viewModes[$viewMode->handle] = $viewMode->name;

@@ -27,16 +27,16 @@ class Settings extends Model
      */
     public $eagerLoad = true;
 
-    public $memoryLoading = true;
+    public $installed = false;
 
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function defineRules(): array
     {
         return [
             ['default', 'string'],
-            [['eagerLoad', 'devMode', 'memoryLoading'], 'boolean']
+            [['eagerLoad', 'devMode', 'installed'], 'boolean']
         ];
     }
 

@@ -15,6 +15,7 @@ class CpDisplayController extends Controller
      */
     public function actionIndex(?string $themeName = null, int $layout = null)
     {
+        $this->requirePermission('manageThemesDisplay');
         $themes = $this->registry->getNonPartials(false, true);
         $theme = null;
 
@@ -27,14 +28,13 @@ class CpDisplayController extends Controller
         } else {
             $theme = $this->registry->getTheme($themeName);
         }
-
         $this->view->registerAssetBundle(DisplayAssets::class);
 
         return $this->renderTemplate('themes/cp/display', [
             'title' => \Craft::t('themes', 'Display'),
             'themes' => $themes,
             'theme' => $themeName,
-            'allLayouts' => $this->layouts->getLayoutsByTheme(true, true, false),
+            'allLayouts' => $this->layouts->getDisplayLayouts(),
             'layout' => $layout ? $layout : 0
         ]);
     }

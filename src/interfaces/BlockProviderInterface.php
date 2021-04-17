@@ -2,17 +2,11 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-
 interface BlockProviderInterface 
 {
-    /**
-     * Add a block to this provider
-     * 
-     * @param  string $blockClass
-     * @return BlockProviderInterface
-     */
-    public function addBlock(string $blockClass): BlockProviderInterface;
+    public function getHandle(): string;
+
+    public function getName(): string;
 
     /**
      * Get a block instance
@@ -21,12 +15,16 @@ interface BlockProviderInterface
      * @param  array  $attributes
      * @return BlockInterface
      */
-    public function getBlock(string $handle, array $attributes = []): BlockInterface;
+    public function createBlock(string $handle): BlockInterface;
 
     /**
      * Get all defined blocks as objects
      * 
      * @return array
      */
-    public function getBlocksObjects(): array;
+    public function getBlocks(): array;
+
+    public function getDefinedBlocks(): array;
+
+    public function addDefinedBlock(string $blockClass): BlockProviderInterface;
 }

@@ -6,18 +6,15 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\services\DisplayService;
+use craft\base\Element;
 use craft\base\Model;
 
 class Display extends Model 
 {
     public $id;
-    public $type;
     public $order;
+    public $type;
     public $viewMode_id;
-    public $hidden = false;
-    public $visuallyHidden = false;
-    public $labelHidden = false;
-    public $labelVisuallyHidden = false;
     public $dateCreated;
     public $dateUpdated;
     public $uid;
@@ -25,14 +22,13 @@ class Display extends Model
     protected $_viewMode;
     protected $_item;
 
-    public function rules()
+    public function defineRules(): array
     {
         return [
-            [['type', 'viewMode_id', 'order', 'labelHidden', 'hidden', 'visuallyHidden', 'labelVisuallyHidden'], 'required'],
-            [['labelHidden', 'hidden', 'visuallyHidden', 'labelVisuallyHidden'], 'boolean'],
+            [['viewMode_id', 'order', 'type'], 'required'],
             [['viewMode_id', 'order'], 'integer'],
-            ['type', 'string'],
-            ['type', 'in', 'range' => [DisplayService::TYPE_MATRIX, DisplayService::TYPE_GROUP, DisplayService::TYPE_FIELD]]
+            ['type', 'in', 'range' => DisplayService::TYPES],
+            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe']
         ];
     }
 
@@ -45,12 +41,8 @@ class Display extends Model
     {
         return [
             'viewMode_id' => $this->viewMode->uid,
-            'type' => $this->type,
             'order' => $this->order,
-            'labelHidden' => $this->labelHidden,
-            'hidden' => $this->hidden,
-            'visuallyHidden' => $this->visuallyHidden,
-            'labelVisuallyHidden' => $this->labelVisuallyHidden,
+            'type' => $this->type,
             'item' => $this->item->getConfig()
         ];
     }
@@ -80,30 +72,24 @@ class Display extends Model
 
     public function getItem(): DisplayItem
     {
-        if (!$this->_item) {
-            switch ($this->type) {
-                case 'field':
-                    $this->_item = new DisplayField;
-                    break;
-                case 'group':
-                    $this->_item = new DisplayGroup;
-                    break;
-                case 'matrix':
-                    $this->_item = new DisplayMatrix;
-                    break;
+        if ($this->_item === null) {
+            if ($this->type == DisplayService::TYPE_GROUP) {
+                $this->_item = Themes::$plugin->groups->getForDisplay($this->id);
+            } else {
+                $this->_item = Themes::$plugin->fields->getForDisplay($this->id);
             }
         }
         return $this->_item;
     }
 
-    public function setItem(DisplayItem $item)
+    public function setItem(?DisplayItem $item)
     {
         $this->_item = $item;
     }
 
-    public function render(): string
+    public function render(Element $element): string
     {
-        return $this->item->render();
+        return $this->item->render($element);
     }
 
     public function __toString()

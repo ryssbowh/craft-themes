@@ -24,7 +24,10 @@ class AssetLinkOptions extends FieldDisplayerOptions
         return [
             [['label', 'custom'], 'string'],
             [['newTab', 'download'], 'boolean'],
-            ['label', 'in', 'range' => array_keys($this->getLabelsOptions)]
+            ['custom', 'required', 'when' => function ($model) {
+                return $model->label == 'custom';
+            }],
+            ['label', 'in', 'range' => array_keys($this->getLabelsOptions())]
         ];
     }
 }

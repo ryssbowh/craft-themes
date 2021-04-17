@@ -8,8 +8,8 @@
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="$emit('closeModal')">{{ t('Close') }}</button>
-                <button type="button" class="btn submit" @click="saveModal">{{ t('Save') }}</button>
+                <button type="button" class="btn" @click="setShowOptionsModal(false)">{{ t('Close') }}</button>
+                <button type="button" class="btn submit" @click="save">{{ t('Save') }}</button>
             </div>
         </div>
     </div>
@@ -23,11 +23,7 @@ import populate from 'populate.js';
 
 export default {
     computed: {
-        ...mapState([])
-    },
-    props: {
-        display: Object,
-        showModal: Boolean
+        ...mapState(['showOptionsModal', 'optionsField'])
     },
     data() {
         return {
@@ -36,14 +32,14 @@ export default {
         }
     },
     watch: {
-        showModal: function () {
-            if (this.showModal) {
+        showOptionsModal: function () {
+            if (this.showOptionsModal) {
                 this.popup.show();
             } else {
                 this.popup.hide();
             }
         },
-        'display.field.displayerHandle': function () {
+        optionsField: function () {
             this.fetchOptions();
         }
     },
@@ -52,8 +48,12 @@ export default {
             this.popup.destroy();
         }
     },
-    created: function () {
-        this.fetchOptions();
+    mounted: function () {
+        this.popup = new Modal(this.$refs.modal, {
+            hideOnEsc: false,
+            hideOnShadeClick: false,
+            autoShow: false
+        });
     },
     methods: {
         handleError: function (err) {
@@ -66,12 +66,12 @@ export default {
         fetchOptions: function () {
             let _this = this;
             let data = {
-                id: this.display.id,
-                displayer: this.display.item.displayerHandle
+                id: this.optionsField.id,
+                displayer: this.optionsField.displayerHandle
             };
             return axios({
                 method: 'post',
-                url: Craft.getCpUrl('themes/ajax/display-options'),
+                url: Craft.getCpUrl('themes/ajax/field-options'),
                 data: data,
                 headers: {'X-CSRF-Token': Craft.csrfTokenValue}
             }).then((response) => {
@@ -79,11 +79,6 @@ export default {
                 _this.$nextTick(() => {
                     _this.populateForm();
                     Craft.initUiElements(_this.$refs.form);
-                    _this.popup = new Modal(_this.$refs.modal, {
-                        hideOnEsc: false,
-                        hideOnShadeClick: false,
-                        autoShow: false
-                    });
                 });
             })
             .catch((err) => {
@@ -92,45 +87,49 @@ export default {
         },
         populateForm() {
             //Cast all booleans as integers, or populate.js will populate "false" and "true"
-            let options = this.display.item.options;
+            let options = this.optionsField.options;
             for (let i in options) {
                 let option = options[i];
                 if (typeof option == 'boolean') {
                     options[i] = options[i] ? 1 : 0;
                 }
             }
-            populate(this.$refs.form, this.display.item.options);
+            populate(this.$refs.form, options);
             $.each($(this.$refs.form).find('.lightswitch'), function () {
                 if ($(this).find('input').val()) {
                     $(this).addClass('on');
                 }
             });
         },
-        saveModal () {
+        save () {
+            this.hideErrors();
             let _this = this;
             let options = $(this.$refs.form).serializeJSON();
             let data = {
-                id: this.display.id,
-                displayer: this.display.item.displayerHandle,
+                id: this.optionsField.id,
+                displayer: this.optionsField.displayerHandle,
                 options: options
             };
             axios({
                 method: 'post',
-                url: Craft.getCpUrl('themes/ajax/display-options/validate'),
+                url: Craft.getCpUrl('themes/ajax/field-options/validate'),
                 data: data,
                 headers: {'X-CSRF-Token': Craft.csrfTokenValue}
             }).then((response) => {
-                console.log(typeof response.data.errors);
                 if (Object.keys(response.data.errors).length > 0) {
                     _this.showErrors(response.data.errors);
                 } else {
-                    _this.$emit('saveModal', {id: this.display.id, data: {options: options}});
+                    this.updateOptions(options);
+                    this.setShowOptionsModal(false);
                 }
             })
             .catch((err) => {
                 _this.handleError(err);
             });
             
+        },
+        hideErrors: function () {
+            $(this.$refs.form).find('.errors').hide();
         },
         showErrors: function (errors) {
             let errorsWrapper;
@@ -148,10 +147,10 @@ export default {
                 }
             }
         },
-        ...mapMutations([]),
+        ...mapMutations(['setShowOptionsModal', 'updateOptions']),
         ...mapActions([]),
     },
-    emits: ['closeModal', 'saveModal'],
+    emits: [],
     mixins: [Mixin],
 };
 </script>

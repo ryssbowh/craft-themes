@@ -11,29 +11,19 @@ class SystemBlockProvider extends BlockProvider
     /**
      * @var array
      */
-    public $blocks = [
+    protected $_definedBlocks = [
         TemplateBlock::class,
         ContentBlock::class,
         TwigBlock::class,
     ];
 
-    /**
-     * @var string
-     */
-    public $handle = 'system';
-
-    /**
-     * @var string
-     */
-    public $name = 'System';
-
-    /**
-     * Get name
-     * 
-     * @return string
-     */
-    public static function getName(): string
+    public function getName(): string
     {
         return \Craft::t('themes', 'System');
+    }
+
+    public function getHandle(): string
+    {
+        return 'system';
     }
 }

@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\displayerOptions\CategoryRenderedOptions;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
+use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Model;
 use craft\elements\Category;
 use craft\fields\Categories;
@@ -50,7 +51,7 @@ class CategoryRendered extends FieldDisplayer
     {
         $group = $this->getCategoryGroup();
         $theme = Themes::$plugin->registry->getCurrent();
-        $layout = Themes::$plugin->layouts->get($theme->handle, $group->uid);
+        $layout = Themes::$plugin->layouts->get($theme->handle, LayoutService::CATEGORY_HANDLE, $group->uid);
         $layout->setDisplaysRenderingMode();
         return $layout;
     }

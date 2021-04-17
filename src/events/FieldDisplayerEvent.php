@@ -7,22 +7,23 @@ use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryList;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryRendered;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultColour;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultDate;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultDropdown;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultEmail;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultLightswitch;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultMultiSelect;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultNumber;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultPlainText;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultRadioButtons;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultRedactor;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultTags;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultTime;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultTitle;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DefaultUrl;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\ColourDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\DateDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\DropdownDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\EmailDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryRendered;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\LightswitchDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\NumberDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TagsDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlDefault;
 use yii\base\Event;
 
 class FieldDisplayerEvent extends Event
@@ -36,25 +37,26 @@ class FieldDisplayerEvent extends Event
     public function init()
     {
         $this->registerMany([
-            new DefaultPlainText,
-            new DefaultTitle,
+            new PlainTextDefault,
+            new TitleDefault,
             new CategoryList,
-            new DefaultRedactor,
-            new DefaultColour,
+            new RedactorDefault,
+            new ColourDefault,
             new AssetLink,
-            new DefaultDate,
-            new DefaultDropdown,
-            new DefaultEmail,
+            new DateDefault,
+            new DropdownDefault,
+            new EmailDefault,
             new EntryLink,
-            new DefaultLightswitch,
-            new DefaultMultiSelect,
-            new DefaultNumber,
-            new DefaultRadioButtons,
-            new DefaultTags,
-            new DefaultTime,
-            new DefaultUrl,
+            new LightswitchDefault,
+            new MultiSelectDefault,
+            new NumberDefault,
+            new RadioButtonsDefault,
+            new TagsDefault,
+            new TimeDefault,
+            new UrlDefault,
             new EntryRendered,
-            new CategoryRendered
+            new CategoryRendered,
+            new MatrixDefault
         ]);
     }
 

@@ -1,5 +1,5 @@
 <div class="{{ classes|raw }}" {{ attributes|raw }}>
 	{% for _block in region.blocks %}
-        {{ _block|raw }}
+        {{ _block.render(element)|raw }}
 	{% endfor %}
 </div>

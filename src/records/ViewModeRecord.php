@@ -12,11 +12,6 @@ class ViewModeRecord extends ActiveRecord
 		return '{{%themes_view_modes}}';
 	}
 
-	public function toModel(): ViewMode
-	{
-		return new ViewMode($this->getAttributes());
-	}
-
     public function getLayout()
     {
         return $this->hasOne(LayoutRecord::className(), ['layout_id' => 'id']);

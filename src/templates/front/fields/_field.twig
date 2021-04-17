@@ -1,7 +1,7 @@
-<div class="{{ classes|raw }}" {{ attributes|raw }} {% if display.visuallyHidden %}display="none"{% endif %}>
+<div class="{{ classes|raw }}" {{ attributes|raw }} {% if field.visuallyHidden %}display="none"{% endif %}>
     {% block label %}
-        {% if not display.labelHidden %}
-            <label class="field-label" {% if display.labelVisuallyHidden %}display="none"{% endif %}>
+        {% if not field.labelHidden %}
+            <label class="field-label" {% if field.labelVisuallyHidden %}display="none"{% endif %}>
                 {{ field.name }}
             </label>
         {% endif %}

@@ -7,9 +7,8 @@ use Ryssbowh\CraftThemes\helpers\AttributeBag;
 use Ryssbowh\CraftThemes\helpers\ClassBag;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\Display;
-use Ryssbowh\CraftThemes\models\DisplayField;
-use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\Region;
+use Ryssbowh\CraftThemes\models\fields\Field;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
@@ -21,12 +20,6 @@ class ViewService extends Service
     const CACHE_KEY_PREFIX = 'themes.templates.';
 
     const THEME_ROOT_TEMPLATE = 'themed_page';
-
-    /**
-     * Element being rendered
-     * @var ?Element
-     */
-    protected $renderingElement;
 
     /**
      * View mode being rendered
@@ -85,7 +78,7 @@ class ViewService extends Service
         $event->variables['layout'] = $layout;
     }
 
-    public function renderRegion(Region $region): string
+    public function renderRegion(Region $region, Element $element): string
     {
         $this->renderingRegion = $region;
         $layout = $this->renderingLayout->getElementMachineName();
@@ -105,12 +98,12 @@ class ViewService extends Service
                 'region' => $region,
                 'layout' => $this->renderingLayout,
                 'viewMode' => $this->renderingViewMode,
-                'element' => $this->renderingElement,
+                'element' => $element,
             ]
         );
     }
 
-    public function renderBlock(BlockInterface $block): string
+    public function renderBlock(BlockInterface $block, Element $element): string
     {
         $region = $this->renderingRegion->handle;
         $layout = $this->renderingLayout->getElementMachineName();
@@ -130,12 +123,12 @@ class ViewService extends Service
                 'block' => $block,
                 'layout' => $this->renderingLayout,
                 'viewMode' => $this->renderingViewMode,
-                'element' => $this->renderingElement,
+                'element' => $element,
             ]
         );
     }
 
-    public function renderField(DisplayField $field)
+    public function renderField(Field $field, Element $element)
     {
         if (!$displayer = $field->getDisplayer()) {
             return '';
@@ -159,10 +152,10 @@ class ViewService extends Service
                 'display' => $field->display,
                 'layout' => $this->renderingLayout,
                 'viewMode' => $this->renderingViewMode,
-                'element' => $this->renderingElement,
+                'element' => $element,
                 'displayer' => $displayer,
                 'options' => $displayer->getOptions(),
-                'value' => $this->renderingElement->{$field->handle},
+                'value' => $element->{$field->handle},
                 'craftField' => $field->craftField
             ]
         );
@@ -175,10 +168,8 @@ class ViewService extends Service
         }
         $oldLayout = $this->renderingLayout;
         $oldViewMode = $this->renderingViewMode;
-        $oldElement = $this->renderingElement;
         $this->renderingLayout = $layout;
         $this->renderingViewMode = $viewMode;
-        $this->renderingElement = $element;
         $machineName = $layout->getElementMachineName();
         $type = $layout->type;
         $html = $this->render(
@@ -200,13 +191,7 @@ class ViewService extends Service
         );
         $this->renderingLayout = $oldLayout;
         $this->renderingViewMode = $oldViewMode;
-        $this->renderingElement = $oldElement;
         return $html;
-    }
-
-    public function getRenderingElement(): ?Element
-    {
-        return $this->renderingElement;
     }
 
     public function getRenderingViewMode(): ?string

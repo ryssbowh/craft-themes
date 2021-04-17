@@ -1,0 +1,10 @@
+{% import "_includes/forms" as forms %}
+
+{{
+    forms.selectField({
+        value: options.viewMode,
+        name: 'viewMode',
+        label: 'View mode'|t('themes'),
+        options: options.getViewModes()
+    })
+}}

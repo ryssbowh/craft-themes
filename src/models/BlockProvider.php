@@ -9,68 +9,47 @@ use craft\base\Model;
 
 abstract class BlockProvider extends Model implements BlockProviderInterface
 {
-    /**
-     * @var array
-     */
-    public $blocks = [];
-
-    /**
-     * @var string
-     */
-    public $handle;
-
-    /**
-     * @var string
-     */
-    public $name;
+    protected $_definedBlocks = [];
 
     /**
      * @inheritDoc
      */
-    public function init()
-    {
-        parent::init();
-        if (!$this->handle) {
-            throw BlockProviderException::noHandle(get_called_class());
-        }
-        if (!$this->name) {
-            throw BlockProviderException::noName(get_called_class());
-        }
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function getBlocksObjects(): array
+    public function getBlocks(): array
     {
         $_this = $this;
-        return array_map(function ($class) use ($_this) {
-            return $_this->loadBlock($class);
-        }, $this->blocks);
+        return array_map(function ($handle) use ($_this) {
+            return $_this->createBlock($handle);
+        }, array_keys($this->definedBlocks));
     }
 
     /**
      * @inheritDoc
      */
-    public function getBlock(string $handle, array $attributes = []): BlockInterface
+    public function createBlock(string $handle): BlockInterface
     {
-        foreach ($this->blocks as $class) {
-            if ($class::$handle == $handle) {
-                return $this->loadBlock($class, $attributes);
-            }
+        $defined = $this->definedBlocks;
+        if (isset($defined[$handle])) {
+            $class = $defined[$handle];
+            return new $class(['provider' => $this->handle]);
         }
         throw BlockProviderException::noBlock(get_called_class(), $handle);
     }
 
+    public function getDefinedBlocks(): array
+    {
+        $blocks = [];
+        foreach ($this->_definedBlocks as $class) {
+            $blocks[$class::$handle] = $class;
+        }
+        return $blocks;
+    }
+
     /**
      * @inheritDoc
      */
-    public function addBlock(string $blockClass): BlockProviderInterface
+    public function addDefinedBlock(string $blockClass): BlockProviderInterface
     {
-        $this->blockClasses[] = $block;
-        if ($this->loaded) {
-            $this->loadBlock($blockClass);
-        }
+        $this->_definedBlocks[] = $block;
         return $this;
     }
 
@@ -79,20 +58,6 @@ abstract class BlockProvider extends Model implements BlockProviderInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['blocksObjects']);
-    }
-
-    /**
-     * Loads a block
-     * 
-     * @param  string $class
-     * @param  array  $attributes
-     * @return BlockInterface
-     */
-    protected function loadBlock(string $class, $attributes = []): BlockInterface
-    {
-        unset($attributes['handle']);
-        $attributes['provider'] = $this->handle;
-        return new $class($attributes);
+        return array_merge(parent::fields(), ['blocks', 'name', 'handle']);
     }
 }

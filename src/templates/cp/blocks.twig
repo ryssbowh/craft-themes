@@ -1,0 +1,19 @@
+{% extends "_layouts/cp" %}
+{% set selectedSubnavItem = 'themes-blocks' %}
+
+{% block contextMenu %}
+	<blocks-context 
+		:initial-theme="'{{ theme }}'"
+		:themes="{{ themes|json_encode }}"
+        :initial-layout="{{ layout }}"
+        :all-layouts="{{ allLayouts|json_encode }}"
+	/>
+{% endblock %}
+
+{% block toolbar %}
+	<blocks-toolbar />
+{% endblock %}
+
+{% block content %}
+	<blocks/>
+{% endblock %}

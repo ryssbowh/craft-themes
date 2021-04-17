@@ -8,10 +8,11 @@ class DisplayGroup extends DisplayItem
 {
     public $name;
     public $handle;
+    public $fields = [];
 
-    public function rules()
+    public function defineRules(): array
     {
-        return array_merge(parent::rules(), [
+        return array_merge(parent::defineRules(), [
             [['name', 'handle'], 'required'],
             [['handle', 'name'], 'string']
         ]);
@@ -27,7 +28,10 @@ class DisplayGroup extends DisplayItem
         return [
             'name' => $this->name,
             'handle' => $this->handle,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'uid' => $this->uid ?? StringHelper::UUID(),
+            'fields' => array_map(function ($field) {
+                return $field->getConfig();
+            }, $this->fields)
         ];
     }
 }

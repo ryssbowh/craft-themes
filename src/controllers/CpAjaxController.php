@@ -2,6 +2,9 @@
 
 namespace Ryssbowh\CraftThemes\controllers;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\DisplayException;
+
 class CpAjaxController extends Controller
 {
     public function beforeAction($action) 
@@ -36,7 +39,7 @@ class CpAjaxController extends Controller
      * 
      * @return Response
      */
-    public function actionProviders()
+    public function actionBlockProviders()
     {
         return [
             'providers' => $this->blockProviders->getAll(true)
@@ -53,7 +56,7 @@ class CpAjaxController extends Controller
     {
         $layout = $this->layouts->getById($layout);
         return [
-            'blocks' => $this->blocks->forLayout($layout)
+            'blocks' => $this->blocks->getForLayout($layout)
         ];
     }
 
@@ -66,36 +69,33 @@ class CpAjaxController extends Controller
     public function actionDisplays(int $layout)
     {
         $layout = $this->layouts->getById($layout);
+
         return [
             'displays' => $this->display->getForLayout($layout),
         ];
     }
 
-    public function actionDisplayOptions()
+    public function actionFieldOptions()
     {
-        $displayId = $this->request->getBodyParam('id');
+        $fieldId = $this->request->getBodyParam('id');
         $displayerHandle = $this->request->getRequiredParam('displayer');
 
-        if ($displayId) {
-            $display = $this->display->getById($displayId);
-            $display->item->displayerHandle = $displayerHandle;
-            $displayer = $display->item->displayer;
-        } else {
-            $displayer = $this->fieldDisplayers->getByHandle($displayerHandle);
-        }
+        $field = $this->fields->getById($fieldId);
+        $displayer = $this->fieldDisplayers->getByHandle($displayerHandle);
+        $displayer->field = $field;
         return [
             'html' => $displayer->getOptionsHtml()
         ];
     }
 
-    public function actionValidateDisplayOptions()
+    public function actionValidateFieldOptions()
     {
-        $displayId = $this->request->getBodyParam('id');
+        $fieldId = $this->request->getBodyParam('id');
         $displayerHandle = $this->request->getRequiredParam('displayer');
         $optionsData = $this->request->getRequiredParam('options');
 
-        if ($displayId) {
-            $field = $this->display->getById($displayId)->item;
+        if ($fieldId) {
+            $field = $this->fields->getById($fieldId);
             $field->displayerHandle = $displayerHandle;
             $displayer = $field->displayer;
         } else {
@@ -119,26 +119,23 @@ class CpAjaxController extends Controller
         $viewModeMapping = [];
         $viewModes = [];
         foreach ($viewModeData as $data) {
-            $data['layout'] = $layoutId;
-            $viewMode = $this->viewModes->fromData($data);
-            $this->viewModes->save($viewMode);
+            $data['layout_id'] = $layoutId;
+            $viewMode = $this->viewModes->create($data);
             $viewModeMapping[$viewMode->handle] = $viewMode->id;
             $viewModes[] = $viewMode;
         }
+        $layout->viewModes = $viewModes;
+        $this->layouts->save($layout);
 
-        $displays = $displayIds = [];
+        $displays = [];
         foreach ($displaysData as $data) {
             if (is_string($data['viewMode_id'])) {
                 $data['viewMode_id'] = $viewModeMapping[$data['viewMode_id']];
             }
-            $display = $this->display->fromData($data);
+            $display = $this->display->create($data);
             $this->display->save($display);
             $displays[] = $display;
-            $displayIds[] = $display->id;
         }
-
-        $this->viewModes->deleteForLayout($layout, array_values($viewModeMapping));
-        $this->display->deleteForLayout($layout, $displayIds);
 
         return [
             'displays' => $displays,
@@ -157,8 +154,8 @@ class CpAjaxController extends Controller
     {
         $layout = $this->layouts->getById($id);
         $layout->hasBlocks = 0;
+        $layout->blocks = [];
         $this->layouts->save($layout);
-        $this->blocks->deleteLayoutBlocks($layout);
 
         return [
             'message' => \Craft::t('themes', 'Layout deleted successfully.'),
@@ -171,25 +168,25 @@ class CpAjaxController extends Controller
      * 
      * @return Response
      */
-    public function actionSaveLayout()
+    public function actionSaveBlocks()
     {
         $_this = $this;
         $blocksData = $this->request->getRequiredParam('blocks');
         $themeName = $this->request->getRequiredParam('theme');
-        $layoutData = $this->request->getRequiredParam('layout');
+        $layoutId = $this->request->getRequiredParam('layout');
 
-        $layout = $this->layouts->getById($layoutData['id']);
+        $layout = $this->layouts->getById($layoutId);
 
         if (!$layout->hasBlocks) {
             $layout->hasBlocks = 1;
-            $this->layouts->save($layout);
         }
 
         $blocks = array_map(function ($blockData) use ($_this) {
-            return $_this->blocks->fromData($blockData);
+            return $_this->blocks->create($blockData);
         }, $blocksData);
+        $layout->blocks = $blocks;
 
-        if (!$this->blocks->saveBlocks($blocks, $layout)) {
+        if (!$this->layouts->save($layout)) {
             $this->response->setStatusCode(400);
             return $this->asJson([
                 'message' => 'Error while saving blocks',
@@ -211,12 +208,13 @@ class CpAjaxController extends Controller
      * 
      * @return Response
      */
-    public function actionRepair()
+    public function actionInstall()
     {
-        $this->layouts->createAll();
-        $this->display->createAll();
+        $this->layouts->install();
+        $this->display->install();
+        \Craft::$app->plugins->savePluginSettings(Themes::$plugin, ['installed' => true]);
         return [
-            'message' => \Craft::t('themes', 'Layouts and display have been repaired')
+            'message' => \Craft::t('themes', 'Layouts and display have been installed')
         ];
     }
 }

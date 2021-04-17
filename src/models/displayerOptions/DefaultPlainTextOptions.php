@@ -2,9 +2,10 @@
 
 namespace Ryssbowh\CraftThemes\models\displayerOptions;
 
+use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use craft\base\Model;
 
-class DefaultPlainTextOptions extends Model
+class DefaultPlainTextOptions extends FieldDisplayerOptions
 {
     public $trimmed = '';
     public $ellipsis = '...';

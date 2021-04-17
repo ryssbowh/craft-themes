@@ -22,6 +22,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     {
         $model = $this->getOptionsModel();
         if ($this->field) {
+            $model->field = $this->field;
             $model->setAttributes($this->field->options, false);
         }
         return $model;

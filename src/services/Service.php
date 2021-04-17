@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Component;
 use yii\base\Event;
 
@@ -11,17 +12,9 @@ class Service extends Component
     /**
      * @return BlockService
      */
-    protected function blockService(): BlockService
+    protected function blocksService(): BlockService
     {
         return Themes::$plugin->blocks;
-    }
-
-    /**
-     * @return BlockService
-     */
-    protected function fieldsService(): FieldsService
-    {
-        return Themes::$plugin->fields;
     }
 
     /**
@@ -43,7 +36,7 @@ class Service extends Component
     /**
      * @return ViewModeService
      */
-    protected function viewModeService(): ViewModeService
+    protected function viewModesService(): ViewModeService
     {
         return Themes::$plugin->viewModes;
     }
@@ -78,6 +71,22 @@ class Service extends Component
     protected function displayService(): DisplayService
     {
         return Themes::$plugin->display;
+    }
+
+    /**
+     * @return DisplayService
+     */
+    protected function groupsService(): GroupsService
+    {
+        return Themes::$plugin->groups;
+    }
+
+    /**
+     * @return FieldsService
+     */
+    protected function fieldsService(): FieldsService
+    {
+        return Themes::$plugin->fields;
     }
 
     /**

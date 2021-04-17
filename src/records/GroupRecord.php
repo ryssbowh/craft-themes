@@ -12,11 +12,6 @@ class GroupRecord extends ActiveRecord
         return '{{%themes_groups}}';
     }
 
-    public function toModel(): DisplayGroup
-    {
-        return new DisplayGroup($this->getAttributes());
-    }
-
     public function getFields()
     {
         return $this->hasMany(FieldRecord::className(), ['id' => 'field_id'])

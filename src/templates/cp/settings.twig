@@ -1,57 +1,32 @@
 {% import "_includes/forms" as forms %}
-{% extends "_layouts/cp" %}
-{% set title = title %}
-{% set selectedSubnavItem = 'themes-settings' %}
-{% set fullPageForm = true %}
 
-{% block content %}
-    <input type="hidden" name="action" value="plugins/save-plugin-settings">
-    <input type="hidden" name="pluginHandle" value="themes">
-    {{ redirectInput("themes/settings") }}
+{% set title = 'Themes settings'|t('themes') %}
 
-    {% namespace namespace %}
-        <h2 class="first">{{ 'Themes rules'|t('themes') }}</h2>
-        <p>{{ 'Rules will be handled from top to bottom, the first match will define the theme and the other rules will not be looked at.'|t('themes') }}</p>
+{{ 
+    forms.lightswitchField({
+        label: 'Devel mode'|t('themes'),
+        name: 'devMode',
+        on: settings.devMode,
+        instructions: 'Shows all the available templates and variables on the front end as Html comments. Always off on production no matter what is chosen here.'|t('themes')
+    }) 
+}}
+{{ 
+    forms.lightswitchField({
+        label: 'Eager loading'|t('themes'),
+        name: 'eagerLoad',
+        on: settings.eagerLoad,
+        instructions: 'Eager load all visible fields automatically.'|t('themes'),
+        warning: "The themes plugin's templates expect fields to be eager-loaded"|t('themes')
+    }) 
+}}
 
-        {% set name = 'rules' %}
-        {% set id = 'theme-rules' %}
-        {% set initJs = false %}
-        {% set rows = settings.rules %}
-        {% include "_includes/forms/editableTable" %}
-
-        <h2>{{ 'Default theme'|t('themes') }}</h2>
-        {{ forms.selectField({
-            name: 'default',
-            options: themes,
-            value: settings.default,
-            instructions: 'Default theme when no rules match'|t('themes')
-        }) }}
-
-        <h2>{{ 'Settings' }}</h2>
-        {{ 
-            forms.lightswitchField({
-                label: 'Devel mode'|t('themes'),
-                name: 'devMode',
-                on: settings.devMode,
-                instructions: 'Devel mode will show all the available templates and variables on the front end as Html comments. Always off on production no matter what is chosen here.'|t('themes')
-            }) 
-        }}
-        {{ 
-            forms.lightswitchField({
-                label: 'Eager loading'|t('themes'),
-                name: 'eagerLoad',
-                on: settings.eagerLoad,
-                instructions: 'Eager load all visible fields automatically.'|t('themes')
-            }) 
-        }}
-    {% endnamespace %}
-    <h2>{{ 'Repair zone'|t('themes') }}</h2>
-    <p>{{ 'Create missing layouts and fields and delete orphans.' }}</p>
-    <button href="{{ url('themes/ajax/repair') }}" class="btn submit repair">{{ 'Repair'|t('themes') }}</button>
+<h2>{{ 'Install'|t('themes') }}</h2>
+{% if settings.installed %}
+    <p>{{ 'Re-install themes data. This can be useful to fix broken states, it will create missing layouts/displays and remove orphans' }}</p>
+    <button href="{{ url('themes/ajax/install') }}" class="btn submit install">{{ 'Re-install'|t('themes') }}</button>
     <div class="spinner layouts-spinner" style="display:none"></div>
-
-    {% js on ready %}
-        new Craft.Themes.SettingsTable('settings-{{ id }}', 'settings[rules]', {{ cols|json_encode|raw }}, {});
-    {% endjs %}
-{% endblock %}
-
+{% else %}
+    <p>{{ 'Install themes data' }}</p>
+    <button href="{{ url('themes/ajax/install') }}" class="btn submit install">{{ 'Install'|t('themes') }}</button>
+    <div class="spinner layouts-spinner" style="display:none"></div>
+{% endif %}

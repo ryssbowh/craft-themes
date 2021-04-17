@@ -40,7 +40,8 @@ const store = createStore({
             viewMode: 0,
             displays: [],
             originalDisplays: [],
-            optionsHtml: {}
+            showOptionsModal: false,
+            optionsField: {}
         }
     },
     mutations: {
@@ -108,43 +109,54 @@ const store = createStore({
                 if (display.id != id) {
                     continue;
                 }
-                state.displays[i] = merge(display, data);
+                display = merge(display, data);
             }
         },
-        setOptionsHtml(state, {id, html}) {
-            state.optionsHtml[id] = html;
+        updateMatrixDisplay(state, {id, typeId, fieldId, data}) {
+            let display, type, field;
+            for (let i in state.displays) {
+                display = state.displays[i];
+                if (display.id != id) {
+                    continue;
+                }
+                for(i in display.item.types) {
+                    type = display.item.types[i];
+                    if (type.type.id != typeId) {
+                        continue;
+                    }
+                    for (i in type.fields) {
+                        field = type.fields[i];
+                        if (field.id != fieldId) {
+                            continue;
+                        }
+                        field = merge(field, data);
+                    }
+                }
+            }
         },
         setHasChanged(state, value) {
             state.hasChanged = value;
         },
         setIsSaving(state, value) {
             state.isSaving = value;
+        },
+        setOptionsField(state, value) {
+            state.optionsField = value;
+            state.showOptionsModal = true;
+        },
+        setShowOptionsModal(state, value) {
+            state.showOptionsModal = value;  
+        },
+        updateOptions(state, value) {
+            state.optionsField.options = value;
         }
     },
     actions: {
-        setThemeAndFetch ({commit, dispatch}, theme) {
-            commit('setTheme', theme);
-            dispatch('fetchViewModes');
-            dispatch('fetchDisplays');
-        },
-        setLayoutAndFetch ({commit, dispatch}, id) {
+        setLayoutAndFetch ({commit, dispatch, state}, id) {
             commit('setLayout', id);
-            dispatch('fetchViewModes');
+            commit('setViewModes', state.layout.viewModes);
+            commit('setViewMode', 0);
             dispatch('fetchDisplays');
-        },
-        fetchViewModes({state, commit}) {
-            commit('setIsFetching', {key: 'viewModes', value: true});
-            return axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+state.layout.id))
-            .then((response) => {
-                commit('setViewModes', response.data.viewModes);
-                commit('setViewMode', 0);
-            })
-            .catch((err) => {
-                handleError(err);
-            })
-            .finally(() => {
-                commit('setIsFetching', {key: 'viewModes', value: false});
-            });
         },
         fetchDisplays({state, commit}) {
             let data = {

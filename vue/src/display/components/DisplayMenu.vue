@@ -1,7 +1,7 @@
 <template>
     <nav id="notification-nav">
         <ul>
-            <li v-for="layout2 in themeLayouts" v-bind:key="layout2.id">
+            <li v-for="layout2 in layouts" v-bind:key="layout2.id">
                 <a href="#" :class="{'sel': layout.id === layout2.id}" @click.prevent="setLayoutAndFetch(layout2.id)">{{ layout2.description }}</a>
             </li>
         </ul>
@@ -14,9 +14,6 @@ import Mixin from '../../mixin';
 
 export default {
     computed: {
-        themeLayouts: function () {
-            return this.layouts.filter(layout => layout.hasDisplays);
-        },
         ...mapState(['layout', 'layouts'])
     },
     props: {

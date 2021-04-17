@@ -25,6 +25,11 @@ class RouteLayout extends Layout
         return md5($this->element()['uriPattern']);
     }
 
+    public function canHaveUrls(): bool
+    {
+        return true;
+    }
+
     /**
      * @inheritDoc
      */
