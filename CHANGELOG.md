@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 1.0.3 - 2021-04-22
+### Fixed
+- Fixed site templates roots registration made in backend
+
 ## 1.0.2 - 2021-02-04
 ### Fixed
 - Error when no rules are defined

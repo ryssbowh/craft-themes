@@ -66,10 +66,6 @@ class Themes extends \craft\base\Plugin
 
         \Craft::info('Loaded themes plugin, handling current request...', __METHOD__);
 
-        if (!Craft::$app->request->getIsSiteRequest()) {
-            return ;
-        }
-
         $this->handleCurrentRequest();
     }
 
@@ -95,8 +91,6 @@ class Themes extends \craft\base\Plugin
             return;
         }
 
-        Craft::$app->view->registerTwigExtension(new TwigTheme);
-
         //Register templates event hook
         Event::on(
             View::class,
@@ -105,15 +99,20 @@ class Themes extends \craft\base\Plugin
                 $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
             }
         );
-        //Register bundle assets event hook
-        Event::on(
-            View::class,
-            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            function(TemplateEvent $event) use ($theme) {
-                $path = \Craft::$app->request->getPathInfo();
-                $theme->registerAssetBundles($path);
-            }
-        );
+
+        if (Craft::$app->request->getIsSiteRequest()) {
+            Craft::$app->view->registerTwigExtension(new TwigTheme);
+            
+            //Register bundle assets event hook
+            Event::on(
+                View::class,
+                View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+                function(TemplateEvent $event) use ($theme) {
+                    $path = \Craft::$app->request->getPathInfo();
+                    $theme->registerAssetBundles($path);
+                }
+            );
+        }
     }
 
     /**
