@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.0.1 - 2021-04-27
+
+### Fixed
+- Typo in method name
+
 ## 2.0.0 - 2021-02-16
 
 > :warning: If you're updating from 1.x please read the breaking changes included in 2.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)

@@ -94,7 +94,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 	/**
 	 * inheritDoc
 	 */
-	public function entends(): bool
+	public function extends(): bool
 	{
 		return ($this->getExtends() !== null);
 	}

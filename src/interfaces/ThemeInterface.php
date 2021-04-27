@@ -43,7 +43,7 @@ interface ThemeInterface
 	 * 
 	 * @return boolean
 	 */
-	public function entends(): bool;
+	public function extends(): bool;
 
 	/**
 	 * Is this theme partial.
