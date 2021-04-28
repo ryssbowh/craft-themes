@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\base\Component;
 use craft\i18n\Locale;
 use craft\models\Site;
+use craft\web\Request;
 
 class ThemesRules extends Component
 {
@@ -43,6 +44,9 @@ class ThemesRules extends Component
 	 */
 	public function resolveCurrentTheme(): ?ThemeInterface
 	{
+        if (!\Craft::$app->request instanceof Request) {
+            return null;
+        }
 		$path = \Craft::$app->request->getFullPath();
 		$currentSite = \Craft::$app->sites->getCurrentSite();
 		$currentUrl = $currentSite->getBaseUrl().$path;

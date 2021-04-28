@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 1.0.4 - 2021-04-28
+### Fixed
+- Don't set theme for console requests
+
 ## 1.0.3 - 2021-04-22
 ### Fixed
 - Fixed site templates roots registration made in backend
