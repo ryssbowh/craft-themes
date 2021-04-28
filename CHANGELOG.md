@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 1.0.5 - 2021-04-28
+### Fixed
+- Bug for console requests
+
 ## 1.0.4 - 2021-04-28
 ### Fixed
 - Don't set theme for console requests

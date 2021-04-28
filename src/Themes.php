@@ -87,7 +87,7 @@ class Themes extends \craft\base\Plugin
         $this->registry->setCurrent($theme);
 
         if (!$theme) {
-            \Craft::info("No theme found for request ".\Craft::$app->request->getUrl(), __METHOD__);
+            \Craft::info("No theme found for request", __METHOD__);
             return;
         }
 
