@@ -45,6 +45,9 @@ class ThemesRules extends Component
 	public function resolveCurrentTheme(): ?ThemeInterface
 	{
         if (!\Craft::$app->request instanceof Request) {
+            if ($this->default) {
+            	return Themes::$plugin->registry->getTheme($this->default);
+            }
             return null;
         }
 		$path = \Craft::$app->request->getFullPath();
