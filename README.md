@@ -82,6 +82,8 @@ The first rule that match will define which theme will be used. Organise your ru
 
 If no rules match, the default theme will be used.
 
+For non web requests, the default theme will be set.
+
 ## Twig
 
 You have access to two new variables in your templates :
@@ -117,7 +119,11 @@ By default, parent themes bundles will also be registered. This can be disabled 
 And two that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
 `@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
-`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.  
+`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.
+
+## Events
+
+Listen to `Ryssbowh\CraftThemes\services\ThemesRules::THEME_SET_EVENT` to get/modify the theme being set on each request.
 
 ## Installation
 

@@ -4,10 +4,12 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ThemeEvent;
+use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\base\Component;
 use craft\i18n\Locale;
 use craft\models\Site;
+use craft\web\Request;
 
 class ThemesRules extends Component
 {
@@ -40,29 +42,37 @@ class ThemesRules extends Component
 
 	/**
 	 * Resolve the theme for the current request, get the theme either from cache
-     * or from defined theme rules
+     * or from defined theme rules. Sets default theme for non-web requests
 	 * 
 	 * @return ?ThemeInterface
 	 */
 	public function resolveCurrentTheme(): ?ThemeInterface
 	{
-        $path = \Craft::$app->request->getFullPath();
-        $currentSite = \Craft::$app->sites->getCurrentSite();
-        $currentUrl = $currentSite->getBaseUrl().$path;
-		$cached = $this->getCache($currentUrl);
-        $theme = null;
-		if (is_string($cached)) {
-			$theme = $cached ? Themes::$plugin->registry->getTheme($cached) : null;
+		if (!\Craft::$app->request instanceof Request) {
+            $themeName = $this->default;
         } else {
-            $themeName = $this->resolveRules($path, $currentSite, $currentUrl);
-            if ($themeName) {
-                $theme = Themes::$plugin->registry->getTheme($themeName);
+        	$path = \Craft::$app->request->getFullPath();
+        	$currentSite = \Craft::$app->sites->getCurrentSite();
+        	$currentUrl = $currentSite->getBaseUrl().$path;
+			$cached = $this->getCache($currentUrl);
+        	if (is_string($cached)) {
+				$themeName = $cached;
+        	} else {
+            	$themeName = $this->resolveRules($path, $currentSite, $currentUrl);
             }
         }
-		if ($theme) {
-            $this->trigger(self::THEME_SET_EVENT, new ThemeEvent(['theme' => $theme]));
+
+        $theme = null;
+        if ($themeName) {
+            try {
+            	$theme = Themes::$plugin->registry->getTheme($themeName);
+            } catch (ThemeException $e) {}
         }
-		return $theme;
+
+        $event = new ThemeEvent(['theme' => $theme]);
+        $this->trigger(self::THEME_SET_EVENT, $event);
+
+		return $event->theme;
 	}
 
 	/**
