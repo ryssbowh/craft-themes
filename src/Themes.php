@@ -85,13 +85,10 @@ class Themes extends \craft\base\Plugin
 
         \Craft::info('Loaded themes plugin', __METHOD__);
 
-        if (Craft::$app->request->getIsSiteRequest()) {
-            $_this = $this;
-            Event::on(View::class, View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS, function ($e) use ($_this) {
-                \Craft::info('Resolving current theme', __METHOD__);
-                $_this->resolveTheme($e);
-            });
-        }
+        Event::on(View::class, View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS, function ($e) use ($_this) {
+            \Craft::info('Resolving current theme', __METHOD__);
+            Themes::$plugin->resolveTheme($e);
+        });
     }
 
     /**
@@ -112,7 +109,7 @@ class Themes extends \craft\base\Plugin
         $this->registry->setCurrent($theme);
 
         if (!$theme) {
-            \Craft::info("No theme found for request ".\Craft::$app->request->getUrl(), __METHOD__);
+            \Craft::info("No theme found for request", __METHOD__);
             return;
         }
 

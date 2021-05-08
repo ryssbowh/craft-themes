@@ -1,5 +1,11 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.1.0 - 2021-05-08
+
+### Changed
+- Set default theme for non-web requests
+- Throw event at all times to allow theme to be changed
+
 ## 2.0.1 - 2021-04-27
 
 ### Fixed

@@ -24,7 +24,7 @@ class ThemesRegistry extends Component
 	protected $currentTheme;
 
 	/**
-	 * Get theme for the current site
+	 * Get current theme
 	 * 
 	 * @return ?ThemeInterface
 	 */
@@ -113,6 +113,9 @@ class ThemesRegistry extends Component
 		throw ThemeException::notDefined($handle);
 	}
 
+	/**
+	 * Loads themes from the list of plugins
+	 */
 	protected function loadThemes()
 	{
 		$themes = [];
