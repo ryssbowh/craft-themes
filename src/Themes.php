@@ -53,6 +53,8 @@ class Themes extends \craft\base\Plugin
             ]
         ]);
 
+        Craft::$app->view->registerTwigExtension(new TwigTheme);
+
         Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
             function (RegisterCacheOptionsEvent $event) {
                 $event->options[] = [
@@ -115,7 +117,6 @@ class Themes extends \craft\base\Plugin
 
         \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
         \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
-        Craft::$app->view->registerTwigExtension(new TwigTheme);
         $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
         $path = \Craft::$app->request->getPathInfo();
         $theme->registerAssetBundles($path);

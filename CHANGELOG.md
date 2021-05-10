@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.1.1 - 2021-05-10
+
+### Fixed
+- Twig extension error in control panel
+
 ## 2.1.0 - 2021-05-08
 
 ### Changed
