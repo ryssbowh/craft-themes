@@ -1,7 +1,7 @@
 <template>
     <div>
         <field :item="item" @updateItem="$emit('updateItem', $event)"></field>
-        <div class="matrix-type" v-for="type in item.types">
+        <div class="matrix-type" v-for="type, index in item.types" v-bind:key="index">
             <div class="matrix-type-name">{{ t('Type {type}', {type: type.type.name}) }}</div>
             <draggable
                 item-key="id"
@@ -19,7 +19,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 import Field from './Field';
 import Draggable from 'vuedraggable';
 
@@ -37,7 +36,6 @@ export default {
         ...mapMutations([]),
         ...mapActions([]),
     },
-    mixins: [Mixin],
     components: {Field, Draggable},
     emits: ['updateItem'],
 };

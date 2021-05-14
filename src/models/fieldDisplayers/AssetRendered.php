@@ -3,31 +3,29 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\DefaultPlainTextOptions;
+use Ryssbowh\CraftThemes\models\displayerOptions\AssetRenderedOptions;
 use craft\base\Model;
-use craft\fields\PlainText;
+use craft\fields\Assets;
 
-class PlainTextDefault extends FieldDisplayer
+class AssetRendered extends FieldDisplayer
 {
-    public $handle = 'plain_text_default';
-
-    public $isDefault = true;
+    public $handle = 'asset_rendered';
 
     public $hasOptions = true;
 
     public function getName(): string
     {
-        return \Craft::t('themes', 'Default');
+        return \Craft::t('themes', 'Rendered');
     }
 
     public function getFieldTarget(): String
     {
-        return PlainText::class;
+        return Assets::class;
     }
 
     public function getOptionsModel(): Model
     {
-        return new DefaultPlainTextOptions;
+        return new AssetRenderedOptions;
     }
 
     public function getOptionsHtml(): string

@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\events;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLink;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryList;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\ColourDefault;
@@ -17,9 +18,11 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\LightswitchDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\NumberDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextFull;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextTrimmed;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorFull;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorTrimmed;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagsDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
@@ -37,26 +40,29 @@ class FieldDisplayerEvent extends Event
     public function init()
     {
         $this->registerMany([
-            new PlainTextDefault,
-            new TitleDefault,
-            new CategoryList,
-            new RedactorDefault,
-            new ColourDefault,
             new AssetLink,
+            new AssetRendered,
+            new CategoryRendered,
+            new CategoryList,
+            new ColourDefault,
             new DateDefault,
             new DropdownDefault,
             new EmailDefault,
             new EntryLink,
+            new EntryRendered,
             new LightswitchDefault,
+            new MatrixDefault,
             new MultiSelectDefault,
             new NumberDefault,
+            new PlainTextFull,
+            new PlainTextTrimmed,
             new RadioButtonsDefault,
+            new RedactorFull,
+            new RedactorTrimmed,
             new TagsDefault,
             new TimeDefault,
+            new TitleDefault,
             new UrlDefault,
-            new EntryRendered,
-            new CategoryRendered,
-            new MatrixDefault
         ]);
     }
 

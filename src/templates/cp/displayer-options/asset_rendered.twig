@@ -1,0 +1,12 @@
+{% import "_includes/forms" as forms %}
+
+{% for volumeUid, item in options.getViewModes() %}
+    {{
+        forms.selectField({
+            value: options.viewModes[volumeUid] ?? null,
+            name: 'viewModes['~volumeUid~']',
+            label: 'View mode ({volume})'|t('themes', {volume: item['label']}),
+            options: item.viewModes
+        })
+    }}
+{% endfor %}

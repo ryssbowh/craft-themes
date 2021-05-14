@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\assets\BlockOptionsAsset;
 use Ryssbowh\CraftThemes\assets\BlocksAssets;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 
@@ -38,7 +39,8 @@ class CpBlocksController extends Controller
         } else {
             $layout = $this->layouts->getById($layout);
         }
-
+        
+        $this->view->registerAssetBundle(BlockOptionsAsset::class);
         $this->view->registerAssetBundle(BlocksAssets::class);
 
         return $this->renderTemplate('themes/cp/blocks', [

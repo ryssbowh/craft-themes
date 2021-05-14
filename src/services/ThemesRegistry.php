@@ -16,6 +16,7 @@ use craft\models\Site;
 class ThemesRegistry extends Service
 {   
     const THEME_SET_EVENT = 'themes.set';
+    const THEMES_WEBROOT = '@webroot/themes/';
 
     /**
      * @var ?array
@@ -53,8 +54,8 @@ class ThemesRegistry extends Service
             $this->currentTheme = null;
         }
         if ($this->currentTheme) {
-            \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
-            \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
+            \Yii::setAlias('@themePath', $theme->basePath);
+            \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
             \Craft::$app->view->registerTwigExtension(new TwigTheme);
             $path = \Craft::$app->request->getPathInfo();
             $this->currentTheme->registerAssetBundles($path);
@@ -78,7 +79,7 @@ class ThemesRegistry extends Service
             return;
         }
         $event->roots[''][] = __DIR__ . '/../templates/front';
-        $event->roots[''] = array_merge($this->currentTheme->getTemplatePaths(), $event->roots['']);#
+        $event->roots[''] = array_merge($this->currentTheme->getTemplatePaths(), $event->roots['']);
     }
 
     /**
@@ -86,7 +87,7 @@ class ThemesRegistry extends Service
      * 
      * @return array
      */
-    public function getAll(): array
+    public function all(): array
     {
         if ($this->themes === null) {
             $this->loadThemes();
@@ -103,7 +104,7 @@ class ThemesRegistry extends Service
     {
         return array_map(function ($theme) {
             return $theme->name;
-        }, $this->getAll());
+        }, $this->all());
     }
 
     /**
@@ -112,16 +113,16 @@ class ThemesRegistry extends Service
      * @param  boolean $asNames
      * @return array
      */
-    public function getNonPartials(bool $asNames = false, bool $asArray = false): array
+    public function getNonPartials(bool $asNames = false, bool $asArrays = false): array
     {
-        $themes = array_filter($this->getAll(), function ($theme) {
+        $themes = array_filter($this->all(), function ($theme) {
             return !$theme->isPartial();
         });
         if ($asNames) {
             return array_map(function ($theme) {
                 return $theme->name;
             }, $themes);
-        } elseif ($asArray) {
+        } elseif ($asArrays) {
             return array_map(function ($theme) {
                 return $theme->toArray();
             }, $themes);
@@ -138,8 +139,8 @@ class ThemesRegistry extends Service
      */
     public function getTheme(string $handle): ThemeInterface
     {
-        if (isset($this->getAll()[$handle])) {
-            return $this->getAll()[$handle];
+        if (isset($this->all()[$handle])) {
+            return $this->all()[$handle];
         }
         throw ThemeException::notDefined($handle);
     }

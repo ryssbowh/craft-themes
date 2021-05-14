@@ -33,7 +33,7 @@ class BlockProvidersService extends Component
      * @param  bool $asArrays
      * @return array
      */
-    public function getAll(bool $asArrays = false): array
+    public function all(bool $asArrays = false): array
     {
         if ($asArrays) {
             return array_map(function ($provider) {

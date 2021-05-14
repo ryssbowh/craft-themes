@@ -25,6 +25,11 @@ class TitleDefault extends FieldDisplayer
         return Title::class;
     }
 
+    public function eagerLoad(): array
+    {
+        return [];
+    }
+
     public function getOptionsModel(): Model
     {
         return new DefaultTitleOptions;

@@ -93,7 +93,7 @@ class Layout extends Model
     public function defineRules(): array
     {
         return [
-            [['type', 'theme', 'element'], 'required'],
+            [['type', 'theme'], 'required'],
             ['type', 'in', 'range' => LayoutService::TYPES],
             [['theme', 'element'], 'string'],
             ['hasBlocks', 'boolean'],
@@ -172,10 +172,9 @@ class Layout extends Model
     }
 
     /**
-     * Get element assoicated to that layout, could be en entry
-     * a category, a route string definition, or nothing for the default layout
+     * Get element associated to that layout
      * 
-     * @return string|Entry|Category
+     * @return mixed
      */
     public function element()
     {
@@ -188,14 +187,15 @@ class Layout extends Model
     public function getViewModes(): array
     {
         if ($this->_viewModes === null) {
-            $this->_viewModes = Themes::$plugin->viewModes->forLayout($this);
+            $this->_viewModes = Themes::$plugin->viewModes->getForLayout($this);
         }
         return $this->_viewModes;
     }
 
-    public function setViewModes(?array $viewModes)
+    public function setViewModes(?array $viewModes): Layout
     {
         $this->_viewModes = $viewModes;
+        return $this;
     }
 
     public function getBlocks(): array
@@ -206,9 +206,20 @@ class Layout extends Model
         return $this->_blocks;
     }
 
-    public function setBlocks(?array $blocks)
+    public function setBlocks(?array $blocks): Layout
     {
         $this->_blocks = $blocks;
+        return $this;
+    }
+
+    public function addBlock(BlockInterface $block): Layout
+    {
+        if (!$this->_loaded) {
+            $this->loadBlocks();
+        }
+        $this->_blocks[] = $block;
+        $this->getRegion($block->region)->addBlock($block);
+        return $this;
     }
 
     public function getElementMachineName(): string
@@ -239,9 +250,9 @@ class Layout extends Model
         $this->regions = $this->getTheme()->getRegions();
         if (!$this->hasBlocks) {
             $default = Themes::$plugin->layouts->getDefault($this->theme);
-            $this->blocks = Themes::$plugin->blocks->forLayout($default);
+            $this->blocks = Themes::$plugin->blocks->getForLayout($default);
         } else {
-            $this->blocks = Themes::$plugin->blocks->forLayout($this);
+            $this->blocks = Themes::$plugin->blocks->getForLayout($this);
         }
         foreach ($this->blocks as $block) {
             $this->getRegion($block->region, false)->addBlock($block);
@@ -303,13 +314,6 @@ class Layout extends Model
             return $display->item->isVisible();
         });
     }
-
-    // public function getVisibleFields(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
-    // {
-    //     return array_filter($this->getVisibleDisplays($viewMode), function ($display) {
-    //         return $display->type == DisplayService::TYPE_FIELD or $display->type == DisplayService::TYPE_MATRIX;
-    //     });
-    // }
 
     /**
      * Load element

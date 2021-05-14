@@ -4,11 +4,16 @@ namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\DisplayException;
+use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\elements\Category;
+use craft\elements\Entry;
+use craft\elements\User;
 
 class CpAjaxController extends Controller
 {
     public function beforeAction($action) 
     {
+        $this->requirePermission('accessPlugin-themes');
         $this->requireAcceptsJson();
         $this->requirePostRequest();
         return true;
@@ -19,202 +24,55 @@ class CpAjaxController extends Controller
         return $this->asJson($result);
     }
 
-    /**
-     * Get view modes for a theme and a layout as json
-     * 
-     * @param  int $layout
-     * @return Response
-     */
-    public function actionViewModes(int $layout)
+    public function actionEntries(string $uid)
     {
-        $layout = $this->layouts->getById($layout);
-
+        $entryTypes = array_values(array_filter(\Craft::$app->sections->getAllEntryTypes(), function ($entryType) use ($uid) {
+            return $uid == $entryType->uid;
+        }));
+        $entries = array_map(function ($entry) {
+            return [
+                'uid' => $entry->uid,
+                'title' => $entry->title
+            ];
+        }, Entry::find()->type($entryTypes[0])->all());
+        usort($entries, function ($a, $b) {
+            return ($a['title'] < $b['title']) ? -1 : 1;
+        });
         return [
-            'viewModes' => $this->viewModes->forLayout($layout)
+            'entries' => $entries
         ];
     }
 
-    /**
-     * Get all block providers as json
-     * 
-     * @return Response
-     */
-    public function actionBlockProviders()
+    public function actionCategories(string $uid)
     {
+        $group = \Craft::$app->categories->getGroupByUid($uid);
+        $categories = array_map(function ($category) {
+            return [
+                'uid' => $category->uid,
+                'title' => $category->title
+            ];
+        }, Category::find()->group($group)->all());
+        usort($categories, function ($a, $b) {
+            return ($a['title'] < $b['title']) ? -1 : 1;
+        });
         return [
-            'providers' => $this->blockProviders->getAll(true)
+            'categories' => $categories
         ];
     }
 
-    /**
-     * Get all blocks for a layout as json
-     * 
-     * @param  int    $layout
-     * @return Response
-     */
-    public function actionBlocks(int $layout)
+    public function actionUsers()
     {
-        $layout = $this->layouts->getById($layout);
+        $users = array_map(function ($user) {
+            return [
+                'uid' => $user->uid,
+                'title' => $user->friendlyName
+            ];
+        }, User::find()->all());
+        usort($users, function ($a, $b) {
+            return ($a['title'] < $b['title']) ? -1 : 1;
+        });
         return [
-            'blocks' => $this->blocks->getForLayout($layout)
-        ];
-    }
-
-    /**
-     * Get all displays for a layout
-     * 
-     * @param  int $layout
-     * @return Response
-     */
-    public function actionDisplays(int $layout)
-    {
-        $layout = $this->layouts->getById($layout);
-
-        return [
-            'displays' => $this->display->getForLayout($layout),
-        ];
-    }
-
-    public function actionFieldOptions()
-    {
-        $fieldId = $this->request->getBodyParam('id');
-        $displayerHandle = $this->request->getRequiredParam('displayer');
-
-        $field = $this->fields->getById($fieldId);
-        $displayer = $this->fieldDisplayers->getByHandle($displayerHandle);
-        $displayer->field = $field;
-        return [
-            'html' => $displayer->getOptionsHtml()
-        ];
-    }
-
-    public function actionValidateFieldOptions()
-    {
-        $fieldId = $this->request->getBodyParam('id');
-        $displayerHandle = $this->request->getRequiredParam('displayer');
-        $optionsData = $this->request->getRequiredParam('options');
-
-        if ($fieldId) {
-            $field = $this->fields->getById($fieldId);
-            $field->displayerHandle = $displayerHandle;
-            $displayer = $field->displayer;
-        } else {
-            $displayer = $this->fieldDisplayers->getByHandle($displayerHandle);
-        }
-        $options = $displayer->getOptions();
-        $options->setAttributes($optionsData);
-        $options->validate();
-        return [
-            'errors' => $options->getErrors()
-        ];
-    }
-
-    public function actionSaveDisplays()
-    {
-        $displaysData = $this->request->getRequiredParam('displays');
-        $layoutId = $this->request->getRequiredParam('layout');
-        $viewModeData = $this->request->getRequiredParam('viewModes');
-        $layout = $this->layouts->getById($layoutId);
-
-        $viewModeMapping = [];
-        $viewModes = [];
-        foreach ($viewModeData as $data) {
-            $data['layout_id'] = $layoutId;
-            $viewMode = $this->viewModes->create($data);
-            $viewModeMapping[$viewMode->handle] = $viewMode->id;
-            $viewModes[] = $viewMode;
-        }
-        $layout->viewModes = $viewModes;
-        $this->layouts->save($layout);
-
-        $displays = [];
-        foreach ($displaysData as $data) {
-            if (is_string($data['viewMode_id'])) {
-                $data['viewMode_id'] = $viewModeMapping[$data['viewMode_id']];
-            }
-            $display = $this->display->create($data);
-            $this->display->save($display);
-            $displays[] = $display;
-        }
-
-        return [
-            'displays' => $displays,
-            'viewModes' => $viewModes,
-            'message' => \Craft::t('themes', 'Displays have been saved successfully')
-        ];
-    }
-
-    /**
-     * Delete a layout by id
-     * 
-     * @param  int    $id
-     * @return Response
-     */
-    public function actionDeleteLayout(int $id)
-    {
-        $layout = $this->layouts->getById($id);
-        $layout->hasBlocks = 0;
-        $layout->blocks = [];
-        $this->layouts->save($layout);
-
-        return [
-            'message' => \Craft::t('themes', 'Layout deleted successfully.'),
-            'layout' => $layout
-        ];
-    }
-
-    /**
-     * Save blocks
-     * 
-     * @return Response
-     */
-    public function actionSaveBlocks()
-    {
-        $_this = $this;
-        $blocksData = $this->request->getRequiredParam('blocks');
-        $themeName = $this->request->getRequiredParam('theme');
-        $layoutId = $this->request->getRequiredParam('layout');
-
-        $layout = $this->layouts->getById($layoutId);
-
-        if (!$layout->hasBlocks) {
-            $layout->hasBlocks = 1;
-        }
-
-        $blocks = array_map(function ($blockData) use ($_this) {
-            return $_this->blocks->create($blockData);
-        }, $blocksData);
-        $layout->blocks = $blocks;
-
-        if (!$this->layouts->save($layout)) {
-            $this->response->setStatusCode(400);
-            return $this->asJson([
-                'message' => 'Error while saving blocks',
-                'errors' => array_map(function ($block) {
-                    return $block->getErrors();
-                }, $blocks)
-            ]);
-        }
-
-        return [
-            'message' => \Craft::t('themes', 'Blocks saved successfully.'),
-            'blocks' => $blocks,
-            'layout' => $layout
-        ];
-    }
-
-    /**
-     * Repairs all layouts
-     * 
-     * @return Response
-     */
-    public function actionInstall()
-    {
-        $this->layouts->install();
-        $this->display->install();
-        \Craft::$app->plugins->savePluginSettings(Themes::$plugin, ['installed' => true]);
-        return [
-            'message' => \Craft::t('themes', 'Layouts and display have been installed')
+            'users' => $users
         ];
     }
 }

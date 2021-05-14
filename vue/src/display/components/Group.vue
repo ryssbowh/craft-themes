@@ -6,7 +6,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 import OptionsModal from './OptionsModal';
 
 export default {
@@ -24,7 +23,6 @@ export default {
         ...mapMutations(['updateDisplay']),
         ...mapActions([]),
     },
-    mixins: [Mixin],
     emits: ['changedVisibility'],
 };
 </script>

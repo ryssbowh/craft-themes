@@ -3,9 +3,9 @@
 {{
     forms.textField({
         type: 'number',
-        value: options.trimmed,
-        name: 'trimmed',
-        label: 'Trimmed'|t('themes'),
+        value: options.truncated,
+        name: 'truncated',
+        label: 'Truncated'|t('themes'),
         placeholder: 'Character limit'|t('themes')
     })
 }}
@@ -14,5 +14,13 @@
         name: 'ellipsis',
         value: options.ellipsis,
         label: 'Ellipsis'|t('theme')
+    })
+}}
+
+{{
+    forms.lightswitchField({
+        on: options.linked,
+        name: 'linked',
+        label: 'Link ellipsis to entry'|t('themes')
     })
 }}

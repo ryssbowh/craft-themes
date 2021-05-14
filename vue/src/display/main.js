@@ -17,4 +17,13 @@ const app = createApp({
 });
 app.use(store);
 
+const Translate = {
+  install(app) {
+    app.config.globalProperties.t = (str, params) => {
+      return window.Craft.t('themes', str, params);
+    }
+  },
+}
+app.use(Translate);
+
 app.mount('#main');

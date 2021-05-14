@@ -21,6 +21,11 @@ class LayoutException extends \Exception
         return new static("Layout can't be built, no element is defined for it");
     }
 
+    public static function onSave()
+    {
+        return new static("Layout couldn't be saved");
+    }
+
     public static function unknownType(string $type)
     {
         return new static("Type $type is not a valid layout type");

@@ -1,19 +1,12 @@
 {% import "_includes/forms" as forms %}
 
 {{
-    forms.lightswitchField({
-        on: options.stripped,
-        name: 'stripped',
-        label: 'Strip HTML tags'|t('themes')
-    })
-}}
-
-{{
     forms.textField({
         type: 'number',
         value: options.truncated,
         name: 'truncated',
         label: 'Truncated'|t('themes'),
+        required: true,
         placeholder: 'Character limit'|t('themes')
     })
 }}
@@ -22,5 +15,13 @@
         name: 'ellipsis',
         value: options.ellipsis,
         label: 'Ellipsis'|t('theme')
+    })
+}}
+
+{{
+    forms.lightswitchField({
+        on: options.linked,
+        name: 'linked',
+        label: 'Link ellipsis to entry'|t('themes')
     })
 }}

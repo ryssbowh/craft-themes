@@ -11,12 +11,13 @@ class BlocksAssets extends AssetBundle
 
     public $js = [
         'chunk-vendors.js',
-        'blocks.js'
+        'blocks.js',
     ];
 
     public $depends = [
         CpAsset::class,
-        JquerySerializeJSON::class
+        JquerySerializeJSON::class,
+        BlockOptionsAsset::class
     ];
 
     public function init()

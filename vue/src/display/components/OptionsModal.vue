@@ -17,7 +17,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 import Modal from '../modal';
 import populate from 'populate.js';
 
@@ -151,7 +150,6 @@ export default {
         ...mapActions([]),
     },
     emits: [],
-    mixins: [Mixin],
 };
 </script>
 <style lang="scss" scoped>

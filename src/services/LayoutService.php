@@ -90,6 +90,22 @@ class LayoutService extends Service
         })->all();
     }
 
+    public function getForTheme(string $theme, ?bool $withDisplays = null, ?bool $withBlocks = null): array
+    {
+        return $this->all()->filter(function ($layout) use ($theme, $withDisplays, $withBlocks) {
+            if ($layout->theme != $theme) {
+                return false;
+            }
+            if ($withDisplays !== null) {
+                return $layout->hasDisplays() === $withDisplays;
+            }
+            if ($withBlocks !== null) {
+                return (bool)$layout->hasBlocks === $withBlocks;
+            }
+            return true;
+        })->all();
+    }
+
     /**
      * Create a layout
      * 
@@ -152,7 +168,7 @@ class LayoutService extends Service
     public function getBlockLayouts(): array
     {
         $layouts = [];
-        foreach (Themes::$plugin->registry->getAll() as $theme) {
+        foreach (Themes::$plugin->registry->all() as $theme) {
             $layouts[$theme->handle] = $this->all()->filter(function ($layout) use ($theme) {
                 return ($layout->canHaveUrls() and $layout->theme == $theme->handle);
             })->sort(function ($elem, $elem2) {
@@ -172,7 +188,7 @@ class LayoutService extends Service
     public function getDisplayLayouts(): array
     {
         $layouts = [];
-        foreach (Themes::$plugin->registry->getAll() as $theme) {
+        foreach (Themes::$plugin->registry->all() as $theme) {
             $elems = 
             $layouts[$theme->handle] = $this->all()->filter(function ($layout) use ($theme) {
                 return ($layout->hasDisplays() and $layout->theme == $theme->handle);
@@ -192,25 +208,39 @@ class LayoutService extends Service
     {
         $ids = [];
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            foreach ($this->getAvailable() as $layout) {
-                if (!$layout2 = $this->get($theme->handle, $layout->type, $layout->element)) {
-                    $layout->theme = $theme->handle;
-                    $layout2 = $layout;
-                }
-                if (!$layout->viewModes) {
-                    $viewMode = $this->viewModesService()->create([
-                        'handle' => ViewModeService::DEFAULT_HANDLE,
-                        'name' => \Craft::t('themes', 'Default'),
-                        'layout_id' => $layout2->id
-                    ]);
-                    $layout->viewModes = [$viewMode];
-                }
-                $this->save($layout2);
-                $ids[] = $layout2->id;
-            }
+            $ids = array_merge($ids, $this->installThemeData($theme->handle));
         }
         $layouts = $this->all()->whereNotIn('id', $ids)->all();
         foreach ($layouts as $layout) {
+            $this->delete($layout, true);
+        }
+    }
+
+    public function installThemeData(string $theme): array
+    {
+        $ids = [];
+        foreach ($this->getAvailable() as $layout) {
+            if (!$layout2 = $this->get($theme, $layout->type, $layout->element)) {
+                $layout->theme = $theme;
+                $layout2 = $layout;
+            }
+            if (!$layout->viewModes) {
+                $viewMode = $this->viewModesService()->create([
+                    'handle' => ViewModeService::DEFAULT_HANDLE,
+                    'name' => \Craft::t('themes', 'Default'),
+                    'layout_id' => $layout2->id
+                ]);
+                $layout->viewModes = [$viewMode];
+            }
+            $this->save($layout2);
+            $ids[] = $layout2->id;
+        }
+        return $ids;
+    }
+
+    public function uninstallThemeData(string $theme)
+    {
+        foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
     }
@@ -279,8 +309,11 @@ class LayoutService extends Service
      * @param  Layout $layout
      * @return Layout
      */
-    public function save(Layout $layout): bool
+    public function save(Layout $layout, $validate = true): bool
     {
+        if ($validate and !$layout->validate()) {
+            return false;
+        }
         $isNew = !is_int($layout->id);
         $uid = $isNew ? StringHelper::UUID() : $layout->uid;
 
@@ -294,10 +327,20 @@ class LayoutService extends Service
         $projectConfig->set($configPath, $configData);
 
         $record = $this->getRecordByUid($uid);
-        $record->save(false);
         $layout->setAttributes($record->getAttributes(), false);
-        $layout->viewModes = null;
-        $layout->blocks = null;
+
+        foreach ($configData['blocks'] as $index => $data) {
+            $record = $this->blocksService()->getRecordByUid($data['uid']);
+            $layout->getBlocks()[$index]->uid = $record->uid;
+            $layout->getBlocks()[$index]->id = $record->id;
+            $layout->getBlocks()[$index]->afterSave();
+        }
+
+        foreach ($configData['viewModes'] as $index => $data) {
+            $record = $this->viewModesService()->getRecordByUid($data['uid']);
+            $layout->getViewModes()[$index]->uid = $record->uid;
+            $layout->getViewModes()[$index]->id = $record->id;
+        }
         
         if ($isNew) {
             $this->all()->push($layout);
@@ -337,13 +380,8 @@ class LayoutService extends Service
         foreach ($this->displayService()->getForLayout($layout) as $display) {
             $this->displayService()->delete($display);
         }
-        foreach ($this->blocksService()->getForLayout($layout) as $block) {
-            $this->blocksService()->delete($block);
-        }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
-
-        // $this->blockService()->deleteLayoutBlocks($layout);
 
         $this->_layouts = $this->all()->where('id', '!=', $layout->id);
 
@@ -372,46 +410,8 @@ class LayoutService extends Service
             $layout->hasBlocks = $data['hasBlocks'];
             $layout->save(false);
 
-            // Saving view modes
-            $ids = [];
-            foreach ($data['viewModes'] as $viewModesData) {
-                $viewMode = $this->viewModesService()->getRecordByUid($viewModesData['uid']);
-                $viewMode->uid = $viewModesData['uid'];
-                $viewMode->handle = $viewModesData['handle'];
-                $viewMode->name = $viewModesData['name'];
-                $viewMode->layout_id = $layout->id;
-                $viewMode->save(false);
-                $ids[] = $viewMode->id;
-            }
-            $toDelete = ViewModeRecord::find()
-                ->where(['layout_id' => $layout->id])
-                ->andWhere(['not in', 'id', $ids])
-                ->all();
-            foreach ($toDelete as $viewMode) {
-                $viewMode->delete();
-            }
-
-            // Saving blocks
-            $ids = [];
-            foreach ($data['blocks'] ?? [] as $blockData) {
-                $block = $this->blocksService()->getRecordByUid($blockData['uid']);
-                $block->uid = $blockData['uid'];
-                $block->provider = $blockData['provider'];
-                $block->region = $blockData['region'];
-                $block->handle = $blockData['handle'];
-                $block->order = $blockData['order'];
-                $block->options = $blockData['options'] ?? null;
-                $block->layout_id = $layout->id;
-                $block->save(false);
-                $ids[] = $block->id;
-            }
-            $toDelete = BlockRecord::find()
-                ->where(['layout_id' => $layout->id])
-                ->andWhere(['not in', 'id', $ids])
-                ->all();
-            foreach ($toDelete as $block) {
-                $block->delete();
-            }
+            $this->viewModesService()->saveMany($data['viewModes'] ?? [], $layout);
+            $this->blocksService()->saveMany($data['blocks'] ?? [], $layout);
             
             $transaction->commit();
         } catch (\Throwable $e) {

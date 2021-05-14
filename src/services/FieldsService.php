@@ -76,7 +76,7 @@ class FieldsService extends Service
                 $class = CraftField::class;
                 break;
             default:
-                throw LayoutException::unknownType($config['type']);
+                throw DisplayException::unknownType($config['type']);
         }
         $field = new $class;
         $attributes = $field->safeAttributes();
@@ -228,8 +228,10 @@ class FieldsService extends Service
     protected function handleTitleChanged(array $data): bool
     {
         $field = $this->getRecordByUid($data['uid']);
+        $isNew = $field->isNewRecord;
         $field->setAttributes($data, false);
-        return $field->save(false);
+        $res = $field->save(false);
+        return $res;
     }
 
     protected function handleMatrixChanged(array $data): bool

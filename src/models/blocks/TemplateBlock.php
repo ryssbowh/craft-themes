@@ -29,25 +29,10 @@ class TemplateBlock extends Block
     public static $handle = 'template';
 
     /**
-     * @var boolean
-     */
-    public $hasOptions = true;
-
-    /**
      * @inheritDoc
      */
     public function getOptionsModel(): Model
     {
         return new BlockTemplateOptions;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/block-options/template', [
-            'options' => $this->getOptions(),
-        ]);
     }
 }

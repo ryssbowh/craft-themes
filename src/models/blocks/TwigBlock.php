@@ -21,7 +21,7 @@ class TwigBlock extends Block
     /**
      * @var string
      */
-    public $longDescription = 'Define custom twig to render this block. Variable `block` is available';
+    public $longDescription = 'Define custom twig to render this block. Variable `block` will be available';
 
     /**
      * @var string
@@ -29,27 +29,10 @@ class TwigBlock extends Block
     public static $handle = 'twig';
 
     /**
-     * @var boolean
-     */
-    public $hasOptions = true;
-
-    /**
      * @inheritDoc
      */
     public function getOptionsModel(): Model
     {
         return new BlockTwigOptions;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate(
-            'themes/cp/block-options/twig', [
-                'options' => $this->getOptions(),
-            ]
-        );
     }
 }

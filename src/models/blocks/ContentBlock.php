@@ -19,10 +19,10 @@ class ContentBlock extends Block
     /**
      * @var string
      */
-    public $smallDescription = 'Main page content';
+    public $smallDescription = 'Displays the main page content';
 
     /**
      * @var string
      */
-    public $longDescription = 'The main page content, should be present on each block layout';
+    public $longDescription = 'Should be present on each block layout';
 }

@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\helpers\ClassBag;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\Region;
+use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\Field;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -17,7 +18,7 @@ use craft\events\TemplateEvent;
 
 class ViewService extends Service
 {
-    const CACHE_KEY_PREFIX = 'themes.templates.';
+    const CACHE_GROUP = 'themes.templates.';
 
     const THEME_ROOT_TEMPLATE = 'themed_page';
 
@@ -137,7 +138,7 @@ class ViewService extends Service
         $type = $this->renderingLayout->type;
         $viewMode = $this->renderingViewMode;
         $handle = $displayer->handle;
-        $template = $this->cacheService()->get('fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle);
+        // $template = $this->cacheService()->get('fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle);
         return $this->render(
             [
                 'fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
@@ -156,7 +157,7 @@ class ViewService extends Service
                 'displayer' => $displayer,
                 'options' => $displayer->getOptions(),
                 'value' => $element->{$field->handle},
-                'craftField' => $field->craftField
+                'craftField' => ($field instanceof CraftField ? $field->craftField : null)
             ]
         );
     }
@@ -214,8 +215,8 @@ class ViewService extends Service
 
     protected function resolveTemplate(array $templates)
     {
-        $key = self::CACHE_KEY_PREFIX . $templates[0];
-        $template = $this->cacheService()->get($key);
+        $key = $templates[0];
+        $template = $this->cacheService()->get(self::CACHE_GROUP, $key);
         // if ($template === false) {
             $twig = \Craft::$app->view->getTwig();
             $template = $twig->resolveTemplate($templates)->getTemplateName();

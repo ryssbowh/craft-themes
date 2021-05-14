@@ -23,13 +23,6 @@ interface BlockInterface extends RenderableInterface
     public function getOptions(): Model;
 
     /**
-     * Block settings html
-     * 
-     * @return string
-     */
-    public function getOptionsHtml(): string;
-
-    /**
      * Get full machine name
      * 
      * @return string

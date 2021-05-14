@@ -44,7 +44,7 @@
       <div class="heading">
           <h3>{{ t('Options') }}</h3>
       </div>
-      <div class="options-form" v-for="block in blocks">
+      <div class="options-form" v-for="block in blocks" v-bind:key="block.index">
         <block-options v-show="blockOptionId == block.index"
           :block="block"
         />
@@ -59,7 +59,6 @@ import Block from './Block.vue';
 import BlockOptions from './BlockOptions.vue';
 import Region from './Region.vue';
 import Draggable from 'vuedraggable';
-import Mixin from '../../mixin';
 import { reduce } from 'lodash';
 
 export default {
@@ -108,8 +107,7 @@ export default {
         Block,
         BlockOptions,
         Draggable
-    },
-    mixins: [Mixin]
+    }
 };
 </script>
 
@@ -178,13 +176,13 @@ export default {
         pointer-events: none;
     }
     .regions {
+        background: white;
         flex-grow: 1;
         * {
             box-sizing: border-box;
         }
     }
     .region-list {
-        background: white;
         padding: 15px 15px 5px;
         display: flex;
         flex-wrap: wrap;
@@ -195,7 +193,7 @@ export default {
         overflow-y: auto;
     }
     .blocks-sidebar {
-        width: 20%;
+        width: 30%;
         max-width: 300px;
     }
     h5.sub-heading {
@@ -206,7 +204,7 @@ export default {
         border-bottom: 1px solid rgba(96, 125, 159, 0.25);
     }
     .options {
-        width: 20%;
+        width: 30%;
         max-width: 300px;
         transition: width 0.3s;
     }

@@ -1,0 +1,72 @@
+@import "../../../node_modules/craftcms-sass/mixins";
+
+.themes {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 15px;
+    row-gap: 15px;
+    .theme {
+        border: 1px solid $grey200;
+        border-radius: 5px;
+        .preview {
+            padding-bottom: 60%;
+            position: relative;
+            border-bottom: 1px solid $grey200;
+        }
+        img {
+            position: absolute;
+            left: 0;
+            top: 0;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        .infos {
+            padding: 10px;
+            flex-direction: column;
+            display: flex;
+        }
+        .name {
+            display: flex;
+            justify-content: space-between;
+        }
+        .extends {
+            min-height: 20px;
+        }
+        .menubtn {
+            background: none;
+            padding: 0 !important;
+            height: auto;
+            &.active {
+                background-color: unset;
+            }
+            &:after {
+                content: unset
+            }
+            &:before {
+                margin-right: 0 !important;
+            }
+        }
+        .partial, .extends {
+            font-size: 12px;
+        }
+    }
+}
+
+@media only screen and (min-width: 568px) {
+    .themes {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .themes {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 1000px) {
+    .themes {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}

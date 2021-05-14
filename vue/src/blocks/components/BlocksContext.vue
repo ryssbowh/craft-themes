@@ -20,7 +20,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 
 export default {
   computed: {
@@ -75,7 +74,6 @@ export default {
     },
     ...mapMutations(['setThemes', 'setAllLayouts', 'setAvailableLayouts', 'setTheme']),
     ...mapActions(['setLayoutById', 'setLayoutAndFetch', 'setThemeAndFetch']),
-  },
-  mixins: [Mixin],
+  }
 };
 </script>

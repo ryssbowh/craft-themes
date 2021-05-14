@@ -85,6 +85,11 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
         return null;
     }
 
+    public function contentBlockRegion(): ?string
+    {
+        return null;
+    }
+
     /**
      * @inheritDoc
      */
@@ -99,21 +104,13 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
-    public function entends(): bool
-    {
-        return ($this->getExtends() !== null);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getAssetUrl(string $path): string
     {
         $fullPath = $this->getBasePath() . DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
         if (file_exists($fullPath)) {
             return \Craft::$app->view->assetManager->getPublishedUrl($fullPath, true);
         }
-        if ($this->inheritsAssets and $this->entends()) {
+        if ($this->inheritsAssets and $this->getExtends() !== null) {
             return $this->getParent()->getAssetUrl($path);
         }
         return '';
@@ -164,6 +161,15 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     public function afterSet()
     {
 
+    }
+
+    public function getPreviewImage(): string
+    {
+        $file = glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null;
+        if (!$file) {
+            $file = \Yii::getAlias('@Ryssbowh/CraftThemes/assets/no-preview.png');
+        }
+        return \Craft::$app->view->assetManager->getPublishedUrl($file, true);
     }
 
     /**

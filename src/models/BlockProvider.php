@@ -17,9 +17,13 @@ abstract class BlockProvider extends Model implements BlockProviderInterface
     public function getBlocks(): array
     {
         $_this = $this;
-        return array_map(function ($handle) use ($_this) {
+        $blocks = array_map(function ($handle) use ($_this) {
             return $_this->createBlock($handle);
         }, array_keys($this->definedBlocks));
+        usort($blocks, function ($a, $b) {
+            return ($a->name < $b->name) ? -1 : 1;
+        });
+        return $blocks;
     }
 
     /**

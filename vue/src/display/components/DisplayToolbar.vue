@@ -6,7 +6,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 import { reduce } from 'lodash';
 
 export default {
@@ -24,8 +23,7 @@ export default {
     methods: {
         ...mapMutations([]),
         ...mapActions(['save']),
-    },
-    mixins: [Mixin]
+    }
 };
 </script>
 <style lang="scss">

@@ -11,7 +11,14 @@ class CategoryLayout extends Layout
      * @var string
      */
     public $type = LayoutService::CATEGORY_HANDLE;
-        
+    
+    public function defineRules(): array
+    {
+        return array_merge(parent::defineRules(), [
+            ['element', 'required'],
+        ]);
+    }
+
     /**
      * @inheritDoc
      */

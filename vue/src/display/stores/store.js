@@ -1,5 +1,4 @@
 import { createStore } from 'vuex';
-import axios from 'axios';
 import { cloneDeep, isEqual, merge } from 'lodash';
 
 function sanitizeDisplays(displays) {
@@ -25,11 +24,26 @@ function setWindowUrl(theme, layout) {
     window.history.pushState({}, '', url.join('/'));
 }
 
+function cloneDisplay(display, viewMode) {
+    display = cloneDeep(display);
+    display.viewMode_id = viewMode.handle;
+    display.id = null;
+    display.item.id = null;
+    if (display.item.type == 'matrix') {
+        for (let i in display.item.types) {
+            for (let j in display.item.types[i].fields) {
+                display.item.types[i].fields[j].id = null;
+            }
+        }
+    }
+    return display;
+}
+
 const store = createStore({
     state () {
         return {
             theme: null,
-            layout: 0,
+            layout: {},
             layouts: [],
             allLayouts: {},
             isFetching: {},
@@ -37,7 +51,7 @@ const store = createStore({
             hasChanged: false,
             viewModes: [],
             originalViewModes: [],
-            viewMode: 0,
+            viewMode: {},
             displays: [],
             originalDisplays: [],
             showOptionsModal: false,
@@ -69,7 +83,7 @@ const store = createStore({
             state.originalViewModes = cloneDeep(value);
         },
         setViewMode(state, index) {
-            state.viewMode = index;
+            state.viewMode = state.viewModes[index];
         },
         addViewMode(state, viewMode) {
             state.viewModes.push(viewMode);
@@ -82,17 +96,17 @@ const store = createStore({
             let toDelete = [];
             for (let i in state.displays) {
                 let display = state.displays[i];
-                if (viewMode.id && viewMode.id === display.viewMode) {
-                    toDelete.push(i);
+                if (viewMode.id && viewMode.id === display.viewMode_id) {
+                    toDelete.push(parseInt(i));
                 }
-                if (viewMode.handle === display.viewMode) {
-                    toDelete.push(i);   
+                if (viewMode.handle === display.viewMode_id) {
+                    toDelete.push(parseInt(i));   
                 }
             }
             state.displays = state.displays.filter((display, index) => !toDelete.includes(index));
             state.viewModes = state.viewModes.filter((viewMode, index2) => index != index2);
-            if (state.viewMode == index) {
-                state.viewMode = 0;
+            if (state.viewMode.handle == viewMode.handle) {
+                state.viewMode = state.viewModes[0];
             }
         },
         setDisplays(state, displays) {
@@ -137,6 +151,13 @@ const store = createStore({
         setHasChanged(state, value) {
             state.hasChanged = value;
         },
+        removeChanges(state) {
+            for (let i in state.viewModes) {
+                if (typeof state.viewModes[i].id == 'undefined') {
+                    delete state.viewModes[i];
+                }
+            }
+        },
         setIsSaving(state, value) {
             state.isSaving = value;
         },
@@ -153,6 +174,7 @@ const store = createStore({
     },
     actions: {
         setLayoutAndFetch ({commit, dispatch, state}, id) {
+            commit('removeChanges');
             commit('setLayout', id);
             commit('setViewModes', state.layout.viewModes);
             commit('setViewMode', 0);
@@ -160,7 +182,7 @@ const store = createStore({
         },
         fetchDisplays({state, commit}) {
             let data = {
-                viewMode: state.viewModes[state.viewMode]
+                viewMode: state.viewMode
             };
             commit('setIsFetching', {key: 'displays', value: true});
             return axios.post(Craft.getCpUrl('themes/ajax/displays/'+state.layout.id), data)
@@ -198,16 +220,13 @@ const store = createStore({
             })
         },
         addViewMode({commit, state, dispatch}, viewMode) {
-            let current = state.viewModes[state.viewMode];
             commit('addViewMode', viewMode);
             for (let i in state.displays) {
                 let display = state.displays[i];
-                if (display.viewMode !== current.id && display.viewMode !== current.handle) {
+                if (display.viewMode_id !== state.viewMode.id && display.viewMode_id !== state.viewMode.handle) {
                     continue;
                 }
-                display = cloneDeep(display);
-                display.viewMode = viewMode.handle;
-                display.id = null;
+                display = cloneDisplay(display, viewMode);
                 commit('addDisplay', display);
             }
             commit('setViewMode', state.viewModes.length - 1);

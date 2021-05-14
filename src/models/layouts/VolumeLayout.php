@@ -13,6 +13,13 @@ class VolumeLayout extends Layout
      */
     public $type = LayoutService::VOLUME_HANDLE;
 
+    public function defineRules(): array
+    {
+        return array_merge(parent::defineRules(), [
+            ['element', 'required'],
+        ]);
+    }
+    
     /**
      * @var boolean
      */

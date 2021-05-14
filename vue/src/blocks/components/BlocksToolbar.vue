@@ -4,7 +4,7 @@
       <button href="#" class="btn submit menubtn" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
       <div class="menu" data-align="right">
         <ul>
-          <li v-for="elem in layoutsWithoutBlocks">
+          <li v-for="elem, index in layoutsWithoutBlocks" v-bind:key="index">
               <a href="#" @click.prevent="checkAndCopy(elem)">{{ elem.description }}</a>
           </li>
         </ul>
@@ -17,7 +17,6 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex';
-import Mixin from '../../mixin';
 import { reduce } from 'lodash';
 
 export default {
@@ -34,17 +33,9 @@ export default {
             return this.layouts.filter(layout => !layout.hasBlocks);
         },
         canSave: function () {
-            return (!this.isSaving && !this.isLoading && this.hasChanged && !this.hasErrors);
+            return (!this.isSaving && !this.isLoading && this.hasChanged);
         },
-        hasErrors: function () {
-            let _this = this;
-            return reduce(Object.keys(this.blockErrors).map((key) => {
-                return _this.blockErrors[key].length > 0;
-            }), function(result, value, key) {
-                return (result || value);
-            }, false);
-        },
-        ...mapState(['isSaving', 'hasChanged', 'blockErrors', 'isFetching', 'availableLayouts', 'layouts', 'isCopying', 'layout'])
+        ...mapState(['isSaving', 'hasChanged', 'isFetching', 'availableLayouts', 'layouts', 'isCopying', 'layout'])
     },
     methods: {
         confirmAndSave: function (extra) {
@@ -68,8 +59,7 @@ export default {
         },
         ...mapMutations([]),
         ...mapActions(['save', 'copy', 'deleteLayout'])
-    },
-    mixins: [Mixin]
+    }
 };
 </script>
 <style lang="scss" scoped>

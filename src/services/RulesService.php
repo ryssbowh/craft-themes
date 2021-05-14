@@ -10,7 +10,7 @@ use craft\models\Site;
 
 class RulesService extends Service
 {
-    const CACHE_KEY_PREFIX = 'themes.rules.';
+    const CACHE_GROUP = 'themes.rules.';
 
     /**
      * @var array
@@ -33,7 +33,7 @@ class RulesService extends Service
         $path = \Craft::$app->request->getFullPath();
         $currentSite = \Craft::$app->sites->getCurrentSite();
         $currentUrl = $currentSite->getBaseUrl().$path;
-        $cached = $this->cacheService()->get(self::CACHE_KEY_PREFIX . $currentUrl);
+        $cached = $this->cacheService()->get(self::CACHE_GROUP, $currentUrl);
         $theme = null;
         if ($cached === null) {
             return null;
@@ -42,7 +42,7 @@ class RulesService extends Service
             $theme = Themes::$plugin->registry->getTheme($cached);
         } else {
             $themeName = $this->resolveRules($path, $currentSite);
-            $this->cacheService()->set(self::CACHE_KEY_PREFIX . $currentUrl, $themeName);
+            $this->cacheService()->set(self::CACHE_GROUP, $currentUrl, $themeName);
             if ($themeName) {
                 $theme = Themes::$plugin->registry->getTheme($themeName);
             }

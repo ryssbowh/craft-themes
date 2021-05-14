@@ -47,7 +47,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 
 export default {
     computed: {
@@ -65,6 +64,7 @@ export default {
                     return this.item.availableDisplayers[i];
                 }
             }
+            return false;
         },
         visible: function () {
             return !this.item.visuallyHidden && !this.item.hidden
@@ -129,7 +129,6 @@ export default {
         ...mapMutations(['setOptionsField']),
         ...mapActions([]),
     },
-    mixins: [Mixin],
     components: {},
     emits: ['updateItem'],
 };

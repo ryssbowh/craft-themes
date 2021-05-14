@@ -2,7 +2,7 @@
     <nav id="tabs">
         <ul>
             <li v-for="mode, index in viewModes" v-bind:key="index" :id="'tab-'+index">
-                <a :class="{'sel': viewMode === index}" @click.prevent="">
+                <a :class="{'sel': viewMode.handle === mode.handle}" @click.prevent="">
                     <span @click.prevent="setViewMode(index)">{{ mode.name }}</span>
                     <span class="icon edit" @click.prevent="editViewMode(index)"></span>
                     <span v-if="mode.handle != 'default'" class="icon delete" @click.prevent="deleteViewMode(index)"></span>
@@ -20,7 +20,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 import ViewModeModal from './ViewModeModal';
 
 export default {
@@ -36,7 +35,7 @@ export default {
         }
     },
     methods: {
-        onCloseModal: function (data) {
+        onCloseModal: function () {
             this.edit = null;
             this.showModal = false;
         },
@@ -47,7 +46,6 @@ export default {
         ...mapMutations(['setViewMode']),
         ...mapActions(['deleteViewMode']),
     },
-    mixins: [Mixin],
     components: {ViewModeModal}
 };
 </script>

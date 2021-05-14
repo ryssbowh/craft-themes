@@ -11,7 +11,7 @@
                             <label class="required" for="name">{{ t('Name') }}</label>
                         </div>
                         <div class="input ltr">
-                            <input type="text" id="name" class="text fullwidth" name="name" :value="edit ? editedViewMode.name : ''" maxlength="255" required>
+                            <input type="text" id="name" :class="{text: true, fullwidth:true, error: handleError}" v-model="name" maxlength="255" required>
                         </div>
                     </div>
                     <div class="field width-100">
@@ -19,9 +19,9 @@
                             <label class="required" for="handle">{{ t('Handle') }}</label>
                         </div>
                         <div class="input ltr">
-                            <input type="text" id="handle" class="text fullwidth" name="handle" :disabled="edit !== null" :value="editedViewMode ? editedViewMode.handle : ''" maxlength="255" required>
+                            <input type="text" id="handle" :class="{text: true, fullwidth:true, error: handleError}" :disabled="edit !== null" v-model="handle" maxlength="255" required>
                         </div>
-                        <ul class="errors" v-if="hasError">
+                        <ul class="errors" v-if="handleError">
                             <li>{{ t('This handle is already defined') }}</li>
                         </ul>
                     </div>
@@ -39,7 +39,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 import Modal from '../modal';
 
 export default {
@@ -50,7 +49,10 @@ export default {
             }
             return this.viewModes[this.edit];
         },
-        ...mapState(['viewModes'])
+        hasError: function () {
+            return this.handleError || this.nameError;
+        },
+        ...mapState(['viewModes', 'layout'])
     },
     props: {
         showModal: Boolean,
@@ -59,7 +61,10 @@ export default {
     data() {
         return {
             popup: null,
-            hasError: false,
+            name: '',
+            handle: '',
+            nameError: false,
+            handleError: false,
             handleGenerator: null
         }
     },
@@ -75,8 +80,16 @@ export default {
                 this.popup.hide();
             }
         },
-        edit: function () {
+        edit: function (newValue) {
             this.updategenerator();
+            this.removeErrors();
+            if (newValue !== null) {
+                this.name = this.editedViewMode.name;
+                this.handle = this.editedViewMode.handle;
+            } else {
+                this.name = '';
+                this.handle = '';
+            }
         }
     },
     beforeUnmount () {
@@ -98,54 +111,45 @@ export default {
                 this.handleGenerator.stopListening();
             }
         },
+        removeErrors() {
+            this.nameError = false;
+            this.handleError = false;
+        },
         closeModal () {
             this.$emit('closeModal');
         },
         validateModal: function () {
-            let res = true;
-            this.hasError = false;
-            let handle = $(this.$refs.modal).find('#handle');
-            let name = $(this.$refs.modal).find('#name');
-            handle.removeClass('error');
-            name.removeClass('error');
-            if (!handle.val().trim()) {
-                handle.addClass('error');
-                res = false;
-            }
-            if (!name.val().trim()) {
-                name.addClass('error');
-                res = false;
+            this.removeErrors();
+            if (!this.name.trim()) {
+                this.nameError = true;
             }
             if (this.edit === null) {
+                if (!this.handle.trim()) {
+                    this.handleError = true;
+                }
                 for (let i in this.viewModes) {
-                    if (this.viewModes[i].handle == handle.val().trim()) {
-                        this.hasError = true;
-                        res = false;
+                    if (this.viewModes[i].handle == this.handle.trim()) {
+                        this.handleError = true;
                     }
                 }
             }
-            return res;
         },
         save() {
-            if (!this.validateModal()) {
+            this.validateModal();
+            if (this.hasError) {
                 return;
             }
-            let handle = $(this.$refs.modal).find('#handle').val();
-            let name = $(this.$refs.modal).find('#name').val();
             if (this.edit !== null) {
-                this.editViewMode({index: this.edit, name: name});
+                this.editViewMode({index: this.edit, name: this.name});
             } else {
-                this.addViewMode({name: name, handle: handle});
+                this.addViewMode({name: this.name, handle: this.handle});
             }
-            // $(this.$refs.modal).find('#handle').val('');
-            // $(this.$refs.modal).find('#name').val('');
             this.$emit('closeModal');
         },
         ...mapMutations([]),
         ...mapActions(['addViewMode', 'editViewMode']),
     },
     emits: ['closeModal'],
-    mixins: [Mixin],
 };
 </script>
 <style lang="scss" scoped>

@@ -54,6 +54,7 @@ class Themes extends \craft\base\Plugin
 
         \Yii::setAlias('@themesPath', '@root/themes');
         \Yii::setAlias('@themesWebPath', '@webroot/themes');
+        \Yii::setAlias('@themesWeb', '@web/themes');
 
         $this->registerServices();
         $this->registerPermissions();
@@ -156,6 +157,8 @@ class Themes extends \craft\base\Plugin
         Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
             function (PluginEvent $event) use ($_this) {
                 $_this->cache->flush();
+                $_this->layouts->installThemeData($event->plugin->handle);
+                $_this->display->installThemeData($event->plugin->handle);
             }
         );
 
@@ -168,6 +171,26 @@ class Themes extends \craft\base\Plugin
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
             function (PluginEvent $event) use ($_this) {
                 $_this->installDependency($event->plugin);
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) use ($_this) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->layouts->uninstallThemeData($event->plugin->handle);
+                    $_this->cache->flush();
+                }
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+            function (PluginEvent $event) use ($_this) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    $_this->cache->flush();
+                    $_this->layouts->installThemeData($event->plugin->handle);
+                    $_this->display->installThemeData($event->plugin->handle);
+                    $_this->blocks->installContentBlock($event->plugin);
+                }
             }
         );
     }
@@ -190,16 +213,23 @@ class Themes extends \craft\base\Plugin
                     'themes/display/<themeName:[\w-]+>' => 'themes/cp-display',
                     'themes/display/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-display',
 
-                    'themes/ajax/displays/<layout:\d+>' => 'themes/cp-ajax/displays',
-                    'themes/ajax/displays/save' => 'themes/cp-ajax/save-displays',
-                    'themes/ajax/view-modes/<layout:\d+>' => 'themes/cp-ajax/view-modes',
-                    'themes/ajax/blocks/save' => 'themes/cp-ajax/save-blocks',
-                    'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-ajax/delete-layout',
-                    'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-ajax/blocks',
-                    'themes/ajax/block-providers' => 'themes/cp-ajax/block-providers',
-                    'themes/ajax/field-options' => 'themes/cp-ajax/field-options',
-                    'themes/ajax/field-options/validate' => 'themes/cp-ajax/validate-field-options',
-                    'themes/ajax/install' => 'themes/cp-ajax/install',
+                    'themes/ajax/displays/<layout:\d+>' => 'themes/cp-display-ajax/displays',
+                    'themes/ajax/displays/save' => 'themes/cp-display-ajax/save-displays',
+                    'themes/ajax/view-modes/<layout:\d+>' => 'themes/cp-display-ajax/view-modes',
+                    'themes/ajax/blocks/save' => 'themes/cp-blocks-ajax/save-blocks',
+                    'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-blocks-ajax/delete-layout',
+                    'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-blocks-ajax/blocks',
+                    'themes/ajax/block-providers' => 'themes/cp-blocks-ajax/block-providers',
+                    'themes/ajax/field-options' => 'themes/cp-display-ajax/field-options',
+                    'themes/ajax/field-options/validate' => 'themes/cp-display-ajax/validate-field-options',
+                    'themes/ajax/install' => 'themes/cp-install-ajax/install',
+
+                    'themes/ajax/entries/<uid:[\w-]+>' => 'themes/cp-ajax/entries',
+                    'themes/ajax/categories/<uid:[\w-]+>' => 'themes/cp-ajax/categories',
+                    'themes/ajax/users' => 'themes/cp-ajax/users',
+
+                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
+                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
 
                     'themes/test' => 'themes/cp-install/test'
                 ]);
@@ -335,10 +365,10 @@ class Themes extends \craft\base\Plugin
             Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
-            Themes::$plugin->display->onCraftFieldSaved($e->field);
+            // Themes::$plugin->display->onCraftFieldSaved($e);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, function (FieldEvent $e) {
-            Themes::$plugin->display->onCraftFieldDeleted($e->field);
+            Themes::$plugin->display->onCraftFieldDeleted($e);
         });
     }
 

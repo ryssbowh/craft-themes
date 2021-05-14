@@ -38,7 +38,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Mixin from '../../mixin';
 import DisplayItem from './DisplayItem';
 import { reduce, filter, sortBy } from 'lodash';
 import Draggable from 'vuedraggable';
@@ -51,16 +50,13 @@ export default {
                 return (res || elem);
             }, this.isSaving);
         },
-        currentViewMode: function () {
-            return this.viewModes[this.viewMode];
-        },
         viewModeDisplays: function () {
-            if (!this.currentViewMode) {
+            if (!this.viewMode) {
                 return [];
             }
-            return sortBy(filter(this.displays, display => display.viewMode_id === this.currentViewMode.id || display.viewMode_id === this.currentViewMode.handle), 'order');
+            return sortBy(filter(this.displays, display => display.viewMode_id === this.viewMode.id || display.viewMode_id === this.viewMode.handle), 'order');
         },
-        ...mapState(['displays', 'isSaving', 'isFetching', 'viewModes', 'viewMode'])
+        ...mapState(['displays', 'isSaving', 'isFetching', 'viewMode'])
     },
     watch: {
         displays: {
@@ -92,7 +88,6 @@ export default {
         ...mapMutations(['updateDisplay']),
         ...mapActions(['checkChanges']),
     },
-    mixins: [Mixin],
     components: {
         DisplayItem,
         Draggable,

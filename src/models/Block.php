@@ -7,7 +7,7 @@ use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
-use Ryssbowh\CraftThemes\models\blockOptions\NoOptions;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Element;
 use craft\base\Model;
@@ -29,16 +29,6 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
      * @var string
      */
     public $smallDescription = '';
-
-    /**
-     * @var boolean
-     */
-    public $hasOptions = false;
-
-    /**
-     * @var array
-     */
-    private $_options = [];
 
     /**
      * @var int
@@ -71,11 +61,6 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     public $active;
 
     /**
-     * @var array
-     */
-    public $options = [];
-
-    /**
      * @var DateTime
      */
     public $dateCreated;
@@ -89,6 +74,11 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
      * @var string
      */
     public $uid;
+
+    /**
+     * @var array
+     */
+    protected $_options = [];
 
     /**
      * @inheritDoc
@@ -120,7 +110,7 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
             'provider' => $this->provider,
             'order' => $this->order,
             'active' => $this->active,
-            'options' => $this->options,
+            'options' => $this->options->getConfig(),
             'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
@@ -142,11 +132,17 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     public function defineRules(): array
     {
         return [
-            [['region', 'handle', 'provider', 'order', 'active', 'layout_id'], 'required'],
+            [['region', 'handle', 'provider', 'order', 'active'], 'required'],
             [['region', 'handle', 'provider'], 'string'],
             ['active', 'boolean'],
             [['order', 'layout_id'], 'number'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id', 'safe'], 'safe']
+            [['dateCreated', 'dateUpdated', 'uid', 'id', 'safe'], 'safe'],
+            ['options', function () {
+                $options = $this->options;
+                if (!$options->validate()) {
+                    $this->addError('options', $options->getErrors());
+                }
+            }]
         ];
     }
 
@@ -177,14 +173,6 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     /**
      * @inheritDoc
      */
-    public function getOptionsHtml(): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getTemplateSuggestions(): array
     {
         return ['blocks/block-' . $this->getMachineName(), 'blocks/block'];
@@ -195,7 +183,7 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['handle', 'hasOptions', 'optionsHtml']);
+        return array_merge(parent::fields(), ['handle', 'options', 'errors']);
     }
 
     /**
@@ -211,9 +199,12 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
      * 
      * @param array $options
      */
-    public function setOptions(array $options)
+    public function setOptions($options)
     {
-        $this->_options = $options;
+        if (is_string($options)) {
+            $options = json_decode($options, true);
+        }
+        $this->_options = $options ?? [];
     }
 
     /**
@@ -221,7 +212,12 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
      */
     public function getOptionsModel(): Model
     {
-        return new NoOptions;
+        return new BlockOptions;
+    }
+
+    public function afterSave()
+    {
+        $this->options->afterSave($this);
     }
 
     public function render(Element $element): string

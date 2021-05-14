@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\events\DisplayEvent;
 use Ryssbowh\CraftThemes\exceptions\DisplayException;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\models\fields\Title;
@@ -17,6 +18,7 @@ use craft\base\Field;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\EntryTypeEvent;
+use craft\events\FieldEvent;
 use craft\fieldlayoutelements\TitleField;
 use craft\fields\Matrix;
 use craft\helpers\StringHelper;
@@ -73,6 +75,13 @@ class DisplayService extends Service
         }
     }
 
+    public function installThemeData(string $theme)
+    {
+        foreach ($this->layoutService()->getForTheme($theme, true) as $layout) {
+            $this->installLayoutDisplays($layout);
+        }
+    }
+
     public function getById(int $id): ?Display
     {
         return $this->all()->firstWhere('id', $id);
@@ -105,6 +114,9 @@ class DisplayService extends Service
 
     public function getForLayout(Layout $layout): array
     {
+        if (!$layout->id) {
+            return [];
+        }
         $viewModes = array_map(function ($viewMode) {
             return $viewMode->id;
         }, $layout->viewModes);
@@ -176,7 +188,7 @@ class DisplayService extends Service
         $display->item = null;
 
         if ($isNew) {
-            $this->_displays->push($display);
+            $this->all()->push($display);
         }
                 
         return true;
@@ -234,7 +246,7 @@ class DisplayService extends Service
     }
 
     /**
-     * Hanles field config deletion
+     * Handles field config deletion
      * 
      * @param ConfigEvent $event
      */
@@ -278,22 +290,23 @@ class DisplayService extends Service
      * 
      * @param  ConfigEvent $event
      */
-    public function onCraftFieldDeleted(CraftField $field)
+    public function onCraftFieldDeleted(FieldEvent $event)
     {
-        foreach ($this->getAllForCraftField($field->id) as $display) {
+        foreach ($this->getAllForCraftField($event->field->id) as $display) {
             $this->delete($display);
         }
     }
 
-    public function onCraftFieldSaved(CraftField $craftField)
+    public function onCraftFieldSaved(FieldEvent $event)
     {
-        $displays = $this->getAllForCraftField($craftField->id);
-        if ($event->oldValue['type'] !== $event->newValue['type']) {
+        $field = $event->field;
+        $displays = $this->getAllForCraftField($field->id);
+        if ($field->type !== $event->newValue['type']) {
             foreach ($displays as $oldDisplay) {
                 $viewMode = $oldDisplay->viewMode;
                 $order = $oldDisplay->order;
                 $this->delete($oldDisplay);
-                $display = $this->createDisplay($viewMode, $craftField, $order);
+                $display = $this->createDisplay($viewMode, $event->field, $order);
                 $this->save($display);
             }
         }
@@ -310,7 +323,12 @@ class DisplayService extends Service
         $displayIds = [];
         foreach ($layout->viewModes as $viewMode) {
             $order = $this->getMaxOrder($viewMode) ?? 0;
-            if (!$display = $this->getForTitleField($viewMode)) {
+            try {
+                $display = $this->getForTitleField($viewMode);
+            } catch (\Throwable $exception) {
+                $display = null;
+            }
+            if (!$display) {
                 $order++;
                 $display = $this->create([
                     'type' => self::TYPE_FIELD,
@@ -322,7 +340,12 @@ class DisplayService extends Service
             }
             $displayIds[] = $display->id;
             foreach ($layout->getFieldLayout()->getFields() as $craftField) {
-                if (!$display = $this->getForCraftField($craftField->id, $viewMode)) {
+                try {
+                    $display = $this->getForCraftField($craftField->id, $viewMode);
+                } catch (\Throwable $exception) {
+                    $display = null;
+                }
+                if (!$display) {
                     $order++;
                     $display = $this->create([
                         'type' => self::TYPE_FIELD,

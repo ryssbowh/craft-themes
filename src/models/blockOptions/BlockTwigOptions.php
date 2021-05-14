@@ -2,12 +2,19 @@
 
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
-use craft\base\Model;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 
-class BlockTwigOptions extends Model
+class BlockTwigOptions extends BlockOptions
 {
     /**
      * @var string
      */
     public $twig = '';
+
+    public function defineRules(): array
+    {
+        return array_merge(parent::defineRules(), [
+            ['twig', 'string']
+        ]);
+    }
 }

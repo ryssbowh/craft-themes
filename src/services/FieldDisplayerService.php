@@ -30,7 +30,7 @@ class FieldDisplayerService extends Service
         return $this->_mapping;
     }
 
-    public function getAll(): array
+    public function all(): array
     {
         if (is_null($this->_displayers)) {
             $this->register();
@@ -40,10 +40,10 @@ class FieldDisplayerService extends Service
 
     public function getByHandle(string $handle): FieldDisplayerInterface
     {
-        if (!isset($this->getAll()[$handle])) {
+        if (!isset($this->all()[$handle])) {
             throw FieldDisplayerException::displayerNotDefined($handle);
         }
-        return $this->getAll()[$handle];
+        return $this->all()[$handle];
     }
 
     public function getByHandles(array $handles): array

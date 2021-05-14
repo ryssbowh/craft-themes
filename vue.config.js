@@ -15,6 +15,7 @@ module.exports = {
     configureWebpack: {
         entry: {
             blocks: "./vue/src/blocks/main.js",
+            blockOptions: "./vue/src/blockOptions/main.js",
             display: "./vue/src/display/main.js"
         },
         output: {

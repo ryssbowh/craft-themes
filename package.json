@@ -24,6 +24,7 @@
     "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
+    "craftcms-sass": "^3.5.7",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "gulp": "^4.0.2",

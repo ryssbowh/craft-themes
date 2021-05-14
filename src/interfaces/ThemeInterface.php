@@ -39,11 +39,11 @@ interface ThemeInterface
     public function getParent(): ?ThemeInterface;
 
     /**
-     * Does this theme inherits another theme
+     * Which region the content block should be installed in
      * 
-     * @return boolean
+     * @return string
      */
-    public function entends(): bool;
+    public function contentBlockRegion(): ?string;
 
     /**
      * Is this theme partial.
@@ -72,4 +72,11 @@ interface ThemeInterface
      * Callback after the theme has been set for a request
      */
     public function afterSet();
+
+    /**
+     * Preview image for the theme, returns a web url
+     * 
+     * @return string
+     */
+    public function getPreviewImage(): string;
 }
