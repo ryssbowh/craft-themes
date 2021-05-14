@@ -14,6 +14,7 @@ class Field extends DisplayItem
     public $options;
     public $type;
     public $craft_field_id;
+    public $craft_field_class;
 
     protected $_craftField;
     protected $_displayer;

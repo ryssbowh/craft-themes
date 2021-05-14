@@ -24,6 +24,7 @@ use craft\elements\Category;
 use craft\elements\Entry;
 use craft\events\ConfigEvent;
 use craft\events\EntryTypeEvent;
+use craft\events\FieldEvent;
 use craft\helpers\StringHelper;
 use craft\services\Routes;
 
@@ -119,6 +120,7 @@ class LayoutService extends Service
             $config = $config->getAttributes();
         }
         $viewModesData = $config['viewModes'] ?? null;
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         switch ($config['type']) {
             case self::DEFAULT_HANDLE:
                 $layout = new Layout;
@@ -224,15 +226,7 @@ class LayoutService extends Service
                 $layout->theme = $theme;
                 $layout2 = $layout;
             }
-            if (!$layout->viewModes) {
-                $viewMode = $this->viewModesService()->create([
-                    'handle' => ViewModeService::DEFAULT_HANDLE,
-                    'name' => \Craft::t('themes', 'Default'),
-                    'layout_id' => $layout2->id
-                ]);
-                $layout->viewModes = [$viewMode];
-            }
-            $this->save($layout2);
+            $this->installLayoutData($layout2);
             $ids[] = $layout2->id;
         }
         return $ids;
@@ -315,7 +309,7 @@ class LayoutService extends Service
             return false;
         }
         $isNew = !is_int($layout->id);
-        $uid = $isNew ? StringHelper::UUID() : $layout->uid;
+        $uid = $layout->uid;
 
         $this->triggerEvent(self::EVENT_BEFORE_SAVE, new LayoutEvent([
             'layout' => $layout
@@ -377,10 +371,6 @@ class LayoutService extends Service
             'layout' => $layout
         ]));
 
-        foreach ($this->displayService()->getForLayout($layout) as $display) {
-            $this->displayService()->delete($display);
-        }
-
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
 
         $this->_layouts = $this->all()->where('id', '!=', $layout->id);
@@ -412,6 +402,7 @@ class LayoutService extends Service
 
             $this->viewModesService()->saveMany($data['viewModes'] ?? [], $layout);
             $this->blocksService()->saveMany($data['blocks'] ?? [], $layout);
+            $this->displayService()->saveMany($data['displays'] ?? [], $layout);
             
             $transaction->commit();
         } catch (\Throwable $e) {
@@ -452,7 +443,7 @@ class LayoutService extends Service
         ]));
     }
 
-        /**
+    /**
      * Creates a entry type or category layout displays
      * 
      * @param EntryTypeEvent $event
@@ -475,67 +466,71 @@ class LayoutService extends Service
     public function onCraftElementSaved(string $type, string $uid)
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            if (!$this->get($theme->handle, $type, $uid)) {
+            $layout = $this->get($theme->handle, $type, $uid);
+            if (!$layout) {
                 $layout = $this->create([
                     'type' => $type,
                     'element' => $uid,
                     'theme' => $theme->handle,
-                    'viewModes' => [
-                        [
-                            'handle' => ViewModeService::DEFAULT_HANDLE,
-                            'name' => \Craft::t('themes', 'Default'),
-                        ]
-                    ]
                 ]);
-                $this->save($layout);
+            }
+            $this->installLayoutData($layout);
+        }
+    }
+
+    /**
+     * Resave layout for which a deleted field was present
+     * 
+     * @param  ConfigEvent $event
+     */
+    public function onCraftFieldDeleted(FieldEvent $event)
+    {
+        $layoutsSaved = [];
+        foreach ($this->displayService()->getAllForCraftField($event->field->id) as $display) {
+            $layout = $display->viewMode->layout;
+            if (in_array($layout->id, $layoutsSaved)) {
+                continue;
+            }
+            $this->installLayoutData($layout);
+            $layoutsSaved[] = $layout->id;
+        }
+    }
+
+    /**
+     * handles a craft field change. Replaces the display in each layout 
+     * where the craft field was referenced (if the type of field has changed) and save the layout.
+     * 
+     * @param  FieldEvent $event
+     */
+    public function onCraftFieldSaved(FieldEvent $event)
+    {
+        if ($event->isNew) {
+            return;
+        }
+        $field = $event->field;
+        $displays = $this->displayService()->getAllForCraftField($field->id);
+        $toSave = [];
+        foreach ($displays as $display) {
+            $oldItem = $display->item;
+            $oldFieldClass = $oldItem->craft_field_class;
+            if ($oldItem->craft_field_class != get_class($field)) {
+                $this->fieldsService()->deleteField($oldItem);
+                $display->item = $this->fieldsService()->createField($field);
+                $display->item->labelHidden = $oldItem->labelHidden;
+                $display->item->labelVisuallyHidden = $oldItem->labelVisuallyHidden;
+                $display->item->visuallyHidden = $oldItem->visuallyHidden;
+                $display->item->hidden = $display->item->hidden ?: $oldItem->hidden;
+                $display->item->display = $display;
+                $layout = $display->viewMode->layout;
+                if (!isset($toSave[$layout->id])) {
+                    $toSave[$layout->id] = $layout;
+                } else {
+                    $layout = $toSave[$layout->id];
+                }
+                $layout->replaceDisplay($display);
             }
         }
-    }
-
-    /**
-     * Creates a category type layout
-     * 
-     * @param ConfigEvent $event
-     */
-    public function onCategoryAdded(ConfigEvent $event)
-    {
-        $uid = $event->tokenMatches[0];
-        foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $layout = $this->create([
-                'type' => self::CATEGORY_HANDLE,
-                'element' => $uid,
-                'theme' => $theme->handle,
-                'viewModes' => [
-                    [
-                        'handle' => ViewModeService::DEFAULT_HANDLE,
-                        'name' => \Craft::t('themes', 'Default'),
-                    ]
-                ]
-            ]);
-            $this->save($layout);
-        }
-    }
-
-    /**
-     * Creates a route type layout
-     * 
-     * @param ConfigEvent $event
-     */
-    public function onRouteAdded(ConfigEvent $event)
-    {
-        $uid = $event->tokenMatches[0];
-        foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $layout = $this->create([
-                'type' => self::ROUTE_HANDLE,
-                'element' => $uid,
-                'theme' => $theme->handle,
-                'viewModes' => [
-                    [
-                        'handle' => ViewModeService::DEFAULT_HANDLE,
-                        'name' => \Craft::t('themes', 'Default'),
-                    ]
-                ]
-            ]);
+        foreach ($toSave as $layout) {
             $this->save($layout);
         }
     }
@@ -562,13 +557,32 @@ class LayoutService extends Service
         return $layout;
     }
 
+    /**
+     * get current layout
+     * 
+     * @return ?Layout
+     */
     public function getCurrent(): ?Layout
     {
         return $this->current;
     }
 
+    protected function installLayoutData(Layout $layout)
+    {
+        if (!$layout->viewModes) {
+            $viewMode = $this->viewModesService()->create([
+                'handle' => ViewModeService::DEFAULT_HANDLE,
+                'name' => \Craft::t('themes', 'Default'),
+                'layout' => $layout
+            ]);
+            $layout->viewModes = [$viewMode];
+        }
+        $layout->displays = $this->displayService()->createLayoutDisplays($layout);
+        $this->save($layout);
+    }
+
     /**
-     * Load all layouts for categories
+     * Creates all categories layouts
      */
     protected function getCategoryLayouts(): array
     {
@@ -584,7 +598,7 @@ class LayoutService extends Service
     }
 
     /**
-     * Load all layouts for entries
+     * Creates all entries layouts
      */
     protected function getEntryLayouts(): array
     {
@@ -602,7 +616,7 @@ class LayoutService extends Service
     }
 
     /**
-     * Load all layouts for routes
+     * Creates all routes layouts
      */
     protected function getRouteLayouts(): array
     {

@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\User;
+use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
 
 class TagLayout extends Layout
@@ -34,21 +35,18 @@ class TagLayout extends Layout
         return \Craft::t('themes', 'Tag : {name}', ['name' => $this->element()->name]);
     }
 
+    public function getHandle(): string
+    {
+        return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
+    }
+
     public function canHaveUrls(): bool
     {
         return false;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getHandle(): string
+    public function getCraftFields(): array
     {
-        return $this->type . '_' . $this->element;
-    }
-
-    public function getFieldLayout(): FieldLayout
-    {
-        return $this->element()->getFieldLayout();
+        return $this->element()->getFieldLayout()->getFields();
     }
 }

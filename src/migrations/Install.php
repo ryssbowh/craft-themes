@@ -76,6 +76,7 @@ class Install extends Migration
             'type' => $this->string(255)->notNull(),
             'display_id' => $this->integer(11),
             'craft_field_id' => $this->integer(11),
+            'craft_field_class' => $this->string(255),
             'displayerHandle' => $this->string(255)->notNull(),
             'options' => $this->text(),
             'labelHidden' => $this->boolean()->defaultValue(false),
@@ -115,14 +116,12 @@ class Install extends Migration
         $this->addForeignKey('themes_blocks_layout', '{{%themes_blocks}}', ['layout_id'], '{{%themes_layouts}}', ['id'], 'CASCADE', null);
 
         $this->addForeignKey('themes_fields_display', '{{%themes_fields}}', ['display_id'], '{{%themes_displays}}', ['id'], 'CASCADE', null);
-        $this->addForeignKey('themes_fields_craft_field', '{{%themes_fields}}', ['craft_field_id'], Table::FIELDS, ['id'], 'CASCADE', null);
 
         $this->addForeignKey('themes_pivot_group_field', '{{%themes_pivot_group}}', ['field_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
         $this->addForeignKey('themes_pivot_group_group', '{{%themes_pivot_group}}', ['group_id'], '{{%themes_groups}}', ['id'], 'CASCADE', null);
 
         $this->addForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}', ['field_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
         $this->addForeignKey('themes_pivot_matrix_parent', '{{%themes_pivot_matrix}}', ['parent_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
-        $this->addForeignKey('themes_pivot_matrix_type', '{{%themes_pivot_matrix}}', ['matrix_type_id'], Table::MATRIXBLOCKTYPES, ['id'], 'CASCADE', null);
     }
 
     /**
@@ -134,12 +133,10 @@ class Install extends Migration
         $this->dropForeignKey('themes_view_mode_layout', '{{%themes_view_modes}}');
         $this->dropForeignKey('themes_blocks_layout', '{{%themes_blocks}}');
         $this->dropForeignKey('themes_fields_display', '{{%themes_fields}}');
-        $this->dropForeignKey('themes_fields_craft_field', '{{%themes_fields}}');
         $this->dropForeignKey('themes_pivot_group_field', '{{%themes_pivot_group}}');
         $this->dropForeignKey('themes_pivot_group_group', '{{%themes_pivot_group}}');
         $this->dropForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}');
         $this->dropForeignKey('themes_pivot_matrix_parent', '{{%themes_pivot_matrix}}');
-        $this->dropForeignKey('themes_pivot_matrix_type', '{{%themes_pivot_matrix}}');
 
         $this->dropTableIfExists('{{%themes_fields}}');
         $this->dropTableIfExists('{{%themes_groups}}');

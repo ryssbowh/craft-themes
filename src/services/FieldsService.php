@@ -3,12 +3,14 @@
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\exceptions\DisplayException;
+use Ryssbowh\CraftThemes\models\DisplayItem;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
 use Ryssbowh\CraftThemes\models\DisplayTitle;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\Field;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\models\fields\Title;
+use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use craft\base\Field as BaseField;
@@ -99,6 +101,13 @@ class FieldsService extends Service
         return $this->create($this->buildFieldConfig($craftField));
     }
 
+    public function deleteField(Field $field)
+    {
+        \Craft::$app->getDb()->createCommand()
+            ->delete(FieldRecord::tableName(), ['id' => $field->id])
+            ->execute();
+    }
+
     public function createTitleField(): Field
     {
         $displayer = $this->fieldDisplayersService()->getDefault(Title::class);
@@ -123,14 +132,9 @@ class FieldsService extends Service
             ];
         }
         $displayer = $this->fieldDisplayersService()->getDefault(get_class($craftField));
-        return $this->create([
-            'type' => self::TYPE_MATRIX,
-            'craft_field_id' => $craftField->id,
-            'displayerHandle' => $displayer ? $displayer->handle : '',
-            'options' => $displayer ? $displayer->getOptions()->toArray() : [],
-            'hidden' => ($displayer == null),
-            'types' => $types
-        ]);
+        $config = $this->buildFieldConfig($craftField, self::TYPE_MATRIX);
+        $config['types'] = $types;
+        return $this->create($config);
     }
 
     public function getForDisplay(int $id): Field
@@ -146,22 +150,23 @@ class FieldsService extends Service
         }, $this->getMatrixPivotRecords($type->id, $matrix->id));
     } 
 
-    public function handleChanged(int $displayId, array $data): bool
+    public function save(array $data, DisplayRecord $display): bool
     {
-        $data['display_id'] = $displayId;
-        $method = 'handle' . ucfirst($data['type']) . 'Changed';
+        $data['display_id'] = $display->id;
+        $method = 'save' . ucfirst($data['type']);
         $res = $this->$method($data);
         $this->_fields = null;
         $this->_matrixPivots = null;
         return $res;
     }
 
-    protected function buildFieldConfig(BaseField $craftField): array
+    protected function buildFieldConfig(BaseField $craftField, string $type = self::TYPE_FIELD): array
     {
         $displayer = $this->fieldDisplayersService()->getDefault(get_class($craftField));
         return [
-            'type' => self::TYPE_FIELD,
+            'type' => $type,
             'craft_field_id' => $craftField->id,
+            'craft_field_class' => get_class($craftField),
             'displayerHandle' => $displayer ? $displayer->handle : '',
             'options' => $displayer ? $displayer->getOptions()->toArray() : [],
             'hidden' => ($displayer == null)
@@ -217,15 +222,17 @@ class FieldsService extends Service
         throw DisplayException::noMatrixType($uid);
     }
 
-    protected function handleFieldChanged(array $data): bool
+    protected function saveField(array $data): bool
     {
         $field = $this->getRecordByUid($data['uid']);
-        $data['craft_field_id'] = \Craft::$app->fields->getFieldByUid($data['craft_field_id'])->id;
+        $craftField = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
+        $data['craft_field_id'] = $craftField->id;
+        $data['craft_field_class'] = get_class($craftField);
         $field->setAttributes($data, false);
         return $field->save(false);
     }
 
-    protected function handleTitleChanged(array $data): bool
+    protected function saveTitle(array $data): bool
     {
         $field = $this->getRecordByUid($data['uid']);
         $isNew = $field->isNewRecord;
@@ -234,12 +241,14 @@ class FieldsService extends Service
         return $res;
     }
 
-    protected function handleMatrixChanged(array $data): bool
+    protected function saveMatrix(array $data): bool
     {
         $matrix = $this->getRecordByUid($data['uid']);
         $types = $data['types'] ?? [];
         unset($data['types']);
-        $data['craft_field_id'] = \Craft::$app->fields->getFieldByUid($data['craft_field_id'])->id;
+        $field = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
+        $data['craft_field_id'] = $field->id;
+        $data['craft_field_class'] = get_class($field);
         $matrix->setAttributes($data, false);
         $res = $matrix->save(false);
         foreach ($types as $typeData) {

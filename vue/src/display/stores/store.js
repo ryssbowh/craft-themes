@@ -28,7 +28,9 @@ function cloneDisplay(display, viewMode) {
     display = cloneDeep(display);
     display.viewMode_id = viewMode.handle;
     display.id = null;
+    display.uid = null;
     display.item.id = null;
+    display.item.uid = null;
     if (display.item.type == 'matrix') {
         for (let i in display.item.types) {
             for (let j in display.item.types[i].fields) {

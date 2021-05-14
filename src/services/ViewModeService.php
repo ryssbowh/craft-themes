@@ -34,6 +34,7 @@ class ViewModeService extends Service
         if ($config instanceof ActiveRecord) {
             $config = $config->getAttributes();
         }
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         return new ViewMode($config);
     }
 
@@ -117,6 +118,7 @@ class ViewModeService extends Service
             $viewMode->handle = $viewModesData['handle'];
             $viewMode->name = $viewModesData['name'];
             $viewMode->layout_id = $layout->id;
+            $viewMode->save(false);
             $ids[] = $viewMode->id;
         }
         $toDelete = ViewModeRecord::find()

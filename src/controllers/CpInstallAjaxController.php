@@ -28,10 +28,9 @@ class CpInstallAjaxController extends Controller
     public function actionInstall()
     {
         $this->layouts->install();
-        $this->display->install();
         \Craft::$app->plugins->savePluginSettings(Themes::$plugin, ['installed' => true]);
         return [
-            'message' => \Craft::t('themes', 'Layouts and display have been installed')
+            'message' => \Craft::t('themes', 'Themes data has been installed')
         ];
     }
 }

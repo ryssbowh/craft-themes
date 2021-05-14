@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\User;
+use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
 
 class UserLayout extends Layout
@@ -31,16 +32,13 @@ class UserLayout extends Layout
         return false;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getHandle(): string
     {
-        return LayoutService::USER_HANDLE;
+        return StringHelper::camelCase($this->type . '_' . $this->theme);
     }
 
-    public function getFieldLayout(): FieldLayout
+    public function getCraftFields(): array
     {
-        return \Craft::$app->getFields()->getLayoutByType(User::class);
+        return \Craft::$app->getFields()->getLayoutByType(User::class)->getFields();
     }
 }

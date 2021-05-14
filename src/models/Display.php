@@ -28,7 +28,7 @@ class Display extends Model
             [['viewMode_id', 'order', 'type'], 'required'],
             [['viewMode_id', 'order'], 'integer'],
             ['type', 'in', 'range' => DisplayService::TYPES],
-            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe']
+            [['dateCreated', 'dateUpdated', 'uid', 'id', 'viewMode'], 'safe']
         ];
     }
 
@@ -43,6 +43,7 @@ class Display extends Model
             'viewMode_id' => $this->viewMode->uid,
             'order' => $this->order,
             'type' => $this->type,
+            'uid' => $this->uid,
             'item' => $this->item->getConfig()
         ];
     }

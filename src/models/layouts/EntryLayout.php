@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
 
 class EntryLayout extends Layout
@@ -37,6 +38,11 @@ class EntryLayout extends Layout
         return true;
     }
 
+    public function getHandle(): string
+    {
+        return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
+    }
+
     public function getElementMachineName(): string
     {
         return $this->element()->handle;
@@ -50,16 +56,8 @@ class EntryLayout extends Layout
         return \Craft::t('themes', 'Entry : {name}', ['name' => $this->element()->name]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getHandle(): string
+    public function getCraftFields(): array
     {
-        return $this->type . '_' . $this->element;
-    }
-
-    public function getFieldLayout(): FieldLayout
-    {
-        return $this->element()->getFieldLayout();
+        return $this->element()->getFieldLayout()->getFields();
     }
 }

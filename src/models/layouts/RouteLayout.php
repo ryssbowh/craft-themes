@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\helpers\StringHelper;
 use craft\services\Routes;
 
 class RouteLayout extends Layout
@@ -30,19 +31,16 @@ class RouteLayout extends Layout
         return true;
     }
 
+    public function getHandle(): string
+    {
+        return StringHelper::camelCase($this->type . '_' . $this->getElementMachineName() . '_' . $this->theme);
+    }
+
     /**
      * @inheritDoc
      */
     public function getDescription(): string
     {
         return \Craft::t('themes', 'Route : {route}', ['route' => $this->element()['uriPattern']]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getHandle(): string
-    {
-        return $this->type . '_' . $this->element;
     }
 }

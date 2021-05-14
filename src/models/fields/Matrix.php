@@ -7,7 +7,6 @@ use Ryssbowh\CraftThemes\exceptions\DisplayMatrixException;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
 use craft\elements\MatrixBlock;
-use craft\helpers\StringHelper;
 
 class Matrix extends CraftField
 {

@@ -2,8 +2,6 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
-use Ryssbowh\CraftThemes\events\DisplayEvent;
-use Ryssbowh\CraftThemes\exceptions\DisplayException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\ViewMode;
@@ -12,13 +10,11 @@ use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\GroupRecord;
+use Ryssbowh\CraftThemes\records\LayoutRecord;
 use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use craft\base\Field;
 use craft\db\ActiveRecord;
-use craft\events\ConfigEvent;
-use craft\events\EntryTypeEvent;
-use craft\events\FieldEvent;
 use craft\fieldlayoutelements\TitleField;
 use craft\fields\Matrix;
 use craft\helpers\StringHelper;
@@ -35,8 +31,6 @@ class DisplayService extends Service
     const EVENT_BEFORE_APPLY_DELETE = 3;
     const EVENT_AFTER_DELETE = 4;
     const EVENT_BEFORE_DELETE = 5;
-
-    const CONFIG_KEY = 'themes.display';
 
     private $_displays;
 
@@ -57,6 +51,7 @@ class DisplayService extends Service
         if ($config instanceof ActiveRecord) {
             $config = $config->getAttributes();
         }
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $itemData = $config['item'] ?? null;
         $display = new Display;
         $attributes = $display->safeAttributes();
@@ -66,20 +61,6 @@ class DisplayService extends Service
             $display->item = $this->fieldsService()->create($itemData);
         }
         return $display;
-    }
-
-    public function install()
-    {
-        foreach ($this->layoutService()->withDisplays() as $layout) {
-            $this->installLayoutDisplays($layout);
-        }
-    }
-
-    public function installThemeData(string $theme)
-    {
-        foreach ($this->layoutService()->getForTheme($theme, true) as $layout) {
-            $this->installLayoutDisplays($layout);
-        }
     }
 
     public function getById(int $id): ?Display
@@ -140,225 +121,77 @@ class DisplayService extends Service
             ->all();
     }
 
-    /**
-     * Delete all displays which id is not in $toKeep for a layout
-     * 
-     * @param array  $toKeep
-     * @param Layout $layout
-     */
-    public function deleteForLayout(Layout $layout, array $toKeep = [])
+    public function saveMany(array $data, LayoutRecord $layout)
     {
-        $viewModeIds = array_map(function ($viewMode) {
-            return $viewMode->id;
-        }, $layout->viewModes);
-        $displays = $this->all()
-            ->whereIn('viewMode_id', $viewModeIds)
-            ->whereNotIn('id', $toKeep);
-        foreach ($displays as $display) {
-            $this->delete($display);
-        }
-    }
-
-    /**
-     * Saves one display
-     * 
-     * @param  Display $display
-     * @return bool
-     */
-    public function save(Display $display, bool $validate = true): bool
-    {
-        if ($validate and !($display->validate() and $display->item->validate())) {
-            throw DisplayException::onSave($display);
-        }
-        
-        $isNew = !is_int($display->id);
-        $uid = $isNew ? StringHelper::UUID() : $display->uid;
-
-        $this->triggerEvent(self::EVENT_BEFORE_SAVE, new DisplayEvent([
-            'display' => $display
-        ]));
-
-        $projectConfig = \Craft::$app->getProjectConfig();
-        $configData = $display->getConfig();
-        $configPath = self::CONFIG_KEY . '.' . $uid;
-        $projectConfig->set($configPath, $configData);
-
-        $record = $this->getRecordByUid($uid);
-        $display->setAttributes($record->getAttributes());
-        $display->item = null;
-
-        if ($isNew) {
-            $this->all()->push($display);
-        }
-                
-        return true;
-    }
-
-    /**
-     * Handles field config change
-     * 
-     * @param ConfigEvent $event
-     */
-    public function handleChanged(ConfigEvent $event)
-    {
-        $uid = $event->tokenMatches[0];
-        $data = $event->newValue;
-        if (!$data) {
-            //For some reason I don't understand, deleting a display config during an install will trigger an update event and end up here
-            //with a null config. It might be because the transaction is not committed yet I'm not sure.
-            return;
-        }
-        $transaction = \Craft::$app->getDb()->beginTransaction();
-        try {
-            $display = $this->getRecordByUid($uid);
-            $isNew = $display->getIsNewRecord();
-
-            $display->uid = $uid;
-            $display->viewMode_id = $this->viewModesService()->getRecordByUid($data['viewMode_id'])->id;
-            $display->type = $data['type'];
-            $display->order = $data['order'];
+        $ids = [];
+        foreach ($data as $displayData) {
+            $viewModeId = $this->viewModesService()->getRecordByUid($displayData['viewMode_id'])->id;
+            $display = $this->getRecordByUid($displayData['uid']);
+            $display->viewMode_id = $viewModeId;
+            $display->type = $displayData['type'];
+            $display->order = $displayData['order'];
             $display->save(false);
-
-            $this->fieldsService()->handleChanged($display->id, $data['item']);
-
-            $transaction->commit();
-        } catch (\Throwable $e) {
-            $transaction->rollBack();
-            throw $e;
+            $ids[$viewModeId][] = $display->id;
+            $this->fieldsService()->save($displayData['item'], $display);
         }
 
-        $this->triggerEvent(self::EVENT_AFTER_SAVE, new DisplayEvent([
-            'display' => $display,
-            'isNew' => $isNew,
-        ]));
-    }
-
-    public function delete(Display $display): bool
-    {
-        $this->triggerEvent(self::EVENT_BEFORE_DELETE, new DisplayEvent([
-            'display' => $display
-        ]));
-        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
-
-        $this->_displays = $this->all()->where('id', '!=', $display->id);
-
-        return true;
-    }
-
-    /**
-     * Handles field config deletion
-     * 
-     * @param ConfigEvent $event
-     */
-    public function handleDeleted(ConfigEvent $event)
-    {
-        $uid = $event->tokenMatches[0];
-        $record = $this->getRecordByUid($uid);
-
-        if (!$record) {
-            return;
-        }
-
-        $this->triggerEvent(self::EVENT_BEFORE_APPLY_DELETE, new DisplayEvent([
-            'display' => $record
-        ]));
-
-        \Craft::$app->getDb()->createCommand()
-            ->delete(DisplayRecord::tableName(), ['uid' => $uid])
-            ->execute();
-
-        $this->triggerEvent(self::EVENT_AFTER_DELETE, new DisplayEvent([
-            'display' => $record
-        ]));
-    }
-
-    /**
-     * Creates a entry type or category layout displays
-     * 
-     * @param EntryTypeEvent $event
-     */
-    public function onCraftElementSaved(string $type, string $uid)
-    {
-        foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $layout = $this->layoutService()->get($theme->handle, $type, $uid);
-            $this->installLayoutDisplays($layout);
-        }
-    }
-
-    /**
-     * Delete field records
-     * 
-     * @param  ConfigEvent $event
-     */
-    public function onCraftFieldDeleted(FieldEvent $event)
-    {
-        foreach ($this->getAllForCraftField($event->field->id) as $display) {
-            $this->delete($display);
-        }
-    }
-
-    public function onCraftFieldSaved(FieldEvent $event)
-    {
-        $field = $event->field;
-        $displays = $this->getAllForCraftField($field->id);
-        if ($field->type !== $event->newValue['type']) {
-            foreach ($displays as $oldDisplay) {
-                $viewMode = $oldDisplay->viewMode;
-                $order = $oldDisplay->order;
-                $this->delete($oldDisplay);
-                $display = $this->createDisplay($viewMode, $event->field, $order);
-                $this->save($display);
+        foreach ($ids as $viewModeId => $displayIds) {
+            $toDelete = DisplayRecord::find()
+                ->where(['viewMode_id' => $viewModeId])
+                ->andWhere(['not in', 'id', $displayIds])
+                ->all();
+            foreach ($toDelete as $display) {
+                $display->delete();
             }
         }
+        $this->_displays = null;
     }
 
     /**
      * Create all displays for a layout.
-     * Go through all craft fields defined on the section/category and create display fields for it.
+     * Go through all craft fields defined on the section/category and create display and fields for it.
      * 
      * @param  Layout $layout
      */
-    protected function installLayoutDisplays(Layout $layout)
+    public function createLayoutDisplays(Layout $layout): array
     {
-        $displayIds = [];
+        $displays = [];
         foreach ($layout->viewModes as $viewMode) {
             $order = $this->getMaxOrder($viewMode) ?? 0;
             try {
                 $display = $this->getForTitleField($viewMode);
-            } catch (\Throwable $exception) {
+            } catch (\Throwable $e) {
                 $display = null;
             }
             if (!$display) {
                 $order++;
                 $display = $this->create([
                     'type' => self::TYPE_FIELD,
-                    'viewMode_id' => $viewMode->id,
+                    'viewMode' => $viewMode,
                     'order' => $order,
                 ]);
                 $display->item = $this->fieldsService()->createTitleField();
-                $this->save($display);
             }
-            $displayIds[] = $display->id;
-            foreach ($layout->getFieldLayout()->getFields() as $craftField) {
+            $displays[] = $display;
+            foreach ($layout->getCraftFields() as $craftField) {
                 try {
                     $display = $this->getForCraftField($craftField->id, $viewMode);
-                } catch (\Throwable $exception) {
+                } catch (\Throwable $e) {
                     $display = null;
                 }
                 if (!$display) {
                     $order++;
                     $display = $this->create([
                         'type' => self::TYPE_FIELD,
-                        'viewMode_id' => $viewMode->id,
+                        'viewMode' => $viewMode,
                         'order' => $order,
                     ]);
                     $display->item = $this->fieldsService()->createField($craftField);
-                    $this->save($display);
                 }
-                $displayIds[] = $display->id;
+                $displays[] = $display;
             }
         }
-        $this->deleteForLayout($layout, $displayIds);
+        return $displays;
     }
 
     /**

@@ -15,7 +15,6 @@ use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
-use craft\helpers\StringHelper;
 
 class BlockService extends Service
 {

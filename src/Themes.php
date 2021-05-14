@@ -158,7 +158,6 @@ class Themes extends \craft\base\Plugin
             function (PluginEvent $event) use ($_this) {
                 $_this->cache->flush();
                 $_this->layouts->installThemeData($event->plugin->handle);
-                $_this->display->installThemeData($event->plugin->handle);
             }
         );
 
@@ -188,7 +187,6 @@ class Themes extends \craft\base\Plugin
                 if ($event->plugin instanceof ThemeInterface) {
                     $_this->cache->flush();
                     $_this->layouts->installThemeData($event->plugin->handle);
-                    $_this->display->installThemeData($event->plugin->handle);
                     $_this->blocks->installContentBlock($event->plugin);
                 }
             }
@@ -214,7 +212,7 @@ class Themes extends \craft\base\Plugin
                     'themes/display/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-display',
 
                     'themes/ajax/displays/<layout:\d+>' => 'themes/cp-display-ajax/displays',
-                    'themes/ajax/displays/save' => 'themes/cp-display-ajax/save-displays',
+                    'themes/ajax/displays/save' => 'themes/cp-display-ajax/save-layout',
                     'themes/ajax/view-modes/<layout:\d+>' => 'themes/cp-display-ajax/view-modes',
                     'themes/ajax/blocks/save' => 'themes/cp-blocks-ajax/save-blocks',
                     'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-blocks-ajax/delete-layout',
@@ -300,7 +298,6 @@ class Themes extends \craft\base\Plugin
             $type = LayoutService::ENTRY_HANDLE;
             $uid = $e->entryType->uid;
             Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
-            Themes::$plugin->display->onCraftElementSaved($type, $uid);
         });
         Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_ENTRY_TYPE, function (EntryTypeEvent $e) {
             $type = LayoutService::ENTRY_HANDLE;
@@ -311,7 +308,6 @@ class Themes extends \craft\base\Plugin
             $type = LayoutService::CATEGORY_HANDLE;
             $uid = $e->categoryGroup->uid;
             Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
-            Themes::$plugin->display->onCraftElementSaved($type, $uid);
         });
         Event::on(Categories::class, Categories::EVENT_AFTER_DELETE_GROUP, function (CategoryGroupEvent $e) {
             $type = LayoutService::CATEGORY_HANDLE;
@@ -322,7 +318,6 @@ class Themes extends \craft\base\Plugin
             $type = LayoutService::VOLUME_HANDLE;
             $uid = $e->volume->uid;
             Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
-            Themes::$plugin->display->onCraftElementSaved($type, $uid);
         });
         Event::on(Volumes::class, Volumes::EVENT_AFTER_DELETE_VOLUME, function (VolumeEvent $e) {
             $type = LayoutService::VOLUME_HANDLE;
@@ -333,7 +328,6 @@ class Themes extends \craft\base\Plugin
             $type = LayoutService::GLOBAL_HANDLE;
             $uid = $e->globalSet->uid;
             Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
-            Themes::$plugin->display->onCraftElementSaved($type, $uid);
         });
         Craft::$app->projectConfig->onRemove(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function(ConfigEvent $e) {
             $type = LayoutService::GLOBAL_HANDLE;
@@ -344,7 +338,6 @@ class Themes extends \craft\base\Plugin
             $type = LayoutService::TAG_HANDLE;
             $uid = $e->tagGroup->uid;
             Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
-            Themes::$plugin->display->onCraftElementSaved($type, $uid);
         });
         Event::on(Tags::class, Tags::EVENT_AFTER_DELETE_GROUP, function (TagGroupEvent $e) {
             $type = LayoutService::TAG_HANDLE;
@@ -365,10 +358,10 @@ class Themes extends \craft\base\Plugin
             Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
-            // Themes::$plugin->display->onCraftFieldSaved($e);
+            Themes::$plugin->layouts->onCraftFieldSaved($e);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, function (FieldEvent $e) {
-            Themes::$plugin->display->onCraftFieldDeleted($e);
+            Themes::$plugin->layouts->onCraftFieldDeleted($e);
         });
     }
 
@@ -380,16 +373,10 @@ class Themes extends \craft\base\Plugin
         Craft::$app->projectConfig
             ->onAdd(LayoutService::CONFIG_KEY.'.{uid}',      [$this->layouts, 'handleChanged'])
             ->onUpdate(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts, 'handleChanged'])
-            ->onRemove(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts, 'handleDeleted'])
-            ->onAdd(DisplayService::CONFIG_KEY.'.{uid}',     [$this->display, 'handleChanged'])
-            ->onUpdate(DisplayService::CONFIG_KEY.'.{uid}',  [$this->display, 'handleChanged'])
-            ->onRemove(DisplayService::CONFIG_KEY.'.{uid}',  [$this->display, 'handleDeleted']);
+            ->onRemove(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts, 'handleDeleted']);
 
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $e) {
-            // Themes::$plugin->blocks->rebuildLayoutConfig($e);
-            // Themes::$plugin->layouts->rebuildLayoutConfig($e);
-            // Themes::$plugin->viewModes->rebuildLayoutConfig($e);
-            // Themes::$plugin->display->rebuildLayoutConfig($e);
+            Themes::$plugin->layouts->rebuildLayoutConfig($e);
         });
     }
 

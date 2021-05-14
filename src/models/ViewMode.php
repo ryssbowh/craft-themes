@@ -5,7 +5,6 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Model;
-use craft\helpers\StringHelper;
 
 class ViewMode extends Model
 {
@@ -44,7 +43,7 @@ class ViewMode extends Model
      */
     public $uid;
 
-    private $_layout;
+    protected $_layout;
 
     /**
      * @inheritdoc
@@ -69,7 +68,7 @@ class ViewMode extends Model
         return [
             'name' => $this->name,
             'handle' => $this->handle,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'uid' => $this->uid
         ];
     }
 
@@ -84,5 +83,10 @@ class ViewMode extends Model
             $this->_layout = Themes::$plugin->layouts->getById($this->layout_id);
         }
         return $this->_layout;
+    }
+
+    public function setLayout(Layout $layout)
+    {
+        $this->_layout = $layout;
     }
 }

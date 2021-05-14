@@ -85,41 +85,41 @@ class CpDisplayAjaxController extends Controller
         ];
     }
 
-    public function actionSaveDisplays()
+    public function actionSaveLayout()
     {
         $displaysData = $this->request->getRequiredParam('displays');
         $layoutId = $this->request->getRequiredParam('layout');
         $viewModeData = $this->request->getRequiredParam('viewModes');
         $layout = $this->layouts->getById($layoutId);
 
+        $viewModesMapping = [];
         $viewModes = [];
         foreach ($viewModeData as $data) {
             $data['layout_id'] = $layoutId;
-            $viewModes[] = $this->viewModes->create($data);
+            $viewMode = $this->viewModes->create($data);
+            $viewModes[] = $viewMode;
+            $viewModesMapping[$viewMode->handle] = $viewMode;
         }
         $layout->viewModes = $viewModes;
+
+        $displays = [];
+        foreach ($displaysData as $data) {
+            $display = $this->display->create($data);
+            if (is_string($data['viewMode_id'])) {
+                //When new view modes are created on frontend, viewMode_id will reference a view mode handle
+                $display->viewMode = $viewModesMapping[$data['viewMode_id']];   
+            }
+            $displays[] = $display;
+        }
+        $layout->displays = $displays;
+
         if (!$this->layouts->save($layout)) {
             throw LayoutException::onSave();
         }
 
-        $viewModeMapping = [];
-        foreach ($layout->viewModes as $viewMode) {
-            $viewModeMapping[$viewMode->handle] = $viewMode->id;
-        }
-
-        $displays = [];
-        foreach ($displaysData as $data) {
-            if (is_string($data['viewMode_id'])) {
-                $data['viewMode_id'] = $viewModeMapping[$data['viewMode_id']];
-            }
-            $display = $this->display->create($data);
-            $this->display->save($display);
-            $displays[] = $display;
-        }
-
         return [
-            'displays' => $displays,
-            'viewModes' => $viewModes,
+            'displays' => $layout->displays,
+            'viewModes' => $layout->viewModes,
             'message' => \Craft::t('themes', 'Displays have been saved successfully')
         ];
     }

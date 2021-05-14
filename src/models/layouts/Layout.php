@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
@@ -13,6 +14,7 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\base\Model;
+use craft\helpers\StringHelper;
 
 class Layout extends Model
 {
@@ -80,11 +82,7 @@ class Layout extends Model
      */
     protected $_element;
 
-    /**
-     * Displays indexed by view mode
-     * @var array
-     */
-    protected $_displays = [];
+    protected $_displays;
 
     protected $_viewModes;
 
@@ -150,6 +148,7 @@ class Layout extends Model
         return [
             'theme' => $this->theme,
             'type' => $this->type,
+            'handle' => $this->handle,
             'element' => $this->element,
             'hasBlocks' => $this->hasBlocks,
             'viewModes' => array_map(function ($viewMode) {
@@ -157,7 +156,10 @@ class Layout extends Model
             }, $this->viewModes),
             'blocks' => array_map(function ($block) {
                 return $block->getConfig();
-            }, $this->blocks)
+            }, $this->blocks),
+            'displays' => array_map(function ($display) {
+                return $display->getConfig();
+            }, $this->displays)
         ];
     }
 
@@ -294,13 +296,41 @@ class Layout extends Model
      * 
      * @return array
      */
-    public function getDisplays(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
+    public function getDisplays(?string $viewMode = null): array
     {
-        if (!isset($this->_displays[$viewMode])) {
-            $viewModeObject = Themes::$plugin->viewModes->get($this, $viewMode);
-            $this->_displays[$viewMode] = Themes::$plugin->display->getForViewMode($viewModeObject);
+        if (is_null($this->_displays)) {
+            $this->_displays = Themes::$plugin->display->getForLayout($this);
         }
-        return $this->_displays[$viewMode];
+        if (is_null($viewMode)) {
+            return $this->_displays;
+        }
+        return array_filter($this->_displays, function ($display) use ($viewMode) {
+            return $viewMode == $display->viewMode->handle;
+        });
+    }
+
+    public function setDisplays(array $displays)
+    {
+        $this->_displays = $displays;
+    }
+
+    public function findDisplayById(int $displayId): ?Display
+    {
+        foreach ($this->displays as $display) {
+            if ($display->id == $displayId) {
+                return $display;
+            }
+        }
+        return null;
+    }
+
+    public function replaceDisplay(Display $display)
+    {
+        foreach ($this->displays as $i => $oldDisplay) {
+            if ($oldDisplay->id == $display->id) {
+                $this->_displays[$i] = $display;
+            }
+        }
     }
 
     /**
@@ -313,6 +343,11 @@ class Layout extends Model
         return array_filter($this->getDisplays($viewMode), function ($display) {
             return $display->item->isVisible();
         });
+    }
+
+    public function getCraftFields(): array
+    {
+        return [];
     }
 
     /**
@@ -330,7 +365,7 @@ class Layout extends Model
      */
     public function getHandle(): string
     {
-        return LayoutService::DEFAULT_HANDLE;
+        return StringHelper::camelCase($this->type . '_' . $this->theme);
     }
 
     public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string
