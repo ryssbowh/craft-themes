@@ -17,13 +17,34 @@ const app = createApp({
 });
 app.use(store);
 
+for (let name in window.displayersOptionComponents) {
+    app.component(name, window.displayersOptionComponents[name]);
+}
+
 const Translate = {
   install(app) {
     app.config.globalProperties.t = (str, params) => {
       return window.Craft.t('themes', str, params);
     }
   },
-}
+};
+const HandleError = {
+  install(app) {
+    app.config.globalProperties.handleError = (err) => {
+      let message = err;
+      if (err.response) {
+        if (err.response.data.message ?? null) {
+          message = err.response.data.message;
+        } else if (err.response.data.error ?? null) {
+          message = err.response.data.error;
+        }
+      }
+      Craft.cp.displayError(message);
+    }
+  }
+};
+
 app.use(Translate);
+app.use(HandleError);
 
 app.mount('#main');

@@ -2,23 +2,17 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
-use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\ViewMode;
-use Ryssbowh\CraftThemes\models\fields\Title;
+use Ryssbowh\CraftThemes\models\fields\CraftField;
+use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
-use Ryssbowh\CraftThemes\records\FieldRecord;
-use Ryssbowh\CraftThemes\records\GroupRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
-use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
-use Ryssbowh\CraftThemes\records\ViewModeRecord;
-use craft\base\Field;
 use craft\db\ActiveRecord;
-use craft\fieldlayoutelements\TitleField;
-use craft\fields\Matrix;
+use craft\fields\Matrix as CraftMatrix;
 use craft\helpers\StringHelper;
-use craft\models\MatrixBlockType;
 
 class DisplayService extends Service
 {
@@ -85,12 +79,12 @@ class DisplayService extends Service
             ->all();
     }
 
-    public function getForTitleField(ViewMode $viewMode = null): ?Display
+    public function getForFieldType(ViewMode $viewMode, string $type): ?Display
     {
         return $this->all()
             ->where('type', self::TYPE_FIELD)
             ->where('viewMode_id', $viewMode->id)
-            ->firstWhere('item.type', FieldsService::TYPE_TITLE);
+            ->firstWhere('item.type', $type);
     }
 
     public function getForLayout(Layout $layout): array
@@ -158,21 +152,27 @@ class DisplayService extends Service
         $displays = [];
         foreach ($layout->viewModes as $viewMode) {
             $order = $this->getMaxOrder($viewMode) ?? 0;
-            try {
-                $display = $this->getForTitleField($viewMode);
-            } catch (\Throwable $e) {
-                $display = null;
+            //Getting or creating displays for fields that are not craft fields (author, title)
+            foreach (Themes::$plugin->fields->registeredFields as $fieldType => $fieldClass) {
+                if ($fieldClass::shouldExistOnLayout($layout)) {
+                    try {
+                        $display = $this->getForFieldType($viewMode, $fieldType);
+                    } catch (\Throwable $e) {
+                        $display = null;
+                    }
+                    if (!$display) {
+                        $order++;
+                        $display = $this->create([
+                            'type' => self::TYPE_FIELD,
+                            'viewMode' => $viewMode,
+                            'order' => $order,
+                        ]);
+                        $display->item = $fieldClass::createNew();
+                    }
+                    $displays[] = $display;
+                }
             }
-            if (!$display) {
-                $order++;
-                $display = $this->create([
-                    'type' => self::TYPE_FIELD,
-                    'viewMode' => $viewMode,
-                    'order' => $order,
-                ]);
-                $display->item = $this->fieldsService()->createTitleField();
-            }
-            $displays[] = $display;
+            //Getting or creating displays for craft fields
             foreach ($layout->getCraftFields() as $craftField) {
                 try {
                     $display = $this->getForCraftField($craftField->id, $viewMode);
@@ -186,7 +186,7 @@ class DisplayService extends Service
                         'viewMode' => $viewMode,
                         'order' => $order,
                     ]);
-                    $display->item = $this->fieldsService()->createField($craftField);
+                    $display->item = CraftField::createNew($craftField);
                 }
                 $displays[] = $display;
             }

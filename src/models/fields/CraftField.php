@@ -3,10 +3,21 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 
 class CraftField extends Field
 {
+    public static function save(array $data): bool
+    {
+        $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
+        $craftField = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
+        $data['craft_field_id'] = $craftField->id;
+        $data['craft_field_class'] = get_class($craftField);
+        $field->setAttributes($data, false);
+        return $field->save(false);
+    }
+
     /**
      * @inheritDoc
      */
@@ -55,7 +66,7 @@ class CraftField extends Field
      */
     public function getAvailableDisplayers(): array
     {
-        return Themes::$plugin->fieldDisplayers->getForField(get_class($this->craftField));
+        return Themes::$plugin->fieldDisplayers->getForField(get_class($this->craftField), $this);
     }
 
     /**

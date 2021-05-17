@@ -10,87 +10,22 @@ class EntryRenderedOptions extends FieldDisplayerOptions
 {
     public $viewModes = [];
 
-    public function getTheme()
-    {
-        return $this->field->layout()->theme;
-    }
-
-    public function rules()
+    public function defineRules(): array
     {
         return [
-            ['viewModes', 'each', 'rule' => ['string']]
+            ['viewModes', 'validateViewModes', 'skipOnEmpty' => false]
         ];
     }
 
-    public function getViewModes(): array
+    public function validateViewModes()
     {
-        $sources = $this->field->craftField()->sources;
-        if ($sources == '*') {
-            return $this->getAllSectionsViewModes();
-        }
-        $viewModes = [];
-        foreach ($sources as $source) {
-            if ($source == 'singles') {
-                $viewModes = $viewModes + $this->getSingleEntriesViewModes();
-            } else {
-                $elems = explode(':', $source);
-                $viewModes = $viewModes + $this->getEntryViewModes($elems[1]);
+        $validViewModes = $this->displayer->getViewModes();
+        foreach ($validViewModes as $typeUid => $viewModes) {
+            if (!isset($this->viewModes[$typeUid])) {
+                $this->addError('viewMode-'.$typeUid, \Craft::t('themes', 'View mode is required')); 
+            } elseif (!in_array($this->viewModes[$typeUid], array_keys($viewModes))) {
+                $this->addError('viewMode-'.$typeUid, \Craft::t('themes', 'View mode is invalid'));
             }
         }
-        return $viewModes;
-    }
-
-    public function getAllSectionsViewModes(): array
-    {
-        $sections = \Craft::$app->sections->getAllSections();
-        $viewModes = [];
-        foreach ($sections as $section) {
-            foreach ($section->getEntryTypes() as $type) {
-                $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
-                $viewModes2 = [];
-                foreach ($layout->getViewModes() as $viewMode) {
-                    $viewModes2[$viewMode->handle] = $viewMode->name;
-                }
-                $viewModes[$type->uid] = [
-                    'type' => $type->name,
-                    'viewModes' => $viewModes2
-                ];
-            }
-        }
-        return $viewModes;
-    }
-
-    public function getSingleEntriesViewModes(): array
-    {
-        $sections = \Craft::$app->sections->getSectionsByType('single');
-        $viewModes = [];
-        foreach ($sections as $section) {
-            $type = $section->getEntryTypes()[0];
-            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
-            $viewModes2 = [];
-            foreach ($layout->getViewModes() as $viewMode) {
-                $viewModes2[$viewMode->handle] = $viewMode->name;
-            }
-            $viewModes[$type->uid] = [
-                'type' => $type->name,
-                'viewModes' => $viewModes2
-            ];
-        }
-        return $viewModes;
-    }
-
-    public function getEntryViewModes(string $uid): array
-    {
-        $section = \Craft::$app->sections->getSectionByUid($uid);
-        $type = $section->getEntryTypes()[0];
-        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
-        $viewModes = [];
-        foreach ($layout->getViewModes() as $viewMode) {
-            $viewModes[$viewMode->handle] = $viewMode->name;
-        }
-        return [$type->uid => [
-            'type' => $type->name,
-            'viewModes' => $viewModes
-        ]];
     }
 }

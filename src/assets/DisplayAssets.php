@@ -11,7 +11,8 @@ class DisplayAssets extends AssetBundle
 
     public $js = [
         'chunk-vendors.js',
-        'display.js'
+        'displayers.js',
+        'display.js',
     ];
 
     public $depends = [

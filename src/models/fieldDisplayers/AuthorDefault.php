@@ -3,13 +3,13 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\EmailDefaultOptions;
+use Ryssbowh\CraftThemes\models\displayerOptions\AuthorDefaultOptions;
+use Ryssbowh\CraftThemes\models\fields\Author;
 use craft\base\Model;
-use craft\fields\Email;
 
-class EmailDefault extends FieldDisplayer
+class AuthorDefault extends FieldDisplayer
 {
-    public static $handle = 'email_default';
+    public static $handle = 'author_default';
 
     public $hasOptions = true;
 
@@ -22,11 +22,11 @@ class EmailDefault extends FieldDisplayer
 
     public static function getFieldTarget(): String
     {
-        return Email::class;
+        return Author::class;
     }
 
     public function getOptionsModel(): Model
     {
-        return new EmailDefaultOptions;
+        return new AuthorDefaultOptions;
     }
 }

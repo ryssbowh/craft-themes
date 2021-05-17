@@ -9,18 +9,18 @@ use craft\fields\Entries;
 
 class EntryLink extends FieldDisplayer
 {
-    public $handle = 'entry_link';
+    public static $handle = 'entry_link';
 
     public $hasOptions = true;
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public function getName(): string
     {
         return \Craft::t('themes', 'Link to entry');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Entries::class;
     }
@@ -28,12 +28,5 @@ class EntryLink extends FieldDisplayer
     public function getOptionsModel(): Model
     {
         return new EntryLinkOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/'.$this->handle, [
-            'options' => $this->getOptions()
-        ]);
     }
 }

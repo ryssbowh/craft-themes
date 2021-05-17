@@ -10,22 +10,38 @@ use craft\fields\BaseRelationField;
 
 abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 {
-    public $field;
+    protected $_field;
 
-    public $isDefault = false;
+    public static $isDefault = false;
 
     public $hasOptions = false;
 
-    public $handle;
+    public function getHandle(): string 
+    {
+        return $this::$handle;
+    }
+
+    public function setField($field)
+    {
+        $this->_field = $field;
+    }
+
+    public function getField(): ?object
+    {
+        return $this->_field;
+    }
 
     public function getOptions(): Model
     {
         $model = $this->getOptionsModel();
-        if ($this->field) {
-            $model->field = $this->field;
-            $model->setAttributes($this->field->options, false);
-        }
+        $model->displayer = $this;
+        $model->setAttributes($this->field->options, false);
         return $model;
+    }
+
+    public function getTheme()
+    {
+        return $this->field->layout->theme;
     }
 
     public function eagerLoad(): array
@@ -38,16 +54,11 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 
     public function fields()
     {
-        return array_merge(parent::fields(), ['name', 'options']);
+        return array_merge(parent::fields(), ['name', 'options', 'handle']);
     }
 
     public function getOptionsModel(): Model
     {
         return new NoOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return '';
     }
 }

@@ -9,9 +9,9 @@ use craft\redactor\Field;
 
 class RedactorTrimmed extends FieldDisplayer
 {
-    public $handle = 'redactor_trimmed';
+    public static $handle = 'redactor_trimmed';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public $hasOptions = true;
 
@@ -20,7 +20,7 @@ class RedactorTrimmed extends FieldDisplayer
         return \Craft::t('themes', 'Trimmed');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Field::class;
     }
@@ -28,12 +28,5 @@ class RedactorTrimmed extends FieldDisplayer
     public function getOptionsModel(): Model
     {
         return new RedactorTrimmedOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
     }
 }

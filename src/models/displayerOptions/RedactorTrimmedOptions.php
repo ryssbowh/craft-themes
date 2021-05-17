@@ -10,7 +10,7 @@ class RedactorTrimmedOptions extends FieldDisplayerOptions
     public $truncated = '';
     public $ellipsis = '...';
 
-    public function rules()
+    public function defineRules(): array
     {
         return [
             ['truncated', 'required'],

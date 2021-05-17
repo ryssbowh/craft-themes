@@ -57,7 +57,9 @@ const store = createStore({
             displays: [],
             originalDisplays: [],
             showOptionsModal: false,
-            optionsField: {}
+            displayer: {},
+            item: {},
+            displayerOptionsErrors: {}
         }
     },
     mutations: {
@@ -163,15 +165,19 @@ const store = createStore({
         setIsSaving(state, value) {
             state.isSaving = value;
         },
-        setOptionsField(state, value) {
-            state.optionsField = value;
+        openDisplayerOptions(state, {displayer, item}) {
+            state.displayer = displayer;
+            state.item = item;
             state.showOptionsModal = true;
         },
         setShowOptionsModal(state, value) {
             state.showOptionsModal = value;  
         },
+        setDisplayerOptionsError(state, value) {
+            state.displayerOptionsErrors = value;
+        },
         updateOptions(state, value) {
-            state.optionsField.options = value;
+            state.item.options = value;
         }
     },
     actions: {
@@ -240,6 +246,10 @@ const store = createStore({
         },
         deleteViewMode({commit, dispatch}, index) {
             commit('deleteViewMode', index);
+            dispatch('checkChanges');
+        },
+        updateOptions({commit, dispatch}, value) {
+            commit('updateOptions', value);
             dispatch('checkChanges');
         }
     }

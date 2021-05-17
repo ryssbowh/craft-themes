@@ -17,21 +17,6 @@ class DisplayException extends \Exception
         return new static("Craft field is not defined on field ".get_class($field));
     }
 
-    public static function noType()
-    {
-        return new static("Field can't be built, no type is defined for it");
-    }
-
-    public static function unknownType(string $type)
-    {
-        return new static("Type $type is not a valid field type");
-    }
-
-    public static function noMatrixType(string $uid)
-    {
-        return new static("Matrix type with uid $uid is not defined");
-    }
-
     public static function noDisplayId(int $id, string $type)
     {
         return new static(ucfirst($type) . " record for display id '".$id."' could not be found");

@@ -4,14 +4,14 @@ namespace Ryssbowh\CraftThemes\models\displayerOptions;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
-class DefaultEmailOptions extends FieldDisplayerOptions
+class UrlDefaultOptions extends FieldDisplayerOptions
 {
-    public $linked = true;
+    public $newTab = true;
 
-    public function rules()
+    public function defineRules(): array
     {
         return [
-            ['linked', 'boolean']       
+            ['newTab', 'boolean']
         ];
     }
 }

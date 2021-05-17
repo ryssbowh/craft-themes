@@ -9,18 +9,18 @@ use craft\fields\Categories;
 
 class CategoryList extends FieldDisplayer
 {
-    public $handle = 'category_list';
+    public static $handle = 'category_list';
 
     public $hasOptions = true;
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public function getName(): string
     {
         return \Craft::t('themes', 'List');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Categories::class;
     }
@@ -28,12 +28,5 @@ class CategoryList extends FieldDisplayer
     public function getOptionsModel(): Model
     {
         return new CategoryListOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
     }
 }

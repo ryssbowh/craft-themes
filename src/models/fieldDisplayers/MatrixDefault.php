@@ -8,16 +8,16 @@ use craft\fields\Matrix;
 
 class MatrixDefault extends FieldDisplayer
 {
-    public $handle = 'matrix_default';
+    public static $handle = 'matrix_default';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Matrix::class;
     }

@@ -8,7 +8,7 @@ class RedactorFullOptions extends FieldDisplayerOptions
 {
     public $stripped = false;
 
-    public function rules()
+    public function defineRules(): array
     {
         return [
             ['stripped', 'boolean'],

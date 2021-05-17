@@ -218,7 +218,6 @@ class Themes extends \craft\base\Plugin
                     'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-blocks-ajax/delete-layout',
                     'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-blocks-ajax/blocks',
                     'themes/ajax/block-providers' => 'themes/cp-blocks-ajax/block-providers',
-                    'themes/ajax/field-options' => 'themes/cp-display-ajax/field-options',
                     'themes/ajax/field-options/validate' => 'themes/cp-display-ajax/validate-field-options',
                     'themes/ajax/install' => 'themes/cp-install-ajax/install',
 
@@ -259,7 +258,8 @@ class Themes extends \craft\base\Plugin
             ],
             'cache' => CacheService::class,
             'display' => DisplayService::class,
-            'fields' => FieldsService::class
+            'fields' => FieldsService::class,
+            'matrix' => MatrixService::class,
         ]);
     }
 

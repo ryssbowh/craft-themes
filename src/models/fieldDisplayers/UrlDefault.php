@@ -3,15 +3,15 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\DefaultUrlOptions;
+use Ryssbowh\CraftThemes\models\displayerOptions\UrlDefaultOptions;
 use craft\base\Model;
 use craft\fields\Url;
 
 class UrlDefault extends FieldDisplayer
 {
-    public $handle = 'url_default';
+    public static $handle = 'url_default';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public $hasOptions = true;
 
@@ -20,20 +20,13 @@ class UrlDefault extends FieldDisplayer
         return \Craft::t('themes', 'Default');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Url::class;
     }
 
     public function getOptionsModel(): Model
     {
-        return new DefaultUrlOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
+        return new UrlDefaultOptions;
     }
 }

@@ -51,19 +51,6 @@ class CpDisplayAjaxController extends Controller
         ];
     }
 
-    public function actionFieldOptions()
-    {
-        $fieldId = $this->request->getBodyParam('id');
-        $displayerHandle = $this->request->getRequiredParam('displayer');
-
-        $field = $this->fields->getById($fieldId);
-        $displayer = $this->fieldDisplayers->getByHandle($displayerHandle);
-        $displayer->field = $field;
-        return [
-            'html' => $displayer->getOptionsHtml()
-        ];
-    }
-
     public function actionValidateFieldOptions()
     {
         $fieldId = $this->request->getBodyParam('id');

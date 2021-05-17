@@ -6,9 +6,14 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
-class AssetRenderedOptions extends FieldDisplayerOptions
+class AssetRenderFileOptions extends FieldDisplayerOptions
 {
     public $viewModes = [];
+
+    public function getTheme()
+    {
+        return $this->field->layout->theme;
+    }
 
     public function defineRules(): array
     {
@@ -19,7 +24,7 @@ class AssetRenderedOptions extends FieldDisplayerOptions
 
     public function validateViewModes()
     {
-        $validViewModes = $this->displayer->getViewModes();
+        $validViewModes = $this->getViewModes();
         foreach ($this->viewModes as $volumeUid => $viewModeUid) {
             if (!isset($validViewModes[$volumeUid]['viewModes'][$viewModeUid])) {
                $this->addError('viewMode-'.$volumeUid, \Craft::t('themes', 'View mode is invalid'));

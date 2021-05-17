@@ -9,9 +9,9 @@ use craft\redactor\Field;
 
 class RedactorFull extends FieldDisplayer
 {
-    public $handle = 'redactor_full';
+    public static $handle = 'redactor_full';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public $hasOptions = true;
 
@@ -20,7 +20,7 @@ class RedactorFull extends FieldDisplayer
         return \Craft::t('themes', 'Full');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Field::class;
     }
@@ -28,12 +28,5 @@ class RedactorFull extends FieldDisplayer
     public function getOptionsModel(): Model
     {
         return new RedactorFullOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
     }
 }

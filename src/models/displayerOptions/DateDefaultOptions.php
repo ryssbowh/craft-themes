@@ -4,20 +4,18 @@ namespace Ryssbowh\CraftThemes\models\displayerOptions;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
-class EntryLinkOptions extends FieldDisplayerOptions
+class DateDefaultOptions extends FieldDisplayerOptions
 {
-    public $label = 'title';
+    public $format = 'd/m/Y H:i:s';
     public $custom = '';
-    public $newTab = false;
 
     public function defineRules(): array
     {
         return [
-            [['label', 'custom'], 'string'],
-            ['newTab', 'boolean'],
-            ['label', 'in', 'range' => ['title', 'custom']],
+            [['format', 'custom'], 'string'],
+            ['format', 'required'],
             ['custom', 'required', 'when' => function ($model) {
-                return $model->label == 'custom';
+                return $model->format == 'custom';
             }],
         ];
     }

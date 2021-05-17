@@ -2,20 +2,21 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\fields\Field;
 use craft\base\Model;
 
 class FieldDisplayerOptions extends Model
 {
-    protected $_field;
+    protected $_displayer;
 
-    public function getField(): Field
+    public function getDisplayer(): FieldDisplayerInterface
     {
-        return $this->_field;
+        return $this->_displayer;
     }
 
-    public function setField(Field $field)
+    public function setDisplayer(FieldDisplayerInterface $displayer)
     {
-        $this->_field = $field;
+        $this->_displayer = $displayer;
     }
 }

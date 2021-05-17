@@ -9,7 +9,7 @@ use craft\fields\PlainText;
 
 class PlainTextTrimmed extends FieldDisplayer
 {
-    public $handle = 'plain_text_trimmed';
+    public static $handle = 'plain_text_trimmed';
 
     public $hasOptions = true;
 
@@ -18,7 +18,7 @@ class PlainTextTrimmed extends FieldDisplayer
         return \Craft::t('themes', 'Trimmed');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return PlainText::class;
     }
@@ -26,12 +26,5 @@ class PlainTextTrimmed extends FieldDisplayer
     public function getOptionsModel(): Model
     {
         return new PlainTextTrimmedOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
     }
 }

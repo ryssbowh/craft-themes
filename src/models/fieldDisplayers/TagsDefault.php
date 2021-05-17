@@ -8,16 +8,16 @@ use craft\fields\Tags;
 
 class TagsDefault extends FieldDisplayer
 {
-    public $handle = 'tags_default';
+    public static $handle = 'tags_default';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Tags::class;
     }

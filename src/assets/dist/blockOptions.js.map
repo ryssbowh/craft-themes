@@ -1,1 +1,0 @@
-{"version":3,"sources":["blockOptions.js"],"names":["window","themesBlockOptions","system","twig"],"mappings":"aAAAA,OAAOC,mBAAqB,CACxBC,OAAQ,CADLD,SAAAA,GACGE,KAAE","file":"blockOptions.js","sourcesContent":["window.themesBlockOptions = {\n    system: {\n        template: {},\n        twig: {}\n    }\n}; "]}

@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\events\FieldDisplayerEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
+use Ryssbowh\CraftThemes\models\fields\Field;
 
 class FieldDisplayerService extends Service
 {
@@ -38,33 +39,35 @@ class FieldDisplayerService extends Service
         return $this->_displayers;
     }
 
-    public function getByHandle(string $handle): FieldDisplayerInterface
+    public function getByHandle(string $handle, Field $field): FieldDisplayerInterface
     {
         if (!isset($this->all()[$handle])) {
             throw FieldDisplayerException::displayerNotDefined($handle);
         }
-        return $this->all()[$handle];
+        $class = $this->all()[$handle];
+        $class = new $class(['field' => $field]);
+        return $class;
     }
 
-    public function getByHandles(array $handles): array
+    public function getByHandles(array $handles, Field $field): array
     {
         $_this = $this;
-        return array_map(function ($handle) use ($_this) {
-            return $_this->getByHandle($handle);
+        return array_map(function ($handle) use ($_this, $field) {
+            return $_this->getByHandle($handle, $field);
         }, $handles);
     }
 
-    public function getForField(string $fieldClass): array
+    public function getForField(string $classFor, Field $field): array
     {
-        return $this->getByHandles($this->getMapping()[$fieldClass] ?? []);
+        return $this->getByHandles($this->getMapping()[$classFor] ?? [], $field);
     }
 
-    public function getDefault(string $fieldClass): ?FieldDisplayerInterface
+    public function getDefault(string $classFor, Field $field): ?FieldDisplayerInterface
     {
-        if ($default = $this->getDefaults()[$fieldClass] ?? false) {
-            return $this->getByHandle($default);
+        if ($default = $this->getDefaults()[$classFor] ?? false) {
+            return $this->getByHandle($default, $field);
         }
-        if ($default = $this->getForField($fieldClass)[0] ?? false) {
+        if ($default = $this->getForField($classFor, $field)[0] ?? false) {
             return $default;
         }
         return null;

@@ -3,15 +3,15 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\DefaultTitleOptions;
+use Ryssbowh\CraftThemes\models\displayerOptions\TitleDefaultOptions;
 use Ryssbowh\CraftThemes\models\fields\Title;
 use craft\base\Model;
 
 class TitleDefault extends FieldDisplayer
 {
-    public $handle = 'title_default';
+    public static $handle = 'title_default';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public $hasOptions = true;
 
@@ -20,7 +20,7 @@ class TitleDefault extends FieldDisplayer
         return \Craft::t('themes', 'Default');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Title::class;
     }
@@ -32,13 +32,6 @@ class TitleDefault extends FieldDisplayer
 
     public function getOptionsModel(): Model
     {
-        return new DefaultTitleOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
+        return new TitleDefaultOptions;
     }
 }

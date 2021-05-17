@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\events\LayoutEvent;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\PageLayout;
+use Ryssbowh\CraftThemes\models\fields\Field;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\GlobalLayout;
@@ -515,7 +516,7 @@ class LayoutService extends Service
             $oldFieldClass = $oldItem->craft_field_class;
             if ($oldItem->craft_field_class != get_class($field)) {
                 $this->fieldsService()->deleteField($oldItem);
-                $display->item = $this->fieldsService()->createField($field);
+                $display->item = Field::createNew($field);
                 $display->item->labelHidden = $oldItem->labelHidden;
                 $display->item->labelVisuallyHidden = $oldItem->labelVisuallyHidden;
                 $display->item->visuallyHidden = $oldItem->visuallyHidden;

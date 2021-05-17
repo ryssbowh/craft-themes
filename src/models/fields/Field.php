@@ -5,10 +5,13 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\DisplayItem;
+use Ryssbowh\CraftThemes\models\layouts\Layout;
+use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
+use craft\base\Field as BaseField;
 
-class Field extends DisplayItem
+abstract class Field extends DisplayItem
 {
     public $displayerHandle;
     public $options;
@@ -25,8 +28,60 @@ class Field extends DisplayItem
             [['displayerHandle', 'type'], 'string'],
             ['options', 'each', 'rule' => ['safe', 'skipOnEmpty' => false]],
             ['type', 'required'],
-            ['type', 'in', 'range' => FieldsService::TYPES]
+            ['type', 'in', 'range' => Themes::$plugin->fields->getValidTypes()]
         ]);
+    }
+
+    public static function getType(): string
+    {
+        return 'field';
+    }
+
+    public static function create(array $config): Field
+    {
+        $class = get_called_class();
+        $field = new $class;
+        $attributes = $field->safeAttributes();
+        $config = array_intersect_key($config, array_flip($attributes));
+        $field->setAttributes($config);
+        return $field;
+    }
+
+    public static function save(array $data): bool
+    {
+        $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
+        $field->setAttributes($data, false);
+        return $field->save(false);
+    }
+
+    public static function shouldExistOnLayout(Layout $layout): bool
+    {
+        return false;
+    }
+
+    public static function createNew(?BaseField $craftField = null): Field
+    {
+        if ($craftField and get_class($craftField) == CraftMatrix::class) {
+            return Matrix::create($craftField);
+        }
+        return static::create(static::buildConfig($craftField));
+    }
+
+    public static function buildConfig(?BaseField $craftField): array
+    {
+        $class = get_called_class();
+        if ($craftField) {
+            $class = get_class($craftField);
+        }
+        $displayer = Themes::$plugin->fieldDisplayers->getDefault($class);
+        return [
+            'type' => get_called_class()::getType(),
+            'craft_field_id' => $craftField ? $craftField->id : null,
+            'craft_field_class' => $craftField ? get_class($craftField) : null,
+            'displayerHandle' => $displayer ? $displayer->handle : '',
+            'options' => $displayer ? $displayer->getOptions()->toArray() : [],
+            'hidden' => ($displayer == null)
+        ];
     }
 
     public function isVisible(): bool
@@ -51,11 +106,6 @@ class Field extends DisplayItem
         ]);
     }
 
-    public function getHandle(): string
-    {
-        return 'title';
-    }
-
     public function getDisplayer(): ?FieldDisplayerInterface
     {
         if (!is_null($this->_displayer)) {
@@ -64,19 +114,13 @@ class Field extends DisplayItem
         if (!$this->displayerHandle) {
             return null;
         }
-        $displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle);
-        $displayer->field = $this;
-        return $displayer;
+        $this->_displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle, $this);
+        return $this->_displayer;
     }
 
     public function getAvailableDisplayers(): array
     {
-        return Themes::$plugin->fieldDisplayers->getForField(TitleField::class);
-    }
-
-    public function getName(): string
-    {
-        return \Craft::t('themes', 'Title');
+        return Themes::$plugin->fieldDisplayers->getForField(get_class($this), $this);
     }
 
     public function getDisplayName(): string
@@ -87,11 +131,6 @@ class Field extends DisplayItem
     public function fields()
     {
         return array_merge(parent::fields(), ['availableDisplayers', 'name', 'handle', 'displayName']);
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return $this->displayer->getOptionsHtml();
     }
 
     /**

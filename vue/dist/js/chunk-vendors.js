@@ -1694,17 +1694,6 @@ eval("/* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DE
 
 /***/ }),
 
-/***/ "./node_modules/populate.js/populate.js":
-/*!**********************************************!*\
-  !*** ./node_modules/populate.js/populate.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("\n/**\n * Populate form fields from a JSON object.\n *\n * @param form object The form element containing your input fields.\n * @param data array JSON data to populate the fields with.\n * @param basename string Optional basename which is added to `name` attributes\n */\nfunction populate(form, data, basename) {\n\tfor (var key in data) {\n\t\tif (! data.hasOwnProperty(key)) {\n\t\t\tcontinue;\n\t\t}\n\n\t\tvar name = key;\n\t\tvar value = data[key];\n\n        if ('undefined' === typeof value) {\n            value = '';\n        }\n\n        if (null === value) {\n            value = '';\n        }\n\n\t\t// handle array name attributes\n\t\tif (typeof(basename) !== \"undefined\") {\n\t\t\tname = basename + \"[\" + key + \"]\";\n\t\t}\n\n\t\tif (value.constructor === Array) {\n\t\t\tname += '[]';\n\t\t} else if(typeof value == \"object\") {\n\t\t\tpopulate(form, value, name);\n\t\t\tcontinue;\n\t\t}\n\n\t\t// only proceed if element is set\n\t\tvar element = form.elements.namedItem(name);\n\t\tif (! element) {\n\t\t\tcontinue;\n\t\t}\n\n\t\tvar type = element.type || element[0].type;\n\n\t\tswitch(type ) {\n\t\t\tdefault:\n\t\t\t\telement.value = value;\n\t\t\t\tbreak;\n\n\t\t\tcase 'radio':\n\t\t\tcase 'checkbox':\n\t\t\t\tvar values = value.constructor === Array ? value : [value];\n\t\t\t\tfor (var j=0; j < element.length; j++) {\n\t\t\t\t\telement[j].checked = values.indexOf(element[j].value) > -1;\n\t\t\t\t}\n\t\t\t\tbreak;\n\n\t\t\tcase 'select-multiple':\n\t\t\t\tvar values = value.constructor === Array ? value : [value];\n\t\t\t\tfor(var k = 0; k < element.options.length; k++) {\n\t\t\t\t\telement.options[k].selected = (values.indexOf(element.options[k].value) > -1 );\n\t\t\t\t}\n\t\t\t\tbreak;\n\n\t\t\tcase 'select':\n\t\t\tcase 'select-one':\n\t\t\t\telement.value = value.toString() || value;\n\t\t\t\tbreak;\n\n\t\t\tcase 'date':\n      \t\t\telement.value = new Date(value).toISOString().split('T')[0];\t\n\t\t\t\tbreak;\n\t\t}\n\n\t}\n};\n\nif ( true && module.exports) {\n\tmodule.exports = populate;\n} \n\n//# sourceURL=webpack:///./node_modules/populate.js/populate.js?");
-
-/***/ }),
-
 /***/ "./node_modules/sortablejs/modular/sortable.esm.js":
 /*!*********************************************************!*\
   !*** ./node_modules/sortablejs/modular/sortable.esm.js ***!

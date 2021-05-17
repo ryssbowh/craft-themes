@@ -13,7 +13,7 @@ use craft\fields\Categories;
 
 class CategoryRendered extends FieldDisplayer
 {
-    public $handle = 'category_rendered';
+    public static $handle = 'category_rendered';
 
     public $hasOptions = true;
 
@@ -24,7 +24,7 @@ class CategoryRendered extends FieldDisplayer
         return \Craft::t('themes', 'Rendered');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Categories::class;
     }
@@ -34,19 +34,6 @@ class CategoryRendered extends FieldDisplayer
         return new CategoryRenderedOptions;
     }
 
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
-    }
-
-    protected function getCategoryGroup()
-    {
-        $elems = explode(':', $this->field->craftField()->source);
-        return \Craft::$app->categories->getGroupByUid($elems[1]);
-    }
-
     public function getGroupLayout(): Layout
     {
         $group = $this->getCategoryGroup();
@@ -54,5 +41,27 @@ class CategoryRendered extends FieldDisplayer
         $layout = Themes::$plugin->layouts->get($theme->handle, LayoutService::CATEGORY_HANDLE, $group->uid);
         $layout->setDisplaysRenderingMode();
         return $layout;
+    }
+
+    public function getViewModes(): array
+    {
+        $group = $this->getCategoryGroup();
+        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::CATEGORY_HANDLE, $group->uid);
+        $viewModes = [];
+        foreach ($layout->getViewModes() as $viewMode) {
+            $viewModes[$viewMode->uid] = $viewMode->name;
+        }
+        return $viewModes;
+    }
+
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['viewModes']);
+    }
+
+    protected function getCategoryGroup()
+    {
+        $elems = explode(':', $this->field->craftField->source);
+        return \Craft::$app->categories->getGroupByUid($elems[1]);
     }
 }

@@ -11,15 +11,7 @@ class AssetLinkOptions extends FieldDisplayerOptions
     public $newTab = false;
     public $download = false;
 
-    public function getLabelsOptions(): array
-    {
-        return [
-            'title' => \Craft::t('themes', 'Asset title'), 
-            'custom' => \Craft::t('themes', 'Custom') 
-        ];
-    }
-
-    public function rules()
+    public function defineRules(): array
     {
         return [
             [['label', 'custom'], 'string'],
@@ -27,7 +19,7 @@ class AssetLinkOptions extends FieldDisplayerOptions
             ['custom', 'required', 'when' => function ($model) {
                 return $model->label == 'custom';
             }],
-            ['label', 'in', 'range' => array_keys($this->getLabelsOptions())]
+            ['label', 'in', 'range' => ['title', 'custom']]
         ];
     }
 }

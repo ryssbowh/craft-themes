@@ -9,16 +9,16 @@ use craft\fields\PlainText;
 
 class PlainTextFull extends FieldDisplayer
 {
-    public $handle = 'plain_text_full';
+    public static $handle = 'plain_text_full';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public function getName(): string
     {
         return \Craft::t('themes', 'Full');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return PlainText::class;
     }

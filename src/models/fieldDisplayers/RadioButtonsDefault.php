@@ -8,16 +8,16 @@ use craft\fields\RadioButtons;
 
 class RadioButtonsDefault extends FieldDisplayer
 {
-    public $handle = 'radio_buttons_default';
+    public static $handle = 'radio_buttons_default';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return RadioButtons::class;
     }

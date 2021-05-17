@@ -90,6 +90,14 @@ class Service extends Component
     }
 
     /**
+     * @return MatrixService
+     */
+    protected function matrixService(): MatrixService
+    {
+        return Themes::$plugin->matrix;
+    }
+
+    /**
      * Trigger an event
      * 
      * @param string $type

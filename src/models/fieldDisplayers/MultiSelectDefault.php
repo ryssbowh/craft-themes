@@ -8,16 +8,16 @@ use craft\fields\MultiSelect;
 
 class MultiSelectDefault extends FieldDisplayer
 {
-    public $handle = 'multiselect_default';
+    public static $handle = 'multiselect_default';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return MultiSelect::class;
     }

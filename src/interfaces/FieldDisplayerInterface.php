@@ -11,7 +11,7 @@ interface FieldDisplayerInterface
      * 
      * @return string
      */
-    public function getFieldTarget(): string;
+    public static function getFieldTarget(): string;
 
     /**
      * Get options model
@@ -26,11 +26,6 @@ interface FieldDisplayerInterface
      * @return Model
      */
     public function getOptions(): Model;
-
-    /**
-     * @return string
-     */
-    public function getOptionsHtml(): string;
 
     public function getName(): string;
 

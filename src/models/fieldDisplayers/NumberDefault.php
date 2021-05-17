@@ -3,15 +3,15 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\DefaultNumberOptions;
+use Ryssbowh\CraftThemes\models\displayerOptions\NumberDefaultOptions;
 use craft\base\Model;
 use craft\fields\Number;
 
 class NumberDefault extends FieldDisplayer
 {
-    public $handle = 'number_default';
+    public static $handle = 'number_default';
 
-    public $isDefault = true;
+    public static $isDefault = true;
 
     public $hasOptions = true;
 
@@ -20,20 +20,13 @@ class NumberDefault extends FieldDisplayer
         return \Craft::t('themes', 'Default');
     }
 
-    public function getFieldTarget(): String
+    public static function getFieldTarget(): String
     {
         return Number::class;
     }
 
     public function getOptionsModel(): Model
     {
-        return new DefaultNumberOptions;
-    }
-
-    public function getOptionsHtml(): string
-    {
-        return \Craft::$app->view->renderTemplate('themes/cp/displayer-options/' . $this->handle, [
-            'options' => $this->getOptions()
-        ]);
+        return new NumberDefaultOptions;
     }
 }

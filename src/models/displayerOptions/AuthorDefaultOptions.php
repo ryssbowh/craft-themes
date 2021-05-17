@@ -4,14 +4,16 @@ namespace Ryssbowh\CraftThemes\models\displayerOptions;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
-class CategoryListOptions extends FieldDisplayerOptions
+class AuthorDefaultOptions extends FieldDisplayerOptions
 {
-    public $linked = false;
+    public $firstName = true;
+    public $lastName = true;
+    public $email = false;
 
     public function defineRules(): array
     {
         return [
-            ['linked', 'boolean']
+            [['firstName', 'lastName', 'email'], 'boolean']
         ];
     }
 }

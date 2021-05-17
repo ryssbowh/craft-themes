@@ -11,7 +11,7 @@ class PlainTextTrimmedOptions extends FieldDisplayerOptions
     public $ellipsis = '...';
     public $linked = false;
 
-    public function rules()
+    public function defineRules(): array
     {
         return [
             ['linked', 'boolean'],
