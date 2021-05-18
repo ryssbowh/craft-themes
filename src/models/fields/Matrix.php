@@ -14,6 +14,16 @@ class Matrix extends CraftField
 {
     private $_types;
 
+    /**
+     * @inheritDoc
+     */
+    public function defineRules(): array
+    {
+        return array_merge(parent::defineRules(), [
+            ['types', 'safe'],
+        ]);
+    }
+
     public static function getType(): string
     {
         return 'matrix';
@@ -29,6 +39,9 @@ class Matrix extends CraftField
         if ($config['types'] ?? null) {
             $field->types = static::buildMatrixTypes($config['types']);
         }
+        if (!isset($config['options']) and $field->displayer) {
+            $field->options = $field->displayer->options->toArray();
+        }
         return $field;
     }
 
@@ -38,7 +51,7 @@ class Matrix extends CraftField
         foreach ($craftField->getBlockTypes() as $type) {
             $types[] = [
                 'type' => $type,
-                'fields' => array_map(function ($field) use ($_this) {
+                'fields' => array_map(function ($field) {
                     return CraftField::buildConfig($field);
                 }, $type->getFields())
             ];
@@ -50,7 +63,7 @@ class Matrix extends CraftField
 
     public static function save(array $data): bool
     {
-        $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
+        $matrix = Themes::$plugin->fields->getRecordByUid($data['uid']);
         $types = $data['types'] ?? [];
         unset($data['types']);
         $field = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
@@ -63,8 +76,9 @@ class Matrix extends CraftField
             unset($typeData['fields']);
             $type = Themes::$plugin->matrix->getMatrixBlockTypeByUid($typeData['type_uid']);
             foreach ($fields as $order => $fieldData) {
-                $field = \Craft::$app->fields->getRecordByUid($fieldData['uid']);
+                $field = Themes::$plugin->fields->getRecordByUid($fieldData['uid']);
                 $fieldData['craft_field_id'] = \Craft::$app->fields->getFieldByUid($fieldData['craft_field_id'])->id;
+                $fieldData['matrix_id'] = $matrix->id;
                 $field->setAttributes($fieldData, false);
                 $field->save(false);
                 $pivot = Themes::$plugin->matrix->getMatrixPivotRecord($type->id, $matrix->id, $field->id);
@@ -142,7 +156,11 @@ class Matrix extends CraftField
             $type = \Craft::$app->matrix->getBlockTypeById($type_id);
             $fields = [];
             foreach ($typeData['fields'] as $fieldData) {
-                $fields[] = Themes::$plugin->fields->create($fieldData);
+                $field = Themes::$plugin->fields->create($fieldData);
+                if (!isset($fieldData['options']) and $field->displayer) {
+                    $field->options = $field->displayer->options->toArray();
+                }
+                $fields[] = $field;
             }
             $types[] = new DisplayMatrixType([
                 'type' => $type,

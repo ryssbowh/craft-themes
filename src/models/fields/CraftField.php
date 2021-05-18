@@ -3,11 +3,16 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 
 class CraftField extends Field
 {
+    public $matrix_id;
+
+    protected $_matrix;
+
     public static function save(array $data): bool
     {
         $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
@@ -24,7 +29,7 @@ class CraftField extends Field
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            ['craft_field_id', 'integer'],
+            [['matrix_id', 'craft_field_id'], 'integer'],
         ]);
     }
 
@@ -51,6 +56,22 @@ class CraftField extends Field
             $this->_craftField = \Craft::$app->fields->getFieldById($this->craft_field_id);
         }
         return $this->_craftField;
+    }
+
+    public function getMatrix(): ?CraftField
+    {
+        if ($this->_matrix === null) {
+            $this->_matrix = $this->matrix_id ? Themes::$plugin->fields->getById($this->matrix_id) : false;
+        }
+        return $this->_matrix ?: null;
+    }
+
+    public function getViewMode(): ViewMode
+    {
+        if ($this->matrix_id) {
+            return $this->matrix->display->viewMode;
+        }
+        return $this->display->viewMode;
     }
 
     /**

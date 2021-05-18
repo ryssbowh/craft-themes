@@ -10,6 +10,7 @@ use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
 use craft\base\Field as BaseField;
+use craft\fields\Matrix as CraftMatrix;
 
 abstract class Field extends DisplayItem
 {
@@ -26,8 +27,8 @@ abstract class Field extends DisplayItem
     {
         return array_merge(parent::defineRules(), [
             [['displayerHandle', 'type'], 'string'],
-            ['options', 'each', 'rule' => ['safe', 'skipOnEmpty' => false]],
             ['type', 'required'],
+            ['options', 'safe'],
             ['type', 'in', 'range' => Themes::$plugin->fields->getValidTypes()]
         ]);
     }
@@ -44,6 +45,9 @@ abstract class Field extends DisplayItem
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
         $field->setAttributes($config);
+        if (!$config['options'] and $field->displayer) {
+            $field->options = $field->displayer->options->toArray();
+        }
         return $field;
     }
 
@@ -62,7 +66,7 @@ abstract class Field extends DisplayItem
     public static function createNew(?BaseField $craftField = null): Field
     {
         if ($craftField and get_class($craftField) == CraftMatrix::class) {
-            return Matrix::create($craftField);
+            return Matrix::createNew($craftField);
         }
         return static::create(static::buildConfig($craftField));
     }
@@ -73,14 +77,11 @@ abstract class Field extends DisplayItem
         if ($craftField) {
             $class = get_class($craftField);
         }
-        $displayer = Themes::$plugin->fieldDisplayers->getDefault($class);
         return [
             'type' => get_called_class()::getType(),
             'craft_field_id' => $craftField ? $craftField->id : null,
             'craft_field_class' => $craftField ? get_class($craftField) : null,
-            'displayerHandle' => $displayer ? $displayer->handle : '',
-            'options' => $displayer ? $displayer->getOptions()->toArray() : [],
-            'hidden' => ($displayer == null)
+            'displayerHandle' => Themes::$plugin->fieldDisplayers->getDefaultHandle($class) ?? ''
         ];
     }
 

@@ -62,15 +62,9 @@ class FieldDisplayerService extends Service
         return $this->getByHandles($this->getMapping()[$classFor] ?? [], $field);
     }
 
-    public function getDefault(string $classFor, Field $field): ?FieldDisplayerInterface
+    public function getDefaultHandle(string $classFor): ?string
     {
-        if ($default = $this->getDefaults()[$classFor] ?? false) {
-            return $this->getByHandle($default, $field);
-        }
-        if ($default = $this->getForField($classFor, $field)[0] ?? false) {
-            return $default;
-        }
-        return null;
+        return $this->getDefaults()[$classFor] ?? null;
     }
 
     protected function register()
