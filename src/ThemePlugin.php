@@ -163,6 +163,14 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 
     }
 
+    public function getHasPreview()
+    {
+        if (glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null) {
+            return true;
+        }
+        return false;
+    }
+
     public function getPreviewImage(): string
     {
         $file = glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null;

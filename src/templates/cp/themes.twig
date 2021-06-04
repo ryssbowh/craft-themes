@@ -10,9 +10,13 @@
             {% set hasSettings = allowChanges and theme.hasCpSettings and currentUser.admin %}
             {% set manageDisplay = canManageDisplay and not theme.isPartial %}
             {% set manageBlocks = canManageBlocks and not theme.isPartial %}
+            {% set hasPreview = theme.hasPreview %}
             <div class="theme">
-                <div class="preview">
+                <div class="preview {{ hasPreview ? '' : 'no-preview' }}">
                     <img src="{{ theme.getPreviewimage() }}" />
+                    {% if not hasPreview %}
+                        <p class="no-preview-p">{{ 'No preview available' }}</p>
+                    {% endif %}
                 </div>
                 <div class="infos">
                     <div class="fullwidth name">

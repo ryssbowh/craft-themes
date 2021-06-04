@@ -13,11 +13,25 @@
             position: relative;
             border-bottom: 1px solid $grey200;
         }
+        .no-preview {
+            img {
+                top: 10px;
+                height: calc(100% - 50px);
+            }
+            .no-preview-p {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 20px;
+                width: 100%;
+                text-align: center;
+            }
+        }
         img {
             position: absolute;
             left: 0;
-            top: 0;
-            object-fit: cover;
+            top: 0; 
+            object-fit: contain;
             width: 100%;
             height: 100%;
         }
