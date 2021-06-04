@@ -97,6 +97,9 @@ export default {
 </script>
 
 <style lang="scss">
+.content-pane {
+    border-top-left-radius: 0;
+}
 .display-table {
     .head {
         font-weight: bold;

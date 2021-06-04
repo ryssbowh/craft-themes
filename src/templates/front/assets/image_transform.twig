@@ -1,0 +1,2 @@
+{% set transform = options.transform == '_custom' ? options.custom|json_decode : options.transform %}
+{{ asset.getImg(transform) }}

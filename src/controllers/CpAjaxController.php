@@ -11,6 +11,9 @@ use craft\elements\User;
 
 class CpAjaxController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
     public function beforeAction($action) 
     {
         $this->requirePermission('accessPlugin-themes');
@@ -19,12 +22,21 @@ class CpAjaxController extends Controller
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterAction($action, $result)
     {
         return $this->asJson($result);
     }
 
-    public function actionEntries(string $uid)
+    /**
+     * Return entries for an entry type uid
+     * 
+     * @param  string $uid
+     * @return array
+     */
+    public function actionEntries(string $uid): array
     {
         $entryTypes = array_values(array_filter(\Craft::$app->sections->getAllEntryTypes(), function ($entryType) use ($uid) {
             return $uid == $entryType->uid;
@@ -43,7 +55,13 @@ class CpAjaxController extends Controller
         ];
     }
 
-    public function actionCategories(string $uid)
+    /**
+     * Return categories for a category group uid
+     * 
+     * @param  string $uid
+     * @return array
+     */
+    public function actionCategories(string $uid): array
     {
         $group = \Craft::$app->categories->getGroupByUid($uid);
         $categories = array_map(function ($category) {
@@ -60,7 +78,12 @@ class CpAjaxController extends Controller
         ];
     }
 
-    public function actionUsers()
+    /**
+     * Return users
+     * 
+     * @return array
+     */
+    public function actionUsers(): array
     {
         $users = array_map(function ($user) {
             return [

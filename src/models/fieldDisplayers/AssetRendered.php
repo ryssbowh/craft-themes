@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\AssetRenderedOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetRenderedOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Model;
 use craft\fields\Assets;

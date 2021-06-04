@@ -9,6 +9,9 @@ use craft\elements\Entry;
 
 class CpBlocksAjaxController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
     public function beforeAction($action) 
     {
         $this->requirePermission('manageThemesBlocks');
@@ -17,6 +20,9 @@ class CpBlocksAjaxController extends Controller
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterAction($action, $result)
     {
         return $this->asJson($result);
@@ -38,9 +44,9 @@ class CpBlocksAjaxController extends Controller
      * Delete a layout by id
      * 
      * @param  int    $id
-     * @return Response
+     * @return array
      */
-    public function actionDeleteLayout(int $id)
+    public function actionDeleteLayout(int $id): array
     {
         $layout = $this->layouts->getById($id);
         $layout->hasBlocks = 0;
@@ -54,12 +60,12 @@ class CpBlocksAjaxController extends Controller
     }
 
     /**
-     * Get all blocks for a layout as json
+     * Get all blocks for a layout
      * 
      * @param  int    $layout
-     * @return Response
+     * @return array
      */
-    public function actionBlocks(int $layout)
+    public function actionBlocks(int $layout): array
     {
         $layout = $this->layouts->getById($layout);
         return [
@@ -70,9 +76,9 @@ class CpBlocksAjaxController extends Controller
     /**
      * Save blocks
      * 
-     * @return Response
+     * @return array
      */
-    public function actionSaveBlocks()
+    public function actionSaveBlocks(): array
     {
         $_this = $this;
         $blocksData = $this->request->getRequiredParam('blocks');
@@ -102,33 +108,6 @@ class CpBlocksAjaxController extends Controller
                 return $block->toArray();
             }, $blocks),
             'layout' => $layout
-        ];
-    }
-
-    public function actionEntries(string $uid)
-    {
-        $entryTypes = array_values(array_filter(\Craft::$app->sections->getAllEntryTypes(), function ($entryType) use ($uid) {
-            return $uid == $entryType->uid;
-        }));
-        $entries = array_map(function ($entry) {
-            return [
-                'uid' => $entry->uid,
-                'title' => $entry->title
-            ];
-        }, Entry::find()->type($entryTypes[0])->all());
-        usort($entries, function ($a, $b) {
-            return ($a['title'] < $b['title']) ? -1 : 1;
-        });
-        return [
-            'entries' => $entries
-        ];
-    }
-
-    public function actionEntryViewModes(string $uid, string $theme)
-    {
-        $layout = Themes::$plugin->layouts->get($theme, LayoutService::ENTRY_HANDLE, $uid);
-        return [
-            'viewModes' => $layout->viewModes
         ];
     }
 }

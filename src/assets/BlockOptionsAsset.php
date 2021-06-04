@@ -13,6 +13,9 @@ class BlockOptionsAsset extends AssetBundle
         'blockOptions.js'
     ];
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();

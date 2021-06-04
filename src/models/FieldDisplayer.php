@@ -4,17 +4,20 @@ namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use Ryssbowh\CraftThemes\models\displayerOptions\NoOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\NoOptions;
+use Ryssbowh\CraftThemes\models\fields\CraftField;
 use craft\base\Model;
 use craft\fields\BaseRelationField;
 
 abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 {
-    protected $_field;
-
     public static $isDefault = false;
 
     public $hasOptions = false;
+
+    protected $_field;
+
+    protected $_options;
 
     public function getHandle(): string 
     {
@@ -33,10 +36,13 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 
     public function getOptions(): Model
     {
-        $model = $this->getOptionsModel();
-        $model->displayer = $this;
-        $model->setAttributes($this->field->options, false);
-        return $model;
+        if ($this->_options === null) {
+            $model = $this->getOptionsModel();
+            $model->displayer = $this;
+            $model->setAttributes($this->field->options, false);
+            $this->_options = $model;
+        }
+        return $this->_options;
     }
 
     public function getTheme()
@@ -46,7 +52,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 
     public function eagerLoad(): array
     {
-        if ($this->field->craftField instanceof BaseRelationField) {
+        if ($this->field instanceof CraftField and $this->field->craftField instanceof BaseRelationField) {
             return [$this->field->craftField->handle];
         }
         return [];

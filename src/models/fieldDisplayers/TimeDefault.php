@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\TimeDefaultOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TimeDefaultOptions;
 use craft\base\Model;
 use craft\fields\Time;
 

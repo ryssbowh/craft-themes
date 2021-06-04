@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\AttributeBag;
 use Ryssbowh\CraftThemes\helpers\ClassBag;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
@@ -14,6 +15,7 @@ use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
+use craft\elements\Asset;
 use craft\events\TemplateEvent;
 
 class ViewService extends Service
@@ -158,6 +160,30 @@ class ViewService extends Service
                 'options' => $displayer->getOptions(),
                 'value' => $element->{$field->handle},
                 'craftField' => ($field instanceof CraftField ? $field->craftField : null)
+            ]
+        );
+    }
+
+    public function renderAsset(Asset $asset, ?FileDisplayerInterface $displayer)
+    {
+        if (!$displayer) {
+            return '';
+        }
+        $layout = $this->renderingLayout->getElementMachineName();
+        $type = $this->renderingLayout->type;
+        $viewMode = $this->renderingViewMode;
+        $handle = $displayer->handle;
+        return $this->render(
+            [
+                'assets/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
+                'assets/' . $type . '/' . $layout . '/' . $handle,
+                'assets/' . $type . '/' . $handle,
+                'assets/' . $handle
+            ],
+            [
+                'asset' => $asset,
+                'displayer' => $displayer,
+                'options' => $displayer->options
             ]
         );
     }

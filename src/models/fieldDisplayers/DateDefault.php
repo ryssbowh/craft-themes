@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\DateDefaultOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\DateDefaultOptions;
 use craft\base\Model;
 use craft\fields\Date;
 

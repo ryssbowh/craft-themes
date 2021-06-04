@@ -20,6 +20,9 @@ class BlocksAssets extends AssetBundle
         BlockOptionsAsset::class
     ];
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();

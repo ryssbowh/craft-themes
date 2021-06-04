@@ -1,0 +1,15 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% if value %}
+        {% if options.firstName %}
+            {{ value.firstName }}
+        {% endif %}
+        {% if options.lastName %}
+            {{ value.firstName }}
+        {% endif %}
+        {% if options.email %}
+            {{ value.email }}
+        {% endif %}
+    {% endif %}
+{% endblock %}

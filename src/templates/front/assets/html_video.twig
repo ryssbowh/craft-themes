@@ -1,0 +1,9 @@
+ <video {% if options.width %}width="{{ options.width }}"{% endif %}
+        {% if options.height %}height="{{ options.height }}"{% endif %} 
+        {% if options.controls %}controls{% endif %} 
+        {% if options.muted %}muted{% endif %} 
+        {% if options.autoplay %}autoplay{% endif %}
+>
+    <source src="{{ asset.getUrl() }}" type="{{ asset.getMimeType() }}">
+    {{ 'Your browser does not support the video element.'|t('themes') }}
+</video> 

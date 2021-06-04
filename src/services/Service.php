@@ -98,6 +98,14 @@ class Service extends Component
     }
 
     /**
+     * @return FileDisplayerService
+     */
+    protected function fileDisplayerService(): FileDisplayerService
+    {
+        return Themes::$plugin->fileDisplayers;
+    }
+
+    /**
      * Trigger an event
      * 
      * @param string $type

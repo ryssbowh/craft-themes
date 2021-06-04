@@ -11,7 +11,8 @@ class DisplayAssets extends AssetBundle
 
     public $js = [
         'chunk-vendors.js',
-        'displayers.js',
+        'fieldDisplayers.js',
+        'fileDisplayers.js',
         'display.js',
     ];
 
@@ -20,6 +21,9 @@ class DisplayAssets extends AssetBundle
         JquerySerializeJSON::class
     ];
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();

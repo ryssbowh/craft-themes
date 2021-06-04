@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\AssetLinkOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetLinkOptions;
 use craft\base\Model;
 use craft\fields\Assets;
 

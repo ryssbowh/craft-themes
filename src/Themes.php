@@ -9,10 +9,12 @@ use Ryssbowh\CraftThemes\events\RegisterBlockProvidersEvent;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\models\SystemBlockProvider;
+use Ryssbowh\CraftThemes\services\FileDisplayerService;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
+use craft\events\SectionEvent;
 use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, RouteEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
 use craft\helpers\UrlHelper;
 use craft\services\{Categories, Plugins, ProjectConfig, Routes, Sections, Volumes, UserPermissions, Tags, Globals, Fields};
@@ -260,6 +262,7 @@ class Themes extends \craft\base\Plugin
             'display' => DisplayService::class,
             'fields' => FieldsService::class,
             'matrix' => MatrixService::class,
+            'fileDisplayers' => FileDisplayerService::class,
         ]);
     }
 
@@ -294,6 +297,13 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerCraftEvents()
     {
+        Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_SECTION, function (SectionEvent $e) {
+            $type = LayoutService::ENTRY_HANDLE;
+            foreach ($e->section->entryTypes as $entryType) {
+                $uid = $entryType->uid;
+                Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
+            }
+        });
         Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_ENTRY_TYPE, function (EntryTypeEvent $e) {
             $type = LayoutService::ENTRY_HANDLE;
             $uid = $e->entryType->uid;

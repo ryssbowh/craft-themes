@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\RulesAssets;
+use Ryssbowh\CraftThemes\services\RulesService;
 
 class CpRulesController extends Controller
 {
@@ -77,6 +78,7 @@ class CpRulesController extends Controller
         if (!\Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {
             $this->setFailFlash(\Craft::t('themes', 'Couldn’t save theme rules'));
         } else {
+            Themes::$plugin->cache->flushGroup(RulesService::CACHE_GROUP);
             $this->setSuccessFlash(\Craft::t('themes', 'Rules have been saved'));
         }
         $this->redirect('themes/rules');

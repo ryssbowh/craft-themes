@@ -80,8 +80,10 @@ window.themesBlockOptionComponents['system-entry'] = {
         }
     },
     created() {
-        this.fetchEntries();
-        this.fetchViewModes();
+        if (this.block.options.type) {
+            this.fetchEntries();
+            this.fetchViewModes();
+        }
     },
     methods: {
         errors: function (field) {

@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\CategoryRenderedOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\CategoryRenderedOptions;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Model;

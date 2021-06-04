@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\events;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLink;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRenderFile;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AuthorDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryList;
@@ -21,10 +22,10 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\NumberDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextFull;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextTrimmed;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextTruncated;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorFull;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorTrimmed;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorTruncated;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagsDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
@@ -44,6 +45,7 @@ class FieldDisplayerEvent extends Event
         $this->registerMany([
             AssetLink::class,
             AssetRendered::class,
+            AssetRenderFile::class,
             AuthorDefault::class,
             CategoryRendered::class,
             CategoryList::class,
@@ -59,10 +61,10 @@ class FieldDisplayerEvent extends Event
             MultiSelectDefault::class,
             NumberDefault::class,
             PlainTextFull::class,
-            PlainTextTrimmed::class,
+            PlainTextTruncated::class,
             RadioButtonsDefault::class,
             RedactorFull::class,
-            RedactorTrimmed::class,
+            RedactorTruncated::class,
             TagsDefault::class,
             TimeDefault::class,
             TitleDefault::class,

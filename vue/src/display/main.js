@@ -17,8 +17,12 @@ const app = createApp({
 });
 app.use(store);
 
-for (let name in window.displayersOptionComponents) {
-    app.component(name, window.displayersOptionComponents[name]);
+for (let name in window.fieldDisplayers) {
+    app.component('fieldDisplayer-' + name, window.fieldDisplayers[name]);
+}
+
+for (let name in window.fileDisplayers) {
+    app.component('fileDisplayer-' + name, window.fileDisplayers[name]);
 }
 
 const Translate = {

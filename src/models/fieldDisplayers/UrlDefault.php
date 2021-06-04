@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\UrlDefaultOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UrlDefaultOptions;
 use craft\base\Model;
 use craft\fields\Url;
 

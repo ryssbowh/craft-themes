@@ -16,7 +16,10 @@ class Author extends Field
 
     public static function shouldExistOnLayout(Layout $layout): bool
     {
-        return ($layout instanceof EntryLayout or $layout instanceof CategoryLayout);
+        if ($layout instanceof EntryLayout) {
+            return $layout->element()->section->type != 'single';
+        }
+        return false;
     }
 
     public function getHandle(): string

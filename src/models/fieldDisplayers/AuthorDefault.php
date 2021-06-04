@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\displayerOptions\AuthorDefaultOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AuthorDefaultOptions;
 use Ryssbowh\CraftThemes\models\fields\Author;
 use craft\base\Model;
 

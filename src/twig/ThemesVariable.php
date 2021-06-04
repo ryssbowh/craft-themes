@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ThemesRegistry;
 use Ryssbowh\CraftThemes\services\ViewModeService;
+use Ryssbowh\CraftThemes\services\ViewService;
 
 class ThemesVariable
 {
@@ -23,6 +24,11 @@ class ThemesVariable
     public function registry(): ThemesRegistry
     {
         return Themes::$plugin->registry;
+    }
+
+    public function view(): ViewService
+    {
+        return Themes::$plugin->view;
     }
 
     public function current(): ?ThemeInterface

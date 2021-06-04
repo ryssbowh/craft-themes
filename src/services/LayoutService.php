@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\events\LayoutEvent;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\PageLayout;
+use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\Field;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
@@ -31,11 +32,11 @@ use craft\services\Routes;
 
 class LayoutService extends Service
 {
-    const EVENT_BEFORE_SAVE = 1;
-    const EVENT_AFTER_SAVE = 2;
-    const EVENT_BEFORE_APPLY_DELETE = 3;
-    const EVENT_AFTER_DELETE = 4;
-    const EVENT_BEFORE_DELETE = 5;
+    const EVENT_BEFORE_SAVE = 'before_save';
+    const EVENT_AFTER_SAVE = 'after_save';
+    const EVENT_BEFORE_APPLY_DELETE = 'before_apply_delete';
+    const EVENT_AFTER_DELETE = 'after_delete';
+    const EVENT_BEFORE_DELETE = 'before_delete';
     const CONFIG_KEY = 'themes.layouts';
 
     const DEFAULT_HANDLE = 'default';
@@ -85,6 +86,11 @@ class LayoutService extends Service
         throw LayoutException::noId($id);
     }
 
+    /**
+     * Get all layouts that have displays
+     * 
+     * @return array
+     */
     public function withDisplays(): array
     {
         return $this->all()->filter(function ($layout) {
@@ -92,6 +98,14 @@ class LayoutService extends Service
         })->all();
     }
 
+    /**
+     * Get all layouts for a theme
+     * 
+     * @param  string    $theme
+     * @param  bool|null $withDisplays
+     * @param  bool|null $withBlocks
+     * @return array
+     */
     public function getForTheme(string $theme, ?bool $withDisplays = null, ?bool $withBlocks = null): array
     {
         return $this->all()->filter(function ($layout) use ($theme, $withDisplays, $withBlocks) {
@@ -219,6 +233,12 @@ class LayoutService extends Service
         }
     }
 
+    /**
+     * Install layouts for a theme
+     * 
+     * @param  string $theme
+     * @return array
+     */
     public function installThemeData(string $theme): array
     {
         $ids = [];
@@ -233,6 +253,11 @@ class LayoutService extends Service
         return $ids;
     }
 
+    /**
+     * Uninstall layouts for a theme
+     * 
+     * @param string $theme
+     */
     public function uninstallThemeData(string $theme)
     {
         foreach ($this->getForTheme($theme) as $layout) {
@@ -283,16 +308,16 @@ class LayoutService extends Service
      * @param  string  $theme
      * @param  string  $element
      * @param  string  $type
-     * @param  boolean $load
+     * @param  boolean $loadBlocks
      * @return ?Layout
      */
-    public function get(string $theme, string $type, string $element = '', bool $load = false): ?Layout
+    public function get(string $theme, string $type, string $element = '', bool $loadBlocks = false): ?Layout
     {
         $layout = $this->all()
             ->where('theme', $theme)
             ->where('element', $element)
             ->firstWhere('type', $type);
-        if ($layout and $load) {
+        if ($layout and $loadBlocks) {
             return $layout->loadBlocks();
         }
         return $layout;
@@ -498,7 +523,7 @@ class LayoutService extends Service
     }
 
     /**
-     * handles a craft field change. Replaces the display in each layout 
+     * handles a craft field save: Replaces the display in each layout 
      * where the craft field was referenced (if the type of field has changed) and save the layout.
      * 
      * @param  FieldEvent $event
@@ -516,7 +541,7 @@ class LayoutService extends Service
             $oldFieldClass = $oldItem->craft_field_class;
             if ($oldItem->craft_field_class != get_class($field)) {
                 $this->fieldsService()->deleteField($oldItem);
-                $display->item = Field::createNew($field);
+                $display->item = CraftField::createNew($field);
                 $display->item->labelHidden = $oldItem->labelHidden;
                 $display->item->labelVisuallyHidden = $oldItem->labelVisuallyHidden;
                 $display->item->visuallyHidden = $oldItem->visuallyHidden;

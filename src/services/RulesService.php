@@ -10,7 +10,7 @@ use craft\models\Site;
 
 class RulesService extends Service
 {
-    const CACHE_GROUP = 'themes.rules.';
+    const CACHE_GROUP = 'themes.rules';
 
     /**
      * @var array

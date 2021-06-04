@@ -45,7 +45,7 @@ abstract class Field extends DisplayItem
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
         $field->setAttributes($config);
-        if (!$config['options'] and $field->displayer) {
+        if ((!isset($config['options']) or !$config['options']) and $field->displayer) {
             $field->options = $field->displayer->options->toArray();
         }
         return $field;

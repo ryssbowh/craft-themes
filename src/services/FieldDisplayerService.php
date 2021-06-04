@@ -9,7 +9,7 @@ use Ryssbowh\CraftThemes\models\fields\Field;
 
 class FieldDisplayerService extends Service
 {
-    const REGISTER_DISPLAYERS = 1;
+    const REGISTER_DISPLAYERS = 'register_displayer';
 
     protected $_defaults;
     protected $_displayers;

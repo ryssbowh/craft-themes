@@ -1,9 +1,9 @@
 <template>
-    <div class="modal elementselectormodal options-modal" style="display:none" ref="modal">
+    <div :class="'modal elementselectormodal options-modal displayer-' + displayer.handle" style="display:none" ref="modal">
         <div class="body">
             <div class="content">
                 <form class="main" ref="form">
-                    <component :is="optionsComponent" :displayer="displayer" :options="displayer.options" :errors="displayerOptionsErrors" @updateOptions="updateOptions"></component>
+                    <component :is="optionsComponent" :displayer="displayer" :options="displayer.options" :errors="displayerOptionsErrors" @updateOptions="updateOptions" :key="item.id"></component>
                 </form>
             </div>
         </div>
@@ -23,7 +23,7 @@ import Modal from '../modal';
 export default {
     computed: {
         optionsComponent: function () {
-            return this.displayer.handle;
+            return 'fieldDisplayer-' + this.displayer.handle;
         },
         ...mapState(['showOptionsModal', 'displayer', 'item', 'displayerOptionsErrors'])
     },
@@ -39,7 +39,7 @@ export default {
             } else {
                 this.popup.hide();
             }
-        }
+        },
     },
     beforeUnmount () {
         if (this.popup) {
