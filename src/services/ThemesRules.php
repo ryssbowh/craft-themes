@@ -88,7 +88,7 @@ class ThemesRules extends Component
      * 
      * @return ?string
      */
-    protected function resolveRules(string $path, Site $site, string $url): ?string
+    protected function resolveRules(string $path, Site $currentSite, string $url): ?string
     {
         $themeName = null;
         foreach ($this->rules as $rule) {
@@ -96,8 +96,8 @@ class ThemesRules extends Component
                 continue;
             }
             $site = $language = $url = false;
-            if ($site = $this->resolveSiteRule($rule['site'], $site)) {
-                if ($language = $this->resolveLanguageRule($rule['language'], $site->getLocale())) {
+            if ($site = $this->resolveSiteRule($rule['site'], $currentSite)) {
+                if ($language = $this->resolveLanguageRule($rule['language'], $currentSite->getLocale())) {
                     $url = $this->resolvePathRule($rule['url'], $path);
                 }
             }

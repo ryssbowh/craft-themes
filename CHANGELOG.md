@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.1.2 - 2021-06-08
+
+### Fixed
+- Error in resolving site rules
+
 ## 2.1.1 - 2021-05-10
 
 ### Fixed
