@@ -3,22 +3,58 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\DisplayItemInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 
-abstract class DisplayItem extends Model implements RenderableInterface
+abstract class DisplayItem extends Model implements DisplayItemInterface
 {
+    /**
+     * @var int
+     */
     public $id;
+
+    /**
+     * @var int
+     */
     public $display_id;
+
+    /**
+     * @var boolean
+     */
     public $labelHidden = false;
+
+    /**
+     * @var boolean
+     */
     public $labelVisuallyHidden = false;
+
+    /**
+     * @var boolean
+     */
     public $hidden = false;
+
+    /**
+     * @var boolean
+     */
     public $visuallyHidden = false;
+
+    /**
+     * @var DateTime
+     */
     public $dateCreated;
+
+    /**
+     * @var DateTime
+     */
     public $dateUpdated;
+
+    /**
+     * @var string
+     */
     public $uid;
     
     /**
@@ -27,8 +63,14 @@ abstract class DisplayItem extends Model implements RenderableInterface
      */
     public $order;
 
+    /**
+     * @var DisplayInterface
+     */
     protected $_display;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [
@@ -38,6 +80,9 @@ abstract class DisplayItem extends Model implements RenderableInterface
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return [
@@ -49,7 +94,10 @@ abstract class DisplayItem extends Model implements RenderableInterface
         ];
     }
 
-    public function getDisplay(): ?Display
+    /**
+     * @inheritDoc
+     */
+    public function getDisplay(): ?DisplayInterface
     {
         if (!$this->display_id) {
             return null;
@@ -60,17 +108,26 @@ abstract class DisplayItem extends Model implements RenderableInterface
         return $this->_display;
     }
 
-    public function setDisplay(Display $display)
+    /**
+     * @inheritDoc
+     */
+    public function setDisplay(DisplayInterface $display)
     {
         $this->_display = $display;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getViewMode(): ViewMode
     {
         return $this->display->viewMode;
     }
 
-    public function getLayout(): Layout
+    /**
+     * @inheritDoc
+     */
+    public function getLayout(): LayoutInterface
     {
         return $this->viewMode->layout;
     }

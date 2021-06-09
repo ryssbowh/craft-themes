@@ -21,16 +21,25 @@ class RouteLayout extends Layout
         return \Craft::$app->projectConfig->get(Routes::CONFIG_ROUTES_KEY)[$this->element];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getElementMachineName(): string
     {
         return md5($this->element()['uriPattern']);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function canHaveUrls(): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string
     {
         return StringHelper::camelCase($this->type . '_' . $this->getElementMachineName() . '_' . $this->theme);

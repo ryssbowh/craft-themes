@@ -8,20 +8,35 @@ use craft\fields\Matrix;
 
 class MatrixDefault extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'matrix_default';
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return Matrix::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function eagerLoad(): array
     {
         $eagerLoad = [$this->field->craftField->handle];

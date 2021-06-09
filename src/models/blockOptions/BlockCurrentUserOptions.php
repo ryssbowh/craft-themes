@@ -13,6 +13,9 @@ class BlockCurrentUserOptions extends BlockOptions
      */
     public $viewMode;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
@@ -21,6 +24,9 @@ class BlockCurrentUserOptions extends BlockOptions
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return [ 

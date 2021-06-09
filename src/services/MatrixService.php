@@ -2,17 +2,27 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
+use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use craft\models\MatrixBlockType;
 
 class MatrixService extends Service
 {
+    /**
+     * @var Collection
+     */
     private $_matrixPivots;
 
-    public function allMatrixPivots()
+    /**
+     * Get all matrix pivots
+     * 
+     * @return Collection
+     */
+    public function allMatrixPivots(): Collection
     {
         if ($this->_matrixPivots === null) {
             $records = MatrixPivotRecord::find()->orderBy(['order' => SORT_ASC])->all();
@@ -24,13 +34,27 @@ class MatrixService extends Service
         return $this->_matrixPivots;
     }
 
+    /**
+     * Get all fields for a matrix type
+     * 
+     * @param  MatrixBlockType $type
+     * @param  Matrix          $matrix
+     * @return array[FieldInterface]
+     */
     public function getForMatrixType(MatrixBlockType $type, Matrix $matrix): array
     {
         return array_map(function ($pivot) {
             return Themes::$plugin->fields->getById($pivot->field_id);
-        }, $this->getMatrixPivotRecords($type->id, $matrix->id));
+        }, $this->getMatrixPivotRecords($type, $matrix));
     }
 
+    /**
+     * Get a matrix block type by uid
+     * 
+     * @param  string $uid
+     * @return MatrixBlockType
+     * @throws FieldException
+     */
     public function getMatrixBlockTypeByUid(string $uid)
     {
         foreach (\Craft::$app->matrix->getAllBlockTypes() as $type) {
@@ -41,7 +65,15 @@ class MatrixService extends Service
         throw FieldException::noMatrixType($uid);
     }
 
-    public function getMatrixPivotRecord(int $typeId, int $matrixId, int $fieldId)
+    /**
+     * Get a pivot record, or creates a new one
+     * 
+     * @param  int    $typeId
+     * @param  int    $matrixId
+     * @param  int    $fieldId
+     * @return MatrixPivotRecord
+     */
+    public function getMatrixPivotRecord(int $typeId, int $matrixId, int $fieldId): MatrixPivotRecord
     {
         return $this->allMatrixPivots()
             ->where('matrix_type_id', $typeId)
@@ -49,11 +81,18 @@ class MatrixService extends Service
             ->firstWhere('field_id', $fieldId) ?? new MatrixPivotRecord;
     }
 
-    protected function getMatrixPivotRecords(int $typeId, int $matrixId): array
+    /**
+     * Get all pivots for a block type and a matrix id
+     * 
+     * @param  MatrixBlockType $type
+     * @param  Matrix          $matrix
+     * @return array
+     */
+    protected function getMatrixPivotRecords(MatrixBlockType $type, Matrix $matrix): array
     {
         return $this->allMatrixPivots()
-            ->where('matrix_type_id', $typeId)
-            ->where('parent_id', $matrixId)
+            ->where('matrix_type_id', $type->id)
+            ->where('parent_id', $matrix->id)
             ->values()->all();
     }
 }

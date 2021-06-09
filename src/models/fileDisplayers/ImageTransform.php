@@ -8,25 +8,45 @@ use craft\base\Model;
 
 class ImageTransform extends FileDisplayer
 {
+    /**
+     * @var string
+     */
     public static $handle = 'image_transform';
 
+    /**
+     * @var boolean
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Image transform');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getKindTargets()
     {
         return ['image'];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new ImageTransformOptions;
     }
 
+    /**
+     * Get all image transforms as array
+     * 
+     * @return array
+     */
     public function getImageTransforms(): array
     {
         $out = [];
@@ -36,6 +56,9 @@ class ImageTransform extends FileDisplayer
         return $out;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['imageTransforms']);

@@ -7,11 +7,28 @@ use craft\models\MatrixBlockType;
 
 class DisplayMatrixType extends Model
 {
+    /**
+     * @var array
+     */
     public $fields = [];
+
+    /**
+     * The matrix block type id
+     * @var int
+     */
     public $type_id;
+
+    /**
+     * @var MatrixBlockType
+     */
     private $_type;
 
-    public function getConfig()
+    /**
+     * Get project config
+     * 
+     * @return array
+     */
+    public function getConfig(): array
     {
         return [
             'type_uid' => $this->type->uid,
@@ -21,6 +38,11 @@ class DisplayMatrixType extends Model
         ];
     }
 
+    /**
+     * Matrix block type getter
+     * 
+     * @return MatrixBlockType
+     */
     public function getType(): MatrixBlockType
     {
         if ($this->_type === null) {
@@ -29,12 +51,20 @@ class DisplayMatrixType extends Model
         return $this->_type;
     }
 
+    /**
+     * Matrix block type getter
+     * 
+     * @param MatrixBlockType $type
+     */
     public function setType(MatrixBlockType $type)
     {
         $this->_type = $type;
         $this->type_id = $type->id;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['type']);

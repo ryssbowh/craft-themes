@@ -3,7 +3,6 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Model;
 
 interface BlockInterface extends RenderableInterface
@@ -23,7 +22,14 @@ interface BlockInterface extends RenderableInterface
     public function getOptions(): Model;
 
     /**
-     * Get full machine name
+     * Options setter
+     * 
+     * @param string|array $options
+     */
+    public function setOptions($options);
+
+    /**
+     * Get full machine name, in the form provider-handle
      * 
      * @return string
      */
@@ -39,9 +45,9 @@ interface BlockInterface extends RenderableInterface
     /**
      * Get layout object
      * 
-     * @return Layout
+     * @return LayoutInterface
      */
-    public function getLayout(): ?Layout;
+    public function getLayout(): ?LayoutInterface;
 
     /**
      * Get provider object
@@ -49,4 +55,16 @@ interface BlockInterface extends RenderableInterface
      * @return BlockProviderInterface
      */
     public function provider(): BlockProviderInterface;
+
+    /**
+     * Project config to be saved
+     * 
+     * @return array
+     */
+    public function getConfig(): array;
+
+    /**
+     * Callback after the block has been saved
+     */
+    public function afterSave();
 }

@@ -5,12 +5,14 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\DisplayMatrixException;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 
-class Matrix extends CraftField
+class Matrix extends CraftField implements MatrixInterface
 {
     private $_types;
 
@@ -24,12 +26,18 @@ class Matrix extends CraftField
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getType(): string
     {
         return 'matrix';
     }
 
-    public static function create(array $config): Field
+    /**
+     * @inheritDoc
+     */
+    public static function create(array $config): FieldInterface
     {
         $class = get_called_class();
         $field = new $class;
@@ -45,7 +53,10 @@ class Matrix extends CraftField
         return $field;
     }
 
-    public static function createNew(?BaseField $craftField = null): Field
+    /**
+     * @inheritDoc
+     */
+    public static function createNew(?BaseField $craftField = null): FieldInterface
     {
         $types = [];
         foreach ($craftField->getBlockTypes() as $type) {
@@ -61,6 +72,9 @@ class Matrix extends CraftField
         return static::create($config);
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function save(array $data): bool
     {
         $matrix = Themes::$plugin->fields->getRecordByUid($data['uid']);
@@ -92,6 +106,9 @@ class Matrix extends CraftField
         return $res;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         $config = parent::getConfig();
@@ -101,6 +118,9 @@ class Matrix extends CraftField
         return $config;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getTypes(): array
     {
         if ($this->_types === null) {
@@ -117,6 +137,9 @@ class Matrix extends CraftField
         return $this->_types;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getVisibleFields(MatrixBlock $block): array
     {
         if (!isset($this->types[$block->type->handle])) {
@@ -128,26 +151,30 @@ class Matrix extends CraftField
         });
     }
 
-    public function getTypeById(int $id): DisplayMatrixType
-    {
-        foreach ($this->types as $type) {
-            if ($type->type_id == $id) {
-                return $type;
-            }
-        }
-        throw DisplayMatrixException::noTypeWithId($id);
-    }
-
+    /**
+     * Types setter
+     * 
+     * @param array $types
+     */
     public function setTypes(array $types)
     {
         $this->_types = $types;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['types']);
     }
 
+    /**
+     * Build matrix types from an array of data
+     * 
+     * @param  array  $data
+     * @return array
+     */
     protected static function buildMatrixTypes(array $data): array
     {
         $types = [];

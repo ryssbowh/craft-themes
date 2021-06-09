@@ -9,22 +9,40 @@ use craft\redactor\Field;
 
 class RedactorTruncated extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'redactor_truncated';
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Truncated');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return Field::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new RedactorTruncatedOptions;

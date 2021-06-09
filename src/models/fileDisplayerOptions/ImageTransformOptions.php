@@ -6,9 +6,19 @@ use Ryssbowh\CraftThemes\models\FileDisplayerOptions;
 
 class ImageTransformOptions extends FileDisplayerOptions
 {
+    /**
+     * @var string
+     */
     public $transform;
+
+    /**
+     * @var string
+     */
     public $custom;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [
@@ -21,6 +31,9 @@ class ImageTransformOptions extends FileDisplayerOptions
         ];
     }
 
+    /**
+     * Validates custom attribute
+     */
     public function validateCustom()
     {
         if (!json_decode($this->custom)) {

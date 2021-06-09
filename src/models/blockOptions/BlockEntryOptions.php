@@ -23,6 +23,9 @@ class BlockEntryOptions extends BlockOptions
      */
     public $viewMode;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
@@ -45,6 +48,9 @@ class BlockEntryOptions extends BlockOptions
         $record->save(false);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return [

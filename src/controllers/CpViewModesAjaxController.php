@@ -9,6 +9,9 @@ use craft\elements\Entry;
 
 class CpViewModesAjaxController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
     public function beforeAction($action) 
     {
         $this->requirePermission('accessPlugin-themes');
@@ -17,12 +20,23 @@ class CpViewModesAjaxController extends Controller
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterAction($action, $result)
     {
         return $this->asJson($result);
     }
 
-    public function actionViewModes(string $theme, string $type, string $uid = '')
+    /**
+     * Get view modes for a theme and a layout
+     * 
+     * @param  string $theme
+     * @param  string $type
+     * @param  string $uid
+     * @return array
+     */
+    public function actionViewModes(string $theme, string $type, string $uid = ''): array
     {
         $layout = Themes::$plugin->layouts->get($theme, $type, $uid);
         return [

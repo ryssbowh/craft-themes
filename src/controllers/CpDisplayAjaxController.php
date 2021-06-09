@@ -8,6 +8,9 @@ use Ryssbowh\CraftThemes\exceptions\LayoutException;
 
 class CpDisplayAjaxController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
     public function beforeAction($action) 
     {
         $this->requirePermission('manageThemesDisplay');
@@ -16,6 +19,9 @@ class CpDisplayAjaxController extends Controller
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterAction($action, $result)
     {
         return $this->asJson($result);
@@ -25,9 +31,9 @@ class CpDisplayAjaxController extends Controller
      * Get view modes for a theme and a layout as json
      * 
      * @param  int $layout
-     * @return Response
+     * @return array
      */
-    public function actionViewModes(int $layout)
+    public function actionViewModes(int $layout): array
     {
         $layout = $this->layouts->getById($layout);
 
@@ -40,9 +46,9 @@ class CpDisplayAjaxController extends Controller
      * Get all displays for a layout
      * 
      * @param  int $layout
-     * @return Response
+     * @return array
      */
-    public function actionDisplays(int $layout)
+    public function actionDisplays(int $layout): array
     {
         $layout = $this->layouts->getById($layout);
 
@@ -51,7 +57,12 @@ class CpDisplayAjaxController extends Controller
         ];
     }
 
-    public function actionValidateFieldOptions()
+    /**
+     * Validate field options
+     * 
+     * @return array
+     */
+    public function actionValidateFieldOptions(): array
     {
         $fieldId = $this->request->getBodyParam('id');
         $displayerHandle = $this->request->getRequiredParam('displayer');
@@ -72,7 +83,12 @@ class CpDisplayAjaxController extends Controller
         ];
     }
 
-    public function actionSaveLayout()
+    /**
+     * Saves a layout
+     * 
+     * @return array
+     */
+    public function actionSaveLayout(): array
     {
         $displaysData = $this->request->getRequiredParam('displays');
         $layoutId = $this->request->getRequiredParam('layout');

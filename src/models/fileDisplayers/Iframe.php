@@ -8,20 +8,35 @@ use craft\base\Model;
 
 class Iframe extends FileDisplayer
 {
+    /**
+     * @var string
+     */
     public static $handle = 'iframe';
 
+    /**
+     * @var boolean
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Iframe');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getKindTargets()
     {
         return ['html'];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new IframeOptions;

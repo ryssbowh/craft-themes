@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\events\BlockEvent;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
@@ -19,14 +20,14 @@ use craft\events\RebuildConfigEvent;
 class BlockService extends Service
 {
     /**
-     * @var array
+     * @var Collection
      */
     protected $_blocks;
 
     /**
      * Get all blocks
      * 
-     * @return array
+     * @return Collection
      */
     public function all(): Collection
     {
@@ -39,6 +40,13 @@ class BlockService extends Service
         return $this->_blocks;
     }
 
+    /**
+     * Creates a block from config
+     * 
+     * @param  array|ActiveRecord $config
+     * @return BlockInterface
+     * @throws BlockException
+     */
     public function create($config): BlockInterface
     {
         if ($config instanceof ActiveRecord) {
@@ -61,7 +69,7 @@ class BlockService extends Service
     }
     
     /**
-     * Get block by id
+     * Get a block by id
      * 
      * @param  int    $id
      * @return ?BlockInterface
@@ -74,10 +82,10 @@ class BlockService extends Service
     /**
      * Get blocks for a layout
      * 
-     * @param  int    $layout
+     * @param  LayoutInterface $layout
      * @return array
      */
-    public function getForLayout(Layout $layout): array
+    public function getForLayout(LayoutInterface $layout): array
     {
         if (!$layout->id) {
             return [];
@@ -89,7 +97,7 @@ class BlockService extends Service
     }
 
     /**
-     * Get block record by uid or a new one if not found
+     * Get block record by uid or create a new one if not found
      * 
      * @param  string $uid
      * @return BlockRecord
@@ -99,6 +107,12 @@ class BlockService extends Service
         return BlockRecord::findOne(['uid' => $uid]) ?? new BlockRecord;
     }
 
+    /**
+     * Validates an array of blocks
+     * 
+     * @param  array  $blocks
+     * @return bool
+     */
     public function validateAll(array $blocks): bool
     {
         $res = true;
@@ -110,6 +124,12 @@ class BlockService extends Service
         return $res;
     }
 
+    /**
+     * Saves blocks data
+     * 
+     * @param  array        $data
+     * @param  LayoutRecord $layout
+     */
     public function saveMany(array $data, LayoutRecord $layout)
     {
         $ids = [];
@@ -134,6 +154,11 @@ class BlockService extends Service
         }
     }
 
+    /**
+     * Install the content block for a theme
+     * 
+     * @param  ThemeInterface $theme
+     */
     public function installContentBlock(ThemeInterface $theme)
     {
         if (!$region = $theme->contentBlockRegion()) {

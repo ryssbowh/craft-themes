@@ -4,8 +4,8 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\events\ViewModeEvent;
 use Ryssbowh\CraftThemes\exceptions\ViewModeException;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use craft\events\ConfigEvent;
@@ -15,8 +15,16 @@ class ViewModeService extends Service
 {
     const DEFAULT_HANDLE = 'default';
 
+    /**
+     * @var Collection
+     */
     protected $_viewModes;
 
+    /**
+     * Get all view modes
+     * 
+     * @return Collection
+     */
     public function all()
     {
         if ($this->_viewModes === null) {
@@ -29,6 +37,12 @@ class ViewModeService extends Service
         return $this->_viewModes;
     }
 
+    /**
+     * Creates a view mode from config
+     * 
+     * @param  array|ActiveRecord $config
+     * @return ViewMode
+     */
     public function create($config): ViewMode
     {
         if ($config instanceof ActiveRecord) {
@@ -56,10 +70,10 @@ class ViewModeService extends Service
     /**
      * Get all view modes for a layout
      * 
-     * @param  Layout $layout
+     * @param  LayoutInterface $layout
      * @return array
      */
-    public function getForLayout(Layout $layout): array
+    public function getForLayout(LayoutInterface $layout): array
     {
         if (!$layout->id) {
             return [];
@@ -73,10 +87,10 @@ class ViewModeService extends Service
     /**
      * Get a default view mode
      * 
-     * @param  Layout $layout
+     * @param  LayoutInterface $layout
      * @return array
      */
-    public function getDefault(Layout $layout): ?ViewMode
+    public function getDefault(LayoutInterface $layout): ?ViewMode
     {
         return $this->get($layout);
     }
@@ -84,11 +98,11 @@ class ViewModeService extends Service
     /**
      * Get a view mode
      * 
-     * @param  Layout $layout
+     * @param  LayoutInterface $layout
      * @param  string $handle
      * @return array
      */
-    public function get(Layout $layout, string $handle = self::DEFAULT_HANDLE): ?ViewMode
+    public function get(LayoutInterface $layout, string $handle = self::DEFAULT_HANDLE): ?ViewMode
     {
         if (!$layout->id) {
             return null;
@@ -109,6 +123,12 @@ class ViewModeService extends Service
         return ViewModeRecord::findOne(['uid' => $uid]) ?? new ViewModeRecord;
     }
 
+    /**
+     * Saves view modes data
+     * 
+     * @param  array        $data
+     * @param  LayoutRecord $layout
+     */
     public function saveMany(array $data, LayoutRecord $layout)
     {
         $ids = [];

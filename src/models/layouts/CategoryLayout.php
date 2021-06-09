@@ -13,6 +13,9 @@ class CategoryLayout extends Layout
      */
     public $type = LayoutService::CATEGORY_HANDLE;
     
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
@@ -28,16 +31,25 @@ class CategoryLayout extends Layout
         return \Craft::$app->categories->getGroupByUid($this->element);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getElementMachineName(): string
     {
         return $this->element()->handle;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasDisplays(): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string
     {
         return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
@@ -51,6 +63,9 @@ class CategoryLayout extends Layout
         return \Craft::t('themes', 'Category : {name}', ['name' => $this->element()->name]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCraftFields(): array
     {
         return $this->element()->getFieldLayout()->getFields();

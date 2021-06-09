@@ -5,8 +5,9 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
-use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
@@ -16,7 +17,7 @@ use craft\base\Element;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 
-class Layout extends Model
+class Layout extends Model implements LayoutInterface
 {
     const RENDERING_MODE_REGIONS = 'regions';
     const RENDERING_MODE_DISPLAYS = 'displays';
@@ -78,16 +79,29 @@ class Layout extends Model
     protected $_loaded = false;
 
     /**
-     * @var string|Entry|Category
+     * Element associated with this layout (entry, user, category, route etc)
+     * @var mixed
      */
     protected $_element;
 
+    /**
+     * @var array
+     */
     protected $_displays;
 
+    /**
+     * @var array
+     */
     protected $_viewModes;
 
+    /**
+     * @var array
+     */
     protected $_blocks;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [
@@ -99,6 +113,9 @@ class Layout extends Model
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function eagerLoadFields(Element $element, string $viewMode)
     {
         $with = [];
@@ -110,15 +127,16 @@ class Layout extends Model
         \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function canHaveUrls(): bool
     {
         return true;
     }
 
     /**
-     * Can this layout define displays
-     * 
-     * @return bool
+     * @inheritDoc
      */
     public function hasDisplays(): bool
     {
@@ -126,9 +144,7 @@ class Layout extends Model
     }
 
     /**
-     * Get theme object
-     * 
-     * @return ThemeInterface
+     * @inheritDoc
      */
     public function getTheme(): ThemeInterface
     {
@@ -139,9 +155,7 @@ class Layout extends Model
     }
 
     /**
-     * Get project config
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getConfig(): array
     {
@@ -164,9 +178,7 @@ class Layout extends Model
     }
 
     /**
-     * Get description
-     * 
-     * @return string
+     * @inheritDoc
      */
     public function getDescription(): string
     {
@@ -174,9 +186,7 @@ class Layout extends Model
     }
 
     /**
-     * Get element associated to that layout
-     * 
-     * @return mixed
+     * @inheritDoc
      */
     public function element()
     {
@@ -186,6 +196,9 @@ class Layout extends Model
         return $this->_element;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getViewModes(): array
     {
         if ($this->_viewModes === null) {
@@ -194,12 +207,18 @@ class Layout extends Model
         return $this->_viewModes;
     }
 
-    public function setViewModes(?array $viewModes): Layout
+    /**
+     * @inheritDoc
+     */
+    public function setViewModes(?array $viewModes): LayoutInterface
     {
         $this->_viewModes = $viewModes;
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getBlocks(): array
     {
         if ($this->_blocks === null) {
@@ -208,13 +227,19 @@ class Layout extends Model
         return $this->_blocks;
     }
 
-    public function setBlocks(?array $blocks): Layout
+    /**
+     * @inheritDoc
+     */
+    public function setBlocks(?array $blocks): LayoutInterface
     {
         $this->_blocks = $blocks;
         return $this;
     }
 
-    public function addBlock(BlockInterface $block): Layout
+    /**
+     * @inheritDoc
+     */
+    public function addBlock(BlockInterface $block): LayoutInterface
     {
         if (!$this->_loaded) {
             $this->loadBlocks();
@@ -224,6 +249,9 @@ class Layout extends Model
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getElementMachineName(): string
     {
         return '';
@@ -238,13 +266,9 @@ class Layout extends Model
     }
 
     /**
-     * Load blocks from database.
-     * If this layout doesn't define blocks it will load its blocks from the default layout
-     * 
-     * @param  boolean $force
-     * @return Layout
+     * @inheritDoc
      */
-    public function loadBlocks(bool $force = false): Layout
+    public function loadBlocks(bool $force = false): LayoutInterface
     {
         if ($this->_loaded and !$force) {
             return $this;
@@ -263,6 +287,9 @@ class Layout extends Model
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRegion(string $handle, bool $checkLoaded = true): Region
     {
         if ($checkLoaded and !$this->_loaded) {
@@ -278,6 +305,9 @@ class Layout extends Model
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function findBlock(string $machineName): ?BlockInterface
     {
         if (!$this->_loaded) {
@@ -292,9 +322,7 @@ class Layout extends Model
     }
 
     /**
-     * Get all displays for a view mode
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getDisplays(?string $viewMode = null): array
     {
@@ -309,22 +337,18 @@ class Layout extends Model
         });
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setDisplays(array $displays)
     {
         $this->_displays = $displays;
     }
 
-    public function findDisplayById(int $displayId): ?Display
-    {
-        foreach ($this->displays as $display) {
-            if ($display->id == $displayId) {
-                return $display;
-            }
-        }
-        return null;
-    }
-
-    public function replaceDisplay(Display $display)
+    /**
+     * @inheritDoc
+     */
+    public function replaceDisplay(DisplayInterface $display)
     {
         foreach ($this->displays as $i => $oldDisplay) {
             if ($oldDisplay->id == $display->id) {
@@ -334,9 +358,7 @@ class Layout extends Model
     }
 
     /**
-     * Get all visible displays
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getVisibleDisplays(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
     {
@@ -345,51 +367,61 @@ class Layout extends Model
         });
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCraftFields(): array
     {
         return [];
     }
 
     /**
-     * Load element
-     */
-    protected function loadElement()
-    {
-        return '';
-    }
-
-    /**
-     * get handle
-     * 
-     * @return string
+     * @inheritDoc
      */
     public function getHandle(): string
     {
         return StringHelper::camelCase($this->type . '_' . $this->theme);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string
     {
         return Themes::$plugin->view->renderLayout($this, $viewMode, $element);
     }
 
-    public function __toString()
-    {
-        return $this->render();
-    }
-
+    /**
+     * @inheritDoc
+     */
     public function getRenderingMode(): string
     {
         return $this->_renderingMode;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setRegionsRenderingMode()
     {
         $this->_renderingMode = self::RENDERING_MODE_REGIONS;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setDisplaysRenderingMode()
     {
         $this->_renderingMode = self::RENDERING_MODE_DISPLAYS;
+    }
+
+    /**
+     * Loads this layout associated element
+     * 
+     * @return mixed
+     */
+    protected function loadElement()
+    {
+        return '';
     }
 }

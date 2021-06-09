@@ -6,9 +6,19 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
 class DateDefaultOptions extends FieldDisplayerOptions
 {
+    /**
+     * @var string
+     */
     public $format = 'd/m/Y H:i:s';
+
+    /**
+     * @var string
+     */
     public $custom = '';
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [

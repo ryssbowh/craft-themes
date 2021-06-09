@@ -8,6 +8,9 @@ use Ryssbowh\CraftThemes\services\RulesService;
 
 class CpRulesController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
     public function beforeAction($action) 
     {
         $this->requirePermission('manageThemesRules');
@@ -15,7 +18,7 @@ class CpRulesController extends Controller
     }
 
     /**
-     * Settings index
+     * Rules index
      * 
      * @return Response
      */
@@ -68,6 +71,11 @@ class CpRulesController extends Controller
         ]);
     }
 
+    /**
+     * Save rules
+     * 
+     * @return Response
+     */
     public function actionSave()
     {
         $this->requirePostRequest();

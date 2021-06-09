@@ -12,12 +12,24 @@ use craft\helpers\Assets;
 
 class FileDefault extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'file_default';
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @var array
+     */
     protected $_displayerMapping;
 
     public function getName(): string
@@ -25,21 +37,38 @@ class FileDefault extends FieldDisplayer
         return \Craft::t('themes', 'Default');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return File::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new FileDefaultOptions;
     }
 
+    /**
+     * Get the displayer defined for an asset kind
+     * 
+     * @param  string $kind
+     * @return ?FileDisplayerInterface
+     */
     public function getDisplayerForKind(string $kind): ?FileDisplayerInterface
     {
         return $this->options->getDisplayerForKind($kind);
     }
 
+    /**
+     * Get available displayers, indexed by asset kind
+     * 
+     * @return array
+     */
     public function getDisplayersMapping(): array
     {
         if ($this->_displayerMapping === null) {
@@ -61,6 +90,9 @@ class FileDefault extends FieldDisplayer
         return $this->_displayerMapping;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['displayersMapping']);

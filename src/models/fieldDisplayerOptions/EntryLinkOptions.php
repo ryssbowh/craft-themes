@@ -6,10 +6,24 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
 class EntryLinkOptions extends FieldDisplayerOptions
 {
+    /**
+     * @var string
+     */
     public $label = 'title';
+
+    /**
+     * @var string
+     */
     public $custom = '';
+
+    /**
+     * @var boolean
+     */
     public $newTab = false;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [

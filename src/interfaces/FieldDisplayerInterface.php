@@ -27,7 +27,24 @@ interface FieldDisplayerInterface
      */
     public function getOptions(): Model;
 
+    /**
+     * Get name
+     * 
+     * @return string
+     */
     public function getName(): string;
 
+    /**
+     * Eager load fields
+     * 
+     * @return array
+     */
     public function eagerLoad(): array;
+
+    /**
+     * Get handle
+     * 
+     * @return string
+     */
+    public static function getHandle(): string;
 }

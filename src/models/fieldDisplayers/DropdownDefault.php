@@ -8,15 +8,27 @@ use craft\fields\Dropdown;
 
 class DropdownDefault extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'dropdown_default';
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return Dropdown::class;

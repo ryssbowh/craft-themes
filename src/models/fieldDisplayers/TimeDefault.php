@@ -9,22 +9,40 @@ use craft\fields\Time;
 
 class TimeDefault extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'time_default';
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return Time::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new TimeDefaultOptions;

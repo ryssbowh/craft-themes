@@ -7,9 +7,9 @@ use craft\base\Element;
 interface RenderableInterface
 {
     /**
-     * Get all possible templates
+     * Render for an element
      * 
-     * @return array
+     * @return string
      */
     public function render(Element $element): string;
 }

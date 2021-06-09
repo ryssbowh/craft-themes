@@ -6,9 +6,19 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
 class TitleDefaultOptions extends FieldDisplayerOptions
 {
+    /**
+     * @var string
+     */
     public $tag = 'h1';
+
+    /**
+     * @var boolean
+     */
     public $linked = false;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [

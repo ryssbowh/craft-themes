@@ -11,27 +11,50 @@ use craft\helpers\Assets as AssetsHelper;
 
 class AssetRenderFile extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'asset_render_file';
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @var array
+     */
     protected $_displayerMapping;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Render file');
     }
 
-    public static function getFieldTarget(): String
+    /**
+     * @inheritDoc
+     */
+    public static function getFieldTarget(): string
     {
         return Assets::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new AssetRenderFileOptions;
     }
 
+    /**
+     * Get available displayers, indexed by asset kind
+     * 
+     * @return array
+     */
     public function getDisplayersMapping(): array
     {
         if ($this->_displayerMapping === null) {
@@ -57,6 +80,9 @@ class AssetRenderFile extends FieldDisplayer
         return $this->_displayerMapping;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['displayersMapping']);

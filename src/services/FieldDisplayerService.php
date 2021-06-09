@@ -11,10 +11,29 @@ class FieldDisplayerService extends Service
 {
     const REGISTER_DISPLAYERS = 'register_displayer';
 
+    /**
+     * Defaults displayers, indexed by field class
+     * @var array
+     */
     protected $_defaults;
+
+    /**
+     * All displayers, indexed by handle
+     * @var array
+     */
     protected $_displayers;
+
+    /**
+     * displayer/fields mapping
+     * @var array
+     */
     protected $_mapping;
 
+    /**
+     * Defaults getter
+     * 
+     * @return array
+     */
     public function getDefaults(): array
     {
         if (is_null($this->_defaults)) {
@@ -23,6 +42,11 @@ class FieldDisplayerService extends Service
         return $this->_defaults;
     }
 
+    /**
+     * Mapping getter
+     * 
+     * @return array
+     */
     public function getMapping(): array
     {
         if (is_null($this->_mapping)) {
@@ -31,6 +55,11 @@ class FieldDisplayerService extends Service
         return $this->_mapping;
     }
 
+    /**
+     * Displayers getter
+     * 
+     * @return array
+     */
     public function all(): array
     {
         if (is_null($this->_displayers)) {
@@ -39,6 +68,13 @@ class FieldDisplayerService extends Service
         return $this->_displayers;
     }
 
+    /**
+     * Get a displayer by handle
+     * 
+     * @param  string $handle
+     * @param  Field  $field
+     * @return FieldDisplayerInterface
+     */
     public function getByHandle(string $handle, Field $field): FieldDisplayerInterface
     {
         if (!isset($this->all()[$handle])) {
@@ -49,7 +85,37 @@ class FieldDisplayerService extends Service
         return $class;
     }
 
-    public function getByHandles(array $handles, Field $field): array
+    /**
+     * Get displayers for a field
+     * 
+     * @param  string $classFor
+     * @param  Field  $field
+     * @return array
+     */
+    public function getForField(string $classFor, Field $field): array
+    {
+        return $this->getByHandles($this->getMapping()[$classFor] ?? [], $field);
+    }
+
+    /**
+     * Get the default displayer handle for a field class
+     * 
+     * @param  string $classFor
+     * @return ?string
+     */
+    public function getDefaultHandle(string $classFor): ?string
+    {
+        return $this->getDefaults()[$classFor] ?? null;
+    }
+
+    /**
+     * Get many displayers, by handle
+     * 
+     * @param  array  $handles
+     * @param  Field  $field
+     * @return array
+     */
+    protected function getByHandles(array $handles, Field $field): array
     {
         $_this = $this;
         return array_map(function ($handle) use ($_this, $field) {
@@ -57,21 +123,11 @@ class FieldDisplayerService extends Service
         }, $handles);
     }
 
-    public function getForField(string $classFor, Field $field): array
-    {
-        return $this->getByHandles($this->getMapping()[$classFor] ?? [], $field);
-    }
-
-    public function getDefaultHandle(string $classFor): ?string
-    {
-        return $this->getDefaults()[$classFor] ?? null;
-    }
-
+    /**
+     * Registers field displayers
+     */
     protected function register()
     {
-        if ($this->_defaults !== null) {
-            return;
-        }
         $event = new FieldDisplayerEvent;
         $this->triggerEvent(self::REGISTER_DISPLAYERS, $event);
         $this->_defaults = $event->getDefaults();

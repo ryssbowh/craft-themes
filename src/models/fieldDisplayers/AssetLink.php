@@ -9,22 +9,40 @@ use craft\fields\Assets;
 
 class AssetLink extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'asset_link';
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Link to asset');
     }
 
-    public static function getFieldTarget(): String
+    /**
+     * @inheritDoc
+     */
+    public static function getFieldTarget(): string
     {
         return Assets::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new AssetLinkOptions;

@@ -3,8 +3,8 @@
 namespace Ryssbowh\CraftThemes;
 
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\models\PageLayout;
 use craft\base\Plugin;
 use yii\base\ArrayableTrait;
@@ -132,9 +132,9 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * Get layout for this theme
      * 
-     * @return Layout
+     * @return LayoutInterface
      */
-    public function getLayout(): Layout
+    public function getLayout(): LayoutInterface
     {
         return Themes::$plugin->layouts->getLayout($this);
     }
@@ -160,10 +160,14 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     public function afterSet()
     {
-
     }
 
-    public function getHasPreview()
+    /**
+     * Does this theme have a preview image
+     * 
+     * @return bool
+     */
+    public function getHasPreview(): bool
     {
         if (glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null) {
             return true;
@@ -171,6 +175,11 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
         return false;
     }
 
+    /**
+     * Get the preview image url
+     * 
+     * @return string
+     */
     public function getPreviewImage(): string
     {
         $file = glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null;

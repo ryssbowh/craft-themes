@@ -12,7 +12,6 @@ interface BlockProviderInterface
      * Get a block instance
      * 
      * @param  string $handle
-     * @param  array  $attributes
      * @return BlockInterface
      */
     public function createBlock(string $handle): BlockInterface;
@@ -24,7 +23,17 @@ interface BlockProviderInterface
      */
     public function getBlocks(): array;
 
+    /**
+     * Get all defined blocks
+     * 
+     * @return array
+     */
     public function getDefinedBlocks(): array;
 
+    /**
+     * Add a block to this provider
+     * 
+     * @param string $blockClass
+     */
     public function addDefinedBlock(string $blockClass): BlockProviderInterface;
 }

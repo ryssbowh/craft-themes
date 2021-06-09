@@ -9,22 +9,40 @@ use craft\fields\Entries;
 
 class EntryLink extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'entry_link';
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Link to entry');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return Entries::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new EntryLinkOptions;

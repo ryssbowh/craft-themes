@@ -9,22 +9,40 @@ use craft\fields\Url;
 
 class UrlDefault extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'url_default';
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return Url::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new UrlDefaultOptions;

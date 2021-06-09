@@ -36,6 +36,11 @@ class GlobalBlock extends Block
         return new BlockGlobalOptions;
     }
 
+    /**
+     * Get all global sets as array
+     * 
+     * @return array
+     */
     public function getSets(): array
     {
         $all = [];
@@ -52,6 +57,9 @@ class GlobalBlock extends Block
         return $all;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['sets']);

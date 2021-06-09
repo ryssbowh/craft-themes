@@ -7,7 +7,7 @@ use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Component;
 use yii\base\Event;
 
-class Service extends Component
+abstract class Service extends Component
 {
     /**
      * @return BlockService

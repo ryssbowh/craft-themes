@@ -73,6 +73,11 @@ class ThemesRegistry extends Service
         return $this->currentTheme;
     }
 
+    /**
+     * Register the current theme templates
+     * 
+     * @param  RegisterTemplateRootsEvent $event
+     */
     public function registerCurrentThemeTemplates(RegisterTemplateRootsEvent $event)
     {
         if (!$this->currentTheme) {
@@ -111,6 +116,7 @@ class ThemesRegistry extends Service
      * Get all non partial themes
      * 
      * @param  boolean $asNames
+     * @param  boolean $asArrays
      * @return array
      */
     public function getNonPartials(bool $asNames = false, bool $asArrays = false): array

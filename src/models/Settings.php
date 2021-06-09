@@ -27,6 +27,9 @@ class Settings extends Model
      */
     public $eagerLoad = true;
 
+    /**
+     * @var boolean
+     */
     public $installed = false;
 
     /**
@@ -48,6 +51,11 @@ class Settings extends Model
         return $this->rules ? $this->rules : [];
     }
 
+    /**
+     * dev mode enabled getter
+     * 
+     * @return bool
+     */
     public function getDevModeEnabled(): bool
     {
         if (getenv('ENVIRONMENT') != 'production') {

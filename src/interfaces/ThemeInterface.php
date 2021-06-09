@@ -22,12 +22,14 @@ interface ThemeInterface
     /**
      * Absolute template paths, including those of the parent(s)
      * 
-     * @return string
+     * @return array
      */
     public function getTemplatePaths(): array;
 
     /**
      * Register this theme's assets in view for a specific path
+     *
+     * @param string $urlPath
      */
     public function registerAssetBundles(string $urlPath);
 
@@ -41,7 +43,7 @@ interface ThemeInterface
     /**
      * Which region the content block should be installed in
      * 
-     * @return string
+     * @return ?string
      */
     public function contentBlockRegion(): ?string;
 

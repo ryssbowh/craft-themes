@@ -3,25 +3,63 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\models\ViewMode;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\DisplayItemInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
 use craft\base\Model;
 
-class Display extends Model 
+class Display extends Model implements DisplayInterface
 {
+    /**
+     * @var int
+     */
     public $id;
+
+    /**
+     * @var int
+     */
     public $order;
+
+    /**
+     * @var string
+     */
     public $type;
+
+    /**
+     * @var int
+     */
     public $viewMode_id;
+
+    /**
+     * @var DateTime
+     */
     public $dateCreated;
+
+    /**
+     * @var DateTime
+     */
     public $dateUpdated;
+
+    /**
+     * @var string
+     */
     public $uid;
 
+    /**
+     * @var array
+     */
     protected $_viewMode;
+
+    /**
+     * @var DisplayItemInterface
+     */
     protected $_item;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [
@@ -33,9 +71,7 @@ class Display extends Model
     }
 
     /**
-     * Project config to be saved
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getConfig(): array
     {
@@ -48,16 +84,25 @@ class Display extends Model
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['item']);
     }
 
-    public function getLayout(): Layout
+    /**
+     * @inheritDoc
+     */
+    public function getLayout(): LayoutInterface
     {
         return $this->viewMode->layout();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getViewMode(): ViewMode
     {
         if (is_null($this->_viewMode)) {
@@ -66,12 +111,18 @@ class Display extends Model
         return $this->_viewMode;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setViewMode(ViewMode $viewMode)
     {
         $this->_viewMode = $viewMode;
     }
 
-    public function getItem(): DisplayItem
+    /**
+     * @inheritDoc
+     */
+    public function getItem(): DisplayItemInterface
     {
         if ($this->_item === null) {
             if ($this->type == DisplayService::TYPE_GROUP) {
@@ -83,18 +134,19 @@ class Display extends Model
         return $this->_item;
     }
 
-    public function setItem(?DisplayItem $item)
+    /**
+     * @inheritDoc
+     */
+    public function setItem(?DisplayItemInterface $item)
     {
         $this->_item = $item;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(Element $element): string
     {
         return $this->item->render($element);
-    }
-
-    public function __toString()
-    {
-        return $this->render();
     }
 }

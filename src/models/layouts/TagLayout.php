@@ -22,6 +22,9 @@ class TagLayout extends Layout
         return \Craft::$app->tags->getTagGroupByUid($this->element);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasDisplays(): bool
     {
         return true;
@@ -35,16 +38,25 @@ class TagLayout extends Layout
         return \Craft::t('themes', 'Tag : {name}', ['name' => $this->element()->name]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string
     {
         return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function canHaveUrls(): bool
     {
         return false;
     }
-
+    
+    /**
+     * @inheritDoc
+     */
     public function getCraftFields(): array
     {
         return $this->element()->getFieldLayout()->getFields();

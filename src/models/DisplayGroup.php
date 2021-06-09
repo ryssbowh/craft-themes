@@ -6,10 +6,24 @@ use craft\helpers\StringHelper;
 
 class DisplayGroup extends DisplayItem 
 {
+    /**
+     * @var string
+     */
     public $name;
+
+    /**
+     * @var string
+     */
     public $handle;
+
+    /**
+     * @var array
+     */
     public $fields = [];
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
@@ -19,9 +33,7 @@ class DisplayGroup extends DisplayItem
     }
 
     /**
-     * Project config to be saved
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getConfig(): array
     {

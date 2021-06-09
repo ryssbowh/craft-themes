@@ -6,11 +6,29 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
 class AssetLinkOptions extends FieldDisplayerOptions
 {
+    /**
+     * @var string
+     */
     public $label = 'title';
+
+    /**
+     * @var string
+     */
     public $custom = '';
+
+    /**
+     * @var boolean
+     */
     public $newTab = false;
+
+    /**
+     * @var boolean
+     */
     public $download = false;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [

@@ -11,6 +11,9 @@ class BlockTemplateOptions extends BlockOptions
      */
     public $template = '';
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

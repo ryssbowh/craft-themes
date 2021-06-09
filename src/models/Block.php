@@ -6,14 +6,13 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use Ryssbowh\CraftThemes\interfaces\RenderableInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
 use craft\base\Element;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 
-abstract class Block extends Model implements BlockInterface, RenderableInterface
+abstract class Block extends Model implements BlockInterface
 {
     /**
      * @var string
@@ -98,9 +97,7 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     }
 
     /**
-     * Project config to be saved
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getConfig(): array
     {
@@ -118,7 +115,7 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     /**
      * @inheritDoc
      */
-    public function getLayout(): ?Layout
+    public function getLayout(): ?LayoutInterface
     {
         if (!$this->layout_id) {
             return null;
@@ -173,14 +170,6 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     /**
      * @inheritDoc
      */
-    public function getTemplateSuggestions(): array
-    {
-        return ['blocks/block-' . $this->getMachineName(), 'blocks/block'];
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function fields()
     {
         return array_merge(parent::fields(), ['handle', 'options', 'errors']);
@@ -195,9 +184,7 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
     }
 
     /**
-     * Set options
-     * 
-     * @param array $options
+     * @inheritDoc
      */
     public function setOptions($options)
     {
@@ -215,18 +202,19 @@ abstract class Block extends Model implements BlockInterface, RenderableInterfac
         return new BlockOptions;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterSave()
     {
         $this->options->afterSave($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(Element $element): string
     {
         return Themes::$plugin->view->renderBlock($this, $element);
-    }
-
-    public function __toString()
-    {
-        return $this->render();
     }
 }

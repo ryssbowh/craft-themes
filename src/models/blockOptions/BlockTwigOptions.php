@@ -11,6 +11,9 @@ class BlockTwigOptions extends BlockOptions
      */
     public $twig = '';
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

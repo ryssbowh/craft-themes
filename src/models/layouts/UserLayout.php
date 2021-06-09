@@ -22,21 +22,33 @@ class UserLayout extends Layout
         return \Craft::t('themes', 'User');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasDisplays(): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function canHaveUrls(): bool
     {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string
     {
         return StringHelper::camelCase($this->type . '_' . $this->theme);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCraftFields(): array
     {
         return \Craft::$app->getFields()->getLayoutByType(User::class)->getFields();

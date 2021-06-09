@@ -9,23 +9,16 @@ use craft\base\Component;
 
 class BlockProvidersService extends Component
 {
+    /**
+     * Register block providers event key
+     * @var string
+     */
     const REGISTER_BLOCK_PROVIDERS = 'block_providers';
 
     /**
      * @var array
      */
-    protected $providers = [];
-
-    /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-        $e = new RegisterBlockProvidersEvent();
-        $this->trigger(self::REGISTER_BLOCK_PROVIDERS, $e);
-        $this->providers = $e->getProviders();
-    }
+    protected $_providers;
 
     /**
      * Get all block providers
@@ -35,12 +28,15 @@ class BlockProvidersService extends Component
      */
     public function all(bool $asArrays = false): array
     {
+        if ($this->_providers === null) {
+            $this->register();
+        }
         if ($asArrays) {
             return array_map(function ($provider) {
                 return $provider->toArray();
-            }, $this->providers);
+            }, $this->_providers);
         }
-        return $this->providers;
+        return $this->_providers;
     }
 
     /**
@@ -52,9 +48,19 @@ class BlockProvidersService extends Component
      */
     public function getByHandle(string $handle): BlockProviderInterface
     {
-        if (isset($this->providers[$handle])) {
-            return $this->providers[$handle];
+        if (isset($this->all()[$handle])) {
+            return $this->all()[$handle];
         }
         throw BlockProviderException::notDefined($handle);
+    }
+
+    /**
+     * Registers block providers
+     */
+    protected function register()
+    {
+        $e = new RegisterBlockProvidersEvent();
+        $this->trigger(self::REGISTER_BLOCK_PROVIDERS, $e);
+        $this->_providers = $e->getProviders();
     }
 }

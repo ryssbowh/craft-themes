@@ -30,5 +30,29 @@ interface FileDisplayerInterface
      */
     public function getOptions(): Model;
 
+    /**
+     * Get name
+     * 
+     * @return string
+     */
     public function getName(): string;
+
+    /**
+     * Get handle
+     * 
+     * @return string
+     */
+    public function getHandle(): string;
+
+    /**
+     * Displayer setter
+     * 
+     * @param FieldDisplayerInterface $displayer
+     */
+    public function setDisplayer(FieldDisplayerInterface $displayer);
+
+    /**
+     * @return FieldDisplayerInterface
+     */
+    public function getDisplayer(): FieldDisplayerInterface;
 }

@@ -8,6 +8,9 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 
 class CategoryRenderedOptions extends FieldDisplayerOptions
 {
+    /**
+     * @var string
+     */
     public $viewMode;
 
     public function defineRules(): array
@@ -17,6 +20,9 @@ class CategoryRenderedOptions extends FieldDisplayerOptions
         ];
     }
 
+    /**
+     * Validate view mode
+     */
     public function validateViewMode()
     {
         if (!isset($this->displayer->getViewModes()[$this->viewMode])) {

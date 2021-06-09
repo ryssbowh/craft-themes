@@ -14,17 +14,20 @@ class VolumeLayout extends Layout
      */
     public $type = LayoutService::VOLUME_HANDLE;
 
+    /**
+     * @var boolean
+     */
+    protected $_hasDisplays = true;
+
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
             ['element', 'required'],
         ]);
     }
-    
-    /**
-     * @var boolean
-     */
-    protected $_hasDisplays = true;
 
     /**
      * @inheritDoc
@@ -34,16 +37,25 @@ class VolumeLayout extends Layout
         return \Craft::$app->volumes->getVolumeByUid($this->element);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasDisplays(): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function canHaveUrls(): bool
     {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string
     {
         return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
@@ -57,6 +69,9 @@ class VolumeLayout extends Layout
         return \Craft::t('themes', 'Asset : {name}', ['name' => $this->element()->name]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCraftFields(): array
     {
         return $this->element()->getFieldLayout()->getFields();

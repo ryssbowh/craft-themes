@@ -16,6 +16,9 @@ class RegisterFieldsEvent extends Event
      */
     protected $_fields = [];
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -26,6 +29,11 @@ class RegisterFieldsEvent extends Event
         $this->add(File::class);
     }
 
+    /**
+     * Register a new field
+     * 
+     * @param string $fieldClass
+     */
     public function add(string $fieldClass)
     {
         $this->_fields[$fieldClass::getType()] = $fieldClass;
@@ -33,7 +41,7 @@ class RegisterFieldsEvent extends Event
     }
 
     /**
-     * Get all providers
+     * Get all fields
      * 
      * @return array
      */

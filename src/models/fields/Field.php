@@ -4,25 +4,55 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\DisplayItem;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
 use craft\base\Field as BaseField;
 use craft\fields\Matrix as CraftMatrix;
 
-abstract class Field extends DisplayItem
+abstract class Field extends DisplayItem implements FieldInterface
 {
+    /**
+     * @var string
+     */
     public $displayerHandle;
+
+    /**
+     * @var array
+     */
     public $options;
+
+    /**
+     * @var string
+     */
     public $type;
+
+    /**
+     * @var int
+     */
     public $craft_field_id;
+
+    /**
+     * @var string
+     */
     public $craft_field_class;
 
+    /**
+     * @var BaseField
+     */
     protected $_craftField;
+
+    /**
+     * @var FieldDisplayerInterface
+     */
     protected $_displayer;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
@@ -33,12 +63,18 @@ abstract class Field extends DisplayItem
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getType(): string
     {
         return 'field';
     }
 
-    public static function create(array $config): Field
+    /**
+     * @inheritDoc
+     */
+    public static function create(array $config): FieldInterface
     {
         $class = get_called_class();
         $field = new $class;
@@ -51,6 +87,9 @@ abstract class Field extends DisplayItem
         return $field;
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function save(array $data): bool
     {
         $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
@@ -58,12 +97,18 @@ abstract class Field extends DisplayItem
         return $field->save(false);
     }
 
-    public static function shouldExistOnLayout(Layout $layout): bool
+    /**
+     * @inheritDoc
+     */
+    public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
         return false;
     }
 
-    public static function createNew(?BaseField $craftField = null): Field
+    /**
+     * @inheritDoc
+     */
+    public static function createNew(?BaseField $craftField = null): FieldInterface
     {
         if ($craftField and get_class($craftField) == CraftMatrix::class) {
             return Matrix::createNew($craftField);
@@ -71,6 +116,9 @@ abstract class Field extends DisplayItem
         return static::create(static::buildConfig($craftField));
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function buildConfig(?BaseField $craftField): array
     {
         $class = get_called_class();
@@ -85,6 +133,9 @@ abstract class Field extends DisplayItem
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isVisible(): bool
     {
         if ($this->hidden or !$this->displayer) {
@@ -94,9 +145,7 @@ abstract class Field extends DisplayItem
     }
 
     /**
-     * Project config to be saved
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getConfig(): array
     {
@@ -107,6 +156,9 @@ abstract class Field extends DisplayItem
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDisplayer(): ?FieldDisplayerInterface
     {
         if (!is_null($this->_displayer)) {
@@ -119,16 +171,25 @@ abstract class Field extends DisplayItem
         return $this->_displayer;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAvailableDisplayers(): array
     {
         return Themes::$plugin->fieldDisplayers->getForField(get_class($this), $this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDisplayName(): string
     {
         return $this->getName();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['availableDisplayers', 'name', 'handle', 'displayName']);
@@ -140,10 +201,5 @@ abstract class Field extends DisplayItem
     public function render(Element $element): string
     {
         return Themes::$plugin->view->renderField($this, $element);
-    }
-
-    public function __toString()
-    {
-        return $this->render();
     }
 }

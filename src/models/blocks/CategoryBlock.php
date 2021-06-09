@@ -36,6 +36,11 @@ class CategoryBlock extends Block
         return new BlockCategoryOptions;
     }
 
+    /**
+     * Get all category groups as array
+     * 
+     * @return array
+     */
     public function getGroups(): array
     {
         $groups = [];
@@ -52,6 +57,9 @@ class CategoryBlock extends Block
         return $groups;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['groups']);

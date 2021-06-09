@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\LayoutEvent;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\PageLayout;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
@@ -47,6 +48,7 @@ class LayoutService extends Service
     const VOLUME_HANDLE = 'volume';
     const GLOBAL_HANDLE = 'global';
     const TAG_HANDLE = 'tag';
+
     const TYPES = [self::DEFAULT_HANDLE, self::CATEGORY_HANDLE, self::ENTRY_HANDLE, self::ROUTE_HANDLE, self::USER_HANDLE, self::VOLUME_HANDLE, self::GLOBAL_HANDLE, self::TAG_HANDLE];
 
     /**
@@ -55,11 +57,16 @@ class LayoutService extends Service
     protected $_layouts;
 
     /**
-     * @var Layout
+     * @var LayoutInterface
      */
     protected $current;
 
-    public function all()
+    /**
+     * All layouts getter
+     * 
+     * @return Collection
+     */
+    public function all(): Collection
     {
         if ($this->_layouts === null) {
             $records = LayoutRecord::find()->with(['blocks', 'viewModes'])->all();
@@ -75,10 +82,10 @@ class LayoutService extends Service
      * Get layout by id
      * 
      * @param  int    $id
-     * @return Layout
+     * @return LayoutInterface
      * @throws LayoutException
      */
-    public function getById(int $id): Layout
+    public function getById(int $id): LayoutInterface
     {
         if ($layout = $this->all()->firstWhere('id', $id)) {
             return $layout;
@@ -123,13 +130,13 @@ class LayoutService extends Service
     }
 
     /**
-     * Create a layout
+     * Create a layout from config
      * 
-     * @param  array  $args
-     * @return Layout
+     * @param  array|ActiveRecord $config
+     * @return LayoutInterface
      * @throws LayoutException
      */
-    public function create($config): Layout
+    public function create($config): LayoutInterface
     {
         if ($config instanceof ActiveRecord) {
             $config = $config->getAttributes();
@@ -254,7 +261,7 @@ class LayoutService extends Service
     }
 
     /**
-     * Uninstall layouts for a theme
+     * Deletes all layouts for a theme
      * 
      * @param string $theme
      */
@@ -269,15 +276,15 @@ class LayoutService extends Service
      * Get default layout for a theme
      * 
      * @param  string  $theme
-     * @return ?Layout
+     * @return ?LayoutInterface
      */
-    public function getDefault(string $theme): ?Layout
+    public function getDefault(string $theme): ?LayoutInterface
     {
         return $this->get($theme, self::DEFAULT_HANDLE);
     }
 
     /**
-     * Get all available layouts : default, entry sections, category groups and config routes
+     * Get all available layouts
      * 
      * @return array
      */
@@ -309,9 +316,9 @@ class LayoutService extends Service
      * @param  string  $element
      * @param  string  $type
      * @param  boolean $loadBlocks
-     * @return ?Layout
+     * @return ?LayoutInterface
      */
-    public function get(string $theme, string $type, string $element = '', bool $loadBlocks = false): ?Layout
+    public function get(string $theme, string $type, string $element = '', bool $loadBlocks = false): ?LayoutInterface
     {
         $layout = $this->all()
             ->where('theme', $theme)
@@ -326,10 +333,11 @@ class LayoutService extends Service
     /**
      * Save a layout
      * 
-     * @param  Layout $layout
-     * @return Layout
+     * @param  LayoutInterface $layout
+     * @param  bool $validate
+     * @return bool
      */
-    public function save(Layout $layout, $validate = true): bool
+    public function save(LayoutInterface $layout, bool $validate = true): bool
     {
         if ($validate and !$layout->validate()) {
             return false;
@@ -383,12 +391,12 @@ class LayoutService extends Service
     /**
      * Deletes a layout
      * 
-     * @param  Layout $layout
+     * @param  LayoutInterface $layout
      * @param  bool $force
      * @return bool
      * @throws LayoutException
      */
-    public function delete(Layout $layout, bool $force = false): bool
+    public function delete(LayoutInterface $layout, bool $force = false): bool
     {
         if (!$force and $layout->type == self::DEFAULT_HANDLE) {
             throw LayoutException::defaultUndeletable();
@@ -470,9 +478,10 @@ class LayoutService extends Service
     }
 
     /**
-     * Creates a entry type or category layout displays
+     * Callback when an element (entry type, route, category group etc) is deleted
      * 
-     * @param EntryTypeEvent $event
+     * @param string $type
+     * @param string $uid
      */
     public function onCraftElementDeleted(string $type, string $uid)
     {
@@ -485,9 +494,10 @@ class LayoutService extends Service
     }
 
     /**
-     * Creates a entry type layout
+     * Callback when an element (entry type, route, category group etc) is saved
      * 
-     * @param ConfigEvent $event
+     * @param string $type
+     * @param string $uid
      */
     public function onCraftElementSaved(string $type, string $uid)
     {
@@ -505,6 +515,7 @@ class LayoutService extends Service
     }
 
     /**
+     * Callback when a field is deleted
      * Resave layout for which a deleted field was present
      * 
      * @param  ConfigEvent $event
@@ -524,7 +535,7 @@ class LayoutService extends Service
 
     /**
      * handles a craft field save: Replaces the display in each layout 
-     * where the craft field was referenced (if the type of field has changed) and save the layout.
+     * where the craft field was referenced (if the type of field has changed) and saves the layout.
      * 
      * @param  FieldEvent $event
      */
@@ -564,11 +575,11 @@ class LayoutService extends Service
     /**
      * Resolve current layout.
      * 
-     * @param  string         $theme
-     * @param  Entry|Category $element
-     * @return ?Layout
+     * @param  string $theme
+     * @param  mixed  $element
+     * @return ?LayoutInterface
      */
-    public function resolveForRequest(string $theme, $element): ?Layout
+    public function resolveForRequest(string $theme, $element): ?LayoutInterface
     {
         $layout = null;
         if ($element instanceof Category) {
@@ -586,14 +597,19 @@ class LayoutService extends Service
     /**
      * get current layout
      * 
-     * @return ?Layout
+     * @return ?LayoutInterface
      */
-    public function getCurrent(): ?Layout
+    public function getCurrent(): ?LayoutInterface
     {
         return $this->current;
     }
 
-    protected function installLayoutData(Layout $layout)
+    /**
+     * Install layout data
+     * 
+     * @param LayoutInterface $layout
+     */
+    protected function installLayoutData(LayoutInterface $layout)
     {
         if (!$layout->viewModes) {
             $viewMode = $this->viewModesService()->create([
@@ -609,6 +625,8 @@ class LayoutService extends Service
 
     /**
      * Creates all categories layouts
+     *
+     * @return array
      */
     protected function getCategoryLayouts(): array
     {
@@ -625,6 +643,8 @@ class LayoutService extends Service
 
     /**
      * Creates all entries layouts
+     *
+     * @return array
      */
     protected function getEntryLayouts(): array
     {
@@ -643,6 +663,8 @@ class LayoutService extends Service
 
     /**
      * Creates all routes layouts
+     *
+     * @return array
      */
     protected function getRouteLayouts(): array
     {
@@ -657,6 +679,11 @@ class LayoutService extends Service
         return $layouts;
     }
 
+    /**
+     * Creates all volumes layouts
+     *
+     * @return array
+     */
     protected function getVolumesLayouts(): array
     {
         $volumes = \Craft::$app->volumes->getAllVolumes();
@@ -670,6 +697,11 @@ class LayoutService extends Service
         return $layouts;
     }
 
+    /**
+     * Creates all globals layouts
+     *
+     * @return array
+     */
     protected function getGlobalsLayouts(): array
     {
         $sets = \Craft::$app->globals->getAllSets();
@@ -683,6 +715,11 @@ class LayoutService extends Service
         return $layouts;
     }
 
+    /**
+     * Creates all tags layouts
+     *
+     * @return array
+     */
     protected function getTagsLayouts(): array
     {
         $groups = \Craft::$app->tags->getAllTagGroups();

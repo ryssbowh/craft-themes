@@ -9,22 +9,40 @@ use craft\redactor\Field;
 
 class RedactorFull extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'redactor_full';
 
+    /**
+     * @inheritDoc
+     */
     public static $isDefault = true;
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Full');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getFieldTarget(): String
     {
         return Field::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new RedactorFullOptions;

@@ -8,8 +8,14 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 
 class EntryRenderedOptions extends FieldDisplayerOptions
 {
+    /**
+     * @var array
+     */
     public $viewModes = [];
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [
@@ -17,6 +23,9 @@ class EntryRenderedOptions extends FieldDisplayerOptions
         ];
     }
 
+    /**
+     * validate view modes
+     */
     public function validateViewModes()
     {
         $validViewModes = $this->displayer->getViewModes();

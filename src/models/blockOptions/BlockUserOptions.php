@@ -40,6 +40,9 @@ class BlockUserOptions extends BlockOptions
         $record->save(false);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return [ 

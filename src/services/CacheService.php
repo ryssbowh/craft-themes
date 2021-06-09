@@ -2,14 +2,27 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
+/**
+ * This is a helper to cache group of keys into system cache.
+ * Allows to set and delete cache data by section (group) with un unknown amount of keys in each group.
+ */
 class CacheService extends Service
 {
     const CACHE_KEYS = 'themes-cache-keys';
 
+    /**
+     * @var CacheInterface
+     */
     protected $cache;
 
+    /**
+     * @var array
+     */
     protected $keys = [];
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         $this->cache = \Craft::$app->cache;
@@ -18,6 +31,13 @@ class CacheService extends Service
         }
     }
 
+    /**
+     * set a cache group key
+     * 
+     * @param string $group
+     * @param string $key
+     * @param mixed  $value
+     */
     public function set(string $group, string $key, $value)
     {
         $this->cache->set($group.$key, $value);
@@ -27,11 +47,24 @@ class CacheService extends Service
         }
     }
 
+    /**
+     * Get a cache value from a group and a key
+     * 
+     * @param  string $group
+     * @param  string $key
+     * @return mixed
+     */
     public function get(string $group, string $key)
     {
         return $this->cache->get($group.$key);
     }
 
+    /**
+     * Delete a key in a group
+     * 
+     * @param  string $group
+     * @param  string $key
+     */
     public function delete(string $group, string $key)
     {
         $this->cache->delete($group.$key);
@@ -41,6 +74,9 @@ class CacheService extends Service
         }
     }
 
+    /**
+     * Flush all keys of all groups
+     */
     public function flush()
     {
         foreach ($this->keys as $group => $keys) {
@@ -52,6 +88,11 @@ class CacheService extends Service
         $this->cacheKeys();
     }
 
+    /**
+     * Flush all keys in a group
+     * 
+     * @param  string $group
+     */
     public function flushGroup(string $group)
     {
         foreach ($this->keys[$group] ?? [] as $key) {
@@ -61,6 +102,9 @@ class CacheService extends Service
         $this->cacheKeys();
     }
 
+    /**
+     * Store into cache the keys defined by this service
+     */
     protected function cacheKeys()
     {
         $this->cache->set(self::CACHE_KEYS, $this->keys);

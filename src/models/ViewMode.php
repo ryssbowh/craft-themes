@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use craft\base\Model;
 
 class ViewMode extends Model
@@ -43,6 +43,9 @@ class ViewMode extends Model
      */
     public $uid;
 
+    /**
+     * @var LayoutInterface
+     */
     protected $_layout;
 
     /**
@@ -75,9 +78,9 @@ class ViewMode extends Model
     /**
      * Get layout object
      * 
-     * @return Layout
+     * @return LayoutInterface
      */
-    public function getLayout(): Layout
+    public function getLayout(): LayoutInterface
     {
         if (is_null($this->_layout)) {
             $this->_layout = Themes::$plugin->layouts->getById($this->layout_id);
@@ -85,7 +88,12 @@ class ViewMode extends Model
         return $this->_layout;
     }
 
-    public function setLayout(Layout $layout)
+    /**
+     * Layout setter
+     * 
+     * @param LayoutInterface $layout
+     */
+    public function setLayout(LayoutInterface $layout)
     {
         $this->_layout = $layout;
     }

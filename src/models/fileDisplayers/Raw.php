@@ -7,13 +7,22 @@ use craft\base\Model;
 
 class Raw extends FileDisplayer
 {
+    /**
+     * @var string
+     */
     public static $handle = 'raw';
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Raw');
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getKindTargets()
     {
         return ['javascript', 'html', 'php', 'text', 'xml'];

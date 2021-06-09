@@ -36,6 +36,11 @@ class EntryBlock extends Block
         return new BlockEntryOptions;
     }
 
+    /**
+     * Get all entry types as array
+     * 
+     * @return array
+     */
     public function getEntryTypes(): array
     {
         $entryTypes = [];
@@ -52,6 +57,9 @@ class EntryBlock extends Block
         return $entryTypes;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['entryTypes']);

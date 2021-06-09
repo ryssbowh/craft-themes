@@ -31,11 +31,17 @@ class SystemBlockProvider extends BlockProvider
         FlashMessagesBlock::class
     ];
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'System');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string
     {
         return 'system';

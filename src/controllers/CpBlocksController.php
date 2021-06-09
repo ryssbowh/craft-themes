@@ -10,7 +10,7 @@ use Ryssbowh\CraftThemes\models\layouts\Layout;
 class CpBlocksController extends Controller
 {
     /**
-     * Layouts index
+     * Blocks index
      * 
      * @param  string|null $themeName
      * @param  int|null    $layout

@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\events;
 
+use Ryssbowh\CraftThemes\models\fileDisplayers\Code;
 use Ryssbowh\CraftThemes\models\fileDisplayers\HtmlAudio;
 use Ryssbowh\CraftThemes\models\fileDisplayers\HtmlVideo;
 use Ryssbowh\CraftThemes\models\fileDisplayers\Iframe;
@@ -14,10 +15,21 @@ use yii\base\Event;
 
 class FileDisplayerEvent extends Event
 {
+    /**
+     * List of displayers
+     * @var array
+     */
     protected $displayers = [];
 
+    /**
+     * Displayer mapping ['assetKind' => ['displayerHandle']]
+     * @var array
+     */
     protected $mapping = [];
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         $this->registerMany([
@@ -27,25 +39,36 @@ class FileDisplayerEvent extends Event
             HtmlAudio::class,
             Iframe::class,
             Raw::class,
-            HtmlVideo::class
+            HtmlVideo::class,
+            Code::class
         ]);
     }
 
-    public function getDefaults(): array
-    {
-        return $this->defaults;
-    }
-
+    /**
+     * Displayers getter
+     * 
+     * @return array
+     */
     public function getDisplayers(): array
     {
         return $this->displayers;
     }
 
+    /**
+     * Mapping getter
+     * 
+     * @return array
+     */
     public function getMapping(): array
     {
         return $this->mapping;
     }
 
+    /**
+     * Register a displayer class
+     * 
+     * @param  string $class
+     */
     public function register(string $class)
     {
         $this->displayers[$class::$handle] = $class;
@@ -58,6 +81,11 @@ class FileDisplayerEvent extends Event
         }
     }
 
+    /**
+     * Register many displayer classes
+     * 
+     * @param  array[string] $displayers
+     */
     public function registerMany(array $displayers)
     {
         foreach ($displayers as $displayer) {

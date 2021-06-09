@@ -11,9 +11,22 @@ class FileDisplayerService extends Service
 {
     const REGISTER_DISPLAYERS = 'register_displayer';
 
+    /**
+     * @var array
+     */
     protected $_displayers;
+
+    /**
+     * Displayer mapping, indexed by asset kinds
+     * @var array
+     */
     protected $_mapping;
 
+    /**
+     * Mapping getter
+     * 
+     * @return array
+     */
     public function getMapping(): array
     {
         if (is_null($this->_mapping)) {
@@ -22,6 +35,11 @@ class FileDisplayerService extends Service
         return $this->_mapping;
     }
 
+    /**
+     * Displayers getter
+     * 
+     * @return array
+     */
     public function all(): array
     {
         if (is_null($this->_displayers)) {
@@ -30,6 +48,12 @@ class FileDisplayerService extends Service
         return $this->_displayers;
     }
 
+    /**
+     * Get a displayer by handle
+     * 
+     * @param  string $handle
+     * @return FileDisplayerInterface
+     */
     public function getByHandle(string $handle): FileDisplayerInterface
     {
         if (!isset($this->all()[$handle])) {
@@ -39,7 +63,24 @@ class FileDisplayerService extends Service
         return new $class;
     }
 
-    public function getByHandles(array $handles): array
+    /**
+     * Get displayers for an asset kind
+     * 
+     * @param  string $kind
+     * @return array
+     */
+    public function getForKind(string $kind): array
+    {
+        return $this->getByHandles($this->getMapping()[$kind] ?? []);
+    }
+
+    /**
+     * Get displayers by handles
+     * 
+     * @param  array  $handles
+     * @return array
+     */
+    protected function getByHandles(array $handles): array
     {
         $_this = $this;
         return array_map(function ($handle) use ($_this) {
@@ -47,16 +88,11 @@ class FileDisplayerService extends Service
         }, $handles);
     }
 
-    public function getForKind(string $kind): array
-    {
-        return $this->getByHandles($this->getMapping()[$kind] ?? []);
-    }
-
+    /**
+     * Registers displayers
+     */
     protected function register()
     {
-        if ($this->_displayers !== null) {
-            return;
-        }
         $event = new FileDisplayerEvent;
         $this->triggerEvent(self::REGISTER_DISPLAYERS, $event);
         $this->_displayers = $event->getDisplayers();

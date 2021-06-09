@@ -9,6 +9,9 @@ use craft\db\ActiveRecord;
 
 class BlockRecord extends ActiveRecord
 {
+    /**
+     * @inheritDoc
+     */
     public static function tableName()
     {
         return '{{%themes_blocks}}';
@@ -17,11 +20,6 @@ class BlockRecord extends ActiveRecord
     public function getProvider(): BlockProviderInterface
     {
         return Themes::$plugin->blockProviders->getByHandle($this->provider);
-    }
-
-    public function toModel(): BlockInterface
-    {
-        return $this->getProvider()->getBlock($this->handle, $this->getAttributes());
     }
 
     public function getLayout()

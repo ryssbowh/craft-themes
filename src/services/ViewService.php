@@ -6,14 +6,10 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\AttributeBag;
 use Ryssbowh\CraftThemes\helpers\ClassBag;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
-use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
-use Ryssbowh\CraftThemes\models\fields\Field;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
-use Ryssbowh\CraftThemes\services\LayoutService;
-use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\elements\Asset;
 use craft\events\TemplateEvent;
@@ -32,7 +28,7 @@ class ViewService extends Service
 
     /**
      * Layout being rendered
-     * @var ?Layout
+     * @var ?LayoutInterface
      */
     protected $renderingLayout;
 
@@ -81,6 +77,13 @@ class ViewService extends Service
         $event->variables['layout'] = $layout;
     }
 
+    /**
+     * Renders a region
+     * 
+     * @param  Region  $region
+     * @param  Element $element
+     * @return string
+     */
     public function renderRegion(Region $region, Element $element): string
     {
         $this->renderingRegion = $region;
@@ -106,6 +109,13 @@ class ViewService extends Service
         );
     }
 
+    /**
+     * Renders a block
+     * 
+     * @param  BlockInterface $block
+     * @param  Element        $element
+     * @return string
+     */
     public function renderBlock(BlockInterface $block, Element $element): string
     {
         $region = $this->renderingRegion->handle;
@@ -131,7 +141,14 @@ class ViewService extends Service
         );
     }
 
-    public function renderField(Field $field, Element $element)
+    /**
+     * Renders a field
+     * 
+     * @param  FieldInterface $field
+     * @param  Element        $element
+     * @return string
+     */
+    public function renderField(FieldInterface $field, Element $element): string
     {
         if (!$displayer = $field->getDisplayer()) {
             return '';
@@ -164,7 +181,14 @@ class ViewService extends Service
         );
     }
 
-    public function renderAsset(Asset $asset, ?FileDisplayerInterface $displayer)
+    /**
+     * Renders an asset
+     * 
+     * @param  Asset                  $asset
+     * @param  FileDisplayerInterface $displayer
+     * @return string
+     */
+    public function renderAsset(Asset $asset, ?FileDisplayerInterface $displayer): string
     {
         if (!$displayer) {
             return '';
@@ -188,7 +212,15 @@ class ViewService extends Service
         );
     }
 
-    public function renderLayout(Layout $layout, string $viewMode, Element $element)
+    /**
+     * Renders a layout
+     * 
+     * @param  LayoutInterface $layout
+     * @param  string          $viewMode
+     * @param  Element         $element
+     * @return string
+     */
+    public function renderLayout(LayoutInterface $layout, string $viewMode, Element $element): string
     {
         if ($this->eagerLoad) {
             $layout->eagerLoadFields($element, $viewMode);
@@ -221,17 +253,34 @@ class ViewService extends Service
         return $html;
     }
 
+    /**
+     * Get the current rendering view mode
+     * 
+     * @return ?string
+     */
     public function getRenderingViewMode(): ?string
     {
         return $this->renderingViewMode;
     }
 
-    public function getRenderingLayout(): ?Layout
+    /**
+     * Get the current rendering layout
+     * 
+     * @return LayoutInterface
+     */
+    public function getRenderingLayout(): ?LayoutInterface
     {
         return $this->renderingLayout;
     }
 
-    protected function render(array $templates, array $variables)
+    /**
+     * Renders an array of templates
+     * 
+     * @param  array  $templates
+     * @param  array  $variables
+     * @return string
+     */
+    protected function render(array $templates, array $variables): string
     {
         $template = $this->resolveTemplate($templates);   
         $html = $this->getDevModeHtml($templates, $template, $variables);
@@ -239,7 +288,13 @@ class ViewService extends Service
         return $html;
     }
 
-    protected function resolveTemplate(array $templates)
+    /**
+     * Resolves a template from an array of templates
+     * 
+     * @param  array  $templates
+     * @return string
+     */
+    protected function resolveTemplate(array $templates): string
     {
         $key = $templates[0];
         $template = $this->cacheService()->get(self::CACHE_GROUP, $key);
@@ -251,7 +306,15 @@ class ViewService extends Service
         return $template;
     }
 
-    protected function getDevModeHtml(array $templates, string $current, array $variables)
+    /**
+     * Get the dev mode html
+     * 
+     * @param  array  $templates
+     * @param  string $current
+     * @param  array  $variables
+     * @return string
+     */
+    protected function getDevModeHtml(array $templates, string $current, array $variables): string
     {
         if (!$this->devMode) {
             return '';

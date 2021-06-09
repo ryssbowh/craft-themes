@@ -92,6 +92,9 @@ class Themes extends \craft\base\Plugin
         \Craft::info('Loaded themes plugin', __METHOD__);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCpNavItem()
     {
         $item = [
@@ -126,6 +129,9 @@ class Themes extends \craft\base\Plugin
         return $item;
     }
 
+    /**
+     * Registers twig variables
+     */
     protected function registerTwigVariables()
     {
         Event::on(
@@ -138,6 +144,9 @@ class Themes extends \craft\base\Plugin
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function settingsHtml(): string
     {
         \Craft::$app->view->registerAssetBundle(SettingsAssets::class);
@@ -228,9 +237,7 @@ class Themes extends \craft\base\Plugin
                     'themes/ajax/users' => 'themes/cp-ajax/users',
 
                     'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
-                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
-
-                    'themes/test' => 'themes/cp-install/test'
+                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes'
                 ]);
             }
         });
@@ -436,6 +443,9 @@ class Themes extends \craft\base\Plugin
         return new Settings();
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function afterUninstall()
     {
         \Craft::$app->getProjectConfig()->remove('themes');

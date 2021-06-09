@@ -30,18 +30,24 @@ class Region extends Model implements RenderableInterface
      */
     public $blocks = [];
 
+    /**
+     * Add a block to this region
+     * 
+     * @param BlockInterface $block
+     */
     public function addBlock(BlockInterface $block)
     {
         $this->blocks[] = $block;
     }
 
+    /**
+     * Render this region for an element
+     * 
+     * @param  Element $element
+     * @return string
+     */
     public function render(Element $element): string
     {
         return Themes::$plugin->view->renderRegion($this, $element);
-    }
-
-    public function __toString()
-    {
-        return $this->render();
     }
 }

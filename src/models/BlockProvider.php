@@ -9,6 +9,10 @@ use craft\base\Model;
 
 abstract class BlockProvider extends Model implements BlockProviderInterface
 {
+    /**
+     * block classes defined by this provider
+     * @var array
+     */
     protected $_definedBlocks = [];
 
     /**
@@ -39,6 +43,9 @@ abstract class BlockProvider extends Model implements BlockProviderInterface
         throw BlockProviderException::noBlock(get_called_class(), $handle);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDefinedBlocks(): array
     {
         $blocks = [];

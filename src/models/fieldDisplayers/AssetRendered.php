@@ -11,25 +11,45 @@ use craft\fields\Assets;
 
 class AssetRendered extends FieldDisplayer
 {
+    /**
+     * @inheritDoc
+     */
     public static $handle = 'asset_rendered';
 
+    /**
+     * @inheritDoc
+     */
     public $hasOptions = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Rendered');
     }
 
-    public static function getFieldTarget(): String
+    /**
+     * @inheritDoc
+     */
+    public static function getFieldTarget(): string
     {
         return Assets::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): Model
     {
         return new AssetRenderedOptions;
     }
 
+    /**
+     * Get view modes for the defined source volume of the associated field
+     * 
+     * @return array
+     */
     public function getViewModes(): array
     {
         $source = $this->field->craftField->sources;
@@ -58,6 +78,9 @@ class AssetRendered extends FieldDisplayer
         return $viewModes;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['viewModes']);

@@ -2,12 +2,14 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
+use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Display;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
-use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\db\ActiveRecord;
@@ -20,15 +22,23 @@ class DisplayService extends Service
     const TYPE_GROUP = 'group';
     const TYPES = [self::TYPE_FIELD, self::TYPE_GROUP];
 
-    const EVENT_BEFORE_SAVE = 1;
-    const EVENT_AFTER_SAVE = 2;
-    const EVENT_BEFORE_APPLY_DELETE = 3;
-    const EVENT_AFTER_DELETE = 4;
-    const EVENT_BEFORE_DELETE = 5;
+    const EVENT_BEFORE_SAVE = 'before_save';
+    const EVENT_AFTER_SAVE = 'after_save';
+    const EVENT_BEFORE_APPLY_DELETE = 'before_apply_delete';
+    const EVENT_AFTER_DELETE = 'after_delete';
+    const EVENT_BEFORE_DELETE = 'before_delete';
 
+    /**
+     * @var Collection
+     */
     private $_displays;
 
-    public function all()
+    /**
+     * Get all displays
+     * 
+     * @return Collection
+     */
+    public function all(): Collection
     {
         if ($this->_displays === null) {
             $records = DisplayRecord::find()->all();
@@ -40,7 +50,13 @@ class DisplayService extends Service
         return $this->_displays;
     }
 
-    public function create($config): Display
+    /**
+     * Create a display from config
+     * 
+     * @param  array|ActiveRecord $config
+     * @return DisplayInterface
+     */
+    public function create($config): DisplayInterface
     {
         if ($config instanceof ActiveRecord) {
             $config = $config->getAttributes();
@@ -57,19 +73,23 @@ class DisplayService extends Service
         return $display;
     }
 
-    public function getById(int $id): ?Display
+    /**
+     * get a display by id
+     * 
+     * @param  int    $id
+     * @return ?DisplayInterface
+     */
+    public function getById(int $id): ?DisplayInterface
     {
         return $this->all()->firstWhere('id', $id);
     }
 
-    public function getForCraftField(?int $fieldId = null, ViewMode $viewMode): ?Display
-    {
-        return $this->all()
-            ->where('type', self::TYPE_FIELD)
-            ->where('item.craft_field_id', $fieldId)
-            ->firstWhere('viewMode_id', $viewMode->id);
-    }
-
+    /**
+     * get all displays for a craft field id
+     * 
+     * @param  int    $fieldId
+     * @return array
+     */
     public function getAllForCraftField(int $fieldId): array
     {
         return $this->all()
@@ -79,7 +99,14 @@ class DisplayService extends Service
             ->all();
     }
 
-    public function getForFieldType(ViewMode $viewMode, string $type): ?Display
+    /**
+     * get all displays for a view mode and a field type
+     * 
+     * @param  ViewMode $viewMode
+     * @param  string   $type
+     * @return ?DisplayInterface
+     */
+    public function getForFieldType(ViewMode $viewMode, string $type): ?DisplayInterface
     {
         return $this->all()
             ->where('type', self::TYPE_FIELD)
@@ -87,7 +114,13 @@ class DisplayService extends Service
             ->firstWhere('item.type', $type);
     }
 
-    public function getForLayout(Layout $layout): array
+    /**
+     * Getall displays for a layout
+     * 
+     * @param  LayoutInterface $layout
+     * @return array
+     */
+    public function getForLayout(LayoutInterface $layout): array
     {
         if (!$layout->id) {
             return [];
@@ -115,6 +148,12 @@ class DisplayService extends Service
             ->all();
     }
 
+    /**
+     * Saves display data
+     * 
+     * @param  array        $data
+     * @param  LayoutRecord $layout
+     */
     public function saveMany(array $data, LayoutRecord $layout)
     {
         $ids = [];
@@ -143,16 +182,16 @@ class DisplayService extends Service
 
     /**
      * Create all displays for a layout.
-     * Go through all craft fields defined on the section/category and create display and fields for it.
+     * Go through all craft fields defined on the layout and create display and fields for it.
      * 
-     * @param  Layout $layout
+     * @param  LayoutInterface $layout
      */
-    public function createLayoutDisplays(Layout $layout): array
+    public function createLayoutDisplays(LayoutInterface $layout): array
     {
         $displays = [];
         foreach ($layout->viewModes as $viewMode) {
             $order = $this->getMaxOrder($viewMode) ?? 0;
-            //Getting or creating displays for fields that are not craft fields (author, title)
+            //Getting or creating displays for fields that are not craft fields (author, title etc)
             foreach (Themes::$plugin->fields->registeredFields as $fieldType => $fieldClass) {
                 if ($fieldClass::shouldExistOnLayout($layout)) {
                     try {
@@ -192,6 +231,21 @@ class DisplayService extends Service
             }
         }
         return $displays;
+    }
+
+    /**
+     * Get a display for a craft field and a view mode
+     * 
+     * @param  int|null $fieldId
+     * @param  ViewMode $viewMode
+     * @return ?DisplayInterface
+     */
+    protected function getForCraftField(?int $fieldId = null, ViewMode $viewMode): ?DisplayInterface
+    {
+        return $this->all()
+            ->where('type', self::TYPE_FIELD)
+            ->where('item.craft_field_id', $fieldId)
+            ->firstWhere('viewMode_id', $viewMode->id);
     }
 
     /**

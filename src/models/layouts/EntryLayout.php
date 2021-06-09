@@ -13,6 +13,9 @@ class EntryLayout extends Layout
      */
     public $type = LayoutService::ENTRY_HANDLE;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
@@ -33,16 +36,25 @@ class EntryLayout extends Layout
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasDisplays(): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string
     {
         return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getElementMachineName(): string
     {
         return $this->element()->handle;
@@ -56,6 +68,9 @@ class EntryLayout extends Layout
         return \Craft::t('themes', 'Entry : {name}', ['name' => $this->element()->name]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCraftFields(): array
     {
         return $this->element()->getFieldLayout()->getFields();

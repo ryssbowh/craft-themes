@@ -2,12 +2,13 @@
 
 namespace Ryssbowh\CraftThemes\events;
 
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use yii\base\Event;
 
 class DisplayEvent extends Event
 {
     /**
-     * @var Display
+     * @var DisplayInterface
      */
     public $display;
 

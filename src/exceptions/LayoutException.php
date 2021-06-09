@@ -2,23 +2,13 @@
 
 namespace Ryssbowh\CraftThemes\exceptions;
 
-use Ryssbowh\CraftThemes\models\layouts\Layout;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 
 class LayoutException extends \Exception
 {
     public static function noTheme(string $class)
     {
         return new static("Can't get layout's theme, it's not defined.");
-    }
-
-    public static function noType()
-    {
-        return new static("Layout can't be built, no type is defined for it");
-    }
-
-    public static function noElement()
-    {
-        return new static("Layout can't be built, no element is defined for it");
     }
 
     public static function onSave()
@@ -41,7 +31,7 @@ class LayoutException extends \Exception
         return new static("Default layout can't be deleted");
     }
 
-    public static function notLoaded(Layout $layout, string $method)
+    public static function notLoaded(LayoutInterface $layout, string $method)
     {
         return new static("$method can't be called unless the layout (".get_class($layout).") is loaded");
     }

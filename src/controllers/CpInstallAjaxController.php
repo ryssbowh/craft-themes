@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\exceptions\DisplayException;
 
 class CpInstallAjaxController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
     public function beforeAction($action) 
     {
         $this->requireAdmin();
@@ -15,17 +18,20 @@ class CpInstallAjaxController extends Controller
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterAction($action, $result)
     {
         return $this->asJson($result);
     }
 
     /**
-     * Repairs all layouts
+     * (Re)install all layouts
      * 
-     * @return Response
+     * @return array
      */
-    public function actionInstall()
+    public function actionInstall(): array
     {
         $this->layouts->install();
         \Craft::$app->plugins->savePluginSettings(Themes::$plugin, ['installed' => true]);

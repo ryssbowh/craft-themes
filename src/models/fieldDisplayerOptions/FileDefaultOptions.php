@@ -9,8 +9,15 @@ use craft\helpers\Assets;
 
 class FileDefaultOptions extends FieldDisplayerOptions
 {
+    /**
+     * Displayers, indexed by asset kind
+     * @var array
+     */
     public $displayers = [];
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [
@@ -18,6 +25,12 @@ class FileDefaultOptions extends FieldDisplayerOptions
         ];
     }
 
+    /**
+     * Get the displayer for an asset kind
+     * 
+     * @param  string $kind
+     * @return ?FileDisplayerInterface
+     */
     public function getDisplayerForKind(string $kind): ?FileDisplayerInterface
     {
         $displayer = null;
@@ -32,6 +45,13 @@ class FileDefaultOptions extends FieldDisplayerOptions
         return $displayer;
     }
 
+    /**
+     * Get options for an asset kind and a displayer
+     * 
+     * @param  string $kind
+     * @param  string $displayer
+     * @return array
+     */
     public function getOptionsForDisplayer(string $kind, string $displayer): array
     {
         if (isset($this->displayers[$kind]) and $this->displayers[$kind]['displayer'] == $displayer) {
@@ -40,6 +60,9 @@ class FileDefaultOptions extends FieldDisplayerOptions
         return [];
     }
 
+    /**
+     * Validate displayers
+     */
     public function validateDisplayers()
     {
         foreach ($this->displayers as $kind => $elem) {

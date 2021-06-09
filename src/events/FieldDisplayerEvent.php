@@ -34,12 +34,27 @@ use yii\base\Event;
 
 class FieldDisplayerEvent extends Event
 {
+    /**
+     * List of registered displayers
+     * @var array
+     */
     protected $displayers = [];
 
+    /**
+     * List of default displayers
+     * @var array
+     */
     protected $defaults = [];
 
+    /**
+     * Displayer mapping ['fieldClass' => [displayerHandle]]
+     * @var array
+     */
     protected $mapping = [];
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         $this->registerMany([
@@ -72,21 +87,41 @@ class FieldDisplayerEvent extends Event
         ]);
     }
 
+    /**
+     * Default getter
+     * 
+     * @return array
+     */
     public function getDefaults(): array
     {
         return $this->defaults;
     }
 
+    /**
+     * Displayers getter
+     * 
+     * @return array
+     */
     public function getDisplayers(): array
     {
         return $this->displayers;
     }
 
+    /**
+     * Mapping getter
+     * 
+     * @return array
+     */
     public function getMapping(): array
     {
         return $this->mapping;
     }
 
+    /**
+     * Register a displayer class
+     * 
+     * @param string $class
+     */
     public function register(string $class)
     {
         $this->displayers[$class::$handle] = $class;
@@ -101,6 +136,11 @@ class FieldDisplayerEvent extends Event
         }
     }
 
+    /**
+     * Register many displayer classes
+     * 
+     * @param array[string] $displayers
+     */
     public function registerMany(array $displayers)
     {
         foreach ($displayers as $displayer) {

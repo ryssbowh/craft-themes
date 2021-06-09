@@ -6,8 +6,14 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
 class RedactorFullOptions extends FieldDisplayerOptions
 {
+    /**
+     * @var boolean
+     */
     public $stripped = false;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [
