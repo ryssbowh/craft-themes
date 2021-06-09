@@ -152,7 +152,6 @@ export default {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(230, 230, 230, 0.7);
         z-index: 1000;
         .spinner {
             position: absolute;

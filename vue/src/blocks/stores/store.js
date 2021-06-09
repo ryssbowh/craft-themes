@@ -11,7 +11,7 @@ function handleError(err) {
 
 function setWindowUrl(theme, layout) {
     let url = document.location.pathname.split('/');
-    let i = url.findIndex(e => e == 'layouts');
+    let i = url.findIndex(e => e == 'blocks');
     if (i === -1) {
         return;
     }
@@ -233,13 +233,12 @@ const store = createStore({
             let layout;
             for (let id in state.layouts) {
                 layout = state.layouts[id];
-                if (layout.handle == 'default') {
+                if (layout.type == 'default') {
                     commit('setLayout', layout.id);
                     dispatch('fetchBlocks');
                     return;
                 }
             }
-            
         },
         copy({state, commit, dispatch}, id) {
             commit('setLayout', id);

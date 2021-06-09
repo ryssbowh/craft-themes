@@ -3,7 +3,7 @@
         <div class="spinner-wrapper" v-if="isLoading">
           <div class="spinner"></div>
         </div>
-        <h2>{{ t('Displays') }}</h2>
+        <h2 v-if="!isLoading">{{ t('Displays') }}</h2>
         <div class="fullwidth display-table" v-if="displays.length">
             <div class="line head">
                 <div class="handle col"></div>
@@ -29,7 +29,7 @@
                 </draggable>
             </div>
         </div>
-        <p v-if="displays.length == 0">
+        <p v-if="displays.length == 0 && !isLoading">
             {{ t('There are no displays for this layout') }}
         </p>
         <options-modal/>
@@ -125,7 +125,6 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(230, 230, 230, 0.7);
     z-index: 1000;
     .spinner {
         position: absolute;

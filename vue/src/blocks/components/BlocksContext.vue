@@ -47,9 +47,10 @@ export default {
     let _this = this;
     window.addEventListener('popstate', () => {
       const url = document.location.pathname.split('/');
-      let i = url.findIndex(e => e == 'layouts');
+      let i = url.findIndex(e => e == 'blocks');
       if (i !== -1) {
-        _this.checkAndSetTheme(url[i+1], url[i+2]);
+        _this.setTheme(url[i+1]);
+        _this.setLayoutAndFetch(url[i+2]);
       }
     });
   },
@@ -64,13 +65,13 @@ export default {
       }
     },
     checkAndSetLayout: function (index) {
-        if (this.hasChanged) {
-            if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                this.setLayoutAndFetch(index);
-            }
-        } else {
-            this.setLayoutAndFetch(index);
+      if (this.hasChanged) {
+        if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
+          this.setLayoutAndFetch(index);
         }
+      } else {
+        this.setLayoutAndFetch(index);
+      }
     },
     ...mapMutations(['setThemes', 'setAllLayouts', 'setAvailableLayouts', 'setTheme']),
     ...mapActions(['setLayoutById', 'setLayoutAndFetch', 'setThemeAndFetch']),

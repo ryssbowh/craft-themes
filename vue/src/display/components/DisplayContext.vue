@@ -37,8 +37,16 @@ export default {
         window.addEventListener('popstate', () => {
             const url = document.location.pathname.split('/');
             let i = url.findIndex(e => e == 'display');
-            if (i !== -1 && typeof url[i+1] != 'undefined') {
-                this.setLayoutAndFetch(url[i+1]);
+            if (i === -1) {
+                return;
+            }
+            if (typeof url[i+1] != 'undefined' && url[i+1] != this.theme) {
+                this.setTheme(url[i+1]);
+            }
+            if (typeof url[i+2] != 'undefined') {
+                this.setLayoutAndFetch(url[i+2]);
+            } else {
+                this.setLayoutAndFetch(this.layouts[0].id);
             }
         });
     },
