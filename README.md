@@ -19,9 +19,7 @@ What it doesn't allow you to do :
 - Change the backend look and feel
 - Override plugins templates (unless specific case, see developers readme)
 
-This theme engine comes with default blocks and field displayers, that might not fit your needs. To learn how to define new blocks, field and asset displayers, see the [developers readme](https://github.com/ryssbowh/example-theme/blob/master/DEVELOPERS.md)
-
-## Layouts and view modes
+## Primary concepts
 
 The building of a page (blocks and displays) is based on the notion of layouts, view modes and displays.
 
@@ -42,7 +40,9 @@ The building of a page (blocks and displays) is based on the notion of layouts, 
 
 **View modes** define a set of displayers and options for a layout. Every Layout that can have view modes comes with a default one.
 
-For a layout to be pulled on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the theme engine will be skipped entirely.
+For a layout to be rendered on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the theme engine will be skipped entirely.
+
+This theme engine comes with default blocks and field displayers, that might not fit your needs. To learn how to define new blocks, field and file displayers, see the [developers readme](https://github.com/ryssbowh/example-theme/blob/master/DEVELOPERS.md)
 
 ## Themes list
 
@@ -120,8 +120,8 @@ Craft 3.5 or over
 
 ## Previous documentations
 
-- 1.x documentation [there](https://github.com/ryssbowh/example-theme/blob/master/README1.md)
-- 2.x documentation [there](https://github.com/ryssbowh/example-theme/blob/master/README2.md)
+- 1.x documentation [there](https://github.com/ryssbowh/craft-themes/blob/v1/README.md)
+- 2.x documentation [there](https://github.com/ryssbowh/craft-themes/blob/v2/README.md)
 
 ## Roadmap
 
