@@ -85,7 +85,11 @@ Choose the theme (if you have several) on the top left hand side, the layout on 
 
 Displays will be saved in project config.
 
+Some display will contain items that are not fields, they are automatically added by the system, example : "Author" on channels.
+
 ## Rules settings
+
+![Rules](images/rules.png)
 
 Define rules in the settings to load the theme you want according to 3 parameters :
 - the current site
@@ -108,6 +112,7 @@ A partial theme will not be available to select in the backend, but it can be in
 - Activate plugin
 - Go to the settings and install the themes data
 - Add a rule in the settings to load a theme or set a default theme.
+- Set your templates to `themed_page` for section/categories/routes you want to use the theme engine for
 
 ## Requirements
 
@@ -120,5 +125,7 @@ Craft 3.5 or over
 
 ## Roadmap
 
+- tests
+- block caching
 - bundleAssets as regular expressions paths  
 - preprocess functions

@@ -66,7 +66,7 @@ class VolumeLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'Asset : {name}', ['name' => $this->element()->name]);
+        return \Craft::t('themes', 'Volume : {name}', ['name' => $this->element()->name]);
     }
 
     /**

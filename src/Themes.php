@@ -54,7 +54,6 @@ class Themes extends \craft\base\Plugin
 
         self::$plugin = $this;
 
-        \Yii::setAlias('@themesPath', '@root/themes');
         \Yii::setAlias('@themesWebPath', '@webroot/themes');
         \Yii::setAlias('@themesWeb', '@web/themes');
 

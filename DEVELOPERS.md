@@ -55,6 +55,14 @@ Define a partial theme with the method `isPartial(): bool` of the plugin class.
 
 ## Twig
 
+`craft.themes.layouts` : Layouts service 
+`craft.themes.viewModes` : View mode service 
+`craft.themes.registry` : Theme registry 
+`craft.themes.view` : Theme view service 
+`craft.themes.current` : Current theme
+
+**Deprecated**
+
 You have access to two new variables in your templates :
 
 `themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance  
@@ -82,8 +90,8 @@ By default, parent themes bundles will also be registered. This can be disabled 
 
 4 new aliases are set :
 
-`@themesPath` : Base directory for themes  
 `@themePath` : Base directory of the current theme. This is not set if no theme is set.
+`@@themeWeb` : Base web url for the current theme. This is not set if no theme is set.
 
 And two that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
