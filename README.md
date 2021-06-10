@@ -1,75 +1,89 @@
 # Craft themes
 
-### This is the 2.0 documentation, find the 1.0 documentation [there](https://github.com/ryssbowh/example-theme/blob/master/README1.md)
+### This is the 3.0 documentation
+### Find the developers readme [there](https://github.com/ryssbowh/example-theme/blob/master/DEVELOPERS.md)
 
-Tired of re-making your front-ends all over again when a lot of it could be reused ?
-
+Tired of re-making your front-ends all over again when a lot of it could be reused ? 
 A theme is just another Craft plugin, it can inherit another theme and has the same functions as any other plugin, settings, migrations etc. 
 
-A rule system allows you to set which theme will be used for which site, language or url path.
+This Theme engine allows you to :
+- Install themes from the store or any git repository (composer, github etc)
+- Define your own themes that can extend each other
+- Choose which theme will be used for which site, language or url path. 
+- Assign blocks to your theme regions
+- Define your own blocks
+- Choose how your fields are displayed on the front end
+- Define your own displayers
 
-## 2.0 breaking changes
+What it doesn't allow you to do :
+- Change the backend look and feel
+- Override plugins templates (unless specific case, see developers readme)
 
-Themes are now regular plugins, they will not be installed in the `themes` folder anymore.
+This theme engine comes with default blocks and field displayers, that might not fit your needs. To learn how to define new blocks, field and asset displayers, see the [developers readme](https://github.com/ryssbowh/example-theme/blob/master/DEVELOPERS.md)
 
-- composer.json type must be `craft-plugin`
-- Main class must inherit `Ryssbowh\CraftThemes\ThemePlugin`
-- Main class method `getName()` has been removed
-- Main class method `getHandle()` has been removed
-- Main class method `getPath()` has been replaced by `getBasePath()`
-- Main class method `getTemplatePath()` replaced by `getTemplatesFolder()`
-- Main class parameter `extends` replaced by method `getExtends()`
+## Layouts and view modes
 
-## Getting started
+The building of a page (blocks and displays) is based on the notion of layouts, view modes and displays.
 
-Create a new plugin, it's main class must extend `Ryssbowh\CraftThemes\ThemePlugin`.
+**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields, there are 7 types of layouts :
 
-You could for example create a `themes` folder at the root, and add it as a composer repository by modifying the root `composer.json` :
+| Layout type | Associated with | Can have blocks | Can have displays and view modes |
+|-------------|-----------------|-----------------|----------------------------------|
+| Default     |                 | Yes             | No                               |
+| Category    | Category group  | Yes             | Yes                              |
+| Entry       | Entry type      | Yes             | Yes                              |
+| Global      | Global set      | No              | Yes                              |
+| Route       | Route           | Yes             | No                               |
+| Tag         | Tag             | No              | Yes                              |
+| User        | User            | No              | Yes                              |
+| Volume      | Volume          | No              | Yes                              |
 
-```
-"repositories": [
-    {
-        "type": "path",
-        "url": "themes/*",
-        "options": {
-            "symlink": true
-        }
-    }
-]
-```
+**Displays** define how a field is rendered on the front end, each field will have a displayer with some options. This plugin comes with default displayers for each type of craft field.
 
-You can then require your theme as any other package.  
-When it's installed, enable it in the backend.
+**View modes** define a set of displayers and options for a layout. Every Layout that can have view modes comes with a default one.
 
-## Root templates folder
+For a layout to be pulled on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the theme engine will be skipped entirely.
 
-It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
+## Themes list
 
-A theme **cannot** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
+![Themes](images/themes.png)
 
-## Inheritance
+The Menu item Theming -> Themes displays the list of themes installed on the system and some shortcut links.
 
-Themes can extend each other with the method `getExtends(): bool` of their main class.  
-Parent themes will be installed automatically when installing a theme in the backend.
+## Blocks
 
-### Templates 
+![Blocks](images/blocks.png)
 
-Templates are inherited, that's the whole point isn't it ?
+The Menu item Theming -> Blocks allows you to drag and drop blocks into the different regions of your Themes. 
 
-So if you call a template that isn't defined in your theme but exist in a parent theme, the parent template will be loaded.
+Define your blocks for the default layout, from which blocks will be pulled for every layout that doesn't have blocks defined. If you need a different set of blocks for other layouts, you can copy the current layout into another type of layout.
 
-### Assets (images, fonts etc)
+This plugins comes with the following type of blocks :
 
-Assets can be inherited through the twig function `theme_url`.  
-If you have an `image.jpg` defined in your theme in the `images` folder, you can publish it with `theme_url('images/image.jpg')`  
+- Category : choose a category and a view mode to render
+- Content : Main content of the page, should be present on each layout
+- Current user : Display information about the current user
+- Entry : Choose a entry and a view mode to render
+- Global : Choose a global set and a view mode to render
+- Messages : Renders the session messages stored in 'notice' and 'error' session flash data
+- Site name : Displays the site name
+- Template : Renders a custom template
+- Twig : Renders some custom twig code
+- User : Choose a user and a view mode to render
 
-If you require an asset and the file is not present in your theme, it will look in the parent theme (if defined).
+### Project config
 
-This inheritance can be disabled with the property `$inheritsAssets` of your theme class.
+Blocks will be included in the project config, but for the blocks that reference an element the information will not be saved in the project config (because elements are different from an environment to another), those are : Entry, Category and User. Those blocks will need to be resaved in the new environment they are deployed to, to reference the correct element.
 
-## Partial themes
+## Displays
 
-A partial theme will not be available to select in the backend, but it can be inherited from. Define a partial theme with the method `isPartial(): bool` of the main class.
+![Displays](images/displays.png)
+
+The menu item Theming -> display allows you to define new view modes for your layouts and select the displayers for your fields.
+
+Choose the theme (if you have several) on the top left hand side, the layout on the left menu, and the view mode tab.
+
+Displays will be saved in project config.
 
 ## Rules settings
 
@@ -82,51 +96,27 @@ The first rule that match will define which theme will be used. Organise your ru
 
 If no rules match, the default theme will be used.
 
-## Twig
+If no default is set, the theme engine will just not be used and your templates will be loaded from the root templates folder.
 
-You have access to two new variables in your templates :
+## Partial themes
 
-`themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance  
-`theme` : Current theme instance. This is not set if no theme is set.  
-
-## Asset Bundles
-
-Asset bundles can be defined in your theme class, in the `$assetBundles` property, it's an array indexed by the url path :
-```
-[
-	'*' => [
-		CommonAssets::class
-	],
-	'blog' => [
-		BlogAsset::class
-	]
-]
-```
-
-Bundle assets will be registered automatically, the '\*' will be registered on every page.
-
-By default, parent themes bundles will also be registered. This can be disabled with the property `$inheritsAssetBundles` of your theme class.
-
-## Aliases
-
-4 new aliases are set :
-
-`@themesPath` : Base directory for themes  
-`@themePath` : Base directory of the current theme. This is not set if no theme is set.
-
-And two that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
-
-`@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
-`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.  
+A partial theme will not be available to select in the backend, but it can be inherited from. You will see them in the themes list, but won't be able to define blocks/displays for them.
 
 ## Installation
 
-run `composer require ryssbowh/craft-themes`  
-Add a rule in the settings to load a theme or set a default theme.  
+- run `composer require ryssbowh/craft-themes:^3.0`
+- Activate plugin
+- Go to the settings and install the themes data
+- Add a rule in the settings to load a theme or set a default theme.
 
 ## Requirements
 
 Craft 3.5 or over
+
+## Previous documentations
+
+- 1.x documentation [there](https://github.com/ryssbowh/example-theme/blob/master/README1.md)
+- 2.x documentation [there](https://github.com/ryssbowh/example-theme/blob/master/README2.md)
 
 ## Roadmap
 

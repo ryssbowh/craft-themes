@@ -1,7 +1,8 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes;
+namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
@@ -85,6 +86,9 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function contentBlockRegion(): ?string
     {
         return null;
