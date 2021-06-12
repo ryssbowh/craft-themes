@@ -1,6 +1,6 @@
-# Craft themes
+# Craft themes 2.x
 
-### This is the 2.0 documentation, find the 1.0 documentation [there](https://github.com/ryssbowh/example-theme/blob/master/README1.md)
+## This version is deprecated, use 3.0 instead
 
 Tired of re-making your front-ends all over again when a lot of it could be reused ?
 

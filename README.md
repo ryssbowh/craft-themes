@@ -1,6 +1,6 @@
 # Craft themes
 
-### This is the 3.0 documentation
+### This is the 3.x documentation
 ### Find the developers readme [there](DEVELOPERS.md)
 
 Tired of re-making your front-ends all over again when a lot of it could be reused ? 
@@ -21,7 +21,7 @@ What it doesn't allow you to do :
 
 ## Basic notions
 
-The building of a page is based on the notion of layouts, blocks, view modes and displays.
+The building of a page is based on the notion of layouts, regions, blocks, view modes and displays.
 
 **Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields, there are 7 types of layouts :
 
@@ -36,7 +36,9 @@ The building of a page is based on the notion of layouts, blocks, view modes and
 | User        | User            | No              | Yes                              |
 | Volume      | Volume          | No              | Yes                              |
 
-**Blocks** are defined on the layouts that allow it, they are assigned to a region of the theme.
+**Regions** they are defined by the theme itself, blocks can be assigned to them.
+
+**Blocks** are defined on the layouts that allow it, they can be assigned to a region of the theme.
 
 **Displays** define how a field is rendered on the front end, each field will have a displayer with some options. This plugin comes with default displayers for each type of craft field.
 
@@ -122,8 +124,8 @@ Craft 3.5 or over
 
 ## Previous documentations
 
-- 1.x documentation [there](https://github.com/ryssbowh/craft-themes/blob/v1/README.md)
-- 2.x documentation [there](https://github.com/ryssbowh/craft-themes/blob/v2/README.md)
+- 1.x documentation [there](README1.md)
+- 2.x documentation [there](README2.md)
 
 ## Roadmap
 
