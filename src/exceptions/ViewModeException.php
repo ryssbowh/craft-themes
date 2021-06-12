@@ -8,4 +8,9 @@ class ViewModeException extends \Exception
     {
         return new static("View mode with id $id couldn't be found");
     }
+
+    public static function noUid(string $uid)
+    {
+        return new static("View mode with uid $uid couldn't be found");
+    }
 }

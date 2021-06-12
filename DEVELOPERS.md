@@ -337,6 +337,11 @@ It is recommended to not use the root `templates` folder when using themes, if s
 
 A theme **can't** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
 
+## Eager loading
+
+By default, when a layout is rendered it will eager load every field it contains, this can be disabled in the settings.  
+All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
+
 ## Twig
 
 `craft.themes.layouts` : Layouts service  
@@ -360,3 +365,5 @@ And three that are not used by the system, but could be useful if you're using a
 ## Reinstall data
 
 If something looks off in the displays, you can always reinstall the themes data in the plugin settings. This will create missing displayers for all themes and elements (entry types, category groups etc), and delete the orphans.
+
+## Caching

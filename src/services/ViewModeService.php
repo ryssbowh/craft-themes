@@ -68,6 +68,21 @@ class ViewModeService extends Service
     }
 
     /**
+     * Get view mode by uid
+     * 
+     * @param  int    $id
+     * @return ViewMode
+     * @throws ViewModeException
+     */
+    public function getByUid(string $uid): ViewMode
+    {
+        if ($viewMode = $this->all()->firstWhere('uid', $uid)) {
+            return $viewMode;
+        }
+        throw ViewModeException::noUid($uid);
+    }
+
+    /**
      * Get all view modes for a layout
      * 
      * @param  LayoutInterface $layout

@@ -77,7 +77,7 @@ class FileDisplayerEvent extends Event
             $kinds = array_keys(Assets::getFileKinds());
         }
         foreach ($kinds as $kind) {
-            if (!in_array($class::$handle, $this->mapping[$kind])) {
+            if (!in_array($class::$handle, $this->mapping[$kind] ?? [])) {
                 $this->mapping[$kind][] = $class::$handle;
             }
         }
