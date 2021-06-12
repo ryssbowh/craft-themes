@@ -3,8 +3,8 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockCurrentUserOptions;
-use craft\base\Model;
 
 class CurrentUserBlock extends Block
 {
@@ -26,7 +26,7 @@ class CurrentUserBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): BlockOptions
     {
         return new BlockCurrentUserOptions;
     }

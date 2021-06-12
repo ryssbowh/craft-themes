@@ -4,8 +4,18 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 interface BlockProviderInterface 
 {
+    /**
+     * Handle getter
+     * 
+     * @return string
+     */
     public function getHandle(): string;
 
+    /**
+     * Name getter 
+     * 
+     * @return string
+     */
     public function getName(): string;
 
     /**

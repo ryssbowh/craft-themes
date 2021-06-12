@@ -76,7 +76,12 @@ class Layout extends Model implements LayoutInterface
     /**
      * @var boolean
      */
-    protected $_loaded = false;
+    protected $_blocksLoaded = false;
+
+    /**
+     * @var boolean
+     */
+    protected $_regionsLoaded = false;
 
     /**
      * Element associated with this layout (entry, user, category, route etc)
@@ -241,9 +246,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function addBlock(BlockInterface $block): LayoutInterface
     {
-        if (!$this->_loaded) {
-            $this->loadBlocks();
-        }
+        $this->loadBlocks();
         $this->_blocks[] = $block;
         $this->getRegion($block->region)->addBlock($block);
         return $this;
@@ -270,10 +273,10 @@ class Layout extends Model implements LayoutInterface
      */
     public function loadBlocks(bool $force = false): LayoutInterface
     {
-        if ($this->_loaded and !$force) {
+        if ($this->_blocksLoaded and !$force) {
             return $this;
         }
-        $this->regions = $this->getTheme()->getRegions();
+        $this->loadRegions();
         if (!$this->hasBlocks) {
             $default = Themes::$plugin->layouts->getDefault($this->theme);
             $this->blocks = Themes::$plugin->blocks->getForLayout($default);
@@ -281,28 +284,37 @@ class Layout extends Model implements LayoutInterface
             $this->blocks = Themes::$plugin->blocks->getForLayout($this);
         }
         foreach ($this->blocks as $block) {
-            $this->getRegion($block->region, false)->addBlock($block);
+            $this->getRegion($block->region)->addBlock($block);
         }
-        $this->_loaded = true;
+        $this->_blocksLoaded = true;
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function getRegion(string $handle, bool $checkLoaded = true): Region
+    public function loadRegions(): LayoutInterface
     {
-        if ($checkLoaded and !$this->_loaded) {
-            throw LayoutException::notLoaded($this, __METHOD__);
+        if ($this->_regionsLoaded) {
+            return $this;
         }
+        $this->regions = $this->getTheme()->getRegions();
+        $this->_regionsLoaded = true;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRegion(string $handle): Region
+    {
+        $this->loadRegions();
         foreach ($this->regions as $region) {
             if ($region->handle == $handle) {
                 return $region;
             }
         }
-        if (!$this->_loaded) {
-            throw LayoutException::noRegion($handle);
-        }
+        throw LayoutException::noRegion($handle);
     }
 
     /**
@@ -310,9 +322,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function findBlock(string $machineName): ?BlockInterface
     {
-        if (!$this->_loaded) {
-            throw LayoutException::notLoaded($this, __METHOD__);
-        }
+        $this->loadBlocks();
         foreach ($this->blocks as $block) {
             if ($block->getMachineName() == $machineName) {
                 return $block;

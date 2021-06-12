@@ -1,7 +1,7 @@
 # Craft themes
 
 ### This is the 3.0 documentation
-### Find the developers readme [there](https://github.com/ryssbowh/example-theme/blob/master/DEVELOPERS.md)
+### Find the developers readme [there](DEVELOPERS.md)
 
 Tired of re-making your front-ends all over again when a lot of it could be reused ? 
 A theme is just another Craft plugin, it can inherit another theme and has the same functions as any other plugin, settings, migrations etc. 
@@ -19,9 +19,9 @@ What it doesn't allow you to do :
 - Change the backend look and feel
 - Override plugins templates (unless specific case, see developers readme)
 
-## Primary concepts
+## Basic notions
 
-The building of a page (blocks and displays) is based on the notion of layouts, view modes and displays.
+The building of a page is based on the notion of layouts, blocks, view modes and displays.
 
 **Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields, there are 7 types of layouts :
 
@@ -36,13 +36,15 @@ The building of a page (blocks and displays) is based on the notion of layouts, 
 | User        | User            | No              | Yes                              |
 | Volume      | Volume          | No              | Yes                              |
 
+**Blocks** are defined on the layouts that allow it, they are assigned to a region of the theme.
+
 **Displays** define how a field is rendered on the front end, each field will have a displayer with some options. This plugin comes with default displayers for each type of craft field.
 
-**View modes** define a set of displayers and options for a layout. Every Layout that can have view modes comes with a default one.
+**View modes** define a set of displayers and options for a layout and a view mode. Every Layout that can have view modes comes with a default one. This allows you to render an element differently in different parts of the page.
 
 For a layout to be rendered on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the theme engine will be skipped entirely.
 
-This theme engine comes with default blocks and field displayers, that might not fit your needs. To learn how to define new blocks, field and file displayers, see the [developers readme](https://github.com/ryssbowh/example-theme/blob/master/DEVELOPERS.md)
+This theme engine comes with default blocks and field displayers, that might not fit your needs. To learn how to define new blocks, field and file displayers, see the [developers readme](DEVELOPERS.md)
 
 ## Themes list
 

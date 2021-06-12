@@ -3,8 +3,8 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockTwigOptions;
-use craft\base\Model;
 
 class TwigBlock extends Block
 {
@@ -31,7 +31,7 @@ class TwigBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): BlockOptions
     {
         return new BlockTwigOptions;
     }

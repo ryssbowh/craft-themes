@@ -1,10 +1,37 @@
-# Craft themes
+# Developers
 
 ## 3.0 breaking changes
 
 - Main class must inherit `Ryssbowh\CraftThemes\models\ThemePlugin`
 
-## Creating a new Theme
+### Deprecated
+
+The following twig variables are deprecated and will be removed in a future version :
+
+`themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance 
+`theme` : Current theme instance.
+
+## Themes
+
+### Inheritance
+
+Themes can extend each other with the method `getExtends(): bool` of their main class.  
+Parent themes will be installed automatically when installing a theme in the backend.
+
+### Assets (images, fonts etc)
+
+Assets can be inherited through the twig function `theme_url`.  
+If you have an `image.jpg` defined in your theme in the `images` folder, you can publish it with `theme_url('images/image.jpg')`  
+
+If you require an asset and the file is not present in your theme, it will look in the parent theme (if defined).
+
+This inheritance can be disabled with the property `$inheritsAssets` of your theme class.
+
+### Partial themes
+
+Define a partial theme with the method `isPartial(): bool` of the plugin class.
+
+### Creating a new Theme
 
 Create a new plugin, it's main class must extend `Ryssbowh\CraftThemes\models\ThemePlugin`.
 
@@ -25,33 +52,273 @@ You could for example create a `themes` folder at the root, and add it as a comp
 You can then require your theme as any other package.  
 When it's installed, enable it in the backend.
 
-## Root templates folder
+### Asset Bundles
 
-It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
+Asset bundles can be defined in your theme class, in the `$assetBundles` property, it's an array indexed by the url path :
+```
+[
+    '*' => [
+        CommonAssets::class
+    ],
+    'blog' => [
+        BlogAsset::class
+    ]
+]
+```
 
-A theme **cannot** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
+Bundle assets will be registered automatically, the '\*' array will be registered on every request.
 
-## Inheritance
+By default, parent themes bundles will also be registered. This can be disabled with the property `$inheritsAssetBundles` of your theme class.
 
-Themes can extend each other with the method `getExtends(): bool` of their main class.  
-Parent themes will be installed automatically when installing a theme in the backend.
+## Blocks
 
-### Templates 
+Blocks are provided by a block provider, each provider can define several blocks. This plugin comes with a default System provider.
+
+### Registering a new provider
+
+Listen to the `REGISTER_BLOCK_PROVIDERS` event of the `BlockProvidersService` class :
+
+```
+Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProvidersEvent $event) {
+    $event->add(new SystemBlockProvider);
+});
+```
+
+Your block provider class must extends the `BlockProvider` class. Blocks defined by the providers are define in their `$_definedBlocks` attribute.
+
+An exception will be thrown if you register a provider which handle is already registered.
+
+### Defining new blocks
+
+New block classes must extends the `Block` class. You can override the `getOptionsModel` method to define more options, this method must return a class that extends the `BlockOptions` class.
+
+To display your options in the backend you need to hook in the Vue backend system, by defining a new Vue component on the `window.themesBlockOptionComponents` variable. 
+This variable will be defined after the `BlockOptionsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+Exxample : 
+```
+window.themesBlockOptionComponents['provider-block'] = {
+    props: {
+        block: Object
+    },
+    methods: {
+        errors: function (field) {
+            if (!this.block.errors.options ?? null) {
+                return [];
+            }
+            for (let i in this.block.errors.options) {
+                if (this.block.errors.options[i][field] ?? null) {
+                    return this.block.errors.options[i][field];
+                }
+            }
+            return [];
+        },
+    },
+    template: `<div class="field">
+        <div class="heading">
+            <label>{{ t('My label') }}</label>
+        </div>
+        <div class="input ltr">
+            <textarea class="text fullwidth" rows="10" :value="block.options.myOption" @input="$emit('updateOptions', {myOption: $event.target.value})">
+            </textarea>
+        </div>
+    </div>`
+};
+```
+The key is built like so : {provider handle}-{block handle}.
+
+You can pass data from your block to Vue by overriding the `fields` method of your block class :
+```
+class MyBlock extends Block
+{
+    public function getMyVariable()
+    {
+        return 'my value';
+    }
+
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['myVariable']);
+    }
+}
+```
+Validating your options and saving them will be handled automatically, as long as you have defined rules in your block options class.
+
+Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockOptions/main.js)
+
+## Field displayers
+
+A field displayer defines how a field is rendered on the front end, each field displayer will handle one type of field.
+
+### Define a new displayer
+
+Register your displayer by listening to the REGISTER_DISPLAYERS event of the FieldDisplayerService class :
+
+```
+Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYERS, function (FieldDisplayerEvent $event) {
+    $event->register(MyFieldDisplayer::class);
+});
+```
+
+Your field displayer class must extend the `FieldDisplayer` class and define the field it can handle in its `getFieldTarget` method. 
+Registering a field displayer with a handle already existing will **replace** the current displayer.
+
+Same as with blocks, to hook in the backend Vue system, add a new component to the `window.fieldDisplayers` variable. 
+This variable will be defined after the `FieldDisplayerAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+
+```
+window.fieldDisplayers['displayer_handle'] = {
+    props: {
+        displayer: Object,
+        options: Object,
+        errors: Object
+    },
+    methods: {
+        errorList: function (field) {
+            return this.errors[field] ?? [];
+        }
+    },
+    created: function () {
+        this.myOption = this.options.myOption;
+    },
+    template: `
+    <div>
+        <div class="field">
+            <div class="heading">
+                <label>{{ t('My option') }}</label>
+            </div>
+            <div class="input ltr">
+                <input type="number" class="fullwidth text" name="myOption" v-model="myOption">
+            </div>
+            <ul class="errors" v-if="errorList('myOption')">
+                <li v-for="error in errorList('myOption')">{{ error }}</li>
+            </ul>
+        </div>
+    </div>`
+};
+```
+
+Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
+
+Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fieldDisplayers/main.js)
+
+## File displayers
+
+A file displayer defines how an asset file is rendered on the front end. Each displayer can handle one or several asset kinds.
+
+### Define a new displayer
+
+Register your displayer by listening to the REGISTER_DISPLAYERS event of the FileDisplayerService class :
+
+```
+Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS, function (FileDisplayerEvent $event) {
+    $event->register(MyFileDisplayer::class);
+});
+```
+
+Your file displayer class must extend the `FileDisplayer` class and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
+Registering a file displayer with a handle already existing will **replace** the current displayer.
+
+Same as with blocks, to hook in the backend Vue system, add a new component to the `window.fileDisplayers` variable. 
+This variable will be defined after the `FileDisplayerAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+
+```
+window.fileDisplayers['displayer_handle'] = {
+    props: {
+        displayer: Object,
+        kind: String,
+        errors: Object
+    },
+    data: function () {
+        return {
+            myOption: 500
+        };
+    },
+    created: function () {
+        this.myOption = this.displayer.options.myOption;
+    },
+    methods: {
+        errorList: function (field) {
+            return this.errors[field] ?? [];
+        }
+    },
+    template: `
+    <div>
+        <div class="field">
+            <div class="heading">
+                <label>{{ t('My Option') }}</label>
+            </div>
+            <div class="input ltr">
+                <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][myOption]'" v-model="myOption">
+            </div>
+            <ul class="errors" v-if="errorList('myOption')">
+                <li v-for="error in errorList('myOption')">{{ error }}</li>
+            </ul>
+        </div>
+    </div>
+    `
+}
+```
+
+Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
+
+Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fileDisplayers/main.js)
+
+## Templating
 
 Templates are inherited, so if you call a template that isn't defined in your theme but exist in a parent theme, the parent template will be loaded.
 
-### Assets (images, fonts etc)
+Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
-Assets can be inherited through the twig function `theme_url`.  
-If you have an `image.jpg` defined in your theme in the `images` folder, you can publish it with `theme_url('images/image.jpg')`  
+Let's say you have an `entry` layout for a entry type `blog`, a region `header`, a view mode `small`, a block `latestBlogs`, a field displayer `redactor` and an file displayer `image`. The precedence of templates would look like this, by order of importance :
 
-If you require an asset and the file is not present in your theme, it will look in the parent theme (if defined).
+Layouts :
 
-This inheritance can be disabled with the property `$inheritsAssets` of your theme class.
+```
+layouts/entry/blog/small.twig,
+layouts/entry/blog.twig
+layouts/entry.twig
+layouts/layout.twig
+```
+Regions :
+```
+regions/entry/blog/header.twig,
+regions/entry/blog/region.twig',
+regions/entry/header.twig,
+regions/entry/region.twig',
+regions/header.twig
+regions/region.twig
+```
+Blocks :
+```
+blocks/entry/blog/header/latestBlogs.twig
+blocks/entry/blog/latestBlogs.twig
+blocks/entry/latestBlogs.twig
+blocks/latestBlogs.twig
+```
+Field displayers :
+```
+fields/entry/blog/small/redactor.twig
+fields/entry/blog/redactor.twig
+fields/entry/redactor.twig
+fields/redactor.twig
+```
+File displayers :
+```
+assets/entry/blog/small/image.twig
+assets/entry/blog/image.twig
+assets/entry/image.twig
+assets/image.twig
+```
 
-## Partial themes
+### Dev mode
 
-Define a partial theme with the method `isPartial(): bool` of the plugin class.
+The available templates and variables can be printed as html comments by enabling the option in the themes plugin settings.
+
+### Root templates folder
+
+It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
+
+A theme **can't** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
 
 ## Twig
 
@@ -61,39 +328,18 @@ Define a partial theme with the method `isPartial(): bool` of the plugin class.
 `craft.themes.view` : Theme view service 
 `craft.themes.current` : Current theme
 
-**Deprecated**
-
-You have access to two new variables in your templates :
-
-`themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance  
-`theme` : Current theme instance. This is not set if no theme is set.  
-
-## Asset Bundles
-
-Asset bundles can be defined in your theme class, in the `$assetBundles` property, it's an array indexed by the url path :
-```
-[
-	'*' => [
-		CommonAssets::class
-	],
-	'blog' => [
-		BlogAsset::class
-	]
-]
-```
-
-Bundle assets will be registered automatically, the '\*' will be registered on every page.
-
-By default, parent themes bundles will also be registered. This can be disabled with the property `$inheritsAssetBundles` of your theme class.
-
 ## Aliases
 
 4 new aliases are set :
 
 `@themePath` : Base directory of the current theme. This is not set if no theme is set.
-`@@themeWeb` : Base web url for the current theme. This is not set if no theme is set.
 
-And two that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
+And three that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
 `@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
-`@themeWebPath` : Web directory for current theme. This is not set if no theme is set. 
+`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.
+`@themeWeb` : Base web url for the current theme. This is not set if no theme is set.
+
+## Reinstall data
+
+If something looks off in the displays, you can always reinstall the themes data in the plugin settings. This will create missing displayers for all themes and elements (entry types, category groups etc), and delete the orphans.

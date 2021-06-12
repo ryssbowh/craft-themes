@@ -9,6 +9,10 @@
         </head>
     {% endblock %}
     {% block body %}
-        {{ layout.render(element)|raw }}
+        <body>
+            {% for region in layout.regions %}
+                {{ region.render(element)|raw }}
+            {% endfor %}
+        </body>
     {% endblock %}
 </html>

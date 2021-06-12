@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use craft\base\Model;
 
 interface BlockInterface extends RenderableInterface
@@ -17,9 +18,9 @@ interface BlockInterface extends RenderableInterface
     /**
      * Get options model
      * 
-     * @return Model
+     * @return BlockOptions
      */
-    public function getOptions(): Model;
+    public function getOptions(): BlockOptions;
 
     /**
      * Options setter
@@ -38,9 +39,9 @@ interface BlockInterface extends RenderableInterface
     /**
      * Model that defines this block's options 
      * 
-     * @return Model
+     * @return BlockOptions
      */
-    public function getOptionsModel(): Model;
+    public function getOptionsModel(): BlockOptions;
 
     /**
      * Get layout object

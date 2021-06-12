@@ -80,6 +80,11 @@ abstract class Block extends Model implements BlockInterface
     protected $_options = [];
 
     /**
+     * @var array
+     */
+    protected $_optionsModel;
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -178,9 +183,12 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function getOptions(): Model
+    public function getOptions(): BlockOptions
     {
-        return \Yii::configure($this->getOptionsModel(), $this->_options);
+        if ($this->_optionsModel === null) {
+            $this->_optionsModel = \Yii::configure($this->getOptionsModel(), $this->_options);
+        }
+        return $this->_optionsModel;
     }
 
     /**
@@ -191,13 +199,13 @@ abstract class Block extends Model implements BlockInterface
         if (is_string($options)) {
             $options = json_decode($options, true);
         }
-        $this->_options = $options ?? [];
+        $this->getOptions()->setAttributes($options);
     }
 
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): BlockOptions
     {
         return new BlockOptions;
     }

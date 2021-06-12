@@ -3,8 +3,8 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockGlobalOptions;
-use craft\base\Model;
 
 class GlobalBlock extends Block
 {
@@ -31,7 +31,7 @@ class GlobalBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): BlockOptions
     {
         return new BlockGlobalOptions;
     }

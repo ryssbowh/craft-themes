@@ -3,8 +3,8 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockEntryOptions;
-use craft\base\Model;
 
 class EntryBlock extends Block
 {
@@ -31,7 +31,7 @@ class EntryBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): BlockOptions
     {
         return new BlockEntryOptions;
     }

@@ -116,6 +116,13 @@ interface LayoutInterface
     public function loadBlocks(bool $force = false): LayoutInterface;
 
     /**
+     * Load regions from the theme
+     * 
+     * @return LayoutInterface
+     */
+    public function loadRegions(): LayoutInterface;
+
+    /**
      * Get a region by handle.
      *
      * 
@@ -123,7 +130,7 @@ interface LayoutInterface
      * @param  bool         $checkLoaded
      * @return Region
      */
-    public function getRegion(string $handle, bool $checkLoaded = true): Region;
+    public function getRegion(string $handle): Region;
 
     /**
      * Find a block by machine name

@@ -1,5 +1,5 @@
-<body class="{{ classes|raw }}" {{ attributes|raw }}>
-    {% for region in regions %}
-        {{ region.render(element)|raw }}
+<div class="{{ classes|raw }}" {{ attributes|raw }}>
+    {% for display in layout.visibleDisplays %}
+        {{ display.render(element)|raw }}
     {% endfor %}
-</body>
+</div>
