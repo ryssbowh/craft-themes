@@ -8,7 +8,7 @@
 
 The following twig variables are deprecated and will be removed in a future version :
 
-`themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance 
+`themesRegistry` : `Ryssbowh\CraftThemes\services\ThemesRegistry` instance  
 `theme` : Current theme instance.
 
 ## Themes
@@ -84,7 +84,7 @@ Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PR
 });
 ```
 
-Your block provider class must extends the `BlockProvider` class. Blocks defined by the providers are define in their `$_definedBlocks` attribute.
+Your block provider class must extends the `BlockProvider` class. Blocks defined by the providers are defined in their `$_definedBlocks` attribute.
 
 An exception will be thrown if you register a provider which handle is already registered.
 
@@ -92,9 +92,9 @@ An exception will be thrown if you register a provider which handle is already r
 
 New block classes must extends the `Block` class. You can override the `getOptionsModel` method to define more options, this method must return a class that extends the `BlockOptions` class.
 
-To display your options in the backend you need to hook in the Vue backend system, by defining a new Vue component on the `window.themesBlockOptionComponents` variable. 
+To display your options in the backend you need to hook in the Vue backend system, by defining a new Vue component on the `window.themesBlockOptionComponents` variable.  
 This variable will be defined after the `BlockOptionsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
-Exxample : 
+Example : 
 ```
 window.themesBlockOptionComponents['provider-block'] = {
     props: {
@@ -151,7 +151,7 @@ A field displayer defines how a field is rendered on the front end, each field d
 
 ### Define a new displayer
 
-Register your displayer by listening to the REGISTER_DISPLAYERS event of the FieldDisplayerService class :
+Register your displayer by listening to the `REGISTER_DISPLAYERS` event of the `FieldDisplayerService` class :
 
 ```
 Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYERS, function (FieldDisplayerEvent $event) {
@@ -207,7 +207,7 @@ A file displayer defines how an asset file is rendered on the front end. Each di
 
 ### Define a new displayer
 
-Register your displayer by listening to the REGISTER_DISPLAYERS event of the FileDisplayerService class :
+Register your displayer by listening to the `REGISTER_DISPLAYERS` event of the `FileDisplayerService` class :
 
 ```
 Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS, function (FileDisplayerEvent $event) {
@@ -274,17 +274,17 @@ Let's say you have an `entry` layout for a entry type `blog`, a region `header`,
 Layouts :
 
 ```
-layouts/entry/blog/small.twig,
+layouts/entry/blog/small.twig
 layouts/entry/blog.twig
 layouts/entry.twig
 layouts/layout.twig
 ```
 Regions :
 ```
-regions/entry/blog/header.twig,
-regions/entry/blog/region.twig',
-regions/entry/header.twig,
-regions/entry/region.twig',
+regions/entry/blog/header.twig
+regions/entry/blog/region.twig
+regions/entry/header.twig
+regions/entry/region.twig
 regions/header.twig
 regions/region.twig
 ```
@@ -322,11 +322,11 @@ A theme **can't** override templates that have a namespace (ie other plugin temp
 
 ## Twig
 
-`craft.themes.layouts` : Layouts service 
-`craft.themes.viewModes` : View mode service 
-`craft.themes.registry` : Theme registry 
-`craft.themes.view` : Theme view service 
-`craft.themes.current` : Current theme
+`craft.themes.layouts` : Layouts service  
+`craft.themes.viewModes` : View mode service  
+`craft.themes.registry` : Theme registry  
+`craft.themes.view` : Theme view service  
+`craft.themes.current` : Current theme 
 
 ## Aliases
 
@@ -337,7 +337,7 @@ A theme **can't** override templates that have a namespace (ie other plugin temp
 And three that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
 `@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
-`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.
+`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.  
 `@themeWeb` : Base web url for the current theme. This is not set if no theme is set.
 
 ## Reinstall data
