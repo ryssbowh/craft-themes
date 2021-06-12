@@ -310,6 +310,23 @@ assets/entry/image.twig
 assets/image.twig
 ```
 
+More templates and variables can be defined by listening to events on the `ViewService` class :
+
+- Layouts : event `BEFORE_RENDERING_LAYOUT`  
+- Assets : event `BEFORE_RENDERING_ASSET`  
+- Fields : event `BEFORE_RENDERING_FIELD`  
+- Blocks : event `BEFORE_RENDERING_BLOCK`  
+- Regions : event `BEFORE_RENDERING_REGION`  
+
+Example :
+
+```
+Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (RenderEvent $event) {
+    $event->prependTemplate('myTemplate')
+        ->addVariable('myVar', 'myValue');
+});
+```
+
 ### Dev mode
 
 The available templates and variables can be printed as html comments by enabling the option in the themes plugin settings.

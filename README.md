@@ -12,7 +12,7 @@ This Theme engine allows you to :
 - Choose which theme will be used for which site, language or url path. 
 - Assign blocks to your theme regions
 - Define your own blocks
-- Choose how your fields are displayed on the front end
+- Choose how your fields and assets are displayed on the front end
 - Define your own displayers
 
 What it doesn't allow you to do :
@@ -23,7 +23,7 @@ What it doesn't allow you to do :
 
 The building of a page is based on the notion of layouts, regions, blocks, view modes and displays.
 
-**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields, there are 7 types of layouts :
+**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 7 types of layouts :
 
 | Layout type | Associated with | Can have blocks | Can have displays and view modes |
 |-------------|-----------------|-----------------|----------------------------------|
