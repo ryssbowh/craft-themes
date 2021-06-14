@@ -100,9 +100,7 @@ class FieldsService extends Service
      */
     public function deleteField(Field $field)
     {
-        \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['id' => $field->id])
-            ->execute();
+        $field->delete();
     }
 
     /**

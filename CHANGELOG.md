@@ -2,7 +2,7 @@
 
 ## 3.0.0 - 
 
-> :warning: Please read the breaking changes included in 3.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)
+> :warning: Please read the breaking changes included in 3.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/DEVELOPERS.md)
 
 ### Added
 - Pro version

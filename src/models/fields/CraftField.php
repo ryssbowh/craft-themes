@@ -11,16 +11,6 @@ use craft\base\Field as BaseField;
 class CraftField extends Field implements CraftFieldInterface
 {
     /**
-     * @var int
-     */
-    public $matrix_id;
-
-    /**
-     * @var CraftField
-     */
-    protected $_matrix;
-
-    /**
      * @inheritDoc
      */
     public static function save(array $data): bool
@@ -39,7 +29,7 @@ class CraftField extends Field implements CraftFieldInterface
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['matrix_id', 'craft_field_id'], 'integer'],
+            [['craft_field_id'], 'integer'],
         ]);
     }
 
@@ -82,9 +72,6 @@ class CraftField extends Field implements CraftFieldInterface
      */
     public function getViewMode(): ViewMode
     {
-        if ($this->matrix_id) {
-            return $this->matrix->display->viewMode;
-        }
         return $this->display->viewMode;
     }
 

@@ -66,6 +66,22 @@ class MatrixService extends Service
     }
 
     /**
+     * Get the Matrix field for a field
+     * 
+     * @param  int    $fieldId
+     * @return ?Matrix
+     */
+    public function getMatrixForField(int $fieldId): ?Matrix
+    {
+        $pivot = $this->allMatrixPivots()
+            ->firstWhere('field_id', $fieldId);
+        if ($pivot) {
+            return $this->fieldsService()->getById($pivot->parent_id);
+        }
+        return null;
+    }
+
+    /**
      * Get a pivot record, or creates a new one
      * 
      * @param  int    $typeId

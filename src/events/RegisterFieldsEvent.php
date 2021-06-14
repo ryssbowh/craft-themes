@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\models\fields\Author;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\File;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
+use Ryssbowh\CraftThemes\models\fields\MatrixField;
 use Ryssbowh\CraftThemes\models\fields\Title;
 use yii\base\Event;
 
@@ -24,6 +25,7 @@ class RegisterFieldsEvent extends Event
         parent::init();
         $this->add(CraftField::class);
         $this->add(Matrix::class);
+        $this->add(MatrixField::class);
         $this->add(Title::class);
         $this->add(Author::class);
         $this->add(File::class);

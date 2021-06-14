@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
+use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
@@ -63,7 +64,7 @@ class Matrix extends CraftField implements MatrixInterface
             $types[] = [
                 'type' => $type,
                 'fields' => array_map(function ($field) {
-                    return CraftField::buildConfig($field);
+                    return MatrixField::buildConfig($field);
                 }, $type->getFields())
             ];
         }
@@ -92,7 +93,6 @@ class Matrix extends CraftField implements MatrixInterface
             foreach ($fields as $order => $fieldData) {
                 $field = Themes::$plugin->fields->getRecordByUid($fieldData['uid']);
                 $fieldData['craft_field_id'] = \Craft::$app->fields->getFieldByUid($fieldData['craft_field_id'])->id;
-                $fieldData['matrix_id'] = $matrix->id;
                 $field->setAttributes($fieldData, false);
                 $field->save(false);
                 $pivot = Themes::$plugin->matrix->getMatrixPivotRecord($type->id, $matrix->id, $field->id);

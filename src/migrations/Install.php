@@ -75,7 +75,6 @@ class Install extends Migration
             'id' => $this->primaryKey(),
             'type' => $this->string(255)->notNull(),
             'display_id' => $this->integer(11),
-            'matrix_id' => $this->integer(11),
             'craft_field_id' => $this->integer(11),
             'craft_field_class' => $this->string(255),
             'displayerHandle' => $this->string(255)->notNull(),
