@@ -3,10 +3,12 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetRenderedOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Model;
+use craft\elements\Asset;
 use craft\fields\Assets;
 
 class AssetRendered extends FieldDisplayer
@@ -76,6 +78,20 @@ class AssetRendered extends FieldDisplayer
         }
 
         return $viewModes;
+    }
+
+    /**
+     * Get the layout for an asset
+     * 
+     * @param  Asset  $asset
+     * @return LayoutInterface
+     */
+    public function getVolumeLayout(Asset $asset): LayoutInterface
+    {
+        $volume = $asset->volume;
+        $theme = Themes::$plugin->registry->getCurrent();
+        $layout = Themes::$plugin->layouts->get($theme->handle, LayoutService::VOLUME_HANDLE, $volume->uid);
+        return $layout;
     }
 
     /**

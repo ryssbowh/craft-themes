@@ -33,6 +33,21 @@ class Settings extends Model
     public $installed = false;
 
     /**
+     * @var boolean
+     */
+    public $blockCache;
+
+    /**
+     * @var boolean
+     */
+    public $templateCache;
+
+    /**
+     * @var boolean
+     */
+    public $rulesCache;
+
+    /**
      * @inheritdoc
      */
     public function defineRules(): array
@@ -62,5 +77,44 @@ class Settings extends Model
             return $this->devMode;
         }
         return false;
+    }
+
+    /**
+     * block cache enabled getter
+     * 
+     * @return bool
+     */
+    public function getBlockCacheEnabled(): bool
+    {
+        if (!is_null($this->blockCache)) {
+            return $this->blockCache;
+        }
+        return !\Craft::$app->getConfig()->getGeneral()->devMode;
+    }
+
+    /**
+     * template cache enabled getter
+     * 
+     * @return bool
+     */
+    public function getTemplateCacheEnabled(): bool
+    {
+        if (!is_null($this->templateCache)) {
+            return $this->templateCache;
+        }
+        return !\Craft::$app->getConfig()->getGeneral()->devMode;
+    }
+
+    /**
+     * rules cache enabled getter
+     * 
+     * @return bool
+     */
+    public function getRulesCacheEnabled(): bool
+    {
+        if (!is_null($this->rulesCache)) {
+            return $this->rulesCache;
+        }
+        return !\Craft::$app->getConfig()->getGeneral()->devMode;
     }
 }

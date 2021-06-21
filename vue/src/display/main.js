@@ -5,6 +5,13 @@ import Displays from './components/Displays.vue';
 import DisplayToolbar from './components/DisplayToolbar.vue';
 import DisplayTabs from './components/DisplayTabs.vue';
 import DisplayMenu from './components/DisplayMenu.vue';
+import DisplayItem from './components/DisplayItem.vue';
+import OptionsModal from './components/OptionsModal.vue';
+import ViewModeModal from './components/ViewModeModal.vue';
+import Modal from './modal.js';
+import Field from './components/Field.vue';
+import Group from './components/Group.vue';
+import Draggable from 'vuedraggable';
 
 const app = createApp({
   components: {
@@ -12,10 +19,16 @@ const app = createApp({
     DisplayContext,
     DisplayToolbar,
     DisplayTabs,
-    DisplayMenu,
+    DisplayMenu
   }
 });
 app.use(store);
+app.component('field', Field);
+app.component('view-mode-modal', ViewModeModal);
+app.component('draggable', Draggable);
+app.component('group', Group);
+app.component('options-modal', OptionsModal);
+app.component('display-item', DisplayItem,);
 
 for (let name in window.fieldDisplayers) {
     app.component('fieldDisplayer-' + name, window.fieldDisplayers[name]);
@@ -23,6 +36,10 @@ for (let name in window.fieldDisplayers) {
 
 for (let name in window.fileDisplayers) {
     app.component('fileDisplayer-' + name, window.fileDisplayers[name]);
+}
+
+for (let name in window.themesFields) {
+    app.component('field-' + name, window.themesFields[name]);
 }
 
 const Translate = {

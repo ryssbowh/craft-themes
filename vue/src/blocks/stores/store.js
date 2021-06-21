@@ -45,7 +45,8 @@ const store = createStore({
             allLayouts: {},
             regions: {},
             hasChanged: false,
-            blockOptionId: null
+            blockOptionId: null,
+            cacheStrategies: {}
         }
     },
     mutations: {
@@ -131,7 +132,10 @@ const store = createStore({
         },
         setIsFetching(state, {key, value}) {
             state.isFetching[key] = value;
-        }
+        },
+        setCacheStrategies(state, value) {
+            state.cacheStrategies = value;
+        },
     },
     actions: {
         save({commit, state}) {

@@ -1,0 +1,31 @@
+.matrix-type {
+    position: relative;
+    &:after {
+        content: '';
+        width: 1px;
+        height: calc(100% - 34px);
+        background: rgba(96, 125, 159, 0.25);
+        display: inline-block;
+        left: 15px;
+        top: 27px;
+        position: absolute;
+    }
+    .matrix-type-name {
+        padding-left: 15px;
+    }
+    .col.move {
+        padding-left: 25px;
+    }
+}
+
+.themes-displays {
+    .line, .matrix-type, .table-type {
+        transition: opacity 0.3s;
+    }
+    .opaque {
+        opacity: 0.5;
+        &.matrix ~ .matrix-type, &.table ~ .table-type {
+            opacity: 0.5;
+        }
+    }
+}

@@ -15,12 +15,19 @@ interface FieldInterface extends DisplayItemInterface
     public static function getType(): string;
 
     /**
+     * For which craft field class this field should be used
+     * 
+     * @return string
+     */
+    public static function forField(): string;
+
+    /**
      * Create a new field from config
      * 
      * @param  array  $config
      * @return FieldInterface
      */
-    public static function create(array $config): FieldInterface;
+    public static function create(?array $config = null): FieldInterface;
 
     /**
      * Saves a field from an array of data
@@ -42,22 +49,6 @@ interface FieldInterface extends DisplayItemInterface
      * @return bool
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool;
-
-    /**
-     * Create a new field from a craft field instance
-     * 
-     * @param  BaseField|null $craftField
-     * @return FieldInterface
-     */
-    public static function createNew(?BaseField $craftField = null): FieldInterface;
-
-    /**
-     * Build the config for a craft field
-     * 
-     * @param  BaseField $craftField
-     * @return array
-     */
-    public static function buildConfig(?BaseField $craftField): array;
 
     /**
      * Is this field visible

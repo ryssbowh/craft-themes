@@ -109,6 +109,18 @@ class Install extends Migration
             'uid' => $this->uid()
         ]);
 
+        $this->createTable('{{%themes_pivot_table}}', [
+            'id' => $this->primaryKey(),
+            'table_id' => $this->integer(11)->notNull(),
+            'field_id' => $this->integer(11)->notNull(),
+            'name' => $this->string(255)->notNull(),
+            'handle' => $this->string(255)->notNull(),
+            'order' => $this->integer(11),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid()
+        ]);
+
         $this->addForeignKey('themes_display_view_mode', '{{%themes_displays}}', ['viewMode_id'], '{{%themes_view_modes}}', ['id'], 'CASCADE', null);
 
         $this->addForeignKey('themes_view_mode_layout', '{{%themes_view_modes}}', ['layout_id'], '{{%themes_layouts}}', ['id'], 'CASCADE', null);
@@ -122,6 +134,9 @@ class Install extends Migration
 
         $this->addForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}', ['field_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
         $this->addForeignKey('themes_pivot_matrix_parent', '{{%themes_pivot_matrix}}', ['parent_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
+
+        $this->addForeignKey('themes_pivot_table_field', '{{%themes_pivot_table}}', ['field_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
+        $this->addForeignKey('themes_pivot_table_parent', '{{%themes_pivot_table}}', ['table_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
     }
 
     /**
@@ -137,6 +152,8 @@ class Install extends Migration
         $this->dropForeignKey('themes_pivot_group_group', '{{%themes_pivot_group}}');
         $this->dropForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}');
         $this->dropForeignKey('themes_pivot_matrix_parent', '{{%themes_pivot_matrix}}');
+        $this->dropForeignKey('themes_pivot_table_field', '{{%themes_pivot_table}}');
+        $this->dropForeignKey('themes_pivot_table_parent', '{{%themes_pivot_table}}');
 
         $this->dropTableIfExists('{{%themes_fields}}');
         $this->dropTableIfExists('{{%themes_groups}}');
@@ -146,5 +163,6 @@ class Install extends Migration
         $this->dropTableIfExists('{{%themes_layouts}}');
         $this->dropTableIfExists('{{%themes_pivot_group}}');
         $this->dropTableIfExists('{{%themes_pivot_matrix}}');
+        $this->dropTableIfExists('{{%themes_pivot_table}}');
     }
 }

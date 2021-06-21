@@ -4,13 +4,9 @@ namespace Ryssbowh\CraftThemes;
 use Craft;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
-use Ryssbowh\CraftThemes\events\FieldDisplayerEvent;
-use Ryssbowh\CraftThemes\events\RegisterBlockProvidersEvent;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\models\SystemBlockProvider;
-use Ryssbowh\CraftThemes\services\FileDisplayerService;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
@@ -36,13 +32,16 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '1.0.0';
+    public $schemaVersion = '3.0.0';
     
     /**
      * @inheritdoc
      */
     public $hasCpSettings = true;
 
+    /**
+     * @inheritdoc
+     */
     public $hasCpSection = true;
 
     /**
@@ -60,7 +59,6 @@ class Themes extends \craft\base\Plugin
         $this->registerServices();
         $this->registerPermissions();
         $this->registerClearCacheEvent();
-        $this->registerBlockProviders();
         $this->registerProjectConfig();
         $this->registerPluginsEvents();
         $this->registerCraftEvents();
@@ -106,24 +104,26 @@ class Themes extends \craft\base\Plugin
                 ]
             ]
         ];
-        $user = \Craft::$app->user;
-        if ($user->checkPermission('manageThemesBlocks')) {
-            $item['subnav']['themes-blocks'] = [
-                'url' => 'themes/blocks',
-                'label' => \Craft::t('themes', 'Blocks'),
-            ];
-        }
-        if ($user->checkPermission('manageThemesDisplay')) {
-            $item['subnav']['themes-display'] = [
-                'url' => 'themes/display',
-                'label' => \Craft::t('themes', 'Display'),
-            ];
-        }
-        if ($user->checkPermission('manageThemesRules')) {
-            $item['subnav']['themes-rules'] = [
-                'url' => 'themes/rules',
-                'label' => \Craft::t('themes', 'Rules'),
-            ];
+        if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
+            $user = \Craft::$app->user;
+            if ($user->checkPermission('manageThemesBlocks')) {
+                $item['subnav']['themes-blocks'] = [
+                    'url' => 'themes/blocks',
+                    'label' => \Craft::t('themes', 'Blocks'),
+                ];
+            }
+            if ($user->checkPermission('manageThemesDisplay')) {
+                $item['subnav']['themes-display'] = [
+                    'url' => 'themes/display',
+                    'label' => \Craft::t('themes', 'Display'),
+                ];
+            }
+            if ($user->checkPermission('manageThemesRules')) {
+                $item['subnav']['themes-rules'] = [
+                    'url' => 'themes/rules',
+                    'label' => \Craft::t('themes', 'Rules'),
+                ];
+            }
         }
         return $item;
     }
@@ -162,42 +162,46 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerPluginsEvents()
     {
-        $_this = $this;
-
         Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
-            function (PluginEvent $event) use ($_this) {
-                $_this->cache->flush();
-                $_this->layouts->installThemeData($event->plugin->handle);
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->layouts->installThemeData($event->plugin->handle);
+                    Themes::$plugin->blocks->installContentBlock($event->plugin);
+                }
             }
         );
 
         Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
-            function (PluginEvent $event) use ($_this) {
-                $_this->cache->flush();
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->layouts->uninstallThemeData($event->plugin->handle);
+                    Themes::$plugin->rules->flushCache();
+                }
             }
         );
 
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
-            function (PluginEvent $event) use ($_this) {
-                $_this->installDependency($event->plugin);
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->installDependency($event->plugin);
+                }
             }
         );
 
         Event::on(Plugins::class, Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
-            function (PluginEvent $event) use ($_this) {
+            function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
                     Themes::$plugin->layouts->uninstallThemeData($event->plugin->handle);
-                    $_this->cache->flush();
+                    Themes::$plugin->rules->flushCache();
                 }
             }
         );
 
         Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) use ($_this) {
+            function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
-                    $_this->cache->flush();
-                    $_this->layouts->installThemeData($event->plugin->handle);
-                    $_this->blocks->installContentBlock($event->plugin);
+                    Themes::$plugin->layouts->installThemeData($event->plugin->handle);
+                    Themes::$plugin->blocks->installContentBlock($event->plugin);
                 }
             }
         );
@@ -209,9 +213,11 @@ class Themes extends \craft\base\Plugin
     protected function registerCpRoutes()
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
+            $event->rules = array_merge($event->rules, [
+                'themes' => 'themes/cp-themes'
+            ]);
             if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
                 $event->rules = array_merge($event->rules, [
-                    'themes' => 'themes/cp-themes',
                     'themes/rules' => 'themes/cp-rules',
                     'themes/save-rules' => 'themes/cp-rules/save',
                     'themes/blocks' => 'themes/cp-blocks',
@@ -252,7 +258,9 @@ class Themes extends \craft\base\Plugin
             'rules' => [
                 'class' => RulesService::class,
                 'rules' => $this->getSettings()->getRules(),
-                'default' => $this->getSettings()->default
+                'default' => $this->getSettings()->default,
+                'cache' => \Craft::$app->cache,
+                'cacheEnabled' => $this->getSettings()->rulesCacheEnabled
             ],
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
@@ -261,25 +269,22 @@ class Themes extends \craft\base\Plugin
             'fieldDisplayers' => FieldDisplayerService::class,
             'view' => [
                 'class' => ViewService::class,
+                'cache' => \Craft::$app->cache,
                 'devMode' => $this->getSettings()->devModeEnabled,
-                'eagerLoad' => $this->getSettings()->eagerLoad
+                'eagerLoad' => $this->getSettings()->eagerLoad,
+                'templateCacheEnabled' => $this->getSettings()->templateCacheEnabled
             ],
-            'cache' => CacheService::class,
+            'blockCache' => [
+                'class' => BlockCacheService::class,
+                'cache' => \Craft::$app->cache,
+                'cacheEnabled' => $this->getSettings()->blockCacheEnabled
+            ],
             'display' => DisplayService::class,
             'fields' => FieldsService::class,
             'matrix' => MatrixService::class,
+            'tables' => TablesService::class,
             'fileDisplayers' => FileDisplayerService::class,
         ]);
-    }
-
-    /**
-     * Registers the system block provider
-     */
-    protected function registerBlockProviders()
-    {
-        Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProvidersEvent $event) {
-            $event->add(new SystemBlockProvider);
-        });
     }
 
     /**
@@ -289,10 +294,24 @@ class Themes extends \craft\base\Plugin
     {
         Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS, function (RegisterCacheOptionsEvent $event) {
             $event->options[] = [
-                'key' => 'themes-cache',
-                'label' => Craft::t('themes', 'Themes cache'),
+                'key' => 'themes-template-cache',
+                'label' => Craft::t('themes', 'Themes templates'),
                 'action' => function() {
-                    Themes::$plugin->cache->flush();
+                    Themes::$plugin->view->flushTemplateCache();
+                }
+            ];
+            $event->options[] = [
+                'key' => 'themes-rules-cache',
+                'label' => Craft::t('themes', 'Themes rules'),
+                'action' => function() {
+                    Themes::$plugin->rules->flushCache();
+                }
+            ];
+            $event->options[] = [
+                'key' => 'themes-block-cache',
+                'label' => Craft::t('themes', 'Themes blocks'),
+                'action' => function() {
+                    Themes::$plugin->blockCache->flush();
                 }
             ];
         });

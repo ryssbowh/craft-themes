@@ -38,10 +38,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import DisplayItem from './DisplayItem';
 import { reduce, filter, sortBy } from 'lodash';
-import Draggable from 'vuedraggable';
-import OptionsModal from './OptionsModal';
 
 export default {
     computed: {
@@ -87,11 +84,6 @@ export default {
         },
         ...mapMutations(['updateDisplay']),
         ...mapActions(['checkChanges']),
-    },
-    components: {
-        DisplayItem,
-        Draggable,
-        OptionsModal
     }
 };
 </script>

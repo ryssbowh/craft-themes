@@ -75,9 +75,20 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public static function create(array $config): FieldInterface
+    public static function forField(): string
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function create(?array $config = null): FieldInterface
     {
         $class = get_called_class();
+        if ($config == null) {
+            $config = $class::buildConfig(null);
+        }
         $field = new $class;
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
@@ -114,34 +125,6 @@ abstract class Field extends DisplayItem implements FieldInterface
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function createNew(?BaseField $craftField = null): FieldInterface
-    {
-        if ($craftField and get_class($craftField) == CraftMatrix::class) {
-            return Matrix::createNew($craftField);
-        }
-        return static::create(static::buildConfig($craftField));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function buildConfig(?BaseField $craftField): array
-    {
-        $class = get_called_class();
-        if ($craftField) {
-            $class = get_class($craftField);
-        }
-        return [
-            'type' => get_called_class()::getType(),
-            'craft_field_id' => $craftField ? $craftField->id : null,
-            'craft_field_class' => $craftField ? get_class($craftField) : null,
-            'displayerHandle' => Themes::$plugin->fieldDisplayers->getDefaultHandle($class) ?? ''
-        ];
     }
 
     /**
@@ -212,5 +195,19 @@ abstract class Field extends DisplayItem implements FieldInterface
     public function render(Element $element): string
     {
         return Themes::$plugin->view->renderField($this, $element);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected static function buildConfig($arg): array
+    {
+        $class = get_called_class();
+        return [
+            'type' => get_called_class()::getType(),
+            'craft_field_id' => null,
+            'craft_field_class' => null,
+            'displayerHandle' => Themes::$plugin->fieldDisplayers->getDefaultHandle($class) ?? ''
+        ];
     }
 }

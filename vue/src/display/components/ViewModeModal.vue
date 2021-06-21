@@ -39,7 +39,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Modal from '../modal';
 
 export default {
     computed: {

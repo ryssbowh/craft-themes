@@ -21,7 +21,8 @@ module.exports = {
             blockOptions: "./vue/src/blockOptions/main.js",
             display: "./vue/src/display/main.js",
             fieldDisplayers: "./vue/src/fieldDisplayers/main.js",
-            fileDisplayers: "./vue/src/fileDisplayers/main.js"
+            fileDisplayers: "./vue/src/fileDisplayers/main.js",
+            fields: "./vue/src/fields/main.js"
         },
         output: {
             filename: "js/[name].js"

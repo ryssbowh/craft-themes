@@ -15,9 +15,10 @@ interface CraftFieldInterface extends FieldInterface
     public function getCraftField(): BaseField;
 
     /**
-     * Get associated matrix field instance, used for fields that are part of a matrix
+     * Create field from a craft field
      * 
-     * @return ?CraftField
+     * @param  BaseField $craftField
+     * @return FieldInterface
      */
-    public function getMatrix(): ?CraftField;
+    public static function createFromField(BaseField $craftField): FieldInterface;
 }

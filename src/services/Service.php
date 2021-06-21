@@ -58,11 +58,11 @@ abstract class Service extends Component
     }
 
     /**
-     * @return CacheService
+     * @return BlockCacheService
      */
-    protected function cacheService(): CacheService
+    protected function blockCacheService(): BlockCacheService
     {
-        return Themes::$plugin->cache;
+        return Themes::$plugin->blockCache;
     }
 
     /**

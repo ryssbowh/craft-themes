@@ -5,21 +5,12 @@ namespace Ryssbowh\CraftThemes\assets;
 use craft\web\AssetBundle;
 use verbb\base\assetbundles\CpAsset;
 
-class DisplayAssets extends AssetBundle
+class FieldsAsset extends AssetBundle
 {
     public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
     public $js = [
-        'chunk-vendors.js',
-        'display.js',
-    ];
-
-    public $depends = [
-        CpAsset::class,
-        JquerySerializeJSON::class,
-        FieldsAsset::class,
-        FieldDisplayerAsset::class,
-        FileDisplayerAsset::class
+        'fields.js'
     ];
 
     /**

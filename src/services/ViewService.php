@@ -17,10 +17,11 @@ use craft\base\Element;
 use craft\elements\Asset;
 use craft\events\TemplateEvent;
 use yii\base\Event;
+use yii\caching\TagDependency;
 
 class ViewService extends Service
 {
-    const CACHE_GROUP = 'themes.templates.';
+    const TEMPLATE_CACHE_TAG = 'themes.templates';
 
     const THEME_ROOT_TEMPLATE = 'themed_page';
 
@@ -51,12 +52,22 @@ class ViewService extends Service
     /**
      * @var boolean
      */
-    public $devMode = false;
+    public $devMode;
+
+    /**
+     * @var boolean
+     */
+    public $templateCacheEnabled;
 
     /**
      * @var boolean
      */
     public $eagerLoad;
+
+    /**
+     * @var CacheInterface
+     */
+    public $cache;
 
     /**
      * Handle current page rendering.
@@ -101,11 +112,11 @@ class ViewService extends Service
         $layout = $this->renderingLayout->getElementMachineName();
         $type = $this->renderingLayout->type;
         $templates = [
-            'regions/' . $type . '/' . $layout . '/' . $region->handle,
+            'regions/' . $type . '/' . $layout . '/region' . $region->handle,
             'regions/' . $type . '/' . $layout . '/region',
-            'regions/' . $type . '/' . $region->handle,
+            'regions/' . $type . '/region-' . $region->handle,
             'regions/' . $type . '/region',
-            'regions/' . $region->handle, 
+            'regions/region-' . $region->handle, 
             'regions/region'
         ];
         $variables = [
@@ -132,6 +143,11 @@ class ViewService extends Service
      */
     public function renderBlock(BlockInterface $block, Element $element): string
     {
+        $cache = $this->blockCacheService()->getBlockCache($block);
+        if ($cache !== null) {
+            return $cache;
+        }
+        $this->blockCacheService()->startBlockCaching($block);
         $region = $this->renderingRegion->handle;
         $layout = $this->renderingLayout->getElementMachineName();
         $machineName = $block->getMachineName();
@@ -155,7 +171,9 @@ class ViewService extends Service
             'templates' => $templates,
             'variables' => $variables
         ]);
-        return $this->render(self::BEFORE_RENDERING_BLOCK, $event);
+        $data = $this->render(self::BEFORE_RENDERING_BLOCK, $event);
+        $this->blockCacheService()->stopBlockCaching($block, $data);
+        return $data;
     }
 
     /**
@@ -165,20 +183,27 @@ class ViewService extends Service
      * @param  Element        $element
      * @return string
      */
-    public function renderField(FieldInterface $field, Element $element): string
+    public function renderField(FieldInterface $field, Element $element, $value = null): string
     {
         if (!$displayer = $field->getDisplayer()) {
             return '';
+        }
+        if ($value == null) {
+            $value = $element->{$field->handle};
         }
         $layout = $this->renderingLayout->getElementMachineName();
         $type = $this->renderingLayout->type;
         $viewMode = $this->renderingViewMode;
         $handle = $displayer->handle;
-        // $template = $this->cacheService()->get('fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle);
+        $withField = $handle . '-' . $field->handle;
         $templates = [
+            'fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $withField,
             'fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
+            'fields/' . $type . '/' . $layout . '/' . $withField,
             'fields/' . $type . '/' . $layout . '/' . $handle,
+            'fields/' . $type . '/' . $withField,
             'fields/' . $type . '/' . $handle,
+            'fields/' . $withField,
             'fields/' . $handle
         ];
         $variables = [
@@ -191,7 +216,7 @@ class ViewService extends Service
             'element' => $element,
             'displayer' => $displayer,
             'options' => $displayer->getOptions(),
-            'value' => $element->{$field->handle},
+            'value' => $value,
             'craftField' => ($field instanceof CraftField ? $field->craftField : null)
         ];
         $event = new RenderEvent([
@@ -299,6 +324,14 @@ class ViewService extends Service
     }
 
     /**
+     * Flush template cache
+     */
+    public function flushTemplateCache()
+    {
+        TagDependency::invalidate($this->cache, self::TEMPLATE_CACHE_TAG);
+    }
+
+    /**
      * Renders an array of templates
      *
      * @param  string $eventType
@@ -308,28 +341,46 @@ class ViewService extends Service
     protected function render(string $eventType, Event $event): string
     {
         $this->triggerEvent($eventType, $event);
-        $template = $this->resolveTemplate($event->templates);   
+        $template = $this->resolveTemplateFromCache($event->templates);   
         $html = $this->getDevModeHtml($event->templates, $template, $event->variables);
         $html .= \Craft::$app->view->renderTemplate($template, $event->variables);
         return $html;
     }
 
     /**
-     * Resolves a template from an array of templates
+     * Resolves a template from cache
      * 
      * @param  array  $templates
      * @return string
      */
+    protected function resolveTemplateFromCache(array $templates): string
+    {
+        if ($this->templateCacheEnabled) {
+            $key = \Craft::$app->cache->buildKey($templates);
+            $template = $this->cache->get($key);
+            if ($template !== false) {
+                return $template;
+            }
+            $dep = new TagDependency([
+                'tags' => [self::TEMPLATE_CACHE_TAG]
+            ]);
+            $template = $this->resolveTemplate($templates);
+            $this->cache->set($key, $template, null, $dep);
+            return $template;
+        }
+        return $this->resolveTemplate($templates);
+    }
+
+    /**
+     * Resolves a template from an array of templates
+     * 
+     * @param  array $templates
+     * @return string
+     */
     protected function resolveTemplate(array $templates): string
     {
-        $key = md5(implode('-', $templates));
-        $template = $this->cacheService()->get(self::CACHE_GROUP, $key);
-        // if ($template === false) {
-            $twig = \Craft::$app->view->getTwig();
-            $template = $twig->resolveTemplate($templates)->getTemplateName();
-            // $this->cacheService()->set($key, $template);
-        // }
-        return $template;
+        $twig = \Craft::$app->view->getTwig();
+        return $twig->resolveTemplate($templates)->getTemplateName();
     }
 
     /**

@@ -206,7 +206,7 @@ class DisplayService extends Service
                             'viewMode' => $viewMode,
                             'order' => $order,
                         ]);
-                        $display->item = $fieldClass::createNew();
+                        $display->item = $fieldClass::create();
                     }
                     $displays[] = $display;
                 }
@@ -225,7 +225,7 @@ class DisplayService extends Service
                         'viewMode' => $viewMode,
                         'order' => $order,
                     ]);
-                    $display->item = CraftField::createNew($craftField);
+                    $display->item = Themes::$plugin->fields->createFromField($craftField);
                 }
                 $displays[] = $display;
             }

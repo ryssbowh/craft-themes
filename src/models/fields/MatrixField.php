@@ -9,11 +9,6 @@ use craft\base\Field as BaseField;
 class MatrixField extends CraftField
 {
     /**
-     * @var CraftField
-     */
-    protected $_matrix;
-
-    /**
      * @inheritDoc
      */
     public static function getType(): string

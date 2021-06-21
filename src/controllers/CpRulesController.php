@@ -86,7 +86,7 @@ class CpRulesController extends Controller
         if (!\Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {
             $this->setFailFlash(\Craft::t('themes', 'Couldn’t save theme rules'));
         } else {
-            Themes::$plugin->cache->flushGroup(RulesService::CACHE_GROUP);
+            Themes::$plugin->rules->flushCache();
             $this->setSuccessFlash(\Craft::t('themes', 'Rules have been saved'));
         }
         $this->redirect('themes/rules');

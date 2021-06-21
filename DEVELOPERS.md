@@ -269,7 +269,7 @@ Templates are inherited, so if you call a template that isn't defined in your th
 
 Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
-Let's say you have an `entry` layout for a entry type `blog`, a region `header`, a view mode `small`, a block `latestBlogs`, a field displayer `redactor` and an file displayer `image`. The precedence of templates would look like this, by order of importance :
+Let's say you have an `entry` layout for a entry type `blog`, a region `header`, a view mode `small`, a block `latestBlogs`, a field `content`, a field displayer `redactor` and a file displayer `image`. The precedence of templates would look like this, by order of importance :
 
 Layouts :
 
@@ -281,11 +281,11 @@ layouts/layout.twig
 ```
 Regions :
 ```
-regions/entry/blog/header.twig
+regions/entry/blog/region-header.twig
 regions/entry/blog/region.twig
-regions/entry/header.twig
+regions/entry/region-header.twig
 regions/entry/region.twig
-regions/header.twig
+regions/region-header.twig
 regions/region.twig
 ```
 Blocks :
@@ -297,9 +297,13 @@ blocks/latestBlogs.twig
 ```
 Field displayers :
 ```
+fields/entry/blog/small/redactor-content.twig
 fields/entry/blog/small/redactor.twig
+fields/entry/blog/redactor-content.twig
 fields/entry/blog/redactor.twig
+fields/entry/redactor-content.twig
 fields/entry/redactor.twig
+fields/redactor-content.twig
 fields/redactor.twig
 ```
 File displayers :
@@ -367,3 +371,55 @@ And three that are not used by the system, but could be useful if you're using a
 If something looks off in the displays, you can always reinstall the themes data in the plugin settings. This will create missing displayers for all themes and elements (entry types, category groups etc), and delete the orphans.
 
 ## Caching
+
+### Rules cache
+
+Theme resolution rules will be cached by default on environments where devMode is disabled. If you change rules on a production environment, clear the cache : `./craft clear-caches/themes-rules-cache`
+
+It can be overriden by creating the `config/themes.php` file :
+
+```
+<?php 
+
+return [
+    'rulesCache' => false
+];
+```
+
+### Template cache
+
+Template resolution will be cached by default on environments where devMode is disabled. So it's a good idea to clear these cache when deploying to a production environment : `./craft clear-caches/themes-template-cache`
+
+It can be overriden by creating the `config/themes.php` file :
+
+```
+<?php 
+
+return [
+    'templateCache' => false
+];
+```
+
+### Block cache
+
+Block cache will be enabled by default on environments where devMode is disabled.
+
+It can be overriden by creating the `config/themes.php` file :
+
+```
+<?php 
+
+return [
+    'blockCache' => false
+];
+```
+
+Each block can have a block strategy that defines how it will be cached. Add new strategies by responding to the event :
+
+```
+Event::on(BlockCacheService::class, BlockCacheService::REGISTER_STRATEGIES, function (RegisterBlockCacheStrategies $event) {
+    $event->add(new MyCacheStrategy);
+});
+```
+
+Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements within a block are changed.

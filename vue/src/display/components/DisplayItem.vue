@@ -1,12 +1,9 @@
 <template>
-    <component :is="type" :item="display.item" @updateItem="updateItem" @updateMatrixItem="updateMatrixItem" />
+    <component :is="type" :item="display.item" @updateItem="updateItem" />
 </template>
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Field from './Field';
-import Group from './Group';
-import Matrix from './Matrix';
 
 export default {
     computed: {
@@ -14,7 +11,10 @@ export default {
             if (this.display.type == 'group') {
                 return 'group';
             }
-            return this.display.item.type == 'matrix' ? 'matrix' : 'field';
+            if (Object.keys(window.themesFields).includes(this.display.item.type)) {
+                return 'field-' + this.display.item.type;
+            }
+            return 'field';
         },
         ...mapState([])
     },
@@ -26,19 +26,12 @@ export default {
         }
     },
     methods: {
-        updateMatrixItem: function (data) {
-            data.id = this.display.id;
-            this.updateMatrixDisplay(data);
-        },
         updateItem: function (data) {
             this.updateDisplay({id: this.display.id, data:{item: data}});
         },
-        ...mapMutations(['updateDisplay', 'updateMatrixDisplay']),
+        ...mapMutations(['updateDisplay']),
         ...mapActions([])
     },
-    emits: [],
-    components: {Field, Matrix, Group}
+    emits: []
 };
 </script>
-<style lang="scss" scoped>
-</style>

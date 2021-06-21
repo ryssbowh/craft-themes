@@ -12,6 +12,7 @@ use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
+use craft\fields\Matrix as CraftMatrix;
 
 class Matrix extends CraftField implements MatrixInterface
 {
@@ -38,7 +39,15 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public static function create(array $config): FieldInterface
+    public static function forField(): string
+    {
+        return CraftMatrix::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function create(?array $config = null): FieldInterface
     {
         $class = get_called_class();
         $field = new $class;
@@ -57,7 +66,7 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public static function createNew(?BaseField $craftField = null): FieldInterface
+    public static function createFromField(BaseField $craftField): FieldInterface
     {
         $types = [];
         foreach ($craftField->getBlockTypes() as $type) {

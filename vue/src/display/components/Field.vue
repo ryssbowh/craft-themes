@@ -1,6 +1,6 @@
 <template>
     <div :class="classes">
-        <div class="move col"><div class="move icon"></div></div>
+        <div class="move col"><div class="move icon" v-if="moveable"></div></div>
         <div class="title col">
             {{ item.name }}
         </div>
@@ -11,7 +11,7 @@
             {{ item.displayName }}
         </div>
         <div class="label col">
-            <div class="select">
+            <div class="select" v-if="hasLabel">
                 <select @change="updateLabelVisibility">
                     <option value="hidden" :selected="item.labelHidden">{{ t('Hidden') }}</option>
                     <option value="visuallyHidden" :selected="item.labelVisuallyHidden">{{ t('Visually hidden') }}</option>
@@ -81,7 +81,15 @@ export default {
         ...mapState([])
     },
     props: {
-        item: Object
+        item: Object,
+        moveable: {
+            type: Boolean,
+            default: true
+        },
+        hasLabel: {
+            type: Boolean,
+            default: true
+        }
     },
     data() {
         return {
@@ -129,18 +137,6 @@ export default {
         ...mapMutations(['openDisplayerOptions']),
         ...mapActions([]),
     },
-    components: {},
     emits: ['updateItem'],
 };
 </script>
-<style lang="scss">
-
-.themes-displays {
-    .opaque {
-        opacity: 0.5;
-        &.Matrix ~ .matrix-type {
-            opacity: 0.5;
-        }
-    }
-}
-</style>

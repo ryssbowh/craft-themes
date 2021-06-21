@@ -4,9 +4,11 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\events\RegisterFieldsEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
+use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\Field;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
+use craft\base\Field as BaseField;
 use craft\db\ActiveRecord;
 
 class FieldsService extends Service
@@ -91,6 +93,22 @@ class FieldsService extends Service
             throw FieldException::noType();
         }
         return $this->getFieldClassByType($config['type'])::create($config);
+    }
+
+    /**
+     * Create a field from a craft field
+     * 
+     * @param  BaseField $field
+     * @return Field
+     */
+    public function createFromField(BaseField $craftField): Field
+    {
+        foreach ($this->registeredFields as $fieldClass) {
+            if ($fieldClass::forField() == get_class($craftField)) {
+                return $fieldClass::createFromField($craftField);
+            }
+        }
+        return CraftField::createFromField($craftField);
     }
 
     /**

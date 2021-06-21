@@ -129,7 +129,7 @@ Craft 3.5 or over
 
 ## Roadmap
 
+- routes
 - tests
-- block caching
 - bundleAssets as regular expressions paths  
 - preprocess functions

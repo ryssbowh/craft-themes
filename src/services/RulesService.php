@@ -7,10 +7,11 @@ use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\i18n\Locale;
 use craft\models\Site;
+use yii\caching\TagDependency;
 
 class RulesService extends Service
 {
-    const CACHE_GROUP = 'themes.rules';
+    const CACHE_TAG = 'themes.rules';
 
     /**
      * @var array
@@ -23,17 +24,27 @@ class RulesService extends Service
     public $default;
 
     /**
+     * @var boolean
+     */
+    public $cacheEnabled;
+
+    /**
+     * @var CacheInterface
+     */
+    public $cache;
+
+    /**
      * Resolve the theme for the current request, 
      * get the theme either from cache or from defined theme rules
      * 
      * @return ?ThemeInterface
      */
-    public function resolveCurrentTheme($event): ?ThemeInterface
+    public function resolveCurrentTheme(): ?ThemeInterface
     {
         $path = \Craft::$app->request->getFullPath();
         $currentSite = \Craft::$app->sites->getCurrentSite();
         $currentUrl = $currentSite->getBaseUrl().$path;
-        $cached = $this->cacheService()->get(self::CACHE_GROUP, $currentUrl);
+        $cached = $this->getCache($currentUrl);
         $theme = null;
         if ($cached === null) {
             return null;
@@ -42,13 +53,54 @@ class RulesService extends Service
             $theme = Themes::$plugin->registry->getTheme($cached);
         } else {
             $themeName = $this->resolveRules($path, $currentSite);
-            $this->cacheService()->set(self::CACHE_GROUP, $currentUrl, $themeName);
+            $this->setCache($currentUrl, $themeName);
             if ($themeName) {
                 $theme = Themes::$plugin->registry->getTheme($themeName);
             }
         }
         $this->themesRegistry()->setCurrent($theme);
         return $theme;
+    }
+
+    /**
+     * Flush rules cache
+     */
+    public function flushCache()
+    {
+        TagDependency::invalidate($this->cache, self::CACHE_TAG);
+    }
+
+    /**
+     * Get the cached theme name for a url
+     * 
+     * @param  string $url
+     * @return ?string|false
+     */
+    protected function getCache(string $url)
+    {
+        if (!$this->cacheEnabled) {
+            return false;
+        }
+        $key = $this->cache->buildKey([self::CACHE_TAG, $url]);
+        return $this->cache->get($key);
+    }
+
+    /**
+     * Set the theme name cache for an url
+     * 
+     * @param string $url
+     * @param string $themeName
+     */
+    protected function setCache(string $url, ?string $themeName)
+    {
+        if (!$this->cacheEnabled) {
+            return;
+        }
+        $key = $this->cache->buildKey([self::CACHE_TAG, $url]);
+        $dep = new TagDependency([
+            'tags' => [self::CACHE_TAG]
+        ]);
+        $this->cache->set($key, $themeName, null, $dep);
     }
 
     /**

@@ -48,6 +48,11 @@ class Controller extends CraftController
     protected $fields;
 
     /**
+     * @var BlockCacheService
+     */
+    protected $blockCache;
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -61,5 +66,6 @@ class Controller extends CraftController
         $this->viewModes = Themes::$plugin->viewModes;
         $this->display = Themes::$plugin->display;
         $this->fields = Themes::$plugin->fields;
+        $this->blockCache = Themes::$plugin->blockCache;
     }
 }

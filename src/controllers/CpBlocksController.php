@@ -48,7 +48,10 @@ class CpBlocksController extends Controller
             'themes' => $themes,
             'theme' => $themeName,
             'layout' => $layout ? $layout->id : null,
-            'allLayouts' => $this->layouts->getBlockLayouts()
+            'allLayouts' => $this->layouts->getBlockLayouts(),
+            'cacheStrategies' => array_map(function ($strategy) {
+                return $strategy->toArray();
+            }, $this->blockCache->strategies)
         ]);
     }
 }

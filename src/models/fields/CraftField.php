@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\CraftFieldInterface;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
@@ -22,6 +23,14 @@ class CraftField extends Field implements CraftFieldInterface
         $field->setAttributes($data, false);
         return $field->save(false);
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public static function createFromField(BaseField $craftField): FieldInterface
+    {
+        return static::create(static::buildConfig($craftField));
+    }
 
     /**
      * @inheritDoc
@@ -30,6 +39,7 @@ class CraftField extends Field implements CraftFieldInterface
     {
         return array_merge(parent::defineRules(), [
             [['craft_field_id'], 'integer'],
+            [['craft_field_class'], 'string']
         ]);
     }
 
@@ -39,7 +49,8 @@ class CraftField extends Field implements CraftFieldInterface
     public function getConfig(): array
     {
         return array_merge(parent::getConfig(), [
-            'craft_field_id' => $this->craftField->uid
+            'craft_field_id' => $this->craftField->uid,
+            'craft_field_class' => get_class($this->craftField)
         ]);
     }
 
@@ -52,17 +63,6 @@ class CraftField extends Field implements CraftFieldInterface
             $this->_craftField = \Craft::$app->fields->getFieldById($this->craft_field_id);
         }
         return $this->_craftField;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getMatrix(): ?CraftField
-    {
-        if ($this->_matrix === null) {
-            $this->_matrix = $this->matrix_id ? Themes::$plugin->fields->getById($this->matrix_id) : false;
-        }
-        return $this->_matrix ?: null;
     }
 
     /**
@@ -105,5 +105,19 @@ class CraftField extends Field implements CraftFieldInterface
     public function getDisplayName(): string
     {
         return $this->craftField::displayName();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected static function buildConfig($craftField): array
+    {
+        $class = get_class($craftField);
+        return [
+            'type' => get_called_class()::getType(),
+            'craft_field_id' => $craftField->id,
+            'craft_field_class' => get_class($craftField),
+            'displayerHandle' => Themes::$plugin->fieldDisplayers->getDefaultHandle($class) ?? ''
+        ];
     }
 }

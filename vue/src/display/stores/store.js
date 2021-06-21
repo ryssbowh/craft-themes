@@ -130,28 +130,6 @@ const store = createStore({
                 display = merge(display, data);
             }
         },
-        updateMatrixDisplay(state, {id, typeId, fieldId, data}) {
-            let display, type, field;
-            for (let i in state.displays) {
-                display = state.displays[i];
-                if (display.id != id) {
-                    continue;
-                }
-                for(i in display.item.types) {
-                    type = display.item.types[i];
-                    if (type.type.id != typeId) {
-                        continue;
-                    }
-                    for (i in type.fields) {
-                        field = type.fields[i];
-                        if (field.id != fieldId) {
-                            continue;
-                        }
-                        field = merge(field, data);
-                    }
-                }
-            }
-        },
         setHasChanged(state, value) {
             state.hasChanged = value;
         },

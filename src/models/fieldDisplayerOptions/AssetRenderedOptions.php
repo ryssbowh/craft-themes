@@ -4,7 +4,9 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
+use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\elements\Asset;
 
 class AssetRenderedOptions extends FieldDisplayerOptions
 {
@@ -34,5 +36,12 @@ class AssetRenderedOptions extends FieldDisplayerOptions
                $this->addError('viewMode-'.$volumeUid, \Craft::t('themes', 'View mode is invalid'));
             }
         }
+    }
+
+    public function getViewMode(Asset $asset): ?ViewMode
+    {
+        $volume = $asset->volume;
+        $viewModeUid = $this->viewModes[$volume->uid] ?? null;
+        return $viewModeUid ? Themes::$plugin->viewModes->getByUid($viewModeUid) : null;
     }
 }

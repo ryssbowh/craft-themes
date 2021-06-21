@@ -552,7 +552,7 @@ class LayoutService extends Service
             $oldFieldClass = $oldItem->craft_field_class;
             if ($oldItem->craft_field_class != get_class($field)) {
                 $this->fieldsService()->deleteField($oldItem);
-                $display->item = CraftField::createNew($field);
+                $display->item = CraftField::createFromField($field);
                 $display->item->labelHidden = $oldItem->labelHidden;
                 $display->item->labelVisuallyHidden = $oldItem->labelVisuallyHidden;
                 $display->item->visuallyHidden = $oldItem->visuallyHidden;

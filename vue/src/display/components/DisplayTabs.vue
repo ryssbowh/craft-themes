@@ -20,7 +20,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import ViewModeModal from './ViewModeModal';
 
 export default {
     computed: {
@@ -45,8 +44,7 @@ export default {
         },
         ...mapMutations(['setViewMode']),
         ...mapActions(['deleteViewMode']),
-    },
-    components: {ViewModeModal}
+    }
 };
 </script>
 <style lang="scss" scoped>

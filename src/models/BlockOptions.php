@@ -8,7 +8,8 @@ use craft\base\Model;
 
 class BlockOptions extends Model implements BlockOptionsInterface
 {
-    public $caching = 0;
+
+    public $cacheStrategy;
 
     /**
      * @inheritDoc
@@ -16,7 +17,7 @@ class BlockOptions extends Model implements BlockOptionsInterface
     public function defineRules(): array
     {
         return [
-            ['caching', 'required']
+            ['cacheStrategy', 'string']
         ];
     }
 

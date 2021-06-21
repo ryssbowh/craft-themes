@@ -26,6 +26,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextTruncated;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorFull;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorTruncated;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TableDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagsDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
@@ -80,6 +81,7 @@ class FieldDisplayerEvent extends Event
             RadioButtonsDefault::class,
             RedactorFull::class,
             RedactorTruncated::class,
+            TableDefault::class,
             TagsDefault::class,
             TimeDefault::class,
             TitleDefault::class,

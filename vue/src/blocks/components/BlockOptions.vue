@@ -6,10 +6,9 @@
       </div>
       <div class="input ltr">                    
         <div class="select">
-          <select id="type" name="caching" :value="block.options.caching" @input="updateOptions({caching: $event.target.value})">
-            <option value="0">No cache</option>
-            <option value="1">Global</option>
-            <option value="2">Session</option>
+          <select id="type" name="cacheStrategy" :value="block.options.cacheStrategy" @input="updateOptions({cacheStrategy: $event.target.value})">
+            <option value="">No cache</option>
+            <option :value="strategy.handle" v-for="strategy in cacheStrategies" v-bind:key="strategy.handle">{{ strategy.name }}</option>
           </select>
         </div>
       </div>
@@ -26,7 +25,7 @@ export default {
     optionsComponent: function () {
       return this.block.provider + '-' + this.block.handle;
     },
-    ...mapState([])
+    ...mapState(['cacheStrategies'])
   },
   props: {
     block: Object

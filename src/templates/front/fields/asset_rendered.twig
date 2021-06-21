@@ -1,0 +1,10 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% for asset in value %}
+        {% set viewMode = options.getViewMode(asset) %}
+        {% if viewMode %}
+            {{ craft.themes.view.renderLayout(displayer.getVolumeLayout(asset), viewMode.handle, asset)|raw }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}

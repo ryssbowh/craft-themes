@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
+use Ryssbowh\CraftThemes\models\SystemBlockProvider;
 use yii\base\Event;
 
 class RegisterBlockProvidersEvent extends Event
@@ -12,6 +13,12 @@ class RegisterBlockProvidersEvent extends Event
      * @var array
      */
     protected $providers = [];
+
+    public function init()
+    {
+        parent::init();
+        $this->add(new SystemBlockProvider);
+    }
 
     /**
      * Add a block provider
