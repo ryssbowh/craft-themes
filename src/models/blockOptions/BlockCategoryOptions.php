@@ -53,9 +53,9 @@ class BlockCategoryOptions extends BlockOptions
      */
     public function getConfig(): array
     {
-        return [
+        return array_merge(parent::getConfig(), [
             'group' => $this->group, 
             'viewMode' => $this->viewMode
-        ];
+        ]);
     }
 }

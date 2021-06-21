@@ -37,7 +37,6 @@ export default {
     allStrategies: Object
   },
   created () {
-    console.log(this.allStrategies);
     this.setCacheStrategies(this.allStrategies);
     this.setThemes(this.themes);
     this.setAllLayouts(this.allLayouts);

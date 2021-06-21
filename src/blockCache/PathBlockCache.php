@@ -7,16 +7,16 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use Ryssbowh\CraftThemes\models\blockCacheOptions\GlobalOptions;
 
-class GlobalBlockCache extends BlockCacheStrategy
+class PathBlockCache extends BlockCacheStrategy
 {
-    const CACHE_TAG = 'themes.blockCache.global';
+    const CACHE_TAG = 'themes.blockCache.path';
 
     /**
      * @inheritDoc
      */
     public function getHandle(): string
     {
-        return 'global';
+        return 'path';
     }
 
     /**
@@ -24,7 +24,7 @@ class GlobalBlockCache extends BlockCacheStrategy
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Global');
+        return \Craft::t('themes', 'Url path');
     }
 
     /**
@@ -40,7 +40,7 @@ class GlobalBlockCache extends BlockCacheStrategy
      */
     protected function getKey(BlockInterface $block): string
     {
-        $key = [];
+        $key = [\Craft::$app->request->getFullPath()];
         if ($this->options->cachePerAuthenticated) {
             $key[] = \Craft::$app->user ? 'auth' : 'noauth';
         }

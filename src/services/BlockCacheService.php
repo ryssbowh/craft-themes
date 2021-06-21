@@ -94,6 +94,17 @@ class BlockCacheService extends Service
     }
 
     /**
+     * Does a strategy handle exist
+     * 
+     * @param  string  $handle
+     * @return boolean
+     */
+    public function hasStrategy(string $handle): bool
+    {
+        return isset($this->strategies[$handle]);
+    }
+
+    /**
      * Get a block cache
      * 
      * @param  BlockInterface $block

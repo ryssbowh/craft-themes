@@ -1,6 +1,6 @@
 <template>
   <form class="options-inner" ref="form">
-    <div id="caching-field" class="field">
+    <div class="field caching-section">
       <div class="heading">
         <label>Caching</label>                                    
       </div>
@@ -12,6 +12,7 @@
           </select>
         </div>
       </div>
+      <component :is="cacheStrategyOptionsComponent" :block="block" @updateOptions="updateOptions"></component>  
     </div>
     <component :is="optionsComponent" :block="block" @updateOptions="updateOptions"></component>
   </form>
@@ -24,6 +25,9 @@ export default {
   computed: {
     optionsComponent: function () {
       return this.block.provider + '-' + this.block.handle;
+    },
+    cacheStrategyOptionsComponent: function () {
+      return 'strategy-' + this.block.options.cacheStrategy;
     },
     ...mapState(['cacheStrategies'])
   },
@@ -42,8 +46,17 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.options-form {
   .options-inner {
     padding: 15px;
   }
+  .caching-section {
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(51, 64, 77, 0.1);
+    .field:first-child {
+      margin-top: 24px !important;
+    }
+  }
+}
 </style>

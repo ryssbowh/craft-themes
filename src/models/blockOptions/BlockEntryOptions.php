@@ -53,9 +53,9 @@ class BlockEntryOptions extends BlockOptions
      */
     public function getConfig(): array
     {
-        return [
+        return array_merge(parent::getConfig(), [
             'type' => $this->type, 
             'viewMode' => $this->viewMode
-        ];
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use yii\caching\TagDependency;
 
 interface BlockCacheStrategyInterface
@@ -42,4 +43,18 @@ interface BlockCacheStrategyInterface
      * Flush cache
      */
     public function flush();
+
+    /**
+     * Get options model (populated)
+     * 
+     * @return BlockCacheStrategyOptions
+     */
+    public function getOptions(): BlockCacheStrategyOptions;
+
+    /**
+     * Get options model
+     * 
+     * @return BlockCacheStrategyOptions
+     */
+    public function getOptionsModel(): BlockCacheStrategyOptions;
 }

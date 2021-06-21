@@ -2,9 +2,9 @@
 
 namespace Ryssbowh\CraftThemes\events;
 
-use Ryssbowh\CraftThemes\blockCache\AuthenticatedBlockCache;
 use Ryssbowh\CraftThemes\blockCache\GlobalBlockCache;
-use Ryssbowh\CraftThemes\blockCache\UserBlockCache;
+use Ryssbowh\CraftThemes\blockCache\PathBlockCache;
+use Ryssbowh\CraftThemes\blockCache\QueryBlockCache;
 use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use yii\base\Event;
 
@@ -19,8 +19,8 @@ class RegisterBlockCacheStrategies extends Event
     {
         parent::init();
         $this->add(new GlobalBlockCache);
-        $this->add(new AuthenticatedBlockCache);
-        $this->add(new UserBlockCache);
+        $this->add(new PathBlockCache);
+        $this->add(new QueryBlockCache);
     }
 
     /**

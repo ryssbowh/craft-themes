@@ -28,15 +28,4 @@ class BlockGlobalOptions extends BlockOptions
             [['set', 'viewMode'], 'string']
         ]);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getConfig(): array
-    {
-        return [
-            'set' => $this->set, 
-            'viewMode' => $this->viewMode
-        ];
-    }
 }

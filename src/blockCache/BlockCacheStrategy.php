@@ -4,11 +4,14 @@ namespace Ryssbowh\CraftThemes\blockCache;
 
 use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use craft\base\Component;
 use yii\caching\TagDependency;
 
 abstract class BlockCacheStrategy extends Component implements BlockCacheStrategyInterface
 {
+    protected $_options;
+
     /**
      * @inheritDoc
      */
@@ -41,6 +44,25 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
     public function flush()
     {
         TagDependency::invalidate(\Craft::$app->cache, $this->getTag());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptions(): BlockCacheStrategyOptions
+    {
+        if ($this->_options === null) {
+            $this->_options = $this->getOptionsModel();
+        }
+        return $this->_options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): BlockCacheStrategyOptions
+    {
+        return new BlockCacheStrategyOptions;
     }
 
     /**

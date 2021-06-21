@@ -4,9 +4,11 @@ namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
+use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use craft\base\Element;
 use craft\base\Model;
@@ -77,11 +79,6 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @var array
      */
-    protected $_options = [];
-
-    /**
-     * @var array
-     */
     protected $_optionsModel;
 
     /**
@@ -106,13 +103,18 @@ abstract class Block extends Model implements BlockInterface
      */
     public function getConfig(): array
     {
+        $options = $this->options->getConfig();
+        $strategyOptions = $this->getCacheStrategyOptions();
+        if ($strategyOptions) {
+            $options = array_merge($options, $strategyOptions->getConfig());
+        }
         return [
             'region' => $this->region,
             'handle' => $this->handle,
             'provider' => $this->provider,
             'order' => $this->order,
             'active' => $this->active,
-            'options' => $this->options->getConfig(),
+            'options' => $options,
             'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
@@ -141,8 +143,16 @@ abstract class Block extends Model implements BlockInterface
             [['dateCreated', 'dateUpdated', 'uid', 'id', 'safe'], 'safe'],
             ['options', function () {
                 $options = $this->options;
+                $strategyOptions = $this->cacheStrategyOptions;
+                $errors = [];
                 if (!$options->validate()) {
-                    $this->addError('options', $options->getErrors());
+                    $errors = array_merge($errors, $options->getErrors());
+                }
+                if (!$strategyOptions->validate()) {
+                    $errors = array_merge($errors, $strategyOptions->getErrors());
+                }
+                if ($errors) {
+                    $this->addError('options', $errors);
                 }
             }]
         ];
@@ -177,7 +187,29 @@ abstract class Block extends Model implements BlockInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['handle', 'options', 'errors']);
+        return array_merge(parent::fields(), ['handle', 'options', 'errors', 'cacheStrategyOptions']);
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $array = parent::toArray($fields, $expand, $recursive);
+        $array['options'] = array_merge($array['options'], $array['cacheStrategyOptions'] ?? []);
+        unset($array['cacheStrategyOptions']);
+        return $array;
+    }
+
+    /**
+     * Get block cache strategy options
+     * 
+     * @return ?BlockCacheStrategyOptions
+     */
+    public function getCacheStrategyOptions(): ?BlockCacheStrategyOptions
+    {
+        $strategy = $this->cacheStrategy;
+        if ($strategy) {
+            return $strategy->options;
+        }
+        return null;
     }
 
     /**
@@ -186,7 +218,7 @@ abstract class Block extends Model implements BlockInterface
     public function getOptions(): BlockOptions
     {
         if ($this->_optionsModel === null) {
-            $this->_optionsModel = \Yii::configure($this->getOptionsModel(), $this->_options);
+            $this->_optionsModel = $this->getOptionsModel();
         }
         return $this->_optionsModel;
     }
@@ -199,7 +231,22 @@ abstract class Block extends Model implements BlockInterface
         if (is_string($options)) {
             $options = json_decode($options, true);
         }
-        $this->getOptions()->setAttributes($options);
+        $this->options->setAttributes($options);
+        $strategy = $this->cacheStrategy;
+        if ($strategy) {
+            $strategy->options->setAttributes($options);
+        }
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getCacheStrategy(): ?BlockCacheStrategyInterface
+    {
+        if ($this->options->cacheStrategy and Themes::$plugin->blockCache->hasStrategy($this->options->cacheStrategy)) {
+            return Themes::$plugin->blockCache->getStrategy($this->options->cacheStrategy);
+        }
+        return null;
     }
 
     /**

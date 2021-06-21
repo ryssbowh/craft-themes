@@ -23,14 +23,4 @@ class BlockCurrentUserOptions extends BlockOptions
             [['viewMode'], 'string']
         ]);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getConfig(): array
-    {
-        return [ 
-            'viewMode' => $this->viewMode
-        ];
-    }
 }

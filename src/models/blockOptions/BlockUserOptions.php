@@ -45,8 +45,8 @@ class BlockUserOptions extends BlockOptions
      */
     public function getConfig(): array
     {
-        return [ 
+        return array_merge(parent::getConfig(), [ 
             'viewMode' => $this->viewMode
-        ];
+        ]);
     }
 }

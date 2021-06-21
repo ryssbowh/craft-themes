@@ -17,6 +17,10 @@ for (let name in window.themesBlockOptionComponents) {
     app.component(name, window.themesBlockOptionComponents[name]);
 }
 
+for (let name in window.themesBlockStrategyComponents) {
+    app.component('strategy-'+name, window.themesBlockStrategyComponents[name]);
+}
+
 const Translate = {
   install(app) {
     app.config.globalProperties.t = (str, params) => {
