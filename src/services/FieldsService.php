@@ -13,7 +13,7 @@ use craft\db\ActiveRecord;
 
 class FieldsService extends Service
 {
-    const REGISTER_FIELDS_EVENT = 'registerFields';
+    const REGISTER_FIELDS = 'registerFields';
 
     /**
      * @var Collection
@@ -165,7 +165,7 @@ class FieldsService extends Service
     protected function register()
     {
         $event = new RegisterFieldsEvent;
-        $this->triggerEvent(self::REGISTER_FIELDS_EVENT, $event);
+        $this->triggerEvent(self::REGISTER_FIELDS, $event);
         $this->_registered = $event->fields;
     }
 

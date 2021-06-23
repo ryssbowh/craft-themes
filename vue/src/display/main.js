@@ -8,7 +8,6 @@ import DisplayMenu from './components/DisplayMenu.vue';
 import DisplayItem from './components/DisplayItem.vue';
 import OptionsModal from './components/OptionsModal.vue';
 import ViewModeModal from './components/ViewModeModal.vue';
-import Modal from './modal.js';
 import Field from './components/Field.vue';
 import Group from './components/Group.vue';
 import Draggable from 'vuedraggable';
@@ -30,16 +29,16 @@ app.component('group', Group);
 app.component('options-modal', OptionsModal);
 app.component('display-item', DisplayItem,);
 
-for (let name in window.fieldDisplayers) {
-    app.component('fieldDisplayer-' + name, window.fieldDisplayers[name]);
+for (let name in window.themesFieldDisplayersComponents) {
+    app.component('fieldDisplayer-' + name, window.themesFieldDisplayersComponents[name]);
 }
 
-for (let name in window.fileDisplayers) {
-    app.component('fileDisplayer-' + name, window.fileDisplayers[name]);
+for (let name in window.themesFileDisplayersComponents) {
+    app.component('fileDisplayer-' + name, window.themesFileDisplayersComponents[name]);
 }
 
-for (let name in window.themesFields) {
-    app.component('field-' + name, window.themesFields[name]);
+for (let name in window.themesFieldsComponents) {
+    app.component('field-' + name, window.themesFieldsComponents[name]);
 }
 
 const Translate = {

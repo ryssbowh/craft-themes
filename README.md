@@ -131,5 +131,11 @@ Craft 3.5 or over
 
 - routes
 - tests
+- test integration with a new module
+  - blocks 
+  - fields
+  - displayers
+  - strategies
+  - file displayers
 - bundleAssets as regular expressions paths  
 - preprocess functions

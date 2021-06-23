@@ -2,14 +2,6 @@ import { mapState } from 'vuex';
 
 window.themesBlockOptionComponents = {};
 
-function handleError(err) {
-    if (err.response) {
-        Craft.cp.displayError(err.response.data.message);
-    } else {
-        Craft.cp.displayError(err);
-    }
-}
-
 window.themesBlockOptionComponents['system-template'] = {
     props: {
         block: Object
@@ -103,7 +95,7 @@ window.themesBlockOptionComponents['system-entry'] = {
                 this.entries = response.data.entries;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         },
         fetchViewModes: function () {
@@ -112,7 +104,7 @@ window.themesBlockOptionComponents['system-entry'] = {
                 this.viewModes = response.data.viewModes;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         }
     },
@@ -211,7 +203,7 @@ window.themesBlockOptionComponents['system-category'] = {
                 this.categories = response.data.categories;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         },
         fetchViewModes: function () {
@@ -220,7 +212,7 @@ window.themesBlockOptionComponents['system-category'] = {
                 this.viewModes = response.data.viewModes;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         }
     },
@@ -308,7 +300,7 @@ window.themesBlockOptionComponents['system-user'] = {
                 this.users = response.data.users;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         },
         fetchViewModes: function () {
@@ -317,7 +309,7 @@ window.themesBlockOptionComponents['system-user'] = {
                 this.viewModes = response.data.viewModes;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         }
     },
@@ -388,7 +380,7 @@ window.themesBlockOptionComponents['system-current-user'] = {
                 this.viewModes = response.data.viewModes;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         }
     },
@@ -453,7 +445,7 @@ window.themesBlockOptionComponents['system-global'] = {
                 this.viewModes = response.data.viewModes;
             })
             .catch((err) => {
-                handleError(err);
+                this.handleError(err);
             });
         }
     },

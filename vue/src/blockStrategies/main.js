@@ -1,5 +1,3 @@
-import { mapState } from 'vuex';
-
 window.themesBlockStrategyComponents = {};
 
 window.themesBlockStrategyComponents['global'] = {

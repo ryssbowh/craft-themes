@@ -1,9 +1,9 @@
 import './main.scss';
 import { merge } from 'lodash';
 
-window.themesFields = {};
+window.themesFieldsComponents = {};
 
-window.themesFields['matrix'] = {
+window.themesFieldsComponents['matrix'] = {
     props: {
         item: Object
     },
@@ -44,7 +44,7 @@ window.themesFields['matrix'] = {
     </div>`
 }
 
-window.themesFields['table'] = {
+window.themesFieldsComponents['table'] = {
     props: {
         item: Object
     },

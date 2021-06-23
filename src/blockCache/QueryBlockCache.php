@@ -40,7 +40,7 @@ class QueryBlockCache extends BlockCacheStrategy
      */
     protected function getKey(BlockInterface $block): string
     {
-        $key = [\Craft::$app->request->getFullPath() . \Craft::$app->request->getQueryStringWithoutPath()];
+        $key = [\Craft::$app->request->getFullPath() . '?' . \Craft::$app->request->getQueryStringWithoutPath()];
         if ($this->options->cachePerAuthenticated) {
             $key[] = \Craft::$app->user ? 'auth' : 'noauth';
         }

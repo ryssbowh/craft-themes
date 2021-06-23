@@ -1,8 +1,8 @@
 import './main.scss';
 
-window.fieldDisplayers = {};
+window.themesFieldDisplayersComponents = {};
 
-window.fieldDisplayers['file_default'] = {
+window.themesFieldDisplayersComponents['file_default'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -91,9 +91,9 @@ window.fieldDisplayers['file_default'] = {
     `
 };
 
-window.fieldDisplayers['asset_render_file'] = {...window.fieldDisplayers['file_default']}
+window.themesFieldDisplayersComponents['asset_render_file'] = {...window.themesFieldDisplayersComponents['file_default']}
 
-window.fieldDisplayers['entry_rendered'] = {
+window.themesFieldDisplayersComponents['entry_rendered'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -124,7 +124,7 @@ window.fieldDisplayers['entry_rendered'] = {
     </div>`
 };
 
-window.fieldDisplayers['category_rendered'] = {
+window.themesFieldDisplayersComponents['category_rendered'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -155,7 +155,7 @@ window.fieldDisplayers['category_rendered'] = {
     </div>`
 };
 
-window.fieldDisplayers['asset_rendered'] = {
+window.themesFieldDisplayersComponents['asset_rendered'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -186,7 +186,7 @@ window.fieldDisplayers['asset_rendered'] = {
     </div>`
 };
 
-window.fieldDisplayers['url_default'] = {
+window.themesFieldDisplayersComponents['url_default'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -220,7 +220,7 @@ window.fieldDisplayers['url_default'] = {
     </div>`
 };
 
-window.fieldDisplayers['time_default'] = {
+window.themesFieldDisplayersComponents['time_default'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -277,7 +277,7 @@ window.fieldDisplayers['time_default'] = {
     </div>`
 };
 
-window.fieldDisplayers['redactor_truncated'] = {
+window.themesFieldDisplayersComponents['redactor_truncated'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -343,9 +343,9 @@ window.fieldDisplayers['redactor_truncated'] = {
     </div>`
 };
 
-window.fieldDisplayers['plain_text_truncated'] = {...window.fieldDisplayers['redactor_truncated']};
+window.themesFieldDisplayersComponents['plain_text_truncated'] = {...window.themesFieldDisplayersComponents['redactor_truncated']};
 
-window.fieldDisplayers['redactor_full'] = {
+window.themesFieldDisplayersComponents['redactor_full'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -374,7 +374,7 @@ window.fieldDisplayers['redactor_full'] = {
     </div>`
 };
 
-window.fieldDisplayers['number_default'] = {
+window.themesFieldDisplayersComponents['number_default'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -440,7 +440,7 @@ window.fieldDisplayers['number_default'] = {
     </div>`
 };
 
-window.fieldDisplayers['entry_link'] = {
+window.themesFieldDisplayersComponents['entry_link'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -513,7 +513,7 @@ window.fieldDisplayers['entry_link'] = {
     </div>`
 };
 
-window.fieldDisplayers['date_default'] = {
+window.themesFieldDisplayersComponents['date_default'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -526,8 +526,8 @@ window.fieldDisplayers['date_default'] = {
         };
     },
     created: function () {
-        format: this.options.format;
-        custom: this.options.custom;
+        this.format = this.options.format;
+        this.custom = this.options.custom;
     },
     methods: {
         errorList: function (field) {
@@ -571,7 +571,7 @@ window.fieldDisplayers['date_default'] = {
     </div>`
 };
 
-window.fieldDisplayers['email_default'] = {
+window.themesFieldDisplayersComponents['email_default'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -600,7 +600,7 @@ window.fieldDisplayers['email_default'] = {
     </div>`
 };
 
-window.fieldDisplayers['category_list'] = {
+window.themesFieldDisplayersComponents['category_list'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -629,7 +629,7 @@ window.fieldDisplayers['category_list'] = {
     </div>`
 };
 
-window.fieldDisplayers['author_default'] = {
+window.themesFieldDisplayersComponents['author_default'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -684,7 +684,7 @@ window.fieldDisplayers['author_default'] = {
     </div>`
 };
 
-window.fieldDisplayers['asset_link'] = {
+window.themesFieldDisplayersComponents['asset_link'] = {
     props: {
         displayer: Object,
         options: Object,
@@ -773,7 +773,7 @@ window.fieldDisplayers['asset_link'] = {
     </div>`
 };
 
-window.fieldDisplayers['title_default'] = {
+window.themesFieldDisplayersComponents['title_default'] = {
     props: {
         displayer: Object,
         options: Object,

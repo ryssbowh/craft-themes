@@ -1,6 +1,6 @@
-window.fileDisplayers = {};
+window.themesFileDisplayersComponents = {};
 
-window.fileDisplayers['iframe'] = {
+window.themesFileDisplayersComponents['iframe'] = {
     props: {
         displayer: Object,
         kind: String,
@@ -49,7 +49,7 @@ window.fileDisplayers['iframe'] = {
     `
 }
 
-window.fileDisplayers['html_video'] = {
+window.themesFileDisplayersComponents['html_video'] = {
     props: {
         displayer: Object,
         kind: String,
@@ -148,7 +148,7 @@ window.fileDisplayers['html_video'] = {
     `
 }
 
-window.fileDisplayers['html_audio'] = {
+window.themesFileDisplayersComponents['html_audio'] = {
     props: {
         displayer: Object,
         kind: String,
@@ -216,7 +216,7 @@ window.fileDisplayers['html_audio'] = {
     `
 }
 
-window.fileDisplayers['image_transform'] = {
+window.themesFileDisplayersComponents['image_transform'] = {
     props: {
         displayer: Object,
         kind: String,
@@ -271,7 +271,7 @@ window.fileDisplayers['image_transform'] = {
     `
 }
 
-window.fileDisplayers['link'] = {
+window.themesFileDisplayersComponents['link'] = {
     props: {
         displayer: Object,
         kind: String,

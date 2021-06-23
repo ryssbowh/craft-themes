@@ -94,36 +94,9 @@ New block classes must extends the `Block` class. You can override the `getOptio
 
 To display your options in the backend you need to hook in the Vue backend system, by defining a new Vue component on the `window.themesBlockOptionComponents` variable.  
 This variable will be defined after the `BlockOptionsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
-Example : 
-```
-window.themesBlockOptionComponents['provider-block'] = {
-    props: {
-        block: Object
-    },
-    methods: {
-        errors: function (field) {
-            if (!this.block.errors.options ?? null) {
-                return [];
-            }
-            for (let i in this.block.errors.options) {
-                if (this.block.errors.options[i][field] ?? null) {
-                    return this.block.errors.options[i][field];
-                }
-            }
-            return [];
-        },
-    },
-    template: `<div class="field">
-        <div class="heading">
-            <label>{{ t('My label') }}</label>
-        </div>
-        <div class="input ltr">
-            <textarea class="text fullwidth" rows="10" :value="block.options.myOption" @input="$emit('updateOptions', {myOption: $event.target.value})">
-            </textarea>
-        </div>
-    </div>`
-};
-```
+
+Examples in `vue/src/blockOptions/main.js`.
+
 The key is built like so : {provider handle}-{block handle}.
 
 You can pass data from your block to Vue by overriding the `fields` method of your block class :
@@ -145,9 +118,37 @@ Validating your options and saving them will be handled automatically, as long a
 
 Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockOptions/main.js)
 
-## Field displayers
+## Fields
 
-A field displayer defines how a field is rendered on the front end, each field displayer will handle one type of field.
+There are 8 types of fields defined by this plugin :
+
+- Title : handles the title of an entry/category
+- Author : handles the author of a entry/category
+- File : handles the file of an asset
+- Matrix : handles Craft matrix fields
+- MatrixField : handles the field within a matrix
+- Table : handles Craft table fields
+- TableField : handles the fields within a table field
+- CraftField : handles all the other Craft fields
+
+A field displayer defines how a field is rendered on the front end, each field displayer will handle one type of field. This is controlled by the method `getFieldTarget(): string` which will return either the class of the Craft field this displayer can handle, or the class of the themes field (like `Title`).
+
+### Define a new field
+
+Register your php field class (implementing `FieldInterface`) by responding to the event :
+
+```
+Event::on(FieldsService::class, FieldsService::REGISTER_FIELDS, function (RegisterFieldsEvent $event) {
+    $event->->add(MyField::class);
+});
+```
+
+To hook in the backend Vue system, add a new component to the `window.themesFieldsComponents` variable. 
+This variable will be defined after the `FieldsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that.
+
+Your field can be created automatically on layout creation if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. This is useful for fields that aren't Craft fields (like `Title`) and need to exist on some Layouts. By default this method returns false.
+
+Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fields/main.js)
 
 ### Define a new displayer
 
@@ -162,40 +163,8 @@ Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYE
 Your field displayer class must extend the `FieldDisplayer` class and define the field it can handle in its `getFieldTarget` method. 
 Registering a field displayer with a handle already existing will **replace** the current displayer.
 
-Same as with blocks, to hook in the backend Vue system, add a new component to the `window.fieldDisplayers` variable. 
+To hook in the backend Vue system, add a new component to the `window.themesFieldDisplayersComponents` variable. 
 This variable will be defined after the `FieldDisplayerAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
-
-```
-window.fieldDisplayers['displayer_handle'] = {
-    props: {
-        displayer: Object,
-        options: Object,
-        errors: Object
-    },
-    methods: {
-        errorList: function (field) {
-            return this.errors[field] ?? [];
-        }
-    },
-    created: function () {
-        this.myOption = this.options.myOption;
-    },
-    template: `
-    <div>
-        <div class="field">
-            <div class="heading">
-                <label>{{ t('My option') }}</label>
-            </div>
-            <div class="input ltr">
-                <input type="number" class="fullwidth text" name="myOption" v-model="myOption">
-            </div>
-            <ul class="errors" v-if="errorList('myOption')">
-                <li v-for="error in errorList('myOption')">{{ error }}</li>
-            </ul>
-        </div>
-    </div>`
-};
-```
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
@@ -218,46 +187,8 @@ Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS
 Your file displayer class must extend the `FileDisplayer` class and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
 Registering a file displayer with a handle already existing will **replace** the current displayer.
 
-Same as with blocks, to hook in the backend Vue system, add a new component to the `window.fileDisplayers` variable. 
+Same as with blocks, to hook in the backend Vue system, add a new component to the `window.themesFileDisplayersComponents` variable. 
 This variable will be defined after the `FileDisplayerAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
-
-```
-window.fileDisplayers['displayer_handle'] = {
-    props: {
-        displayer: Object,
-        kind: String,
-        errors: Object
-    },
-    data: function () {
-        return {
-            myOption: 500
-        };
-    },
-    created: function () {
-        this.myOption = this.displayer.options.myOption;
-    },
-    methods: {
-        errorList: function (field) {
-            return this.errors[field] ?? [];
-        }
-    },
-    template: `
-    <div>
-        <div class="field">
-            <div class="heading">
-                <label>{{ t('My Option') }}</label>
-            </div>
-            <div class="input ltr">
-                <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][myOption]'" v-model="myOption">
-            </div>
-            <ul class="errors" v-if="errorList('myOption')">
-                <li v-for="error in errorList('myOption')">{{ error }}</li>
-            </ul>
-        </div>
-    </div>
-    `
-}
-```
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
@@ -422,4 +353,11 @@ Event::on(BlockCacheService::class, BlockCacheService::REGISTER_STRATEGIES, func
 });
 ```
 
-Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements within a block are changed.
+To hook in the backend Vue system, add a new component to the `window.themesBlockStrategyComponents` variable. 
+This variable will be defined after the `BlockOptionsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+
+Validating your options and saving them will be handled automatically, as long as you have defined rules in your strategy options class.
+
+Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockStrategies/main.js)
+
+Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
