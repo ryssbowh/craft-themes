@@ -2,9 +2,13 @@
 
 namespace Ryssbowh\CraftThemes\models\blocks;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockEntryOptions;
+use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\elements\Entry;
 
 class EntryBlock extends Block
 {
@@ -27,6 +31,11 @@ class EntryBlock extends Block
      * @var string
      */
     public static $handle = 'entry';
+
+    /**
+     * @var Entry
+     */
+    protected $_entry;
 
     /**
      * @inheritDoc
@@ -55,6 +64,29 @@ class EntryBlock extends Block
             return ($a['name'] < $b['name']) ? -1 : 1;
         });
         return $entryTypes;
+    }
+
+    /**
+     * Get entry as defined in options
+     * 
+     * @return Entry
+     */
+    public function getEntry(): Entry
+    {
+        if ($this->_entry === null) {
+            $this->_entry = Entry::find()->uid($this->options->entry)->one();
+        }
+        return $this->_entry;
+    }
+
+    /**
+     * Get layout associated to entry defined in options
+     * 
+     * @return LayoutInterface
+     */
+    public function getEntryLayout(): LayoutInterface
+    {
+        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::ENTRY_HANDLE, $this->options->type);
     }
 
     /**

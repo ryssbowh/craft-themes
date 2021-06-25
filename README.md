@@ -131,6 +131,7 @@ Craft 3.5 or over
 
 - routes
 - tests
+- install blocks in theme
 - test integration with a new module
   - blocks 
   - fields

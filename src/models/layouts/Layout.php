@@ -370,11 +370,27 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function getVisibleDisplays(string $viewMode = ViewModeService::DEFAULT_HANDLE): array
+    public function getVisibleDisplays(string $viewMode): array
     {
+        if (!$this->hasViewMode($viewMode)) {
+            throw LayoutException::noViewMode($viewMode);
+        }
         return array_filter($this->getDisplays($viewMode), function ($display) {
             return $display->item->isVisible();
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasViewMode(string $viewMode): bool
+    {
+        foreach ($this->viewModes as $mode) {
+            if ($mode->handle == $viewMode) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

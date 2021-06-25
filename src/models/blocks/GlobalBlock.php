@@ -2,9 +2,13 @@
 
 namespace Ryssbowh\CraftThemes\models\blocks;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockGlobalOptions;
+use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\elements\GlobalSet;
 
 class GlobalBlock extends Block
 {
@@ -27,6 +31,11 @@ class GlobalBlock extends Block
      * @var string
      */
     public static $handle = 'global';
+
+    /**
+     * @var GlobalSet
+     */
+    protected $_global;
 
     /**
      * @inheritDoc
@@ -55,6 +64,29 @@ class GlobalBlock extends Block
             return ($a['name'] < $b['name']) ? -1 : 1;
         });
         return $all;
+    }
+
+    /**
+     * Get global set as defined in options
+     * 
+     * @return GlobalSet
+     */
+    public function getGlobalSet(): GlobalSet
+    {
+        if ($this->_global === null) {
+            $this->_global = GlobalSet::find()->uid($this->options->set)->one();
+        }
+        return $this->_global;
+    }
+
+    /**
+     * Get layout associated to global set defined in options
+     * 
+     * @return LayoutInterface
+     */
+    public function getGlobalSetLayout(): LayoutInterface
+    {
+        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::GLOBAL_HANDLE, $this->options->set);
     }
 
     /**

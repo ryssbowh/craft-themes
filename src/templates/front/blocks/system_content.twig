@@ -1,5 +1,7 @@
-<div class="{{ classes|raw }}" {{ attributes|raw }}>
-    {% for display in layout.visibleDisplays %}
+{% extends "blocks/block" %}
+
+{% block content %}
+    {% for display in layout.getVisibleDisplays('default') %}
         {{ display.render(element)|raw }}
     {% endfor %}
-</div>
+{% endblock %}

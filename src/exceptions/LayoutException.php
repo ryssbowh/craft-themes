@@ -21,6 +21,11 @@ class LayoutException extends \Exception
         return new static("Type $type is not a valid layout type");
     }
 
+    public static function noViewMode(string $viewMode)
+    {
+        return new static("View mode '$viewMode' is not defined on this layout");
+    }
+
     public static function noId(int $id)
     {
         return new static("Layout with id $id couldn't be found");

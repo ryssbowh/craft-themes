@@ -2,9 +2,13 @@
 
 namespace Ryssbowh\CraftThemes\models\blocks;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockCategoryOptions;
+use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\elements\Category;
 
 class CategoryBlock extends Block
 {
@@ -27,6 +31,11 @@ class CategoryBlock extends Block
      * @var string
      */
     public static $handle = 'category';
+
+    /**
+     * @var Category
+     */
+    protected $_category;
 
     /**
      * @inheritDoc
@@ -55,6 +64,29 @@ class CategoryBlock extends Block
             return ($a['name'] < $b['name']) ? -1 : 1;
         });
         return $groups;
+    }
+
+    /**
+     * Get category as defined in options
+     * 
+     * @return Category
+     */
+    public function getCategory(): Category
+    {
+        if ($this->_category === null) {
+            $this->_category = Category::find()->uid($this->options->category)->one();
+        }
+        return $this->_category;
+    }
+
+    /**
+     * Get layout associated to category defined in options
+     * 
+     * @return LayoutInterface
+     */
+    public function getCategoryLayout(): LayoutInterface
+    {
+        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::CATEGORY_HANDLE, $this->options->group);
     }
 
     /**

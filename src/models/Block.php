@@ -82,6 +82,11 @@ abstract class Block extends Model implements BlockInterface
     protected $_optionsModel;
 
     /**
+     * @var LayoutInterface
+     */
+    protected $_layout;
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -124,10 +129,14 @@ abstract class Block extends Model implements BlockInterface
      */
     public function getLayout(): ?LayoutInterface
     {
-        if (!$this->layout_id) {
-            return null;
+        if ($this->_layout === null) {
+            if (!$this->layout_id) {
+                $this->_layout = false;
+            } else {
+                $this->_layout = Themes::$plugin->layouts->getById($this->layout_id);
+            }
         }
-        return Themes::$plugin->layouts->getById($this->layout_id);
+        return $this->_layout ?: null;
     }
 
     /**
@@ -148,7 +157,7 @@ abstract class Block extends Model implements BlockInterface
                 if (!$options->validate()) {
                     $errors = array_merge($errors, $options->getErrors());
                 }
-                if (!$strategyOptions->validate()) {
+                if ($strategyOptions and !$strategyOptions->validate()) {
                     $errors = array_merge($errors, $strategyOptions->getErrors());
                 }
                 if ($errors) {
@@ -190,6 +199,9 @@ abstract class Block extends Model implements BlockInterface
         return array_merge(parent::fields(), ['handle', 'options', 'errors', 'cacheStrategyOptions']);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         $array = parent::toArray($fields, $expand, $recursive);

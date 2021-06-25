@@ -1,3 +1,5 @@
-<div class="block block-{{ block.handle }}">
-	I'm the block {{ block.name }}, override my template 'blocks/{{ block.handle }}'
+<div class="{{ classes|raw }}" {{ attributes|raw }}>
+    {% block content %}
+	   I'm the block {{ block.name }}, override my template 'blocks/{{ block.provider~'_'~block.handle }}'
+    {% endblock %}
 </div>

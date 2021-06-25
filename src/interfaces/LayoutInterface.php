@@ -77,6 +77,14 @@ interface LayoutInterface
     public function setViewModes(?array $viewModes): LayoutInterface;
 
     /**
+     * Is a view mode handle defined in this layout 
+     * 
+     * @param  string  $viewMode
+     * @return boolean
+     */
+    public function hasViewMode(string $viewMode): bool;
+
+    /**
      * Blocks getter
      * 
      * @return array
@@ -166,7 +174,7 @@ interface LayoutInterface
      * 
      * @return array
      */
-    public function getVisibleDisplays(string $viewMode = ViewModeService::DEFAULT_HANDLE): array;
+    public function getVisibleDisplays(string $viewMode): array;
 
     /**
      * Get all craft fields defined on this layout's element

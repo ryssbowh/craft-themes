@@ -1,3 +1,5 @@
-<div class="{{ classes|raw }}" {{ attributes|raw }}>
+{% extends "blocks/block" %}
+
+{% block content %}
     <a href="{{ currentSite.getBaseUrl }}">{{ currentSite.name }}</a>
-</div>
+{% endblock %}
