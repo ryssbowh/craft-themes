@@ -10,6 +10,7 @@ use Ryssbowh\CraftThemes\models\fields\MatrixField;
 use Ryssbowh\CraftThemes\models\fields\Table;
 use Ryssbowh\CraftThemes\models\fields\TableField;
 use Ryssbowh\CraftThemes\models\fields\Title;
+use Ryssbowh\CraftThemes\models\fields\UserInfo;
 use yii\base\Event;
 
 class RegisterFieldsEvent extends Event
@@ -33,6 +34,7 @@ class RegisterFieldsEvent extends Event
         $this->add(Title::class);
         $this->add(Author::class);
         $this->add(File::class);
+        $this->add(UserInfo::class);
     }
 
     /**

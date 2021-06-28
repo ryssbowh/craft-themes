@@ -3,6 +3,6 @@
     
     {% block content %}
         {% set viewMode = craft.themes.viewModes.getByUid(block.options.viewMode) %}
-        {{ craft.themes.view.renderLayout(block.userLayout, viewMode.handle, currentUser)|raw }}
+        {{ craft.themes.view.renderLayout(block.userLayout, viewMode.handle, block.user)|raw }}
     {% endblock %}
 {% endif %}

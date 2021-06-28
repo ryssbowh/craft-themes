@@ -53,4 +53,12 @@ class UserLayout extends Layout
     {
         return \Craft::$app->getFields()->getLayoutByType(User::class)->getFields();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getElementMachineName(): string
+    {
+        return 'user';
+    }
 }

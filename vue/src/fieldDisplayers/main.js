@@ -684,6 +684,8 @@ window.themesFieldDisplayersComponents['author_default'] = {
     </div>`
 };
 
+window.themesFieldDisplayersComponents['user-info_default'] = {... window.themesFieldDisplayersComponents['author_default']}
+
 window.themesFieldDisplayersComponents['asset_link'] = {
     props: {
         displayer: Object,

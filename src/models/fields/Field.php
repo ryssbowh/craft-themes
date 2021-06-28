@@ -194,7 +194,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function render(Element $element): string
     {
-        return Themes::$plugin->view->renderField($this, $element);
+        return Themes::$plugin->view->renderField($this, $element, $element->{$this->handle});
     }
 
     /**

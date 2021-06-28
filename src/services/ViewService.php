@@ -181,15 +181,13 @@ class ViewService extends Service
      * 
      * @param  FieldInterface $field
      * @param  Element        $element
+     * @param  mixed          $value
      * @return string
      */
-    public function renderField(FieldInterface $field, Element $element, $value = null): string
+    public function renderField(FieldInterface $field, Element $element, $value): string
     {
         if (!$displayer = $field->getDisplayer()) {
             return '';
-        }
-        if ($value == null) {
-            $value = $element->{$field->handle};
         }
         $layout = $this->renderingLayout->getElementMachineName();
         $type = $this->renderingLayout->type;

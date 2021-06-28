@@ -8,8 +8,8 @@
     <div class="themes">
     	{% for theme in themes %}
             {% set hasSettings = allowChanges and theme.hasCpSettings and currentUser.admin %}
-            {% set manageDisplay = canManageDisplay and not theme.isPartial %}
-            {% set manageBlocks = canManageBlocks and not theme.isPartial %}
+            {% set manageDisplay = allowChanges and canManageDisplay and not theme.isPartial %}
+            {% set manageBlocks = allowChanges and canManageBlocks and not theme.isPartial %}
             {% set hasPreview = theme.hasPreview %}
             <div class="theme">
                 <div class="preview {{ hasPreview ? '' : 'no-preview' }}">
