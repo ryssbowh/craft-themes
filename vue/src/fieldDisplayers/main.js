@@ -155,6 +155,8 @@ window.themesFieldDisplayersComponents['category_rendered'] = {
     </div>`
 };
 
+window.themesFieldDisplayersComponents['tag_rendered'] = {... window.themesFieldDisplayersComponents['category_rendered']};
+
 window.themesFieldDisplayersComponents['asset_rendered'] = {
     props: {
         displayer: Object,
@@ -786,6 +788,14 @@ window.themesFieldDisplayersComponents['title_default'] = {
             return this.errors[field] ?? [];
         }
     },
+    data: function () {
+        return {
+            tag: 'h1',
+        };
+    },
+    created: function () {
+        this.tag = this.options.tag;
+    },
     mounted: function () {
         this.$nextTick(() => {
             Craft.initUiElements(this.$el);
@@ -799,13 +809,14 @@ window.themesFieldDisplayersComponents['title_default'] = {
             </div>
             <div class="input ltr">                    
                 <div class="select">
-                    <select name="tag" :value="options.tag">
+                    <select name="tag" v:model="tag">
                         <option value="h1">H1</option>
                         <option value="h2">H2</option>
                         <option value="h3">H3</option>
                         <option value="h4">H4</option>
                         <option value="h5">H5</option>
                         <option value="h6">H6</option>
+                        <option value="p">p</option>
                     </select>
                 </div>
             </div>
@@ -825,6 +836,52 @@ window.themesFieldDisplayersComponents['title_default'] = {
                     <input type="hidden" name="linked">
                 </button>
             </div>
+        </div>
+    </div>`
+};
+
+
+window.themesFieldDisplayersComponents['tag-title_default'] = {
+    props: {
+        displayer: Object,
+        options: Object,
+        errors: Object
+    },
+    methods: {
+        errorList: function (field) {
+            return this.errors[field] ?? [];
+        }
+    },
+    data: function () {
+        return {
+            tag: 'h1',
+        };
+    },
+    created: function () {
+        this.tag = this.options.tag;
+    },
+    template: `
+    <div>
+        <div class="field">
+            <div class="heading">
+                <label class="required">{{ t('Tag') }}</label>
+            </div>
+            <div class="input ltr">                    
+                <div class="select">
+                    <select name="tag" v:model="tag">
+                        <option value="h1">H1</option>
+                        <option value="h2">H2</option>
+                        <option value="h3">H3</option>
+                        <option value="h4">H4</option>
+                        <option value="h5">H5</option>
+                        <option value="h6">H6</option>
+                        <option value="p">p</option>
+                    </select>
+                </div>
+            </div>
+            <ul class="errors" v-if="errorList('tag')">
+                <li v-for="error in errorList('tag')">{{ error }}</li>
+            </ul>
         </div>
     </div>`
 };

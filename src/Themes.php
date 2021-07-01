@@ -11,9 +11,9 @@ use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
 use craft\events\SectionEvent;
-use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, RouteEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
+use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
 use craft\helpers\UrlHelper;
-use craft\services\{Categories, Plugins, ProjectConfig, Routes, Sections, Volumes, UserPermissions, Tags, Globals, Fields};
+use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields};
 use craft\utilities\ClearCaches;
 use craft\web\Application;
 use craft\web\UrlManager;
@@ -162,19 +162,9 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerPluginsEvents()
     {
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->layouts->installThemeData($event->plugin->handle);
-                    Themes::$plugin->blocks->installContentBlock($event->plugin);
-                }
-            }
-        );
-
         Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->layouts->uninstallThemeData($event->plugin->handle);
                     Themes::$plugin->rules->flushCache();
                 }
             }
@@ -318,7 +308,7 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Listens to Entries/Categories/Routes/Fields deletions and additions
+     * Listens to Entries/Categories/Fields deletions and additions
      */
     protected function registerCraftEvents()
     {
@@ -378,19 +368,6 @@ class Themes extends \craft\base\Plugin
             $type = LayoutService::TAG_HANDLE;
             $uid = $e->tagGroup->uid;
             Themes::$plugin->layouts->onCraftElementDeleted($type, $uid);
-        });
-        Craft::$app->projectConfig->onRemove(Routes::CONFIG_ROUTES_KEY.'.{uid}', function(ConfigEvent $e) {
-            $type = LayoutService::ROUTE_HANDLE;
-            $uid = $e->tokenMatches[0];
-            Themes::$plugin->layouts->onCraftElementDeleted($type, $uid);
-        })->onAdd(Routes::CONFIG_ROUTES_KEY.'.{uid}', function(ConfigEvent $e) {
-            $type = LayoutService::ROUTE_HANDLE;
-            $uid = $e->tokenMatches[0];
-            Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
-        })->onUpdate(Routes::CONFIG_ROUTES_KEY.'.{uid}', function(ConfigEvent $e) {
-            $type = LayoutService::ROUTE_HANDLE;
-            $uid = $e->tokenMatches[0];
-            Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
             Themes::$plugin->layouts->onCraftFieldSaved($e);
@@ -459,6 +436,17 @@ class Themes extends \craft\base\Plugin
     protected function createSettingsModel(): Settings
     {
         return new Settings();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function beforeUninstall(): bool
+    {
+        foreach ($this->registry->all() as $plugin) {
+            \Craft::$app->plugins->uninstallPlugin($plugin->handle);
+        }
+        return true;
     }
 
     /**

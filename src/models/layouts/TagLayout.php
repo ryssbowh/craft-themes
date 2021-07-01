@@ -19,7 +19,7 @@ class TagLayout extends Layout
      */
     protected function loadElement()
     {
-        return \Craft::$app->tags->getTagGroupByUid($this->element);
+        return \Craft::$app->tags->getTagGroupByUid($this->elementUid);
     }
 
     /**
@@ -35,7 +35,7 @@ class TagLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'Tag : {name}', ['name' => $this->element()->name]);
+        return \Craft::t('themes', 'Tag : {name}', ['name' => $this->element->name]);
     }
 
     /**
@@ -43,7 +43,7 @@ class TagLayout extends Layout
      */
     public function getHandle(): string
     {
-        return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
+        return StringHelper::camelCase($this->type . '_' . $this->element->handle . '_' . $this->theme);
     }
 
     /**
@@ -59,6 +59,14 @@ class TagLayout extends Layout
      */
     public function getCraftFields(): array
     {
-        return $this->element()->getFieldLayout()->getFields();
+        return $this->element->getFieldLayout()->getFields();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getElementMachineName(): string
+    {
+        return 'tag';
     }
 }

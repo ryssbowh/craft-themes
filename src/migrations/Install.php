@@ -34,7 +34,7 @@ class Install extends Migration
             'id' => $this->primaryKey(),
             'theme' => $this->string(255)->notNull(),
             'type' => $this->string(255)->notNull(),
-            'element' => $this->string(255)->notNull(),
+            'elementUid' => $this->string(255)->notNull(),
             'hasBlocks' => $this->boolean()->defaultValue(false),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),

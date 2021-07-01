@@ -23,7 +23,7 @@ What it doesn't allow you to do :
 
 The building of a page is based on the notion of layouts, regions, blocks, view modes and displays.
 
-**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 7 types of layouts :
+**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 6 types of layouts :
 
 | Layout type | Associated with | Can have blocks | Can have displays and view modes |
 |-------------|-----------------|-----------------|----------------------------------|
@@ -31,7 +31,6 @@ The building of a page is based on the notion of layouts, regions, blocks, view 
 | Category    | Category group  | Yes             | Yes                              |
 | Entry       | Entry type      | Yes             | Yes                              |
 | Global      | Global set      | No              | Yes                              |
-| Route       | Route           | Yes             | No                               |
 | Tag         | Tag             | No              | Yes                              |
 | User        | User            | No              | Yes                              |
 | Volume      | Volume          | No              | Yes                              |
@@ -116,7 +115,7 @@ A partial theme will not be available to select in the backend, but it can be in
 - Activate plugin
 - Go to the settings and install the themes data
 - Add a rule in the settings to load a theme or set a default theme.
-- Set your templates to `themed_page` for section/categories/routes you want to use the theme engine for
+- Set your templates to `themed_page` for section/categories you want to use the theme engine for
 
 ## Requirements
 
@@ -129,8 +128,8 @@ Craft 3.5 or over
 
 ## Roadmap
 
-- routes
 - tests
+- test email templates in console
 - install blocks in theme
 - test integration with a new module
   - blocks 

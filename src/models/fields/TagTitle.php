@@ -4,19 +4,16 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
-use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
-use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
-use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 
-class Title extends Field
+class TagTitle extends Field
 {
     /**
      * @inheritDoc
      */
     public static function getType(): string
     {
-        return 'title';
+        return 'tag-title';
     }
 
     /**
@@ -24,7 +21,7 @@ class Title extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        if ($layout instanceof EntryLayout or $layout instanceof CategoryLayout or $layout instanceof VolumeLayout) {
+        if ($layout instanceof TagLayout) {
             return true;
         }
         return false;

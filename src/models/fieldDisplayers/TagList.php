@@ -6,12 +6,12 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\base\Model;
 use craft\fields\Tags;
 
-class TagsDefault extends FieldDisplayer
+class TagList extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'tags_default';
+    public static $handle = 'tag_list';
 
     /**
      * @inheritDoc
@@ -23,7 +23,7 @@ class TagsDefault extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Default');
+        return \Craft::t('themes', 'List');
     }
 
     /**

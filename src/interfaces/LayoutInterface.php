@@ -55,11 +55,18 @@ interface LayoutInterface
     public function getDescription(): string;
 
     /**
-     * Get element associated to that layout
+     * Get element associated to that layout (category group, entry type, User etc)
      * 
      * @return mixed
      */
-    public function element();
+    public function getElement();
+
+    /**
+     * Set element associated to that layout
+     * 
+     * @return mixed
+     */
+    public function setElement($element);
 
     /**
      * Get view modes defined for that layout

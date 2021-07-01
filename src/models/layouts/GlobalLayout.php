@@ -20,7 +20,7 @@ class GlobalLayout extends Layout
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            ['element', 'required'],
+            ['elementUid', 'required'],
         ]);
     }
     
@@ -30,7 +30,7 @@ class GlobalLayout extends Layout
     protected function loadElement()
     {
         foreach (\Craft::$app->globals->getAllSets() as $set) {
-            if ($set->uid == $this->element) {
+            if ($set->uid == $this->elementUid) {
                 return $set;
             }
         }
@@ -50,7 +50,7 @@ class GlobalLayout extends Layout
      */
     public function getHandle(): string
     {
-        return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
+        return StringHelper::camelCase($this->type . '_' . $this->element->handle . '_' . $this->theme);
     }
 
     /**
@@ -66,7 +66,7 @@ class GlobalLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'Global : {name}', ['name' => $this->element()->name]);
+        return \Craft::t('themes', 'Global : {name}', ['name' => $this->element->name]);
     }
 
     /**
@@ -74,6 +74,6 @@ class GlobalLayout extends Layout
      */
     public function getCraftFields(): array
     {
-        return $this->element()->getFieldLayout()->getFields();
+        return $this->element->getFieldLayout()->getFields();
     }
 }

@@ -25,7 +25,7 @@ class VolumeLayout extends Layout
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            ['element', 'required'],
+            ['elementUid', 'required'],
         ]);
     }
 
@@ -34,7 +34,7 @@ class VolumeLayout extends Layout
      */
     protected function loadElement()
     {
-        return \Craft::$app->volumes->getVolumeByUid($this->element);
+        return \Craft::$app->volumes->getVolumeByUid($this->elementUid);
     }
 
     /**
@@ -58,7 +58,7 @@ class VolumeLayout extends Layout
      */
     public function getHandle(): string
     {
-        return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
+        return StringHelper::camelCase($this->type . '_' . $this->element->handle . '_' . $this->theme);
     }
 
     /**
@@ -66,7 +66,7 @@ class VolumeLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'Volume : {name}', ['name' => $this->element()->name]);
+        return \Craft::t('themes', 'Volume : {name}', ['name' => $this->element->name]);
     }
 
     /**
@@ -74,6 +74,6 @@ class VolumeLayout extends Layout
      */
     public function getCraftFields(): array
     {
-        return $this->element()->getFieldLayout()->getFields();
+        return $this->element->getFieldLayout()->getFields();
     }
 }

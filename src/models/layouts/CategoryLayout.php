@@ -19,7 +19,7 @@ class CategoryLayout extends Layout
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            ['element', 'required'],
+            ['elementUid', 'required'],
         ]);
     }
 
@@ -28,7 +28,7 @@ class CategoryLayout extends Layout
      */
     protected function loadElement()
     {
-        return \Craft::$app->categories->getGroupByUid($this->element);
+        return \Craft::$app->categories->getGroupByUid($this->elementUid);
     }
 
     /**
@@ -36,7 +36,7 @@ class CategoryLayout extends Layout
      */
     public function getElementMachineName(): string
     {
-        return $this->element()->handle;
+        return $this->element->handle;
     }
 
     /**
@@ -52,7 +52,7 @@ class CategoryLayout extends Layout
      */
     public function getHandle(): string
     {
-        return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
+        return StringHelper::camelCase($this->type . '_' . $this->element->handle . '_' . $this->theme);
     }
 
     /**
@@ -60,7 +60,7 @@ class CategoryLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'Category : {name}', ['name' => $this->element()->name]);
+        return \Craft::t('themes', 'Category : {name}', ['name' => $this->element->name]);
     }
 
     /**
@@ -68,6 +68,6 @@ class CategoryLayout extends Layout
      */
     public function getCraftFields(): array
     {
-        return $this->element()->getFieldLayout()->getFields();
+        return $this->element->getFieldLayout()->getFields();
     }
 }

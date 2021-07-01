@@ -15,7 +15,6 @@ use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\GlobalLayout;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
-use Ryssbowh\CraftThemes\models\layouts\RouteLayout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
 use Ryssbowh\CraftThemes\models\layouts\UserLayout;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
@@ -29,7 +28,6 @@ use craft\events\ConfigEvent;
 use craft\events\EntryTypeEvent;
 use craft\events\FieldEvent;
 use craft\helpers\StringHelper;
-use craft\services\Routes;
 
 class LayoutService extends Service
 {
@@ -43,13 +41,12 @@ class LayoutService extends Service
     const DEFAULT_HANDLE = 'default';
     const CATEGORY_HANDLE = 'category';
     const ENTRY_HANDLE = 'entry';
-    const ROUTE_HANDLE = 'route';
     const USER_HANDLE = 'user';
     const VOLUME_HANDLE = 'volume';
     const GLOBAL_HANDLE = 'global';
     const TAG_HANDLE = 'tag';
 
-    const TYPES = [self::DEFAULT_HANDLE, self::CATEGORY_HANDLE, self::ENTRY_HANDLE, self::ROUTE_HANDLE, self::USER_HANDLE, self::VOLUME_HANDLE, self::GLOBAL_HANDLE, self::TAG_HANDLE];
+    const TYPES = [self::DEFAULT_HANDLE, self::CATEGORY_HANDLE, self::ENTRY_HANDLE, self::USER_HANDLE, self::VOLUME_HANDLE, self::GLOBAL_HANDLE, self::TAG_HANDLE];
 
     /**
      * @var Collection
@@ -109,21 +106,21 @@ class LayoutService extends Service
      * Get all layouts for a theme
      * 
      * @param  string    $theme
-     * @param  bool|null $withDisplays
-     * @param  bool|null $withBlocks
+     * @param  bool|null $withHasDisplays
+     * @param  bool|null $withHasBlocks
      * @return array
      */
-    public function getForTheme(string $theme, ?bool $withDisplays = null, ?bool $withBlocks = null): array
+    public function getForTheme(string $theme, ?bool $withHasDisplays = null, ?bool $withHasBlocks = null): array
     {
-        return $this->all()->filter(function ($layout) use ($theme, $withDisplays, $withBlocks) {
+        return $this->all()->filter(function ($layout) use ($theme, $withHasDisplays, $withHasBlocks) {
             if ($layout->theme != $theme) {
                 return false;
             }
-            if ($withDisplays !== null) {
-                return $layout->hasDisplays() === $withDisplays;
+            if ($withHasDisplays !== null) {
+                return $layout->hasDisplays() === $withHasDisplays;
             }
-            if ($withBlocks !== null) {
-                return (bool)$layout->hasBlocks === $withBlocks;
+            if ($withHasBlocks !== null) {
+                return (bool)$layout->hasBlocks === $withHasBlocks;
             }
             return true;
         })->all();
@@ -146,9 +143,6 @@ class LayoutService extends Service
         switch ($config['type']) {
             case self::DEFAULT_HANDLE:
                 $layout = new Layout;
-                break;
-            case self::ROUTE_HANDLE:
-                $layout = new RouteLayout;
                 break;
             case self::CATEGORY_HANDLE:
                 $layout = new CategoryLayout;
@@ -250,7 +244,7 @@ class LayoutService extends Service
     {
         $ids = [];
         foreach ($this->getAvailable() as $layout) {
-            if (!$layout2 = $this->get($theme, $layout->type, $layout->element)) {
+            if (!$layout2 = $this->get($theme, $layout->type, $layout->elementUid)) {
                 $layout->theme = $theme;
                 $layout2 = $layout;
             }
@@ -293,16 +287,15 @@ class LayoutService extends Service
         return [
             $this->create([
                 'type' => self::DEFAULT_HANDLE,
-                'element' => '',
+                'elementUid' => '',
                 'hasBlocks' => true
             ]),
             $this->create([
                 'type' => self::USER_HANDLE,
-                'element' => ''
+                'elementUid' => ''
             ]),
             ...$this->getCategoryLayouts(),
             ...$this->getEntryLayouts(),
-            ...$this->getRouteLayouts(),
             ...$this->getVolumesLayouts(),
             ...$this->getGlobalsLayouts(),
             ...$this->getTagsLayouts()
@@ -313,16 +306,16 @@ class LayoutService extends Service
      * Get a layout
      * 
      * @param  string  $theme
-     * @param  string  $element
+     * @param  string  $elementUid
      * @param  string  $type
      * @param  boolean $loadBlocks
      * @return ?LayoutInterface
      */
-    public function get(string $theme, string $type, string $element = '', bool $loadBlocks = false): ?LayoutInterface
+    public function get(string $theme, string $type, string $elementUid = '', bool $loadBlocks = false): ?LayoutInterface
     {
         $layout = $this->all()
             ->where('theme', $theme)
-            ->where('element', $element)
+            ->where('elementUid', $elementUid)
             ->firstWhere('type', $type);
         if ($layout and $loadBlocks) {
             return $layout->loadBlocks();
@@ -429,7 +422,7 @@ class LayoutService extends Service
 
             $layout->uid = $uid;
             $layout->type = $data['type'];
-            $layout->element = $data['element'];
+            $layout->elementUid = $data['elementUid'];
             $layout->theme = $data['theme'];
             $layout->hasBlocks = $data['hasBlocks'];
             $layout->save(false);
@@ -478,7 +471,7 @@ class LayoutService extends Service
     }
 
     /**
-     * Callback when an element (entry type, route, category group etc) is deleted
+     * Callback when an element (entry type, category group etc) is deleted
      * 
      * @param string $type
      * @param string $uid
@@ -486,7 +479,7 @@ class LayoutService extends Service
     public function onCraftElementDeleted(string $type, string $uid)
     {
         $layouts = $this->all()->filter(function ($layout) use ($uid) {
-            return $layout->element == $uid;
+            return $layout->elementUid == $uid;
         });
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
@@ -494,7 +487,7 @@ class LayoutService extends Service
     }
 
     /**
-     * Callback when an element (entry type, route, category group etc) is saved
+     * Callback when an element (entry type, category group etc) is saved
      * 
      * @param string $type
      * @param string $uid
@@ -506,7 +499,7 @@ class LayoutService extends Service
             if (!$layout) {
                 $layout = $this->create([
                     'type' => $type,
-                    'element' => $uid,
+                    'elementUid' => $uid,
                     'theme' => $theme->handle,
                 ]);
             }
@@ -635,7 +628,7 @@ class LayoutService extends Service
         foreach ($groups as $group) {
             $layouts[] = $this->create([
                 'type' => self::CATEGORY_HANDLE,
-                'element' => $group->uid
+                'elementUid' => $group->uid
             ]);
         }
         return $layouts;
@@ -654,27 +647,9 @@ class LayoutService extends Service
             foreach ($section->getEntryTypes() as $entryType) {
                 $layouts[] = $this->create([
                     'type' => self::ENTRY_HANDLE,
-                    'element' => $entryType->uid
+                    'elementUid' => $entryType->uid
                 ]);
             }
-        }
-        return $layouts;
-    }
-
-    /**
-     * Creates all routes layouts
-     *
-     * @return array
-     */
-    protected function getRouteLayouts(): array
-    {
-        $routes = \Craft::$app->projectConfig->get(Routes::CONFIG_ROUTES_KEY);
-        $layouts = [];
-        foreach ($routes as $uid => $route) {
-            $layouts[] = $this->create([
-                'type' => self::ROUTE_HANDLE,
-                'element' => $uid
-            ]);
         }
         return $layouts;
     }
@@ -691,7 +666,7 @@ class LayoutService extends Service
         foreach ($volumes as $volume) {
             $layouts[] = $this->create([
                 'type' => self::VOLUME_HANDLE,
-                'element' => $volume->uid
+                'elementUid' => $volume->uid
             ]);
         }
         return $layouts;
@@ -709,7 +684,7 @@ class LayoutService extends Service
         foreach ($sets as $set) {
             $layouts[] = $this->create([
                 'type' => self::GLOBAL_HANDLE,
-                'element' => $set->uid
+                'elementUid' => $set->uid
             ]);
         }
         return $layouts;
@@ -727,7 +702,7 @@ class LayoutService extends Service
         foreach ($groups as $group) {
             $layouts[] = $this->create([
                 'type' => self::TAG_HANDLE,
-                'element' => $group->uid
+                'elementUid' => $group->uid
             ]);
         }
         return $layouts;

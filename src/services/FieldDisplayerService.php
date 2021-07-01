@@ -73,12 +73,12 @@ class FieldDisplayerService extends Service
      * 
      * @param  string $handle
      * @param  Field  $field
-     * @return FieldDisplayerInterface
+     * @return ?FieldDisplayerInterface
      */
-    public function getByHandle(string $handle, Field $field): FieldDisplayerInterface
+    public function getByHandle(string $handle, Field $field): ?FieldDisplayerInterface
     {
         if (!isset($this->all()[$handle])) {
-            throw FieldDisplayerException::displayerNotDefined($handle);
+            return null;
         }
         $class = $this->all()[$handle];
         $class = new $class(['field' => $field]);
@@ -118,9 +118,14 @@ class FieldDisplayerService extends Service
     protected function getByHandles(array $handles, Field $field): array
     {
         $_this = $this;
-        return array_map(function ($handle) use ($_this, $field) {
-            return $_this->getByHandle($handle, $field);
-        }, $handles);
+        $displayers = [];
+        foreach ($handles as $handle) {
+            $displayer = $this->getByHandle($handle, $field);
+            if ($displayer) {
+                $displayers[] = $displayer;
+            }
+        }
+        return $displayers;
     }
 
     /**

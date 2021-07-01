@@ -162,6 +162,18 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
+    public function beforeInstall(): bool
+    {
+        if (!\Craft::$app->plugins->getPlugin('themes')) {
+            \Craft::error(\Craft::t('app', 'The Themes plugin must be installed before installing a theme'));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function afterSet()
     {
     }

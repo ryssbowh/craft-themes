@@ -1,7 +1,6 @@
 {% extends "fields/_field" %}
 
 {% block content %}
-    {{ d(value, options) }}
     {% if value %}
         {% if options.firstName %}
             {{ value.firstName }}

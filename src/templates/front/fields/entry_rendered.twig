@@ -2,7 +2,7 @@
 
 {% block content %}
     {% set viewMode = craft.themes.viewModes.getByUid(options.viewMode) %}
-    {% for category in value %}
-        {{ craft.themes.view.renderLayout(displayer.groupLayout, viewMode.handle, category)|raw }}
+    {% for entry in value %}
+        {{ craft.themes.view.renderLayout(displayer.groupLayout, viewMode.handle, entry)|raw }}
     {% endfor %}
 {% endblock %}

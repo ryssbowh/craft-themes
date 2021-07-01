@@ -19,7 +19,7 @@ class EntryLayout extends Layout
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            ['element', 'required'],
+            ['elementUid', 'required'],
         ]);
     }
     
@@ -29,7 +29,7 @@ class EntryLayout extends Layout
     protected function loadElement()
     {
         foreach (\Craft::$app->sections->getAllEntryTypes() as $entryType) {
-            if ($entryType->uid == $this->element) {
+            if ($entryType->uid == $this->elementUid) {
                 return $entryType;
             }
         }
@@ -49,7 +49,7 @@ class EntryLayout extends Layout
      */
     public function getHandle(): string
     {
-        return StringHelper::camelCase($this->type . '_' . $this->element()->handle . '_' . $this->theme);
+        return StringHelper::camelCase($this->type . '_' . $this->element->handle . '_' . $this->theme);
     }
 
     /**
@@ -57,7 +57,7 @@ class EntryLayout extends Layout
      */
     public function getElementMachineName(): string
     {
-        return $this->element()->handle;
+        return $this->element->handle;
     }
 
     /**
@@ -65,7 +65,7 @@ class EntryLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'Entry : {name}', ['name' => $this->element()->name]);
+        return \Craft::t('themes', 'Entry : {name}', ['name' => $this->element->name]);
     }
 
     /**
@@ -73,6 +73,6 @@ class EntryLayout extends Layout
      */
     public function getCraftFields(): array
     {
-        return $this->element()->getFieldLayout()->getFields();
+        return $this->element->getFieldLayout()->getFields();
     }
 }

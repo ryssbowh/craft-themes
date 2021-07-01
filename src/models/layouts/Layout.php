@@ -45,7 +45,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @var string
      */
-    public $element;
+    public $elementUid;
 
     /**
      * @var boolean
@@ -84,7 +84,7 @@ class Layout extends Model implements LayoutInterface
     protected $_regionsLoaded = false;
 
     /**
-     * Element associated with this layout (entry, user, category, route etc)
+     * Element associated with this layout (entry type, user, category group etc)
      * @var mixed
      */
     protected $_element;
@@ -112,9 +112,9 @@ class Layout extends Model implements LayoutInterface
         return [
             [['type', 'theme'], 'required'],
             ['type', 'in', 'range' => LayoutService::TYPES],
-            [['theme', 'element'], 'string'],
+            [['theme', 'elementUid'], 'string'],
             ['hasBlocks', 'boolean'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe']
+            [['dateCreated', 'dateUpdated', 'uid', 'id', 'element'], 'safe']
         ];
     }
 
@@ -168,7 +168,7 @@ class Layout extends Model implements LayoutInterface
             'theme' => $this->theme,
             'type' => $this->type,
             'handle' => $this->handle,
-            'element' => $this->element,
+            'elementUid' => $this->elementUid,
             'hasBlocks' => $this->hasBlocks,
             'viewModes' => array_map(function ($viewMode) {
                 return $viewMode->getConfig();
@@ -193,12 +193,20 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function element()
+    public function getElement()
     {
         if ($this->_element == null) {
             $this->_element = $this->loadElement();
         }
         return $this->_element;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setElement($element)
+    {
+        $this->_element = $element;
     }
 
     /**

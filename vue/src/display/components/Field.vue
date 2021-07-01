@@ -75,8 +75,19 @@ export default {
         hasDisplayers: function () {
             return this.item.availableDisplayers.length > 0;
         },
+        displayerDefined: function () {
+            if (!this.item.displayerHandle) {
+                return false;
+            }
+            for (let i in this.item.availableDisplayers) {
+                if (this.item.availableDisplayers[i].handle == this.item.displayerHandle) {
+                    return true;
+                }
+            }
+            return false;
+        },
         isOpaque: function () {
-            return (this.item.hidden || this.item.visuallyHidden || !this.hasDisplayers || !this.item.displayerHandle);
+            return (this.item.hidden || this.item.visuallyHidden || !this.displayerDefined || !this.hasDisplayers || !this.item.displayerHandle);
         },
         ...mapState([])
     },

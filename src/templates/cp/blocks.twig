@@ -2,19 +2,27 @@
 {% set selectedSubnavItem = 'themes-blocks' %}
 
 {% block contextMenu %}
-	<blocks-context 
-		:initial-theme="'{{ theme }}'"
-		:themes="{{ themes|json_encode }}"
-        :initial-layout="{{ layout }}"
-        :all-layouts="{{ allLayouts|json_encode }}"
-        :all-strategies="{{ cacheStrategies|json_encode }}"
-	/>
+    {% if themes|length %}
+    	<blocks-context 
+    		:initial-theme="'{{ theme }}'"
+    		:themes="{{ themes|json_encode }}"
+            :initial-layout="{{ layout }}"
+            :all-layouts="{{ allLayouts|json_encode }}"
+            :all-strategies="{{ cacheStrategies|json_encode }}"
+    	/>
+    {% endif %}
 {% endblock %}
 
 {% block toolbar %}
-	<blocks-toolbar />
+    {% if themes|length %}
+	   <blocks-toolbar />
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-	<blocks/>
+    {% if themes|length %}
+	   <blocks/>
+    {% else %}
+        <p>{{ 'No themes are currently installed'|t('site') }}</p>
+    {% endif %}
 {% endblock %}
