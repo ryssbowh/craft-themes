@@ -129,9 +129,14 @@ class FieldDisplayerEvent extends Event
      * Register a displayer class
      * 
      * @param string $class
+     * @param bool   $replaceIfExisting
+     * @throws FieldDisplayerException
      */
-    public function register(string $class)
+    public function register(string $class, bool $replaceIfExisting = false)
     {
+        if (!$replaceIfExisting and isset($this->displayers[$class::$handle])) {
+            throw FieldDisplayerException::alreadyDefined($class);
+        }
         $this->displayers[$class::$handle] = $class;
         if (!isset($this->mapping[$class::getFieldTarget()])) {
             $this->mapping[$class::getFieldTarget()] = [];
@@ -148,11 +153,13 @@ class FieldDisplayerEvent extends Event
      * Register many displayer classes
      * 
      * @param array[string] $displayers
+     * @param bool          $replaceIfExisting
+     * @throws FieldDisplayerException
      */
-    public function registerMany(array $displayers)
+    public function registerMany(array $displayers, bool $replaceIfExisting = false)
     {
         foreach ($displayers as $displayer) {
-            $this->register($displayer);
+            $this->register($displayer, $replaceIfExisting);
         }
     }
 }

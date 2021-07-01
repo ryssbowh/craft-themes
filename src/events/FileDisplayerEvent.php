@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\events;
 
+use Ryssbowh\CraftThemes\exceptions\FileDisplayerException;
 use Ryssbowh\CraftThemes\models\fileDisplayers\Code;
 use Ryssbowh\CraftThemes\models\fileDisplayers\HtmlAudio;
 use Ryssbowh\CraftThemes\models\fileDisplayers\HtmlVideo;
@@ -68,9 +69,14 @@ class FileDisplayerEvent extends Event
      * Register a displayer class
      * 
      * @param  string $class
+     * @param  bool   $replaceIfExisting
+     * @throws FileDisplayerException
      */
-    public function register(string $class)
+    public function register(string $class, bool $replaceIfExisting = false)
     {
+        if (!$replaceIfExisting and isset($this->displayers[$class::$handle])) {
+            throw FileDisplayerException::alreadyDefined($class);
+        }
         $this->displayers[$class::$handle] = $class;
         $kinds = $class::getKindTargets();
         if ($kinds == '*') {
@@ -87,11 +93,13 @@ class FileDisplayerEvent extends Event
      * Register many displayer classes
      * 
      * @param  array[string] $displayers
+     * @param  bool   $replaceIfExisting
+     * @throws FileDisplayerException
      */
-    public function registerMany(array $displayers)
+    public function registerMany(array $displayers, bool $replaceIfExisting = false)
     {
         foreach ($displayers as $displayer) {
-            $this->register($displayer);
+            $this->register($displayer, $replaceIfExisting);
         }
     }
 }

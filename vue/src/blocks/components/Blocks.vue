@@ -38,6 +38,7 @@
         <region v-for="region in regions" v-bind:key="region.handle"
           :region="region"
         />
+        <p v-if="!regions.length">{{ t('No regions are defined for this theme') }}</p>
       </div>
     </div>
     <div class="options">
