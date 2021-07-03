@@ -29,18 +29,34 @@ app.component('group', Group);
 app.component('options-modal', OptionsModal);
 app.component('display-item', DisplayItem,);
 
-for (let name in window.themesFieldDisplayersComponents) {
-    app.component('fieldDisplayer-' + name, window.themesFieldDisplayersComponents[name]);
+let event = new CustomEvent("register-field-displayers-components", {detail: {}});
+document.dispatchEvent(event);
+
+for (let name in event.detail) {
+    app.component('fieldDisplayer-' + name, event.detail[name]);
 }
 
-for (let name in window.themesFileDisplayersComponents) {
-    app.component('fileDisplayer-' + name, window.themesFileDisplayersComponents[name]);
+event = new CustomEvent("register-file-displayers-components", {detail: {}});
+document.dispatchEvent(event);
+
+for (let name in event.detail) {
+    app.component('fileDisplayer-' + name, event.detail[name]);
 }
 
-for (let name in window.themesFieldsComponents) {
-    app.component('field-' + name, window.themesFieldsComponents[name]);
+event = new CustomEvent("register-fields-components", {detail: {}});
+document.dispatchEvent(event);
+
+for (let name in event.detail) {
+    app.component('field-' + name, event.detail[name]);
 }
 
+const FieldComponents = {
+  install(app) {
+    app.config.globalProperties.fieldComponents = () => {
+      return Object.keys(event.detail);
+    }
+  },
+};
 const Translate = {
   install(app) {
     app.config.globalProperties.t = (str, params) => {
@@ -66,5 +82,6 @@ const HandleError = {
 
 app.use(Translate);
 app.use(HandleError);
+app.use(FieldComponents);
 
 app.mount('#main');

@@ -21,12 +21,6 @@
 }}
 
 <h2>{{ 'Install'|t('themes') }}</h2>
-{% if settings.installed %}
-    <p>{{ 'Re-install themes data. This can be useful to fix broken states, it will create missing layouts/displays and remove orphans' }}</p>
-    <button href="{{ url('themes/ajax/install') }}" class="btn submit install">{{ 'Re-install'|t('themes') }}</button>
-    <div class="spinner layouts-spinner" style="display:none"></div>
-{% else %}
-    <p>{{ 'Install themes data' }}</p>
-    <button href="{{ url('themes/ajax/install') }}" class="btn submit install">{{ 'Install'|t('themes') }}</button>
-    <div class="spinner layouts-spinner" style="display:none"></div>
-{% endif %}
+<p>{{ 'Re-install themes data. This can be useful to fix broken states, it will create missing layouts/fields/displays and remove orphans' }}</p>
+<button href="{{ url('themes/ajax/install') }}" class="btn submit install">{{ 'Re-install'|t('themes') }}</button>
+<div class="spinner layouts-spinner" style="display:none"></div>

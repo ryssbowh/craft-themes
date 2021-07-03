@@ -4,6 +4,8 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 interface BlockProviderInterface 
 {
+    const REGISTER_BLOCKS = 'register_blocks';
+
     /**
      * Handle getter
      * 
@@ -39,11 +41,4 @@ interface BlockProviderInterface
      * @return array
      */
     public function getDefinedBlocks(): array;
-
-    /**
-     * Add a block to this provider
-     * 
-     * @param string $blockClass
-     */
-    public function addDefinedBlock(string $blockClass): BlockProviderInterface;
 }

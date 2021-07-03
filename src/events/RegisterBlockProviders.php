@@ -7,7 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\models\SystemBlockProvider;
 use yii\base\Event;
 
-class RegisterBlockProvidersEvent extends Event
+class RegisterBlockProviders extends Event
 {
     /**
      * @var array
@@ -24,7 +24,7 @@ class RegisterBlockProvidersEvent extends Event
      * Add a block provider
      * 
      * @param  BlockProviderInterface $provider
-     * @return RegisterBlockProvidersEvent
+     * @return RegisterBlockProviders
      * @throws BlockProviderException
      */
     public function add(BlockProviderInterface $provider)

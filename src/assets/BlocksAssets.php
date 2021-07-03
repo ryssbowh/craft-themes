@@ -10,14 +10,15 @@ class BlocksAssets extends AssetBundle
     public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
     public $js = [
+        'blockOptions.js',
+        'blockStrategies.js',
         'chunk-vendors.js',
         'blocks.js',
     ];
 
     public $depends = [
         CpAsset::class,
-        JquerySerializeJSON::class,
-        BlockOptionsAsset::class
+        JquerySerializeJSON::class
     ];
 
     /**

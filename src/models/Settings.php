@@ -30,11 +30,6 @@ class Settings extends Model
     /**
      * @var boolean
      */
-    public $installed = false;
-
-    /**
-     * @var boolean
-     */
     public $blockCache;
 
     /**
@@ -54,7 +49,7 @@ class Settings extends Model
     {
         return [
             ['default', 'string'],
-            [['eagerLoad', 'devMode', 'installed'], 'boolean']
+            [['eagerLoad', 'devMode'], 'boolean']
         ];
     }
 

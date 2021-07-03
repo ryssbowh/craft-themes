@@ -129,13 +129,9 @@ Craft 3.5 or over
 ## Roadmap
 
 - tests
+- test all displayers options
+- default options for file displayers
 - test email templates in console
 - install blocks in theme
-- test integration with a new module
-  - blocks 
-  - fields
-  - displayers
-  - strategies
-  - file displayers
 - bundleAssets as regular expressions paths  
 - preprocess functions

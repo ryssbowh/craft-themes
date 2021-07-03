@@ -72,7 +72,7 @@ By default, parent themes bundles will also be registered. This can be disabled 
 
 ## Blocks
 
-Blocks are provided by a block provider, each provider can define several blocks. This plugin comes with a default System provider.
+Blocks are provided by a block provider, each provider can define several blocks. This plugin comes with a default 'System' provider.
 
 ### Registering a new provider
 
@@ -88,14 +88,29 @@ Your block provider class must extends the `BlockProvider` class. Blocks defined
 
 An exception will be thrown if you register a provider which handle is already registered.
 
+You can modify blocks provided by a provider by responding to an event :
+
+```
+Event::on(SystemBlockProvider::class, BlockProviderInterface::REGISTER_BLOCKS, function (RegisterBlockProviderBlocks $event) {
+    $event->blocks[] = MyBlock::class;
+});
+```
+
+An exception will be thrown if you register 2 blocks with the same handle within a provider.
+
 ### Defining new blocks
 
-New block classes must extends the `Block` class. You can override the `getOptionsModel` method to define more options, this method must return a class that extends the `BlockOptions` class.
+New block classes must extends the `Block` class. You can override the `getOptionsModel` method to define more options, this method must return an instance that extends the `BlockOptions` class.
 
-To display your options in the backend you need to hook in the Vue backend system, by defining a new Vue component on the `window.themesBlockOptionComponents` variable.  
-This variable will be defined after the `BlockOptionsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+To hook in the backend Vue system, register a js file with a bundle :
+```
+Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+    $event->bundles[] = MyBundle::class;
+});
+```  
+respond to the js event `register-block-option-components` and add your component to the `event.detail` variable. 
 
-Examples in `vue/src/blockOptions/main.js`.
+Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockOptions/main.js)
 
 The key is built like so : {provider handle}-{block handle}.
 
@@ -116,22 +131,27 @@ class MyBlock extends Block
 ```
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your block options class.
 
-Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockOptions/main.js)
-
 ## Fields
 
-There are 8 types of fields defined by this plugin :
+There are 10 types of fields defined by this plugin.
 
-- Title : handles the title of an entry/category
+5 "new" fields, which can have their own displayers :
+
 - Author : handles the author of a entry/category
 - File : handles the file of an asset
+- TagTitle : handles the title for a tag
+- Title : handles the title of an entry/category
+- UserInfo : handles the user info for user layouts
+
+And 5 that handle Craft fields, those can't have their own displayers. Their displayers will display the Craft field associated with them :
+
+- CraftField : handles most Craft fields (except Matrix and Table)
 - Matrix : handles Craft matrix fields
 - MatrixField : handles the field within a matrix
 - Table : handles Craft table fields
 - TableField : handles the fields within a table field
-- CraftField : handles all the other Craft fields
 
-A field displayer defines how a field is rendered on the front end, each field displayer will handle one type of field. This is controlled by the method `getFieldTarget(): string` which will return either the class of the Craft field this displayer can handle, or the class of the themes field (like `Title`).
+A field displayer defines how a field is rendered on the front end, each field displayer will handle one type of field. This is controlled by the method `getFieldTarget(): string` which will return either the class of the Craft field this displayer can handle, or the class of the themes field (like `Title`, `Author` etc).
 
 ### Define a new field
 
@@ -143,12 +163,18 @@ Event::on(FieldsService::class, FieldsService::REGISTER_FIELDS, function (Regist
 });
 ```
 
-To hook in the backend Vue system, add a new component to the `window.themesFieldsComponents` variable. 
-This variable will be defined after the `FieldsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that.
-
-Your field can be created automatically on layout creation if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. This is useful for fields that aren't Craft fields (like `Title`) and need to exist on some Layouts. By default this method returns false.
+To hook in the backend Vue system, register a js file with a bundle :
+```
+Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+    $event->bundles[] = MyBundle::class;
+});
+```  
+respond to the js event `register-fields-components` and add your component to the `event.detail` variable.
 
 Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fields/main.js)
+
+"new" fields (any field that doesn't extend from `CraftField`) can be created automatically on layouts if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. By default this method returns false.  
+This method won't have any effect for fields that extends `CraftField`, as they will be created automatically (assuming a Craft field exists on the category group/entry type).
 
 ### Define a new displayer
 
@@ -163,8 +189,13 @@ Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYE
 Your field displayer class must extend the `FieldDisplayer` class and define the field it can handle in its `getFieldTarget` method. 
 Registering a field displayer with a handle already existing will **replace** the current displayer.
 
-To hook in the backend Vue system, add a new component to the `window.themesFieldDisplayersComponents` variable. 
-This variable will be defined after the `FieldDisplayerAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+To hook in the backend Vue system, register a js file with a bundle :
+```
+Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+    $event->bundles[] = MyBundle::class;
+});
+```  
+respond to the js event `register-field-displayers-components` and add your component to the `event.detail` variable.  
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
@@ -187,8 +218,13 @@ Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS
 Your file displayer class must extend the `FileDisplayer` class and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
 Registering a file displayer with a handle already existing will **replace** the current displayer.
 
-Same as with blocks, to hook in the backend Vue system, add a new component to the `window.themesFileDisplayersComponents` variable. 
-This variable will be defined after the `FileDisplayerAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+To hook in the backend Vue system, register a js file with a bundle :
+```
+Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+    $event->bundles[] = MyBundle::class;
+});
+```  
+respond to the js event `register-file-displayers-components` and add your component to the `event.detail` variable.   
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
@@ -299,7 +335,7 @@ And three that are not used by the system, but could be useful if you're using a
 
 ## Reinstall data
 
-If something looks off in the displays, you can always reinstall the themes data in the plugin settings. This will create missing displayers for all themes and elements (entry types, category groups etc), and delete the orphans.
+If something looks off in the displays, you can always reinstall the themes data in the plugin settings. This will create missing fields/displayers for all themes and elements (entry types, category groups etc), and delete the orphans.
 
 ## Caching
 
@@ -353,8 +389,13 @@ Event::on(BlockCacheService::class, BlockCacheService::REGISTER_STRATEGIES, func
 });
 ```
 
-To hook in the backend Vue system, add a new component to the `window.themesBlockStrategyComponents` variable. 
-This variable will be defined after the `BlockOptionsAsset` has been registered, so if you use an asset bundle to register your js, make sure your bundle depends on that. 
+To hook in the backend Vue system, register a js file with a bundle :
+```
+Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+    $event->bundles[] = MyBundle::class;
+});
+```  
+respond to the js event `register-block-strategy-components` and add your component to the `event.detail` variable. 
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your strategy options class.
 

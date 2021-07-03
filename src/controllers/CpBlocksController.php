@@ -3,12 +3,14 @@
 namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\assets\BlockOptionsAsset;
 use Ryssbowh\CraftThemes\assets\BlocksAssets;
+use Ryssbowh\CraftThemes\events\RegisterBundles;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 
 class CpBlocksController extends Controller
 {
+    const REGISTER_ASSET_BUNDLES = 'register_asset_bundles';
+
     /**
      * Blocks index
      * 
@@ -40,7 +42,13 @@ class CpBlocksController extends Controller
             $layout = $this->layouts->getById($layout);
         }
         
-        $this->view->registerAssetBundle(BlockOptionsAsset::class);
+        if ($this->hasEventHandlers(self::REGISTER_ASSET_BUNDLES)) {
+            $event = new RegisterBundles;
+            $this->trigger(self::REGISTER_ASSET_BUNDLES, $event);
+            foreach ($event->bundles as $class) {
+                $this->view->registerAssetBundle($class);
+            }
+        }
         $this->view->registerAssetBundle(BlocksAssets::class);
 
         return $this->renderTemplate('themes/cp/blocks', [

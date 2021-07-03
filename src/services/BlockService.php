@@ -34,7 +34,13 @@ class BlockService extends Service
         if (is_null($this->_blocks)) {
             $this->_blocks = collect();
             foreach (BlockRecord::find()->all() as $record) {
-                $this->_blocks->push($this->create($record));
+                //Catching a provider exception, in case the block can't be created.
+                //Reason is whether the block provider or the block handle isn't defined
+                try {
+                    $this->_blocks->push($this->create($record));
+                } catch (BlockProviderException $e) {
+                    \Craft::error('themes', 'Couldn\'t create block record ' . $record->id . ', it has been skipped');
+                }
             }
         }
         return $this->_blocks;

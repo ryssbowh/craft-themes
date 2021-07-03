@@ -2,7 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
-use Ryssbowh\CraftThemes\events\RegisterBlockProvidersEvent;
+use Ryssbowh\CraftThemes\events\RegisterBlockProviders;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use craft\base\Component;
@@ -59,7 +59,7 @@ class BlockProvidersService extends Component
      */
     protected function register()
     {
-        $e = new RegisterBlockProvidersEvent();
+        $e = new RegisterBlockProviders();
         $this->trigger(self::REGISTER_BLOCK_PROVIDERS, $e);
         $this->_providers = $e->getProviders();
     }

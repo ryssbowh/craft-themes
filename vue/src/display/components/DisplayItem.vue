@@ -11,7 +11,7 @@ export default {
             if (this.display.type == 'group') {
                 return 'group';
             }
-            if (Object.keys(window.themesFieldsComponents).includes(this.display.item.type)) {
+            if (this.fieldComponents().includes(this.display.item.type)) {
                 return 'field-' + this.display.item.type;
             }
             return 'field';

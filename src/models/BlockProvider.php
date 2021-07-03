@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\events\RegisterBlockProviderBlocks;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
@@ -14,6 +15,12 @@ abstract class BlockProvider extends Model implements BlockProviderInterface
      * @var array
      */
     protected $_definedBlocks = [];
+
+    /**
+     * block classes defined by this provider, indexed by blocks handles
+     * @var array
+     */
+    protected $_allDefinedBlocks;
 
     /**
      * @inheritDoc
@@ -48,20 +55,24 @@ abstract class BlockProvider extends Model implements BlockProviderInterface
      */
     public function getDefinedBlocks(): array
     {
-        $blocks = [];
-        foreach ($this->_definedBlocks as $class) {
-            $blocks[$class::$handle] = $class;
+        if ($this->_allDefinedBlocks === null) {
+            $event = new RegisterBlockProviderBlocks([
+                'blocks' => $this->_definedBlocks,
+                'provider' => $this
+            ]);
+            if ($this->hasEventHandlers(BlockProviderInterface::REGISTER_BLOCKS)) {
+                $this->trigger(BlockProviderInterface::REGISTER_BLOCKS, $event);    
+            }
+            $blocks = [];
+            foreach ($event->blocks as $class) {
+                if (isset($blocks[$class::$handle])) {
+                    throw BlockProviderException::blockDefined($class::$handle, $this->handle);
+                }
+                $blocks[$class::$handle] = $class;
+            }
+            $this->_allDefinedBlocks = $blocks;
         }
-        return $blocks;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addDefinedBlock(string $blockClass): BlockProviderInterface
-    {
-        $this->_definedBlocks[] = $block;
-        return $this;
+        return $this->_allDefinedBlocks;
     }
 
     /**
