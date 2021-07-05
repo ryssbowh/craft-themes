@@ -104,6 +104,14 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 return this.errors[field] ?? [];
             }
         },
+        data: function () {
+            return {
+                viewModes: {}
+            }
+        },
+        created: function () {
+            this.viewModes = this.options.viewModes;
+        },
         template: `
         <div>
             <div class="field" v-for="elem, typeUid in displayer.viewModes">
@@ -112,7 +120,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select :name="'viewModes['+typeUid+']'" :value="options.viewModes[typeUid]">
+                        <select :name="'viewModes['+typeUid+']'" v-model="viewModes[typeUid]">
                             <option v-for="label, uid in elem.viewModes" :value="uid">{{ label }}</option>
                         </select>
                     </div>
@@ -135,6 +143,14 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 return this.errors[field] ?? [];
             }
         },
+        data: function () {
+            return {
+                viewMode: null
+            }
+        },
+        created: function () {
+            this.viewMode = this.options.viewMode;
+        },
         template: `
         <div>
             <div class="field">
@@ -143,7 +159,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="viewMode" :value="options.viewMode">
+                        <select name="viewMode" v-model="viewMode">
                             <option v-for="label, uid in displayer.viewModes" :value="uid">{{ label }}</option>
                         </select>
                     </div>
@@ -168,6 +184,14 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 return this.errors[field] ?? [];
             }
         },
+        data: function () {
+            return {
+                viewModes: {}
+            }
+        },
+        created: function () {
+            this.viewModes = this.options.viewModes;
+        },
         template: `
         <div>
             <div class="field" v-for="elem, volumeUid in displayer.viewModes">
@@ -176,7 +200,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select :name="'viewModes['+volumeUid+']'" :value="options.viewModes[volumeUid]">
+                        <select :name="'viewModes['+volumeUid+']'" v-model="viewModes[volumeUid]">
                             <option v-for="label, uid in elem.viewModes" :value="uid">{{ label }}</option>
                         </select>
                     </div>
@@ -591,7 +615,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     <label>{{ t('Output as link') }}</label>
                 </div>
                 <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: linked}">
+                    <button type="button" :class="{lightswitch: true, on: options.linked}">
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>

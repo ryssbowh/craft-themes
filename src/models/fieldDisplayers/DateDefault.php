@@ -43,8 +43,8 @@ class DateDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new DateDefaultOptions;
+        return DateDefaultOptions::class;
     }
 }

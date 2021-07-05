@@ -43,8 +43,8 @@ class EmailDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new EmailDefaultOptions;
+        return EmailDefaultOptions::class;
     }
 }

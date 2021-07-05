@@ -43,8 +43,8 @@ class RedactorFull extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new RedactorFullOptions;
+        return RedactorFullOptions::class;
     }
 }

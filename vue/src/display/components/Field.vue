@@ -107,8 +107,6 @@ export default {
             showModal: false,
         }
     },
-    created() {
-    },
     methods: {
         onSaveModal: function (data) {
             this.$emit("updateItem", {options: data});
@@ -144,6 +142,9 @@ export default {
         },
         updateDisplayer: function(e) {
             this.$emit("updateItem", {displayerHandle: e.originalTarget.value});
+            if(this.displayer.hasOptions) {
+                this.openDisplayerOptions({displayer: this.displayer, item: this.item});
+            }
         },
         ...mapMutations(['openDisplayerOptions']),
         ...mapActions([]),

@@ -51,8 +51,8 @@ class TitleDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new TitleDefaultOptions;
+        return TitleDefaultOptions::class;
     }
 }

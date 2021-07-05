@@ -48,9 +48,9 @@ class FileDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new FileDefaultOptions;
+        return FileDefaultOptions::class;
     }
 
     /**

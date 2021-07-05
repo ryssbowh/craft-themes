@@ -13,7 +13,21 @@ class AssetRenderedOptions extends FieldDisplayerOptions
     /**
      * @var array
      */
-    public $viewModes = [];
+    public $viewModes;
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        if ($this->viewModes === null) {
+            $this->viewModes = [];
+            foreach ($this->displayer->getViewModes() as $volumeUid => $viewModes) {
+                $keys = array_keys($viewModes['viewModes']);
+                $this->viewModes[$volumeUid] = $keys[0];
+            }
+        }
+    }
 
     /**
      * @inheritDoc

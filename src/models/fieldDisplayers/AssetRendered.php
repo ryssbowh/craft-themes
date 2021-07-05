@@ -42,9 +42,29 @@ class AssetRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new AssetRenderedOptions;
+        return AssetRenderedOptions::class;
+    }
+
+    /**
+     * Get all defined volumes on the field
+     * 
+     * @return array
+     */
+    public function getAllVolumes(): array
+    {
+        $source = $this->field->craftField->sources;
+        if ($source == '*') {
+            return \Craft::$app->volumes->getAllVolumes();
+        } else {
+            $volumes = [];
+            foreach ($source as $source) {
+                $elems = explode(':', $source);
+                $volumes[] = \Craft::$app->volumes->getVolumeByUid($elems[1]);        
+            }
+            return $volumes;
+        }
     }
 
     /**
@@ -54,18 +74,8 @@ class AssetRendered extends FieldDisplayer
      */
     public function getViewModes(): array
     {
-        $source = $this->field->craftField->sources;
         $viewModes = [];
-        if ($source == '*') {
-            $volumes = \Craft::$app->volumes->getAllVolumes();
-        } else {
-            $volumes = [];
-            foreach ($source as $source) {
-                $elems = explode(':', $source);
-                $volumes[] = \Craft::$app->volumes->getVolumeByUid($elems[1]);        
-            }
-        }
-        foreach ($volumes as $volume) {
+        foreach ($this->allVolumes as $volume) {
             $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::VOLUME_HANDLE, $volume->uid);
             $volumeViewModes = [];
             foreach ($layout->viewModes as $viewMode) {
@@ -76,7 +86,6 @@ class AssetRendered extends FieldDisplayer
                 'viewModes' => $volumeViewModes
             ];
         }
-
         return $viewModes;
     }
 

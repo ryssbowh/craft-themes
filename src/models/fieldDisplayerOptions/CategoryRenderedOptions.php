@@ -12,7 +12,21 @@ class CategoryRenderedOptions extends FieldDisplayerOptions
      * @var string
      */
     public $viewMode;
+    
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        if ($this->viewMode === null) {
+            $keys = array_keys($this->displayer->getViewModes());
+            $this->viewMode = $keys[0];
+        }
+    }
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return [

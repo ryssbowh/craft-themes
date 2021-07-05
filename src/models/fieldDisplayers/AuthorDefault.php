@@ -43,8 +43,8 @@ class AuthorDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new AuthorDefaultOptions;
+        return AuthorDefaultOptions::class;
     }
 }

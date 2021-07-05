@@ -43,8 +43,8 @@ class EntryLink extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new EntryLinkOptions;
+        return EntryLinkOptions::class;
     }
 }

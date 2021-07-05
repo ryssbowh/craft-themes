@@ -42,9 +42,9 @@ class TagRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new TagRenderedOptions;
+        return TagRenderedOptions::class;
     }
 
     /**

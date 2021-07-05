@@ -14,11 +14,11 @@ interface FieldDisplayerInterface
     public static function getFieldTarget(): string;
 
     /**
-     * Get options model
+     * Get options model class
      * 
-     * @return Model
+     * @return string
      */
-    public function getOptionsModel(): ?Model;
+    public function getOptionsModel(): string;
 
     /**
      * Get options

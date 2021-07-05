@@ -71,9 +71,11 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     public function getOptions(): Model
     {
         if ($this->_options === null) {
-            $model = $this->getOptionsModel();
-            $model->displayer = $this;
-            $model->setAttributes($this->field->options, false);
+            $class = $this->getOptionsModel();
+            $model = new $class([
+                'displayer' => $this
+            ]);
+            $model->setAttributes($this->field->options);
             $this->_options = $model;
         }
         return $this->_options;
@@ -109,8 +111,8 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new NoOptions;
+        return NoOptions::class;
     }
 }
