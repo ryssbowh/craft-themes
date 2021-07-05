@@ -7,6 +7,11 @@ use Ryssbowh\CraftThemes\models\FileDisplayer;
 class ImageFull extends FileDisplayer
 {
     /**
+     * @var boolean
+     */
+    public static $isDefault = true;
+
+    /**
      * @var string
      */
     public static $handle = 'image_full';

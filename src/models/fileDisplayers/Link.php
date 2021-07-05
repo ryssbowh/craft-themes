@@ -9,6 +9,11 @@ use craft\base\Model;
 class Link extends FileDisplayer
 {
     /**
+     * @var boolean
+     */
+    public static $isDefault = true;
+
+    /**
      * @var string
      */
     public static $handle = 'link';

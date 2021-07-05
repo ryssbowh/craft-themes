@@ -23,7 +23,7 @@ What it doesn't allow you to do :
 
 The building of a page is based on the notion of layouts, regions, blocks, view modes and displays.
 
-**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 6 types of layouts :
+**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 7 types of layouts :
 
 | Layout type | Associated with | Can have blocks | Can have displays and view modes |
 |-------------|-----------------|-----------------|----------------------------------|
@@ -130,7 +130,6 @@ Craft 3.5 or over
 
 - tests
 - test all displayers options
-- default options for file displayers
 - test email templates in console
 - install blocks in theme
 - bundleAssets as regular expressions paths  

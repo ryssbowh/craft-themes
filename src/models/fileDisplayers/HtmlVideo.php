@@ -9,6 +9,11 @@ use craft\base\Model;
 class HtmlVideo extends FileDisplayer
 {
     /**
+     * @var boolean
+     */
+    public static $isDefault = true;
+
+    /**
      * @var string
      */
     public static $handle = 'html_video';

@@ -13,7 +13,7 @@ class FileDefaultOptions extends FieldDisplayerOptions
      * Displayers, indexed by asset kind
      * @var array
      */
-    public $displayers = [];
+    public $displayers;
 
     /**
      * @inheritDoc
@@ -23,6 +23,17 @@ class FileDefaultOptions extends FieldDisplayerOptions
         return [
             ['displayers', 'validateDisplayers']
         ];
+    }
+
+    public function init()
+    {
+        parent::init();
+        if ($this->displayers === null) {
+            $this->displayers = [];
+            foreach (Themes::$plugin->fileDisplayers->getDefaults() as $kind => $displayer) {
+                $this->displayers[$kind]['displayer'] = $displayer;
+            }
+        }
     }
 
     /**

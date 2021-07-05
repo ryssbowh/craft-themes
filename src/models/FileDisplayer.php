@@ -10,6 +10,11 @@ use craft\base\Model;
 abstract class FileDisplayer extends Model implements FileDisplayerInterface
 {
     /**
+     * @var boolean
+     */
+    public static $isDefault = false;
+    
+    /**
      * @var FieldDisplayerInterface
      */
     protected $_displayer;

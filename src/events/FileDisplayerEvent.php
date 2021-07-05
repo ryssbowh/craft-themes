@@ -29,6 +29,12 @@ class FileDisplayerEvent extends Event
     protected $mapping = [];
 
     /**
+     * Displayer defaults ['assetKind' => 'displayerHandle']
+     * @var array
+     */
+    protected $defaults = [];
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -66,6 +72,16 @@ class FileDisplayerEvent extends Event
     }
 
     /**
+     * Defaults getter
+     * 
+     * @return array
+     */
+    public function getDefaults(): array
+    {
+        return $this->defaults;
+    }
+
+    /**
      * Register a displayer class
      * 
      * @param  string $class
@@ -85,6 +101,9 @@ class FileDisplayerEvent extends Event
         foreach ($kinds as $kind) {
             if (!in_array($class::$handle, $this->mapping[$kind] ?? [])) {
                 $this->mapping[$kind][] = $class::$handle;
+            }
+            if ($class::$isDefault) {
+                $this->defaults[$kind] = $class::$handle;
             }
         }
     }

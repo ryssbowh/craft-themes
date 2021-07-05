@@ -23,6 +23,12 @@ class FileDisplayerService extends Service
     protected $_mapping;
 
     /**
+     * Defaults displayer mapping, indexed by asset kinds
+     * @var array
+     */
+    protected $_defaults;
+
+    /**
      * Mapping getter
      * 
      * @return array
@@ -33,6 +39,19 @@ class FileDisplayerService extends Service
             $this->register();
         }
         return $this->_mapping;
+    }
+
+    /**
+     * Defaults getter
+     * 
+     * @return array
+     */
+    public function getDefaults(): array
+    {
+        if (is_null($this->_defaults)) {
+            $this->register();
+        }
+        return $this->_defaults;
     }
 
     /**
@@ -97,5 +116,6 @@ class FileDisplayerService extends Service
         $this->triggerEvent(self::REGISTER_DISPLAYERS, $event);
         $this->_displayers = $event->getDisplayers();
         $this->_mapping = $event->getMapping();
+        $this->_defaults = $event->getDefaults();
     }
 }
