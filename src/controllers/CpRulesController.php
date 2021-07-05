@@ -49,6 +49,17 @@ class CpRulesController extends Controller
                 'options' => ['' => \Craft::t('themes', 'Any')] + $sites,
                 'class' => 'site cell'
             ],
+            'viewPort' => [
+                'heading' => \Craft::t('themes', 'View port'),
+                'type' => 'select',
+                'options' => [
+                    '' => \Craft::t('themes', 'Any'),
+                    'phone' => \Craft::t('themes', 'Phone'),
+                    'tablet' => \Craft::t('themes', 'Tablet'),
+                    'desktop' => \Craft::t('themes', 'Desktop'),
+                ],
+                'class' => 'view-port cell'
+            ],
             'language' => [
                 'heading' => \Craft::t('themes', 'Language'),
                 'type' => 'select',

@@ -441,6 +441,14 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
+    protected function beforeInstall(): bool
+    {
+        return \Craft::$app->plugins->installPlugin('mobile-detect');
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function beforeUninstall(): bool
     {
         foreach ($this->registry->all() as $plugin) {

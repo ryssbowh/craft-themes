@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\i18n\Locale;
 use craft\models\Site;
+use superbig\mobiledetect\MobileDetect;
 use yii\caching\TagDependency;
 
 class RulesService extends Service
@@ -44,7 +45,8 @@ class RulesService extends Service
         $path = \Craft::$app->request->getFullPath();
         $currentSite = \Craft::$app->sites->getCurrentSite();
         $currentUrl = $currentSite->getBaseUrl().$path;
-        $cached = $this->getCache($currentUrl);
+        $viewPort = $this->getViewPort();
+        $cached = $this->getCache($currentUrl, $viewPort);
         $theme = null;
         if ($cached === null) {
             return null;
@@ -52,8 +54,8 @@ class RulesService extends Service
         if (is_string($cached)) {
             $theme = Themes::$plugin->registry->getTheme($cached);
         } else {
-            $themeName = $this->resolveRules($path, $currentSite);
-            $this->setCache($currentUrl, $themeName);
+            $themeName = $this->resolveRules($path, $currentSite, $viewPort);
+            $this->setCache($currentUrl, $viewPort, $themeName);
             if ($themeName) {
                 $theme = Themes::$plugin->registry->getTheme($themeName);
             }
@@ -76,27 +78,28 @@ class RulesService extends Service
      * @param  string $url
      * @return ?string|false
      */
-    protected function getCache(string $url)
+    protected function getCache(string $url, string $viewPort)
     {
         if (!$this->cacheEnabled) {
             return false;
         }
-        $key = $this->cache->buildKey([self::CACHE_TAG, $url]);
+        $key = $this->cache->buildKey([self::CACHE_TAG, $url, $viewPort]);
         return $this->cache->get($key);
     }
 
     /**
-     * Set the theme name cache for an url
+     * Set the theme name cache
      * 
      * @param string $url
+     * @param string $viewPort
      * @param string $themeName
      */
-    protected function setCache(string $url, ?string $themeName)
+    protected function setCache(string $url, string $viewPort, ?string $themeName)
     {
         if (!$this->cacheEnabled) {
             return;
         }
-        $key = $this->cache->buildKey([self::CACHE_TAG, $url]);
+        $key = $this->cache->buildKey([self::CACHE_TAG, $url, $viewPort]);
         $dep = new TagDependency([
             'tags' => [self::CACHE_TAG]
         ]);
@@ -106,22 +109,27 @@ class RulesService extends Service
     /**
      * Resolve all defined rules, returns theme name
      * 
+     * @param  string $currentPath
+     * @param  Site   $currentSite
+     * @param  string $currentViewPort
      * @return ?string
      */
-    protected function resolveRules(string $path, Site $currentSite): ?string
+    protected function resolveRules(string $currentPath, Site $currentSite, string $currentViewPort): ?string
     {
         $themeName = null;
         foreach ($this->rules as $rule) {
             if (!$rule['enabled']) {
                 continue;
             }
-            $site = $language = $url = false;
+            $site = $language = $path = $viewPort = false;
             if ($site = $this->resolveSiteRule($rule['site'], $currentSite)) {
                 if ($language = $this->resolveLanguageRule($rule['language'], $currentSite->getLocale())) {
-                    $url = $this->resolvePathRule($rule['url'], $path);
+                    if ($path = $this->resolvePathRule($rule['url'], $currentPath)) {
+                        $viewPort = $this->resolveViewPortRule($rule['viewPort'], $currentViewPort);
+                    }
                 }
             }
-            if ($site and $language and $url) {
+            if ($site and $language and $path and $viewPort) {
                 $themeName = $rule['theme'];
                 break;
             }
@@ -131,9 +139,26 @@ class RulesService extends Service
         }
         return $themeName;
     }
+        
+    /**
+     * Get user's view port
+     * 
+     * @return string
+     */
+    protected function getViewPort(): string
+    {
+        $detect = MobileDetect::$plugin->mobileDetectService;
+        if ($detect->isPhone()) {
+            return 'phone';
+        }
+        if($detect->isTablet()) {
+            return 'tablet';
+        }
+        return 'desktop';
+    }
 
     /**
-     * Resolve the site part of a rule
+     * Resolves the site part of a rule
      * 
      * @param  string $ruleSite
      * @param  Site   $site
@@ -145,7 +170,7 @@ class RulesService extends Service
     }
 
     /**
-     * Reolsves the language part of a rule
+     * Resolves the language part of a rule
      * 
      * @param  string $ruleLanguage
      * @param  Locale $locale
@@ -157,7 +182,19 @@ class RulesService extends Service
     }
 
     /**
-     * Resolve the path part of a rule
+     * Resolves the view port part of a rule
+     * 
+     * @param  string $ruleViewPort
+     * @param  string $viewPort
+     * @return bool
+     */
+    protected function resolveViewPortRule(string $ruleViewPort, string $viewPort): bool
+    {
+        return ($ruleViewPort == '' or $viewPort == $ruleViewPort);
+    }
+
+    /**
+     * Resolves the path part of a rule
      * 
      * @param  string $ruleUrl
      * @param  string $path

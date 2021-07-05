@@ -97,6 +97,7 @@ Some display will contain items that are not fields, they are automatically adde
 Define rules in the settings to load the theme you want according to 3 parameters :
 - the current site
 - the current language
+- the current view port
 - the current url path, this can also be a regular expression if enclosed in slashes. example `/^blog*/`. Enter `/` for the homepage.
 
 The first rule that match will define which theme will be used. Organise your rules to have the most specific first.
