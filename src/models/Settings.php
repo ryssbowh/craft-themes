@@ -18,6 +18,16 @@ class Settings extends Model
     public $default;
 
     /**
+     * @var ?string
+     */
+    public $console;
+
+    /**
+     * @var boolean
+     */
+    public $setConsole = true;
+
+    /**
      * @var boolean
      */
     public $devMode = false;

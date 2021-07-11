@@ -54,7 +54,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @var int
      */
-    public $order;
+    public $order = 0;
 
     /**
      * @var bool

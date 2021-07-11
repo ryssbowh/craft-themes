@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\models\Region;
+use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 
@@ -76,6 +77,14 @@ interface LayoutInterface
     public function getViewModes(): array;
 
     /**
+     * Get view mode by handle
+     * 
+     * @param  string $handle
+     * @return ?ViewMode
+     */
+    public function getViewModeByHandle(string $handle): ?ViewMode;
+
+    /**
      * View modes setter
      * 
      * @param  array $viewModes
@@ -139,13 +148,21 @@ interface LayoutInterface
 
     /**
      * Get a region by handle.
-     *
      * 
      * @param  string       $handle
      * @param  bool         $checkLoaded
      * @return Region
      */
     public function getRegion(string $handle): Region;
+
+    /**
+     * Get a display by handle for a view mode
+     * 
+     * @param  string $viewMode
+     * @param  string $handle
+     * @return ?DisplayInterface
+     */
+    public function getDisplayByHandle(string $viewMode, string $handle): ?DisplayInterface;
 
     /**
      * Find a block by machine name

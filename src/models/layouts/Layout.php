@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Region;
+use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -223,6 +224,19 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
+    public function getViewModeByHandle(string $handle): ?ViewMode
+    {
+        foreach ($this->viewModes as $viewMode) {
+            if ($viewMode->handle == $handle) {
+                return $viewMode;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setViewModes(?array $viewModes): LayoutInterface
     {
         $this->_viewModes = $viewModes;
@@ -353,6 +367,19 @@ class Layout extends Model implements LayoutInterface
         return array_filter($this->_displays, function ($display) use ($viewMode) {
             return $viewMode == $display->viewMode->handle;
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDisplayByHandle(string $viewMode, string $handle): ?DisplayInterface
+    {
+        foreach ($this->getDisplays($viewMode) as $display) {
+            if ($display->item->handle == $handle) {
+                return $display;
+            }
+        }
+        return null;
     }
 
     /**

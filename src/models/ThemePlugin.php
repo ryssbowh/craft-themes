@@ -168,7 +168,29 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
             \Craft::error(\Craft::t('app', 'The Themes plugin must be installed before installing a theme'));
             return false;
         }
+        if ($parent = $this->getExtends()) {
+            \Craft::$app->plugins->installPlugin($parent);
+        }
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterUninstall()
+    {
+        Themes::$plugin->registry->resetThemes();
+        Themes::$plugin->layouts->uninstallThemeData($this->handle);
+        Themes::$plugin->rules->flushCache();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterInstall()
+    {
+        Themes::$plugin->registry->addTheme($this);
+        Themes::$plugin->layouts->installThemeData($this->handle);
     }
 
     /**
@@ -179,9 +201,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     }
 
     /**
-     * Does this theme have a preview image
-     * 
-     * @return bool
+     * @inheritDoc
      */
     public function getHasPreview(): bool
     {
@@ -192,9 +212,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     }
 
     /**
-     * Get the preview image url
-     * 
-     * @return string
+     * @inheritDoc
      */
     public function getPreviewImage(): string
     {

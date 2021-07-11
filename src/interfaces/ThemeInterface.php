@@ -81,4 +81,11 @@ interface ThemeInterface
      * @return string
      */
     public function getPreviewImage(): string;
+
+    /**
+     * Does this theme have a preview image
+     * 
+     * @return bool
+     */
+    public function getHasPreview(): bool;
 }

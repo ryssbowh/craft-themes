@@ -50,10 +50,8 @@ class ThemesRegistry extends Service
             $this->currentTheme = $this->getTheme($theme);
         } elseif ($theme instanceof ThemeInterface) {
             $this->currentTheme = $theme;
-        } elseif ($theme === null) {
-            $this->currentTheme = null;
         }
-        if ($this->currentTheme) {
+        if ($this->currentTheme and \Craft::$app->request->getIsSiteRequest()) {
             \Yii::setAlias('@themePath', $theme->basePath);
             \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
             \Craft::$app->view->registerTwigExtension(new TwigTheme);
@@ -66,7 +64,7 @@ class ThemesRegistry extends Service
             new ThemeEvent(['theme' => $this->currentTheme])
         );
         if (!$this->currentTheme) {
-            \Craft::info("No theme found for request ".\Craft::$app->request->getUrl(), __METHOD__);
+            \Craft::info("No theme found for request", __METHOD__);
         } else {
             \Craft::info("Theme has been set to : " . $this->currentTheme->name, __METHOD__);
         }
@@ -149,6 +147,25 @@ class ThemesRegistry extends Service
             return $this->all()[$handle];
         }
         throw ThemeException::notDefined($handle);
+    }
+
+    /**
+     * Add a theme manually
+     *
+     * @return ThemeInterface $theme
+     */
+    public function addTheme(ThemeInterface $theme)
+    {
+        $this->loadThemes();
+        $this->themes[$theme->handle] = $theme;
+    }
+
+    /**
+     * Reset themes internal cache
+     */
+    public function resetThemes()
+    {
+        $this->themes = null;
     }
 
     /**

@@ -130,7 +130,6 @@ Craft 3.5 or over
 ## Roadmap
 
 - tests
-- test all displayers options
 - test email templates in console
 - install blocks in theme
 - bundleAssets as regular expressions paths  

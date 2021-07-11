@@ -76,6 +76,9 @@ class AssetRendered extends FieldDisplayer
     {
         $viewModes = [];
         foreach ($this->allVolumes as $volume) {
+            if (!$volume) {
+                continue;
+            }
             $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::VOLUME_HANDLE, $volume->uid);
             $volumeViewModes = [];
             foreach ($layout->viewModes as $viewMode) {

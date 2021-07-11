@@ -123,7 +123,7 @@ class LayoutService extends Service
                 return (bool)$layout->hasBlocks === $withHasBlocks;
             }
             return true;
-        })->all();
+        })->values()->all();
     }
 
     /**

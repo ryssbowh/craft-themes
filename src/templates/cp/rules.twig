@@ -21,9 +21,27 @@
         <h2>{{ 'Default theme'|t('themes') }}</h2>
         {{ forms.selectField({
             name: 'default',
-            options: themes,
+            options: {'': 'No theme'|t('themes')}|merge(themes),
             value: settings.default,
             instructions: 'Default theme when no rules match'|t('themes')
+        }) }}
+
+        <h2>{{ 'Console requests'|t('themes') }}</h2>
+        {{ forms.lightswitchField({
+            name: 'setConsole',
+            on: settings.setConsole,
+            containerAttributes: {
+                class: ['console-lightswitch']
+            },
+            label: 'Set the console requests theme, this is needed if console requests render templates (when sending emails for example)'|t('themes')
+        }) }}
+
+        {{ forms.selectField({
+            name: 'console',
+            label: 'Console requests theme'|t('themes'),
+            options: themes,
+            value: settings.console,
+            fieldClass: ['console-themes']
         }) }}
     {% endnamespace %}
 

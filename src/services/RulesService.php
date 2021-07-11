@@ -25,6 +25,16 @@ class RulesService extends Service
     public $default;
 
     /**
+     * @var ?string
+     */
+    public $console;
+
+    /**
+     * @var boolean
+     */
+    public $setConsole;
+
+    /**
      * @var boolean
      */
     public $cacheEnabled;
@@ -42,6 +52,17 @@ class RulesService extends Service
      */
     public function resolveCurrentTheme(): ?ThemeInterface
     {
+        if (\Craft::$app->request->getIsCpRequest()) {
+            return null;
+        }
+        if (\Craft::$app->request->getIsConsoleRequest()) {
+            if ($this->setConsole and $this->console) {
+                $theme = Themes::$plugin->registry->getTheme($this->console);
+                $this->themesRegistry()->setCurrent($theme);
+                return $theme;
+            }
+            return null;
+        }
         $path = \Craft::$app->request->getFullPath();
         $currentSite = \Craft::$app->sites->getCurrentSite();
         $currentUrl = $currentSite->getBaseUrl().$path;
@@ -60,7 +81,9 @@ class RulesService extends Service
                 $theme = Themes::$plugin->registry->getTheme($themeName);
             }
         }
-        $this->themesRegistry()->setCurrent($theme);
+        if ($theme) {
+            $this->themesRegistry()->setCurrent($theme);
+        }
         return $theme;
     }
 

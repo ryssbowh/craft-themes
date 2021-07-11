@@ -36,3 +36,18 @@ Craft.Themes.RulesTable = Craft.EditableTable.extend({
         });
     }
 });
+
+function showHideConsoleThemeField(show) {
+    if (show) {
+        $('.console-themes').slideDown();
+    } else {
+        $('.console-themes').slideUp();
+    }
+}
+
+$(function() { 
+    showHideConsoleThemeField($('.console-lightswitch').hasClass('on'));
+    $('.console-lightswitch').on('change', function(){
+        showHideConsoleThemeField($('.console-lightswitch').hasClass('on'));
+    });
+});

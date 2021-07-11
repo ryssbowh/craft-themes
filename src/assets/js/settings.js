@@ -21,6 +21,6 @@ function install(btn) {
 $(function() { 
     $('.install').click(function (e) {
         e.preventDefault();
-        install($(this));
+        install($(this)); 
     });
 });

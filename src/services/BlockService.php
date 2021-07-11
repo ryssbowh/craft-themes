@@ -159,26 +159,4 @@ class BlockService extends Service
             $block->delete();
         }
     }
-
-    /**
-     * Install the content block for a theme
-     * 
-     * @param  ThemeInterface $theme
-     */
-    public function installContentBlock(ThemeInterface $theme)
-    {
-        if (!$region = $theme->contentBlockRegion()) {
-            return;
-        }
-        foreach ($this->layoutService()->getForTheme($theme->handle, null, true) as $layout) {
-            $block = $this->create([
-                'provider' => 'system',
-                'handle' => 'content',
-                'region' => $region,
-                'order' => 0
-            ]);
-            $layout->addBlock($block);
-            $this->layoutService()->save($layout);
-        }
-    }
 }

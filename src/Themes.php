@@ -15,11 +15,11 @@ use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, G
 use craft\helpers\UrlHelper;
 use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields};
 use craft\utilities\ClearCaches;
-use craft\web\Application;
 use craft\web\UrlManager;
 use craft\web\View;
 use craft\web\twig\variables\Cp;
 use craft\web\twig\variables\CraftVariable;
+use yii\base\Application;
 use yii\base\Event;
 
 class Themes extends \craft\base\Plugin
@@ -64,23 +64,21 @@ class Themes extends \craft\base\Plugin
         $this->registerCraftEvents();
         $this->registerTwigVariables();
 
-        if (Craft::$app->request->getIsSiteRequest()) {
-            Event::on(
-                Application::class, 
-                Application::EVENT_BEFORE_REQUEST, 
-                [$this->rules, 'resolveCurrentTheme']
-            );
-            Event::on(
-                View::class, 
-                View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-                [$this->registry, 'registerCurrentThemeTemplates']
-            );
-            Event::on(
-                View::class, 
-                View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-                [$this->view, 'beforeRenderPage']
-            );
-        }
+        Event::on(
+            Application::class, 
+            Application::EVENT_BEFORE_REQUEST, 
+            [$this->rules, 'resolveCurrentTheme']
+        );
+        Event::on(
+            View::class, 
+            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
+            [$this->registry, 'registerCurrentThemeTemplates']
+        );
+        Event::on(
+            View::class, 
+            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+            [$this->view, 'beforeRenderPage']
+        );
 
         if (Craft::$app->request->getIsCpRequest()) {
             $this->registerCpRoutes();
@@ -169,32 +167,6 @@ class Themes extends \craft\base\Plugin
                 }
             }
         );
-
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->installDependency($event->plugin);
-                }
-            }
-        );
-
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->layouts->uninstallThemeData($event->plugin->handle);
-                    Themes::$plugin->rules->flushCache();
-                }
-            }
-        );
-
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->layouts->installThemeData($event->plugin->handle);
-                    Themes::$plugin->blocks->installContentBlock($event->plugin);
-                }
-            }
-        );
     }
 
     /**
@@ -250,7 +222,9 @@ class Themes extends \craft\base\Plugin
                 'rules' => $this->getSettings()->getRules(),
                 'default' => $this->getSettings()->default,
                 'cache' => \Craft::$app->cache,
-                'cacheEnabled' => $this->getSettings()->rulesCacheEnabled
+                'cacheEnabled' => $this->getSettings()->rulesCacheEnabled,
+                'console' => $this->getSettings()->console,
+                'setConsole' => $this->getSettings()->setConsole
             ],
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
@@ -412,21 +386,6 @@ class Themes extends \craft\base\Plugin
                     ];
                 }
             );
-        }
-    }
-
-    /**
-     * Install parent theme
-     * 
-     * @param PluginInterface $plugin
-     */
-    protected function installDependency(PluginInterface $plugin)
-    {
-        if (!$plugin instanceof ThemeInterface) {
-            return;
-        }
-        if ($parent = $plugin->getExtends()) {
-            \Craft::$app->plugins->installPlugin($parent);
         }
     }
 

@@ -77,7 +77,7 @@ class CpRulesController extends Controller
             'title' => \Craft::t('themes', 'Rules'),
             'settings' => $settings,
             'cols' => $cols,
-            'themes' => ['' => \Craft::t('themes', 'No theme')] + $themes,
+            'themes' => $themes,
             'namespace' => 'settings'
         ]);
     }
