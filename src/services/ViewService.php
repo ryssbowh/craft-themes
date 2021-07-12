@@ -205,7 +205,7 @@ class ViewService extends Service
             'fields/' . $handle
         ];
         $variables = [
-            'classes' => new ClassBag(['field', $displayer->handle]),
+            'classes' => new ClassBag(['field', 'field-' . $field->handle, $displayer->handle]),
             'attributes' => new AttributeBag,
             'field' => $field,
             'display' => $field->display,

@@ -12,6 +12,7 @@ use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
 use craft\base\Field as BaseField;
+use craft\fieldlayoutelements\CustomField;
 use craft\fields\Matrix as CraftMatrix;
 
 abstract class Field extends DisplayItem implements FieldInterface
@@ -171,6 +172,21 @@ abstract class Field extends DisplayItem implements FieldInterface
     public function getAvailableDisplayers(): array
     {
         return Themes::$plugin->fieldDisplayers->getForField(get_class($this), $this);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        foreach ($this->layout->element->fieldLayout->tabs as $tab) {
+            foreach ($tab->elements as $element) {
+                if (get_class($element) == CustomField::class and $element->field->handle == $this->handle) {
+                    return $element->label ?? $element->field->name;
+                }
+            }
+        }
+        return '';
     }
 
     /**

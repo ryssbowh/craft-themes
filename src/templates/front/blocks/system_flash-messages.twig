@@ -1,13 +1,11 @@
 {% extends "blocks/block" %}
 
-{% do craft.app.session.setFlash('notice', "I'm a message") %}
-{% do craft.app.session.setFlash('error', "I'm an error message") %}
 {% set message = craft.app.session.getFlash('notice') %}
 {% set error = craft.app.session.getFlash('error') %}
 
 {% block content %}
     {% if message or error %}
-        <div class="container {{ classes|raw }}" {{ attributes|raw }}>
+        <div class="{{ classes|raw }}" {{ attributes|raw }}>
             <div class="row">
                 {% if message %}
                     <div class="col-12">

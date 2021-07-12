@@ -41,7 +41,7 @@ class DisplayService extends Service
     public function all(): Collection
     {
         if ($this->_displays === null) {
-            $records = DisplayRecord::find()->all();
+            $records = DisplayRecord::find()->orderBy('order asc')->all();
             $this->_displays = collect();
             foreach ($records as $record) {
                 $this->_displays->push($this->create($record));

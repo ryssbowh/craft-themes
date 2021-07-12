@@ -94,14 +94,6 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
-    public function getName(): string
-    {
-        return $this->craftField->name;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getDisplayName(): string
     {
         return $this->craftField::displayName();
