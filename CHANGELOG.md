@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.1.3 - 2021-07-13
+
+### Fixed
+- Do not register bundles for console requests
+
 ## 2.1.2 - 2021-06-08
 
 ### Fixed

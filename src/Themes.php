@@ -21,6 +21,7 @@ use craft\web\UrlManager;
 use craft\web\View;
 use yii\base\Event;
 use yii\log\Logger;
+use craft\web\Request;
 
 class Themes extends \craft\base\Plugin
 {
@@ -118,8 +119,10 @@ class Themes extends \craft\base\Plugin
         \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
         \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
         $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
-        $path = \Craft::$app->request->getPathInfo();
-        $theme->registerAssetBundles($path);
+        if (\Craft::$app->request instanceof Request) {
+            $path = \Craft::$app->request->getPathInfo(); 
+            $theme->registerAssetBundles($path);
+        }
         \Craft::info("Theme has been set to : " . $theme->name, __METHOD__);
     }
 
