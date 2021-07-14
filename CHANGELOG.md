@@ -1,8 +1,7 @@
 # ryssbowh/craft-themes Changelog
 
 ## 3.0.0 - 
-
-> :warning: Please read the breaking changes included in 3.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/DEVELOPERS.md)
+> :warning: Read the breaking changes included in 3.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/DEVELOPERS.md) before updating
 
 ### Added
 - Pro version
@@ -11,6 +10,15 @@
 - Blocks
 - Field displayers
 - Files displayers
+
+### Deprecated
+- Twig variable `themesRegistry`
+- Twig variable `theme`
+
+## 2.1.3 - 2021-07-13
+
+### Fixed
+- Do not register bundles for console requests
 
 ## 2.1.2 - 2021-06-08
 
@@ -34,7 +42,6 @@
 - Typo in method name
 
 ## 2.0.0 - 2021-02-16
-
 > :warning: If you're updating from 1.x please read the breaking changes included in 2.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)
 
 ### Changed
@@ -51,30 +58,37 @@
 - ThemeInterface::isPartial()
 
 ## 1.0.6 - 2021-05-01
+
 ### Fixed
 - Set default theme for non-web requests
 
 ## 1.0.5 - 2021-04-28
+
 ### Fixed
 - Bug for console requests
 
 ## 1.0.4 - 2021-04-28
+
 ### Fixed
 - Don't set theme for console requests
 
 ## 1.0.3 - 2021-04-22
+
 ### Fixed
 - Fixed site templates roots registration made in backend
 
 ## 1.0.2 - 2021-02-04
+
 ### Fixed
 - Error when no rules are defined
 
 ## 1.0.1 - 2021-02-01
+
 ### Fixed
 - Composer 2 compatibility
 
 ## 1.0.0 - 2021-01-31
+
 ### Added
 - Rule system
 
@@ -84,5 +98,6 @@
 - themes service renamed to registry
 
 ## 0.1.0 - 2021-01-27
+
 ### Added
 - Initial release
