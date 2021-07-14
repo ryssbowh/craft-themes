@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.1.4 - 2021-07-14
+
+### Fixed
+- Method typo
+
 ## 2.1.3 - 2021-07-13
 
 ### Fixed
