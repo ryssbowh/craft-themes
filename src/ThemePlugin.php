@@ -108,7 +108,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 		if (file_exists($fullPath)) {
 			return \Craft::$app->view->assetManager->getPublishedUrl($fullPath, true);
 		}
-		if ($this->inheritsAssets and $this->entends()) {
+		if ($this->inheritsAssets and $this->getExtends()) {
 			return $this->getParent()->getAssetUrl($path);
 		}
 		return '';
