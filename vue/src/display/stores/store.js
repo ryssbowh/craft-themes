@@ -128,6 +128,7 @@ const store = createStore({
                     continue;
                 }
                 display = merge(display, data);
+                break;
             }
         },
         setHasChanged(state, value) {

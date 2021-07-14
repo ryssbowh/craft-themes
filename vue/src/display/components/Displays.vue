@@ -65,7 +65,7 @@ export default {
     },
     methods: {
         rebuildOrders: function (e) {
-            let displays = this.displays;
+            let displays = this.viewModeDisplays;
             let newOrder = 0;
             for (let i in displays) {
                 let display = displays[i];

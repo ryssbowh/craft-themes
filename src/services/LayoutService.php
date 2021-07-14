@@ -545,7 +545,7 @@ class LayoutService extends Service
             $layout = $display->viewMode->layout;
             $oldFieldClass = $oldItem->craft_field_class;
             if ($oldItem->craft_field_class != get_class($field)) {
-                // Field has changed class, recreating it entirely 
+                // Field has changed class, deleting old field, recreating it
                 // and copying old field attributes
                 $oldItem->delete();
                 $display->item = CraftField::createFromField($field);

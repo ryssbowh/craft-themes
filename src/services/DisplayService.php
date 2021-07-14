@@ -190,7 +190,7 @@ class DisplayService extends Service
     {
         $displays = [];
         foreach ($layout->viewModes as $viewMode) {
-            $order = $this->getMaxOrder($viewMode) ?? 0;
+            $order = $this->getNextOrder($viewMode);
             //Getting or creating displays for fields that are not craft fields (author, title etc)
             foreach (Themes::$plugin->fields->registeredFields as $fieldType => $fieldClass) {
                 if ($fieldClass::shouldExistOnLayout($layout)) {
@@ -200,12 +200,12 @@ class DisplayService extends Service
                         $display = null;
                     }
                     if (!$display) {
-                        $order++;
                         $display = $this->create([
                             'type' => self::TYPE_FIELD,
                             'viewMode' => $viewMode,
                             'order' => $order,
                         ]);
+                        $order++;
                         $display->item = $fieldClass::create();
                     }
                     $displays[] = $display;
@@ -219,12 +219,12 @@ class DisplayService extends Service
                     $display = null;
                 }
                 if (!$display) {
-                    $order++;
                     $display = $this->create([
                         'type' => self::TYPE_FIELD,
                         'viewMode' => $viewMode,
                         'order' => $order,
                     ]);
+                    $order++;
                     $display->item = Themes::$plugin->fields->createFromField($craftField);
                 }
                 $displays[] = $display;
@@ -249,18 +249,18 @@ class DisplayService extends Service
     }
 
     /**
-     * Get max order in displays for a view mode
+     * Get next order in displays for a view mode
      * 
      * @param  ViewMode $viewMode
      * @return int
      */
-    protected function getMaxOrder(ViewMode $viewMode): ?int
+    protected function getNextOrder(ViewMode $viewMode): ?int
     {
-        $size = sizeof($this->getForViewMode($viewMode));
-        if ($size > 0) {
-            return $this->getForViewMode($viewMode)[$size - 1]->order;
+        $displays = $this->getForViewMode($viewMode);
+        if (sizeof($displays) > 0) {
+            return $displays[sizeof($displays) - 1]->order + 1;
         }
-        return null;
+        return 0;
     }
 
     /**
