@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 
 class Author extends Field

@@ -5,7 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\events\RegisterFieldsEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
-use Ryssbowh\CraftThemes\models\fields\Field;
+use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use craft\base\Field as BaseField;

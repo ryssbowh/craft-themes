@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\CraftFieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;

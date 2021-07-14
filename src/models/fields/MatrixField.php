@@ -4,7 +4,6 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\ViewMode;
-use craft\base\Field as BaseField;
 
 class MatrixField extends CraftField
 {

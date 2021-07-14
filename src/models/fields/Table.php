@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\records\TablePivotRecord;
 use craft\base\Field as BaseField;
 use craft\fields\Table as CraftTable;
 
@@ -73,6 +74,45 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
+    public function onCraftFieldChanged(BaseField $craftField): bool
+    {
+        $oldFields = $this->fields;
+        $newFields = [];
+        $order = 0;
+        foreach ($craftField->columns as $column) {
+            $newConfig = TableField::buildConfig($column);
+            if (isset($oldFields[$order])) {
+                $oldField = $oldFields[$order];
+                if ($oldField->craft_field_class != $newConfig['craft_field_class']) {
+                    //Column has changed field class, creating a new field 
+                    //and copying old fields attributes
+                    $field = TableField::create($newConfig);
+                    $field->id = $oldField->id;
+                    $field->uid = $oldField->uid;
+                    $field->labelHidden = $oldField->labelHidden;
+                    $field->labelVisuallyHidden = $oldField->labelVisuallyHidden;
+                    $field->visuallyHidden = $oldField->visuallyHidden;
+                    $field->hidden = $field->hidden ?: $oldField->hidden;
+                } else {
+                    //Column is the same, replacing name and handle in case they have changed
+                    $field = $oldField;
+                    $field->name = $column['heading'];
+                    $field->handle = $column['handle'];
+                }
+            } else {
+                //New column was added to the table
+                $field = TableField::create($newConfig);
+            }
+            $newFields[$order] = $field;
+            $order++;
+        }
+        $this->fields = $newFields;
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function save(array $data): bool
     {
         $table = Themes::$plugin->fields->getRecordByUid($data['uid']);
@@ -83,6 +123,7 @@ class Table extends CraftField
         unset($data['fields']);
         $table->setAttributes($data, false);
         $res = $table->save(false);
+        $pivotIds = [];
         foreach ($fields as $order => $fieldData) {
             $field = Themes::$plugin->fields->getRecordByUid($fieldData['uid']);
             $field->setAttributes($fieldData, false);
@@ -94,6 +135,14 @@ class Table extends CraftField
             $pivot->name = $fieldData['name'];
             $pivot->handle = $fieldData['handle'];
             $pivot->save(false);
+            $pivotIds[] = $pivot->id;
+        }
+        $oldRecords = TablePivotRecord::find()
+            ->where(['table_id' => $table->id])
+            ->andWhere(['not in', 'id', $pivotIds])
+            ->all();
+        foreach ($oldRecords as $record) {
+            $record->delete();
         }
         return $res;
     }

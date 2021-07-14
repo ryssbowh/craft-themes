@@ -5,7 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\events\FieldDisplayerEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use Ryssbowh\CraftThemes\models\fields\Field;
+use Ryssbowh\CraftThemes\models\Field;
 
 class FieldDisplayerService extends Service
 {

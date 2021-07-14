@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;

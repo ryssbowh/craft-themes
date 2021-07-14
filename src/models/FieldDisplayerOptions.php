@@ -3,7 +3,6 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use Ryssbowh\CraftThemes\models\fields\Field;
 use craft\base\Model;
 
 class FieldDisplayerOptions extends Model

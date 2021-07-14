@@ -10,7 +10,6 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\PageLayout;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
-use Ryssbowh\CraftThemes\models\fields\Field;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\GlobalLayout;
@@ -511,7 +510,7 @@ class LayoutService extends Service
      * Callback when a field is deleted
      * Resave layout for which a deleted field was present
      * 
-     * @param  ConfigEvent $event
+     * @param ConfigEvent $event
      */
     public function onCraftFieldDeleted(FieldEvent $event)
     {
@@ -546,8 +545,12 @@ class LayoutService extends Service
             $layout = $display->viewMode->layout;
             $oldFieldClass = $oldItem->craft_field_class;
             if ($oldItem->craft_field_class != get_class($field)) {
+                // Field has changed class, recreating it entirely 
+                // and copying old field attributes
                 $oldItem->delete();
                 $display->item = CraftField::createFromField($field);
+                $display->item->id = $oldItem->id;
+                $display->item->uid = $oldItem->uid;
                 $display->item->labelHidden = $oldItem->labelHidden;
                 $display->item->labelVisuallyHidden = $oldItem->labelVisuallyHidden;
                 $display->item->visuallyHidden = $oldItem->visuallyHidden;
@@ -555,6 +558,7 @@ class LayoutService extends Service
                 $display->item->display = $display;
                 $toSave[$layout->id] = $layout;
             } else {
+                // Let the field deal with the change itself
                 if ($oldItem->onCraftFieldChanged($field)) {
                     $toSave[$layout->id] = $layout;
                 }

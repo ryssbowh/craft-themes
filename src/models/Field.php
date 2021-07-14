@@ -1,6 +1,6 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes\models\fields;
+namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;

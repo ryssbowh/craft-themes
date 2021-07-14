@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\Formidable\Models\Fields\LightSwitch;
 use craft\base\Field as BaseField;
