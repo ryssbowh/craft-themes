@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\models\fields\MatrixField;
 use craft\base\Model;
 use craft\models\MatrixBlockType;
 
@@ -68,5 +69,21 @@ class DisplayMatrixType extends Model
     public function fields()
     {
         return array_merge(parent::fields(), ['type']);
+    }
+
+    /**
+     * Find a field by craft field id
+     * 
+     * @param  int $id
+     * @return ?MatrixField
+     */
+    public function getFieldById(int $craftFieldId): ?MatrixField
+    {
+        foreach ($this->fields as $field) {
+            if ($field->craftField->id == $craftFieldId) {
+                return $field;
+            }
+        }
+        return null;
     }
 }

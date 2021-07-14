@@ -74,7 +74,7 @@ class DisplayService extends Service
     }
 
     /**
-     * get a display by id
+     * Get a display by id
      * 
      * @param  int    $id
      * @return ?DisplayInterface
@@ -85,7 +85,7 @@ class DisplayService extends Service
     }
 
     /**
-     * get all displays for a craft field id
+     * Get all displays for a craft field id
      * 
      * @param  int    $fieldId
      * @return array
@@ -100,7 +100,7 @@ class DisplayService extends Service
     }
 
     /**
-     * get all displays for a view mode and a field type
+     * Get all displays for a view mode and a field type
      * 
      * @param  ViewMode $viewMode
      * @param  string   $type
@@ -115,7 +115,7 @@ class DisplayService extends Service
     }
 
     /**
-     * Getall displays for a layout
+     * Get all displays for a layout
      * 
      * @param  LayoutInterface $layout
      * @return array

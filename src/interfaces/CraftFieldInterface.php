@@ -21,4 +21,12 @@ interface CraftFieldInterface extends FieldInterface
      * @return FieldInterface
      */
     public static function createFromField(BaseField $craftField): FieldInterface;
+
+    /**
+     * Callback when the associated Craft field is changed
+     * 
+     * @param  CraftField $field
+     * @return bool should the layout be saved
+     */
+    public function onCraftFieldChanged(BaseField $field): bool;
 }

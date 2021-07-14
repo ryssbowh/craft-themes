@@ -25,6 +25,14 @@ class MatrixField extends CraftField
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return $this->craftField->name;
+    }
+
+    /**
      * Get view mode associated to this field
      * 
      * @return ViewMode

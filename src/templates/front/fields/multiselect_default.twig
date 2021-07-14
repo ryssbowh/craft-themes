@@ -1,5 +1,5 @@
 {% extends "fields/_field" %}
 
 {% block content %}
-    {{ value|join(' ') }}
+    {{ value.options|filter(e => e.selected)|map(e => e.label)|join(', ') }}
 {% endblock %}

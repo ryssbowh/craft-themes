@@ -35,6 +35,14 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
+    public function onCraftFieldChanged(BaseField $field): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

@@ -10,6 +10,7 @@ use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
+use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 use craft\fields\Matrix as CraftMatrix;
@@ -47,6 +48,52 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
+    public function onCraftFieldChanged(BaseField $craftField): bool
+    {
+        $oldTypes = $this->types;
+        $newTypes = [];
+        foreach ($craftField->getBlockTypes() as $craftType) {
+            if (isset($oldTypes[$craftType->handle])) {
+                $type = $oldTypes[$craftType->handle];
+            } else {
+                //Type doesn't exist on the Matrix, creating a new one
+                $type = new DisplayMatrixType([
+                    'type' => $craftType,
+                    'fields' => []
+                ]);
+            }
+            $fields = [];
+            foreach ($craftType->fields as $craftField) {
+                $oldField = $type->getFieldById($craftField->id);
+                if (!$oldField) {
+                    //New field was added to the block type, creating new field
+                    $field = MatrixField::createFromField($craftField);
+                } else if ($oldField->craft_field_class != get_class($craftField)) {
+                    //Field has changed class, creating a new one 
+                    //and copying old fields attributes
+                    $field = MatrixField::createFromField($craftField);
+                    $field->id = $oldField->id;
+                    $field->uid = $oldField->uid;
+                    $field->labelHidden = $oldField->labelHidden;
+                    $field->labelVisuallyHidden = $oldField->labelVisuallyHidden;
+                    $field->visuallyHidden = $oldField->visuallyHidden;
+                    $field->hidden = $field->hidden ?: $oldField->hidden;
+                } else {
+                    //Field hasn't changed
+                    $field = $oldField;
+                }
+                $fields[] = $field;
+            }
+            $type->fields = $fields;
+            $newTypes[$craftType->handle] = $type;
+        }
+        $this->types = $newTypes;
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function create(?array $config = null): FieldInterface
     {
         $class = get_called_class();
@@ -68,17 +115,8 @@ class Matrix extends CraftField implements MatrixInterface
      */
     public static function createFromField(BaseField $craftField): FieldInterface
     {
-        $types = [];
-        foreach ($craftField->getBlockTypes() as $type) {
-            $types[] = [
-                'type' => $type,
-                'fields' => array_map(function ($field) {
-                    return MatrixField::buildConfig($field);
-                }, $type->getFields())
-            ];
-        }
         $config = static::buildConfig($craftField);
-        $config['types'] = $types;
+        $config['types'] = self::buildMatrixTypesConfig($craftField);
         return static::create($config);
     }
 
@@ -95,6 +133,7 @@ class Matrix extends CraftField implements MatrixInterface
         $data['craft_field_class'] = get_class($field);
         $matrix->setAttributes($data, false);
         $res = $matrix->save(false);
+        $pivotIds = [];
         foreach ($types as $typeData) {
             $fields = $typeData['fields'] ?? [];
             unset($typeData['fields']);
@@ -110,7 +149,15 @@ class Matrix extends CraftField implements MatrixInterface
                 $pivot->matrix_type_id = $type->id;
                 $pivot->order = $order;
                 $pivot->save(false);
+                $pivotIds[] = $pivot->id;
             }
+        }
+        $oldRecords = MatrixPivotRecord::find()
+            ->where(['parent_id' => $matrix->id])
+            ->andWhere(['not in', 'id', $pivotIds])
+            ->all();
+        foreach ($oldRecords as $record) {
+            $record->delete();
         }
         return $res;
     }
@@ -179,6 +226,26 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
+     * Creates the types config for a Matrix field
+     * 
+     * @param  Matrix $craftField
+     * @return array
+     */
+    protected static function buildMatrixTypesConfig(CraftMatrix $craftField): array
+    {
+        $types = [];
+        foreach ($craftField->getBlockTypes() as $type) {
+            $types[$type->handle] = [
+                'type' => $type,
+                'fields' => array_map(function ($field) {
+                    return MatrixField::buildConfig($field);
+                }, $type->getFields())
+            ];
+        }
+        return $types;
+    }
+
+    /**
      * Build matrix types from an array of data
      * 
      * @param  array  $data
@@ -198,7 +265,7 @@ class Matrix extends CraftField implements MatrixInterface
                 }
                 $fields[] = $field;
             }
-            $types[] = new DisplayMatrixType([
+            $types[$type->handle] = new DisplayMatrixType([
                 'type' => $type,
                 'fields' => $fields
             ]);

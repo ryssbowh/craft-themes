@@ -8,6 +8,20 @@ use craft\base\Field as BaseField;
 interface FieldInterface extends DisplayItemInterface
 {
     /**
+     * Handle getter
+     * 
+     * @return string
+     */
+    public function getHandle(): string;
+
+    /**
+     * Name getter
+     * 
+     * @return string
+     */
+    public function getName(): string;
+    
+    /**
      * Type getter
      * 
      * @return string
@@ -85,18 +99,4 @@ interface FieldInterface extends DisplayItemInterface
      * @return string
      */
     public function render(Element $element): string;
-
-    /**
-     * Handle getter
-     * 
-     * @return string
-     */
-    public function getHandle(): string;
-
-    /**
-     * Name getter
-     * 
-     * @return string
-     */
-    public function getName(): string;
 }

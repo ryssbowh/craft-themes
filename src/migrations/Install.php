@@ -17,15 +17,15 @@ class Install extends Migration
             return;
         }
         $this->createTable('{{%themes_blocks}}', [
-        	'id' => $this->primaryKey(),
-        	'region' => $this->string(255)->notNull(),
+            'id' => $this->primaryKey(),
+            'region' => $this->string(255)->notNull(),
             'layout_id' => $this->integer(11)->notNull(),
-        	'handle' => $this->string(255)->notNull(),
+            'handle' => $this->string(255)->notNull(),
             'provider' => $this->string(255)->notNull(),
-        	'order' => $this->integer(11)->unsigned()->notNull(),
-        	'active' => $this->boolean()->defaultValue(true),
+            'order' => $this->integer(11)->unsigned()->notNull(),
+            'active' => $this->boolean()->defaultValue(true),
             'options' => $this->text(),
-        	'dateCreated' => $this->dateTime()->notNull(),
+            'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid()
         ]);

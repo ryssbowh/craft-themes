@@ -112,16 +112,6 @@ class FieldsService extends Service
     }
 
     /**
-     * deletes a field
-     * 
-     * @param  Field  $field
-     */
-    public function deleteField(Field $field)
-    {
-        $field->delete();
-    }
-
-    /**
      * Get a field for a display
      * 
      * @param  int    $displayId

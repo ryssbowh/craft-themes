@@ -527,10 +527,11 @@ class LayoutService extends Service
     }
 
     /**
-     * handles a craft field save: Replaces the display in each layout 
-     * where the craft field was referenced (if the type of field has changed) and saves the layout.
+     * Handles a craft field save: Replaces the display in 
+     * each layout where the craft field was referenced 
+     * (if the type of field has changed) and saves the layout.
      * 
-     * @param  FieldEvent $event
+     * @param FieldEvent $event
      */
     public function onCraftFieldSaved(FieldEvent $event)
     {
@@ -542,22 +543,21 @@ class LayoutService extends Service
         $toSave = [];
         foreach ($displays as $display) {
             $oldItem = $display->item;
+            $layout = $display->viewMode->layout;
             $oldFieldClass = $oldItem->craft_field_class;
             if ($oldItem->craft_field_class != get_class($field)) {
-                $this->fieldsService()->deleteField($oldItem);
+                $oldItem->delete();
                 $display->item = CraftField::createFromField($field);
                 $display->item->labelHidden = $oldItem->labelHidden;
                 $display->item->labelVisuallyHidden = $oldItem->labelVisuallyHidden;
                 $display->item->visuallyHidden = $oldItem->visuallyHidden;
                 $display->item->hidden = $display->item->hidden ?: $oldItem->hidden;
                 $display->item->display = $display;
-                $layout = $display->viewMode->layout;
-                if (!isset($toSave[$layout->id])) {
+                $toSave[$layout->id] = $layout;
+            } else {
+                if ($oldItem->onCraftFieldChanged($field)) {
                     $toSave[$layout->id] = $layout;
-                } else {
-                    $layout = $toSave[$layout->id];
                 }
-                $layout->replaceDisplay($display);
             }
         }
         foreach ($toSave as $layout) {

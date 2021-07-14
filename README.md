@@ -9,7 +9,7 @@ A theme is just another Craft plugin, it can inherit another theme and has the s
 This Theme engine allows you to :
 - Install themes from the store or any git repository (composer, github etc)
 - Define your own themes that can extend each other
-- Choose which theme will be used for which site, language or url path. 
+- Choose which theme will be used for which site, language, viewport or url path. 
 - Assign blocks to your theme regions
 - Define your own blocks
 - Choose how your fields and assets are displayed on the front end
@@ -43,7 +43,7 @@ The building of a page is based on the notion of layouts, regions, blocks, view 
 
 **View modes** define a set of displayers and options for a layout and a view mode. Every Layout that can have view modes comes with a default one. This allows you to render an element differently in different parts of the page.
 
-For a layout to be rendered on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the theme engine will be skipped entirely.
+For a layout to be rendered on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the block/displayer engines will be skipped entirely.
 
 This theme engine comes with default blocks and field displayers, that might not fit your needs. To learn how to define new blocks, field and file displayers, see the [developers readme](DEVELOPERS.md)
 
