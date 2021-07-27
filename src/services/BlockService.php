@@ -110,7 +110,7 @@ class BlockService extends Service
      */
     public function getRecordByUid(string $uid): BlockRecord
     {
-        return BlockRecord::findOne(['uid' => $uid]) ?? new BlockRecord;
+        return BlockRecord::findOne(['uid' => $uid]) ?? new BlockRecord(['uid' => $uid]);
     }
 
     /**

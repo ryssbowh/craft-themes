@@ -135,7 +135,7 @@ class ViewModeService extends Service
      */
     public function getRecordByUid(string $uid): ViewModeRecord
     {
-        return ViewModeRecord::findOne(['uid' => $uid]) ?? new ViewModeRecord;
+        return ViewModeRecord::findOne(['uid' => $uid]) ?? new ViewModeRecord(['uid' => $uid]);
     }
 
     /**

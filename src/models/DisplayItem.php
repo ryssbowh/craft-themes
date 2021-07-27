@@ -56,12 +56,6 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
      * @var string
      */
     public $uid;
-    
-    /**
-     * Order when used in matrix or group
-     * @var int
-     */
-    public $order;
 
     /**
      * @var DisplayInterface

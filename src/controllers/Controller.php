@@ -53,6 +53,11 @@ class Controller extends CraftController
     protected $blockCache;
 
     /**
+     * @var GroupsService
+     */
+    protected $groups;
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -67,5 +72,6 @@ class Controller extends CraftController
         $this->display = Themes::$plugin->display;
         $this->fields = Themes::$plugin->fields;
         $this->blockCache = Themes::$plugin->blockCache;
+        $this->groups = Themes::$plugin->groups;
     }
 }

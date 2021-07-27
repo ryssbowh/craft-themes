@@ -3,7 +3,10 @@
         <div class="spinner-wrapper" v-if="isLoading">
           <div class="spinner"></div>
         </div>
-        <h2 v-if="!isLoading">{{ t('Displays') }}</h2>
+        <div class="flex title">
+            <h2 v-if="!isLoading">{{ t('Displays') }}</h2>
+            <a href="#" @click.prevent="newGroup">{{ t('New group') }}</a>
+        </div>
         <div class="fullwidth display-table" v-if="displays.length">
             <div class="line head">
                 <div class="handle col"></div>
@@ -21,7 +24,7 @@
                     :list="viewModeDisplays"
                     group="displays"
                     handle=".move"
-                    @change="rebuildOrders"
+                    @change="onDragChange"
                     >
                     <template #item="{element}">
                         <display-item :display="element"/>
@@ -33,6 +36,7 @@
             {{ t('There are no displays for this layout') }}
         </p>
         <options-modal/>
+        <group-modal @closeModal="onCloseGroupModal"/>
     </div>
 </template>
 
@@ -51,9 +55,9 @@ export default {
             if (!this.viewMode) {
                 return [];
             }
-            return sortBy(filter(this.displays, display => display.viewMode_id === this.viewMode.id || display.viewMode_id === this.viewMode.handle), 'order');
+            return sortBy(filter(this.displays, display => display.group_id == null && (display.viewMode_id === this.viewMode.id || display.viewMode_id === this.viewMode.handle)), 'order');
         },
-        ...mapState(['displays', 'isSaving', 'isFetching', 'viewMode'])
+        ...mapState(['displays', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal'])
     },
     watch: {
         displays: {
@@ -64,25 +68,45 @@ export default {
         }
     },
     methods: {
+        onDragChange: function (e) {
+            if (e.added) {
+                this.updateDisplay({id: e.added.element.id, data: {group_id: null}});
+            }
+            this.rebuildOrders(e);
+        },
         rebuildOrders: function (e) {
+            let newIndex, movedElem;
+            if (e.added) {
+                newIndex = e.added.newIndex;
+                movedElem = e.added.element;
+            } else if (e.moved) {
+                newIndex = e.moved.newIndex;
+                movedElem = e.moved.element;
+            }
             let displays = this.viewModeDisplays;
             let newOrder = 0;
             for (let i in displays) {
                 let display = displays[i];
-                if (e.moved && newOrder == e.moved.newIndex) {
+                if (movedElem && newOrder == newIndex) {
                     newOrder++;
                 }
-                if (e.moved && display.id == e.moved.element.id) {
+                if (movedElem && display.id == movedElem.id) {
                     continue;
                 }
                 this.updateDisplay({id: display.id, data: {order: newOrder}});
                 newOrder++;
             }
-            if (e.moved) {
-                this.updateDisplay({id: e.moved.element.id, data: {order: e.moved.newIndex}});
+            if (movedElem) {
+                this.updateDisplay({id: movedElem.id, data: {order: newIndex}});
             }
         },
-        ...mapMutations(['updateDisplay']),
+        onCloseGroupModal: function () {
+            this.setShowGroupModal({show: false});
+        },
+        newGroup: function () {
+            this.setShowGroupModal({show: true});  
+        },
+        ...mapMutations(['updateDisplay', 'setShowGroupModal']),
         ...mapActions(['checkChanges']),
     }
 };
@@ -110,6 +134,9 @@ export default {
 }
 .themes-displays {
     position: relative;
+    .title {
+        justify-content: space-between;
+    }
 }
 .spinner-wrapper {
     position: absolute;

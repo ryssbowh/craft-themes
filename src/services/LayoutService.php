@@ -407,7 +407,7 @@ class LayoutService extends Service
     /**
      * Handles a change in layout config
      * 
-     * @param  ConfigEvent $event
+     * @param ConfigEvent $event
      */
     public function handleChanged(ConfigEvent $event)
     {

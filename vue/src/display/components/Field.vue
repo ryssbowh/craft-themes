@@ -93,6 +93,10 @@ export default {
     },
     props: {
         item: Object,
+        display: {
+            type: Object,
+            default: {}
+        },
         moveable: {
             type: Boolean,
             default: true

@@ -8,6 +8,7 @@ import DisplayMenu from './components/DisplayMenu.vue';
 import DisplayItem from './components/DisplayItem.vue';
 import OptionsModal from './components/OptionsModal.vue';
 import ViewModeModal from './components/ViewModeModal.vue';
+import GroupModal from './components/GroupModal.vue';
 import Field from './components/Field.vue';
 import Group from './components/Group.vue';
 import Draggable from 'vuedraggable';
@@ -27,6 +28,7 @@ app.component('view-mode-modal', ViewModeModal);
 app.component('draggable', Draggable);
 app.component('group', Group);
 app.component('options-modal', OptionsModal);
+app.component('group-modal', GroupModal);
 app.component('display-item', DisplayItem,);
 
 let event = new CustomEvent("register-field-displayers-components", {detail: {}});

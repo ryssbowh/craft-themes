@@ -24,7 +24,7 @@ interface DisplayInterface
     /**
      * View mode interface
      * 
-     * @return ViewModeInterface
+     * @return ViewMode
      */
     public function getViewMode(): ViewMode;
 
@@ -48,6 +48,27 @@ interface DisplayInterface
      * @param DisplayItemInterface $item
      */
     public function setItem(?DisplayItemInterface $item);
+
+    /**
+     * Group getter
+     * 
+     * @return ?DisplayInterface
+     */
+    public function getGroup(): ?DisplayInterface;
+
+    /**
+     * Group setter
+     * 
+     * @param DisplayInterface $group
+     */
+    public function setGroup(?DisplayInterface $group);
+
+    /**
+     * Is this display a group 
+     * 
+     * @return boolean
+     */
+    public function isGroup(): bool;
 
     /**
      * Render this display for an element

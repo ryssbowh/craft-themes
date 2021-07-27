@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\DisplayItem;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
+use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
 use craft\base\Field as BaseField;
@@ -70,7 +71,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public static function getType(): string
     {
-        return 'field';
+        return DisplayService::TYPE_FIELD;
     }
 
     /**
@@ -108,16 +109,6 @@ abstract class Field extends DisplayItem implements FieldInterface
         $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
         $field->setAttributes($data, false);
         return $field->save(false);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete()
-    {
-        \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['id' => $this->id])
-            ->execute();
     }
 
     /**

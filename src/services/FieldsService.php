@@ -146,7 +146,7 @@ class FieldsService extends Service
      */
     public function getRecordByUid(string $uid): FieldRecord
     {
-        return FieldRecord::findOne(['uid' => $uid]) ?? new FieldRecord;
+        return FieldRecord::findOne(['uid' => $uid]) ?? new FieldRecord(['uid' => $uid]);
     }
 
     /**

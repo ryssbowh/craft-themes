@@ -6,7 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
@@ -204,7 +204,9 @@ class Themes extends \craft\base\Plugin
                     'themes/ajax/users' => 'themes/cp-ajax/users',
 
                     'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
-                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes'
+                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
+
+                    'themes/ajax/uid' => 'themes/cp-ajax/uid'
                 ]);
             }
         });
@@ -248,6 +250,7 @@ class Themes extends \craft\base\Plugin
             'matrix' => MatrixService::class,
             'tables' => TablesService::class,
             'fileDisplayers' => FileDisplayerService::class,
+            'groups' => GroupsService::class,
         ]);
     }
 

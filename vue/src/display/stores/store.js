@@ -1,9 +1,5 @@
 import { createStore } from 'vuex';
-import { cloneDeep, isEqual, merge } from 'lodash';
-
-function sanitizeDisplays(displays) {
-    return displays;
-}
+import { cloneDeep, isEqual, merge, filter } from 'lodash';
 
 function handleError(err) {
     if (err.response) {
@@ -24,8 +20,24 @@ function setWindowUrl(theme, layout) {
     window.history.pushState({}, '', url.join('/'));
 }
 
-function cloneDisplay(display, viewMode) {
+function cloneGroup(group, viewMode) {
+    let display = cloneDisplay(group, viewMode);
+    return axios({
+        method: 'post',
+        url: Craft.getCpUrl('themes/ajax/uid'),
+        headers: {'X-CSRF-Token': Craft.csrfTokenValue}
+    }).then((response) => {
+        display.uid = response.data.uid;
+        return display;
+    });
+}
+
+function cloneDisplay(display, viewMode, groupMapping) {
+    let oldGroup = display.group_id;
     display = cloneDeep(display);
+    if (oldGroup) {
+        display.group_id = groupMapping[oldGroup];
+    }
     display.viewMode_id = viewMode.handle;
     display.id = null;
     display.uid = null;
@@ -57,6 +69,8 @@ const store = createStore({
             displays: [],
             originalDisplays: [],
             showOptionsModal: false,
+            showGroupModal: false,
+            editedGroupUid: null,
             displayer: {},
             item: {},
             displayerOptionsErrors: {}
@@ -131,6 +145,9 @@ const store = createStore({
                 break;
             }
         },
+        removeDisplay(state, id) {
+            state.displays = state.displays.filter(display => display.id != id);
+        },
         setHasChanged(state, value) {
             state.hasChanged = value;
         },
@@ -151,6 +168,10 @@ const store = createStore({
         },
         setShowOptionsModal(state, value) {
             state.showOptionsModal = value;  
+        },
+        setShowGroupModal(state, {show, editUid = null}) {
+            state.showGroupModal = show;
+            state.editedGroupUid = editUid;  
         },
         setDisplayerOptionsError(state, value) {
             state.displayerOptionsErrors = value;
@@ -191,7 +212,7 @@ const store = createStore({
             axios({
                 method: 'post',
                 url: Craft.getCpUrl('themes/ajax/displays/save'),
-                data: {displays: sanitizeDisplays(state.displays), layout: state.layout.id, viewModes: state.viewModes},
+                data: {displays: state.displays, layout: state.layout.id, viewModes: state.viewModes},
             })
             .then(res => {
                 commit('setDisplays', cloneDeep(res.data.displays));
@@ -208,16 +229,34 @@ const store = createStore({
         },
         addViewMode({commit, state, dispatch}, viewMode) {
             commit('addViewMode', viewMode);
-            for (let i in state.displays) {
-                let display = state.displays[i];
-                if (display.viewMode_id !== state.viewMode.id && display.viewMode_id !== state.viewMode.handle) {
-                    continue;
-                }
-                display = cloneDisplay(display, viewMode);
-                commit('addDisplay', display);
+            let displays = filter(state.displays, (d) => d.viewMode_id === state.viewMode.id || d.viewMode_id === state.viewMode.handle);
+            let groups = filter(displays, (d) => d.type == 'group');
+            let fields = filter(displays, (d) => d.type == 'field');
+            let newDisplays = [];
+            let promises = [];
+            let groupMapping = {};
+            //Cloning all groups first, each cloning will be a promise. 
+            //Builds a mapping between old groups and new groups so that new fields are in the right groups
+            for (let i in groups) {
+                promises.push(cloneGroup(groups[i], viewMode).then((display) => {
+                    newDisplays.push(display);
+                    groupMapping[groups[i].id ?? groups[i].uid] = display.uid;
+                }));
             }
-            commit('setViewMode', state.viewModes.length - 1);
-            dispatch('checkChanges');
+            //When all groups are cloned, clone all fields
+            return new Promise((resolve, reject) => {
+                Promise.all(promises).then(() => {
+                    for (let i in fields) {
+                        newDisplays.push(cloneDisplay(fields[i], viewMode, groupMapping));
+                    }
+                    for (let i in newDisplays) {
+                        commit('addDisplay', newDisplays[i]);
+                    }
+                    commit('setViewMode', state.viewModes.length - 1);
+                    dispatch('checkChanges');
+                    resolve();
+                });
+            });
         },
         editViewMode({commit, dispatch}, args) {
             commit('editViewMode', args);

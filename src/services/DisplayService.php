@@ -68,7 +68,11 @@ class DisplayService extends Service
         $config = array_intersect_key($config, array_flip($attributes));
         $display->setAttributes($config);
         if ($itemData) {
-            $display->item = $this->fieldsService()->create($itemData);
+            if ($display->type == self::TYPE_FIELD) {
+                $display->item = $this->fieldsService()->create($itemData);
+            } else {
+                $display->item = $this->groupsService()->create($itemData);
+            }
         }
         return $display;
     }
@@ -82,6 +86,17 @@ class DisplayService extends Service
     public function getById(int $id): ?DisplayInterface
     {
         return $this->all()->firstWhere('id', $id);
+    }
+
+    /**
+     * Get a display by uid
+     * 
+     * @param  int    $uid
+     * @return ?DisplayInterface
+     */
+    public function getByUid(string $uid): ?DisplayInterface
+    {
+        return $this->all()->firstWhere('uid', $uid);
     }
 
     /**
@@ -135,6 +150,20 @@ class DisplayService extends Service
     }
 
     /**
+     * Get all displays for a group
+     * 
+     * @param  int $groupId
+     * @return array
+     */
+    public function getForGroup(int $groupId): array
+    {
+        return $this->all()
+            ->where('group_id', $groupId)
+            ->values()
+            ->all();
+    }
+
+    /**
      * Get all displays for a view mode
      * 
      * @param  ViewMode $viewMode
@@ -149,23 +178,59 @@ class DisplayService extends Service
     }
 
     /**
-     * Saves display data
+     * Saves one display
      * 
-     * @param  array        $data
-     * @param  LayoutRecord $layout
+     * @param  array  $data
+     * @return DisplayRecord
+     */
+    public function save(array $data): DisplayRecord
+    {
+        $display = $this->getRecordByUid($data['uid']);
+        if ($data['viewMode_id']) {
+            $viewModeId = $this->viewModesService()->getRecordByUid($data['viewMode_id'])->id;
+            $display->viewMode_id = $viewModeId;
+        } else {
+            $display->viewMode_id = null;
+        }
+        if ($data['group_id']) {
+            $groupId = $this->displayService()->getRecordByUid($data['group_id'])->id;
+            $display->group_id = $groupId;
+        } else {
+            $display->group_id = null;
+        }
+        $display->type = $data['type'];
+        $display->order = $data['order'];
+        $display->save(false);
+        if ($data['type'] == self::TYPE_FIELD) {
+            $this->fieldsService()->save($data['item'], $display);
+        } else {
+            $this->groupsService()->save($data['item'], $display);
+        }
+        return $display;
+    }
+
+    /**
+     * Saves display data for a layout
+     * 
+     * @param array        $data
+     * @param LayoutRecord $layout
      */
     public function saveMany(array $data, LayoutRecord $layout)
     {
         $ids = [];
+        $saveLater = [];
         foreach ($data as $displayData) {
-            $viewModeId = $this->viewModesService()->getRecordByUid($displayData['viewMode_id'])->id;
-            $display = $this->getRecordByUid($displayData['uid']);
-            $display->viewMode_id = $viewModeId;
-            $display->type = $displayData['type'];
-            $display->order = $displayData['order'];
-            $display->save(false);
-            $ids[$viewModeId][] = $display->id;
-            $this->fieldsService()->save($displayData['item'], $display);
+            if ($displayData['group_id']) {
+                //Saving this display later to make sure its group has been saved
+                $saveLater[] = $displayData;
+                continue;
+            }
+            $display = $this->save($displayData);
+            $ids[$display->viewMode->id][] = $display->id;
+        }
+        foreach ($saveLater as $displayData) {
+            $display = $this->save($displayData);
+            $ids[$display->viewMode->id][] = $display->id;
         }
 
         foreach ($ids as $viewModeId => $displayIds) {
@@ -184,7 +249,7 @@ class DisplayService extends Service
      * Create all displays for a layout.
      * Go through all craft fields defined on the layout and create display and fields for it.
      * 
-     * @param  LayoutInterface $layout
+     * @param LayoutInterface $layout
      */
     public function createLayoutDisplays(LayoutInterface $layout): array
     {
@@ -269,8 +334,8 @@ class DisplayService extends Service
      * @param  string $uid
      * @return DisplayRecord
      */
-    protected function getRecordByUid(string $uid): DisplayRecord
+    public function getRecordByUid(string $uid): DisplayRecord
     {
-        return DisplayRecord::findOne(['uid' => $uid]) ?? new DisplayRecord;
+        return DisplayRecord::findOne(['uid' => $uid]) ?? new DisplayRecord(['uid' => $uid]);
     }
 }

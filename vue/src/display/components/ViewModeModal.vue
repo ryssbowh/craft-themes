@@ -39,6 +39,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
+import Modal from '../modal';
 
 export default {
     computed: {
@@ -140,10 +141,13 @@ export default {
             }
             if (this.edit !== null) {
                 this.editViewMode({index: this.edit, name: this.name});
+                this.$emit('closeModal');
             } else {
-                this.addViewMode({name: this.name, handle: this.handle});
+                let res = this.addViewMode({name: this.name, handle: this.handle});
+                res.then(() => {
+                    this.$emit('closeModal');
+                });
             }
-            this.$emit('closeModal');
         },
         ...mapMutations([]),
         ...mapActions(['addViewMode', 'editViewMode']),

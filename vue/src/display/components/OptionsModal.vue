@@ -77,7 +77,6 @@ export default {
             }).catch((err) => {
                 this.handleError(err);
             });
-            
         },
         ...mapMutations(['setShowOptionsModal', 'setDisplayerOptionsError']),
         ...mapActions(['updateOptions']),

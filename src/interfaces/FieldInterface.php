@@ -52,11 +52,6 @@ interface FieldInterface extends DisplayItemInterface
     public static function save(array $data): bool;
 
     /**
-     * Delete this field
-     */
-    public function delete();
-
-    /**
      * Should this field exist on a layout, called during the creation of a layout
      * 
      * @param  LayoutInterface $layout
