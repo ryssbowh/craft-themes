@@ -133,6 +133,17 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function eagerLoad(): array
+    {
+        if ($this->displayer) {
+            return $this->displayer->eagerLoad();
+        }
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return array_merge(parent::getConfig(), [

@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Region;
@@ -126,9 +127,7 @@ class Layout extends Model implements LayoutInterface
     {
         $with = [];
         foreach ($this->getVisibleDisplays($viewMode) as $display) {
-            if ($fields = $display->item->displayer->eagerLoad()) {
-                $with = array_merge($with, $fields);
-            }
+            $with = array_merge($with, $display->item->eagerLoad());
         }
         \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
     }
@@ -411,7 +410,7 @@ class Layout extends Model implements LayoutInterface
             throw LayoutException::noViewMode($viewMode);
         }
         return array_filter($this->getDisplays($viewMode), function ($display) {
-            return $display->item->isVisible();
+            return $display->group_id === null and $display->item->isVisible();
         });
     }
 

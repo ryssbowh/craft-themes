@@ -1,0 +1,17 @@
+<div class="{{ classes|raw }}" {{ attributes|raw }} {% if group.visuallyHidden %}display="none"{% endif %}>
+    {% block label %}
+        {% if not group.labelHidden %}
+            <label class="group-label" {% if group.labelVisuallyHidden %}display="none"{% endif %}>
+                {{ group.name }}
+            </label>
+        {% endif %}
+    {% endblock %}
+
+    <div class="group-content">
+        {% block content %}
+            {% for display in displays %}
+                {{ display.render(element)|raw }}
+            {% endfor %}
+        {% endblock %}
+    </div>
+</div>

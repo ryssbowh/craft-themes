@@ -5,7 +5,7 @@ namespace Ryssbowh\CraftThemes\interfaces;
 use craft\base\Element;
 use craft\base\Field as BaseField;
 
-interface FieldInterface extends DisplayItemInterface
+interface FieldInterface
 {
     /**
      * Handle getter
@@ -20,13 +20,6 @@ interface FieldInterface extends DisplayItemInterface
      * @return string
      */
     public function getName(): string;
-    
-    /**
-     * Type getter
-     * 
-     * @return string
-     */
-    public static function getType(): string;
 
     /**
      * For which craft field class this field should be used
@@ -60,13 +53,6 @@ interface FieldInterface extends DisplayItemInterface
     public static function shouldExistOnLayout(LayoutInterface $layout): bool;
 
     /**
-     * Is this field visible
-     * 
-     * @return boolean
-     */
-    public function isVisible(): bool;
-
-    /**
      * Get the displayer for this field
      * 
      * @return FieldDisplayerInterface
@@ -86,12 +72,4 @@ interface FieldInterface extends DisplayItemInterface
      * @return string
      */
     public function getDisplayName(): string;
-
-    /**
-     * Render this field for an element
-     * 
-     * @param  Element $element
-     * @return string
-     */
-    public function render(Element $element): string;
 }

@@ -7,6 +7,13 @@ use Ryssbowh\CraftThemes\models\ViewMode;
 interface DisplayItemInterface extends RenderableInterface
 {
     /**
+     * Type getter
+     * 
+     * @return string
+     */
+    public static function getType(): string;
+
+    /**
      * Get project vonfig
      * 
      * @return array
@@ -40,4 +47,18 @@ interface DisplayItemInterface extends RenderableInterface
      * @return LayoutInterface
      */
     public function getLayout(): LayoutInterface;
+
+    /**
+     * Is this item visible
+     * 
+     * @return boolean
+     */
+    public function isVisible(): bool;
+
+    /**
+     * Eager load fields
+     * 
+     * @return array
+     */
+    public function eagerLoad(): array;
 }

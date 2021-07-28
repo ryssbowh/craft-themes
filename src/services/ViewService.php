@@ -10,6 +10,7 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\models\Group;
 use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -30,6 +31,7 @@ class ViewService extends Service
     const BEFORE_RENDERING_FIELD = 'before_rendering_field';
     const BEFORE_RENDERING_BLOCK = 'before_rendering_block';
     const BEFORE_RENDERING_REGION = 'before_rendering_region';
+    const BEFORE_RENDERING_GROUP = 'before_rendering_group';
 
     /**
      * View mode being rendered
@@ -222,6 +224,46 @@ class ViewService extends Service
             'variables' => $variables
         ]);
         return $this->render(self::BEFORE_RENDERING_FIELD, $event);
+    }
+
+    /**
+     * Renders a group
+     * 
+     * @param  Group   $group
+     * @param  Element $element
+     * @return string
+     */
+    public function renderGroup(Group $group, Element $element): string
+    {
+        $layout = $this->renderingLayout->getElementMachineName();
+        $type = $this->renderingLayout->type;
+        $viewMode = $this->renderingViewMode;
+        $handle = $group->handle;
+        $templates = [
+            'groups/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
+            'groups/' . $type . '/' . $layout . '/' . $viewMode . '/group',
+            'groups/' . $type . '/' . $layout . '/' . $handle,
+            'groups/' . $type . '/' . $layout . '/group',
+            'groups/' . $type . '/' . $handle,
+            'groups/' . $type . '/group',
+            'groups/' . $handle,
+            'groups/group'
+        ];
+        $variables = [
+            'classes' => new ClassBag(['group', 'group-' . $group->handle]),
+            'attributes' => new AttributeBag,
+            'group' => $group,
+            'display' => $group->display,
+            'layout' => $this->renderingLayout,
+            'viewMode' => $this->renderingViewMode,
+            'element' => $element,
+            'displays' => $group->visibleDisplays
+        ];
+        $event = new RenderEvent([
+            'templates' => $templates,
+            'variables' => $variables
+        ]);
+        return $this->render(self::BEFORE_RENDERING_GROUP, $event);
     }
 
     /**

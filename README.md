@@ -21,7 +21,7 @@ What it doesn't allow you to do :
 
 ## Basic notions
 
-The building of a page is based on the notion of layouts, regions, blocks, view modes and displays.
+The building of a page is based on the notion of layouts, regions, blocks, view modes and displays (or groups of displays).
 
 **Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 7 types of layouts :
 
@@ -39,7 +39,7 @@ The building of a page is based on the notion of layouts, regions, blocks, view 
 
 **Blocks** are defined on the layouts that allow it, they can be assigned to a region of the theme.
 
-**Displays** define how a field is rendered on the front end, each field will have a displayer with some options. This plugin comes with default displayers for each type of craft field.
+**Displays** define how a field is rendered on the front end, each field will have a displayer with some options. This plugin comes with default displayers for each type of craft field. Displays can be organised in groups.
 
 **View modes** define a set of displayers and options for a layout and a view mode. Every Layout that can have view modes comes with a default one. This allows you to render an element differently in different parts of the page.
 
@@ -88,7 +88,9 @@ Choose the theme (if you have several) on the top left hand side, the layout on 
 
 Displays will be saved in project config.
 
-Some display will contain items that are not fields, they are automatically added by the system, example : "Author" on channels.
+Displays can be grouped together, you can define as many groups as you want. Groups cannot contain groups.
+
+Some display will contain items that are not Craft fields, they are automatically added by the system, example : "Author" on channels.
 
 ## Rules settings
 

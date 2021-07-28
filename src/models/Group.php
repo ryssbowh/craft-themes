@@ -2,7 +2,6 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\records\GroupRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
 
@@ -42,7 +41,7 @@ class Group extends DisplayItem
     }
 
     /**
-     * Fields getter
+     * Displays getter
      * 
      * @return array
      */
@@ -52,6 +51,30 @@ class Group extends DisplayItem
             $this->_displays = Themes::$plugin->display->getForGroup($this->display->id);
         }
         return $this->_displays;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eagerLoad(): array
+    {
+        $fields = [];
+        foreach ($this->getVisibleDisplays() as $display) {
+            $fields = array_merge($fields, $display->item->eagerLoad());
+        }
+        return $fields;
+    }
+
+    /**
+     * Visible displays getter
+     * 
+     * @return array
+     */
+    public function getVisibleDisplays(): array
+    {
+        return array_filter($this->displays, function ($display) {
+            return $display->item->isVisible();
+        });
     }
 
     /**
@@ -69,10 +92,7 @@ class Group extends DisplayItem
      */
     public function isVisible(): bool
     {
-        if ($this->hidden or !$this->displayer) {
-            return false;
-        }
-        return true;
+        return !$this->hidden;
     }
 
     /**
@@ -91,6 +111,6 @@ class Group extends DisplayItem
      */
     public function render(Element $element): string
     {
-        return Themes::$plugin->view->renderField($this, $element, $element->{$this->handle});
+        return Themes::$plugin->view->renderGroup($this, $element);
     }
 }

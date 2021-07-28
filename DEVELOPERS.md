@@ -236,7 +236,7 @@ Templates are inherited, so if you call a template that isn't defined in your th
 
 Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
-Let's say you have an `entry` layout for a entry type `blog`, a region `header`, a view mode `small`, a block `latestBlogs`, a field `content`, a field displayer `redactor` and a file displayer `image`. The precedence of templates would look like this, by order of importance :
+Let's say you have an `entry` layout for a entry type `blog`, a region `header`, a view mode `small`, a block `latestBlogs`, a field `content`, a field displayer `redactor`, a file displayer `image` and a group `left`. The precedence of templates would look like this, by order of importance :
 
 Layouts :
 
@@ -273,6 +273,17 @@ fields/entry/redactor.twig
 fields/redactor-content.twig
 fields/redactor.twig
 ```
+Groups:
+```
+groups/entry/blog/small/left.twig
+groups/entry/blog/small/group.twig
+groups/entry/blog/left.twig
+groups/entry/blog/group.twig
+groups/entry/left.twig
+groups/entry/group.twig
+groups/left.twig
+groups/group.twig
+```
 File displayers :
 ```
 assets/entry/blog/small/image.twig
@@ -288,6 +299,7 @@ More templates and variables can be defined by listening to events on the `ViewS
 - Fields : event `BEFORE_RENDERING_FIELD`  
 - Blocks : event `BEFORE_RENDERING_BLOCK`  
 - Regions : event `BEFORE_RENDERING_REGION`  
+- Groups : event `BEFORE_RENDERING_GROUP`  
 
 Example :
 
