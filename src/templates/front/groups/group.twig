@@ -9,7 +9,7 @@
 
     <div class="group-content">
         {% block content %}
-            {% for display in displays %}
+            {% for display in group.visibleDisplays %}
                 {{ display.render(element)|raw }}
             {% endfor %}
         {% endblock %}

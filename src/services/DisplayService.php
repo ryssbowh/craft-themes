@@ -255,6 +255,11 @@ class DisplayService extends Service
     {
         $displays = [];
         foreach ($layout->viewModes as $viewMode) {
+            //Keeping all the groups defined in this view mode 
+            $groups = array_values(array_filter($this->getForViewMode($viewMode), function ($display) {
+                return $display->type == self::TYPE_GROUP;
+            }));
+            $displays = array_merge($displays, $groups);
             $order = $this->getNextOrder($viewMode);
             //Getting or creating displays for fields that are not craft fields (author, title etc)
             foreach (Themes::$plugin->fields->registeredFields as $fieldType => $fieldClass) {

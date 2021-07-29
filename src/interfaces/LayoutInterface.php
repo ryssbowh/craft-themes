@@ -208,13 +208,6 @@ interface LayoutInterface
     public function getCraftFields(): array;
 
     /**
-     * get handle
-     * 
-     * @return string
-     */
-    public function getHandle(): string;
-
-    /**
      * Render this layout for an element
      *
      * @param  Element $element

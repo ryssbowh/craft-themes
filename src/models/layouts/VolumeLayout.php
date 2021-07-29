@@ -56,14 +56,6 @@ class VolumeLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getHandle(): string
-    {
-        return StringHelper::camelCase($this->type . '_' . $this->element->handle . '_' . $this->theme);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getDescription(): string
     {
         return \Craft::t('themes', 'Volume : {name}', ['name' => $this->element->name]);

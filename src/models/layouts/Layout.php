@@ -167,7 +167,6 @@ class Layout extends Model implements LayoutInterface
         return [
             'theme' => $this->theme,
             'type' => $this->type,
-            'handle' => $this->handle,
             'elementUid' => $this->elementUid,
             'hasBlocks' => $this->hasBlocks,
             'viewModes' => array_map(function ($viewMode) {
@@ -286,7 +285,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['description', 'handle', 'viewModes']);
+        return array_merge(parent::fields(), ['description', 'viewModes']);
     }
 
     /**
@@ -433,14 +432,6 @@ class Layout extends Model implements LayoutInterface
     public function getCraftFields(): array
     {
         return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getHandle(): string
-    {
-        return StringHelper::camelCase($this->type . '_' . $this->theme);
     }
 
     /**

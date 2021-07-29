@@ -256,8 +256,7 @@ class ViewService extends Service
             'display' => $group->display,
             'layout' => $this->renderingLayout,
             'viewMode' => $this->renderingViewMode,
-            'element' => $element,
-            'displays' => $group->visibleDisplays
+            'element' => $element
         ];
         $event = new RenderEvent([
             'templates' => $templates,

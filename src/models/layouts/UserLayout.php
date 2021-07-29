@@ -41,14 +41,6 @@ class UserLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getHandle(): string
-    {
-        return StringHelper::camelCase($this->type . '_' . $this->theme);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getCraftFields(): array
     {
         return \Craft::$app->getFields()->getLayoutByType(User::class)->getFields();
