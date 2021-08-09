@@ -13,4 +13,9 @@ class ViewModeException extends \Exception
     {
         return new static("View mode with uid $uid couldn't be found");
     }
+
+    public static function defaultUndeletable()
+    {
+        return new static("Default view mode can't be deleted");
+    }
 }

@@ -37,7 +37,7 @@ class BlockCategoryOptions extends BlockOptions
     /**
      * Saving the category option field after save as it's not included in project config
      * 
-     * @param  BlockInterface $block
+     * @param BlockInterface $block
      */
     public function afterSave(BlockInterface $block)
     {

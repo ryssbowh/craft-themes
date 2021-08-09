@@ -25,7 +25,7 @@ interface DisplayItemInterface extends RenderableInterface
      * 
      * @return ?DisplayInterface
      */
-    public function getDisplay(): ?DisplayInterface;
+    public function getDisplay(): DisplayInterface;
 
     /**
      * Display setter

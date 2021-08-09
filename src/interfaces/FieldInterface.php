@@ -45,6 +45,13 @@ interface FieldInterface
     public static function save(array $data): bool;
 
     /**
+     * Deletes a field record
+     * 
+     * @param array  $data
+     */
+    public static function delete(array $data);
+
+    /**
      * Should this field exist on a layout, called during the creation of a layout
      * 
      * @param  LayoutInterface $layout

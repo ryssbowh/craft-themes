@@ -8,9 +8,14 @@ use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\GroupPivotRecord;
 use Ryssbowh\CraftThemes\records\GroupRecord;
 use craft\db\ActiveRecord;
+use craft\events\ConfigEvent;
+use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class GroupsService extends Service
 {
+    const CONFIG_KEY = 'themes.groups';
+
     /**
      * @var Collection
      */
@@ -36,12 +41,12 @@ class GroupsService extends Service
     /**
      * Get a group for a display
      * 
-     * @param  int    $displayId
+     * @param  DisplayInterface $display
      * @return ?Field
      */
-    public function getForDisplay(int $displayId): ?Group
+    public function getForDisplay(DisplayInterface $display): ?Group
     {
-        return $this->all()->firstWhere('display_id', $displayId);
+        return $this->all()->firstWhere('display_id', $display->id);
     }
 
     /**
@@ -55,24 +60,111 @@ class GroupsService extends Service
         if ($config instanceof ActiveRecord) {
             $config = $config->getAttributes();
         }
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $group = new Group;
         $group->setAttributes($config);
         return $group;
     }
 
     /**
-     * Saves a group's data 
+     * Saves a group
      * 
-     * @param  array         $data
-     * @param  DisplayRecord $display
+     * @param  Group $group
+     * @param  bool  $validate
      * @return bool
      */
-    public function save(array $data, DisplayRecord $display): bool
+    public function save(Group $group, bool $validate = true): bool
     {
-        $data['display_id'] = $display->id;
-        $group = $this->getRecordByUid($data['uid']);
-        $group->setAttributes($data, false);
-        return $group->save(false);
+        if ($validate and !$group->validate()) {
+            return false;
+        }
+
+        $isNew = !is_int($group->id);
+        $uid = $group->uid;
+
+        $projectConfig = \Craft::$app->getProjectConfig();
+        $configData = $display->getConfig();
+        $configPath = self::CONFIG_KEY . '.' . $uid;
+        $projectConfig->set($configPath, $configData);
+
+        $record = $this->getRecordByUid($uid);
+        $group->setAttributes($record->getAttributes());
+        
+        if ($isNew) {
+            $this->add($group);
+        }
+
+        return true;
+    }
+
+    /**
+     * Deletes a group
+     * 
+     * @param  Group $group
+     * @return bool
+     */
+    public function delete(Group $group): bool
+    {
+        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $group->uid);
+
+        $this->_groups = $this->all()->where('id', '!=', $group->id);
+
+        return true;
+    }
+
+    /**
+     * Handles a change in group config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleChanged(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $data = $event->newValue;
+        $transaction = \Craft::$app->getDb()->beginTransaction();
+        try {
+            $group = $this->getRecordByUid($uid);
+
+            $group->display_id = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+            $group->name = $data['name'];
+            $group->handle = $data['handle'];
+            $group->labelHidden = $data['labelHidden'];
+            $group->labelVisuallyHidden = $data['labelVisuallyHidden'];
+            $group->hidden = $data['hidden'];
+            $group->visuallyHidden = $data['visuallyHidden'];
+            $group->save(false);
+            
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Handles a deletion in group config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleDeleted(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+
+        \Craft::$app->getDb()->createCommand()
+            ->delete(GroupRecord::tableName(), ['uid' => $uid])
+            ->execute();
+    }
+
+    /**
+     * Respond to rebuild config event
+     * 
+     * @param RebuildConfigEvent $e
+     */
+    public function rebuildConfig(RebuildConfigEvent $e)
+    {
+        foreach ($this->all() as $group) {
+            $e->config[self::CONFIG_KEY.'.'.$group->uid] = $group->getConfig();
+        }
     }
 
     /**
@@ -84,5 +176,17 @@ class GroupsService extends Service
     public function getRecordByUid(string $uid): GroupRecord
     {
         return GroupRecord::find()->where(['uid' => $uid])->one() ?? new GroupRecord(['uid' => $uid]);
+    }
+
+    /**
+     * Add a group to internal cache
+     * 
+     * @param Group $group
+     */
+    protected function add(Group $group)
+    {
+        if (!$this->all()->firstWhere('id', $group->id)) {
+            $this->all()->push($group);
+        }
     }
 }

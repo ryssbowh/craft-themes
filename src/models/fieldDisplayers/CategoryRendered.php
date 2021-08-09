@@ -57,7 +57,7 @@ class CategoryRendered extends FieldDisplayer
     {
         $group = $this->getCategoryGroup();
         $theme = Themes::$plugin->registry->getCurrent();
-        $layout = Themes::$plugin->layouts->get($theme->handle, LayoutService::CATEGORY_HANDLE, $group->uid);
+        $layout = Themes::$plugin->layouts->get($theme, LayoutService::CATEGORY_HANDLE, $group->uid);
         return $layout;
     }
 

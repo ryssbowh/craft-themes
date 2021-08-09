@@ -51,6 +51,13 @@ interface BlockInterface extends RenderableInterface
     public function getLayout(): ?LayoutInterface;
 
     /**
+     * Set layout object
+     * 
+     * @param LayoutInterface $layout
+     */
+    public function setLayout(LayoutInterface $layout);
+
+    /**
      * Get provider object
      * 
      * @return BlockProviderInterface

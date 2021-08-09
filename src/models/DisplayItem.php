@@ -84,20 +84,17 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
             'labelVisuallyHidden' => $this->labelVisuallyHidden,
             'hidden' => $this->hidden,
             'visuallyHidden' => $this->visuallyHidden,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'display_id' => $this->display->uid
         ];
     }
 
     /**
      * @inheritDoc
      */
-    public function getDisplay(): ?DisplayInterface
+    public function getDisplay(): DisplayInterface
     {
-        if (!$this->display_id) {
-            return null;
-        }
         if (is_null($this->_display)) {
-            $this->_display = Themes::$plugin->display->getById($this->display_id);
+            $this->_display = Themes::$plugin->displays->getById($this->display_id);
         }
         return $this->_display;
     }

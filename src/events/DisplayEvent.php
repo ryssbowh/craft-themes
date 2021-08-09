@@ -8,7 +8,7 @@ use yii\base\Event;
 class DisplayEvent extends Event
 {
     /**
-     * @var DisplayInterface
+     * @var DisplayInterface|DisplayRecord
      */
     public $display;
 

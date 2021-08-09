@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\LayoutEvent;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
+use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\PageLayout;
@@ -20,12 +21,14 @@ use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
+use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\db\ActiveRecord;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\events\ConfigEvent;
 use craft\events\EntryTypeEvent;
 use craft\events\FieldEvent;
+use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
 
 class LayoutService extends Service
@@ -51,11 +54,6 @@ class LayoutService extends Service
      * @var Collection
      */
     protected $_layouts;
-
-    /**
-     * @var LayoutInterface
-     */
-    protected $current;
 
     /**
      * All layouts getter
@@ -90,6 +88,21 @@ class LayoutService extends Service
     }
 
     /**
+     * Get layout by uid
+     * 
+     * @param  int    $id
+     * @return LayoutInterface
+     * @throws LayoutException
+     */
+    public function getByUid(string $uid): LayoutInterface
+    {
+        if ($layout = $this->all()->firstWhere('uid', $uid)) {
+            return $layout;
+        }
+        throw LayoutException::noUid($uid);
+    }
+
+    /**
      * Get all layouts that have displays
      * 
      * @return array
@@ -98,19 +111,20 @@ class LayoutService extends Service
     {
         return $this->all()->filter(function ($layout) {
             return $layout->hasDisplays();
-        })->all();
+        })->values()->all();
     }
 
     /**
      * Get all layouts for a theme
      * 
-     * @param  string    $theme
+     * @param  string|ThemeInterface $theme
      * @param  bool|null $withHasDisplays
      * @param  bool|null $withHasBlocks
      * @return array
      */
-    public function getForTheme(string $theme, ?bool $withHasDisplays = null, ?bool $withHasBlocks = null): array
+    public function getForTheme($theme, ?bool $withHasDisplays = null, ?bool $withHasBlocks = null): array
     {
+        $theme = $this->getThemeHandle($theme);
         return $this->all()->filter(function ($layout) use ($theme, $withHasDisplays, $withHasBlocks) {
             if ($layout->theme != $theme) {
                 return false;
@@ -219,47 +233,60 @@ class LayoutService extends Service
     }
 
     /**
-     * Create all layouts and deletes non existing
+     * Create all layouts for all themes
      */
     public function install()
     {
-        $ids = [];
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $ids = array_merge($ids, $this->installThemeData($theme->handle));
-        }
-        $layouts = $this->all()->whereNotIn('id', $ids)->all();
-        foreach ($layouts as $layout) {
-            $this->delete($layout, true);
+            $this->installThemeData($theme);
         }
     }
 
     /**
-     * Install layouts for a theme
+     * Install layouts for a theme, will deletes orphans
      * 
-     * @param  string $theme
-     * @return array
+     * @param  ThemeInterface $theme
+     * @throws ThemeException
+     * @return bool
      */
-    public function installThemeData(string $theme): array
+    public function installThemeData(ThemeInterface $theme): bool
     {
+        if (!\Craft::$app->plugins->isPluginInstalled($theme->handle)) {
+            throw ThemeException::notInstalled($theme->handle);
+        }
+        if ($theme->isPartial()) {
+            return false;
+        }
         $ids = [];
         foreach ($this->getAvailable() as $layout) {
             if (!$layout2 = $this->get($theme, $layout->type, $layout->elementUid)) {
-                $layout->theme = $theme;
+                $layout->theme = $theme->handle;
                 $layout2 = $layout;
             }
             $this->installLayoutData($layout2);
             $ids[] = $layout2->id;
         }
-        return $ids;
+        $layouts = $this->all()
+            ->whereNotIn('id', $ids)
+            ->where(['theme' => $theme->handle])
+            ->all();
+        foreach ($layouts as $layout) {
+            $this->delete($layout, true);
+        }
+        return true;
     }
 
     /**
      * Deletes all layouts for a theme
      * 
-     * @param string $theme
+     * @param  ThemeInterface $theme
+     * @throws ThemeException
      */
-    public function uninstallThemeData(string $theme)
+    public function uninstallThemeData(ThemeInterface $theme)
     {
+        if (\Craft::$app->plugins->isPluginInstalled($theme->handle)) {
+            throw ThemeException::installed($theme->handle);
+        }
         foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
@@ -268,50 +295,27 @@ class LayoutService extends Service
     /**
      * Get default layout for a theme
      * 
-     * @param  string  $theme
+     * @param  string|ThemeInterface  $theme
      * @return ?LayoutInterface
      */
-    public function getDefault(string $theme): ?LayoutInterface
+    public function getDefault($theme): ?LayoutInterface
     {
+        $theme = $this->getThemeHandle($theme);
         return $this->get($theme, self::DEFAULT_HANDLE);
-    }
-
-    /**
-     * Get all available layouts
-     * 
-     * @return array
-     */
-    public function getAvailable(): array
-    {
-        return [
-            $this->create([
-                'type' => self::DEFAULT_HANDLE,
-                'elementUid' => '',
-                'hasBlocks' => true
-            ]),
-            $this->create([
-                'type' => self::USER_HANDLE,
-                'elementUid' => ''
-            ]),
-            ...$this->getCategoryLayouts(),
-            ...$this->getEntryLayouts(),
-            ...$this->getVolumesLayouts(),
-            ...$this->getGlobalsLayouts(),
-            ...$this->getTagsLayouts()
-        ];
     }
 
     /**
      * Get a layout
      * 
-     * @param  string  $theme
-     * @param  string  $elementUid
-     * @param  string  $type
-     * @param  boolean $loadBlocks
+     * @param  string|ThemeInterface $theme
+     * @param  string                $elementUid
+     * @param  string                $type
+     * @param  boolean               $loadBlocks
      * @return ?LayoutInterface
      */
-    public function get(string $theme, string $type, string $elementUid = '', bool $loadBlocks = false): ?LayoutInterface
+    public function get($theme, string $type, string $elementUid = '', bool $loadBlocks = false): ?LayoutInterface
     {
+        $theme = $this->getThemeHandle($theme);
         $layout = $this->all()
             ->where('theme', $theme)
             ->where('elementUid', $elementUid)
@@ -323,10 +327,28 @@ class LayoutService extends Service
     }
 
     /**
+     * Returns all layouts for a type
+     * 
+     * @param  string|ThemeInterface $theme
+     * @param  string                $type
+     * @return array
+     */
+    public function getForType($theme, string $type): array
+    {
+        $theme = $this->getThemeHandle($theme);
+        return $this->all()
+            ->where('theme', $theme)
+            ->where('type', $type)
+            ->values()
+            ->all();
+    }
+
+    /**
      * Save a layout
      * 
      * @param  LayoutInterface $layout
      * @param  bool $validate
+     * @throws LayoutException
      * @return bool
      */
     public function save(LayoutInterface $layout, bool $validate = true): bool
@@ -334,11 +356,18 @@ class LayoutService extends Service
         if ($validate and !$layout->validate()) {
             return false;
         }
+
         $isNew = !is_int($layout->id);
         $uid = $layout->uid;
 
+        $existing = $this->get($layout->theme, $layout->type, $layout->elementUid ?? '');
+        if ($existing and $existing->id != $layout->id) {
+            throw LayoutException::alreadyExists($layout->theme, $layout->type, $layout->elementUid ?? '');
+        }
+
         $this->triggerEvent(self::EVENT_BEFORE_SAVE, new LayoutEvent([
-            'layout' => $layout
+            'layout' => $layout,
+            'isNew' => $isNew
         ]));
 
         $projectConfig = \Craft::$app->getProjectConfig();
@@ -347,24 +376,39 @@ class LayoutService extends Service
         $projectConfig->set($configPath, $configData);
 
         $record = $this->getRecordByUid($uid);
-        $layout->setAttributes($record->getAttributes(), false);
+        $layout->setAttributes($record->getAttributes());
 
-        foreach ($configData['blocks'] as $index => $data) {
-            $record = $this->blocksService()->getRecordByUid($data['uid']);
-            $layout->getBlocks()[$index]->uid = $record->uid;
-            $layout->getBlocks()[$index]->id = $record->id;
-            $layout->getBlocks()[$index]->afterSave();
-        }
-
-        foreach ($configData['viewModes'] as $index => $data) {
-            $record = $this->viewModesService()->getRecordByUid($data['uid']);
-            $layout->getViewModes()[$index]->uid = $record->uid;
-            $layout->getViewModes()[$index]->id = $record->id;
-        }
-        
         if ($isNew) {
-            $this->all()->push($layout);
+            $this->add($layout);
         }
+
+        //Saving view modes
+        foreach ($layout->viewModes as $viewMode) {
+            Themes::$plugin->viewModes->save($viewMode);
+        }
+        Themes::$plugin->viewModes->cleanUpLayout($layout);
+        //Saving blocks
+        foreach ($layout->blocks as $block) {
+            Themes::$plugin->blocks->save($block);
+        }
+        Themes::$plugin->blocks->cleanUpLayout($layout);
+        //Saving displays, groups first
+        $groups = [];
+        $displays = [];
+        foreach ($layout->displays as $display) {
+            if ($display->type == DisplayService::TYPE_GROUP) {
+                $groups[] = $display;
+            } else {
+                $displays[] = $display;
+            }
+        }
+        foreach ($groups as $display) {
+            Themes::$plugin->displays->save($display);
+        }
+        foreach ($displays as $display) {
+            Themes::$plugin->displays->save($display);
+        }
+        Themes::$plugin->displays->cleanUpLayout($layout);
 
         return true;
     }
@@ -377,7 +421,7 @@ class LayoutService extends Service
      */
     public function getRecordByUid(string $uid): LayoutRecord
     {
-        return LayoutRecord::findOne(['uid' => $uid]) ?? new LayoutRecord;
+        return LayoutRecord::findOne(['uid' => $uid]) ?? new LayoutRecord(['uid' => $uid]);
     }
 
     /**
@@ -390,12 +434,37 @@ class LayoutService extends Service
      */
     public function delete(LayoutInterface $layout, bool $force = false): bool
     {
-        if (!$force and $layout->type == self::DEFAULT_HANDLE) {
+        if (!$force and ($layout->type == self::DEFAULT_HANDLE or $layout->type == self::USER_HANDLE)) {
             throw LayoutException::defaultUndeletable();
         }
         $this->triggerEvent(self::EVENT_BEFORE_DELETE, new LayoutEvent([
             'layout' => $layout
         ]));
+
+        //Deleting view modes
+        foreach ($layout->viewModes as $viewMode) {
+            Themes::$plugin->viewModes->delete($viewMode, true);
+        }
+        //Deleting blocks
+        foreach ($layout->blocks as $block) {
+            Themes::$plugin->blocks->delete($block);
+        }
+        //Deleting displays, groups last
+        $groups = [];
+        $displays = [];
+        foreach ($layout->displays as $display) {
+            if ($display->type == DisplayService::TYPE_GROUP) {
+                $groups[] = $display;
+            } else {
+                $displays[] = $display;
+            }
+        }
+        foreach ($displays as $display) {
+            Themes::$plugin->displays->delete($display);
+        }
+        foreach ($groups as $display) {
+            Themes::$plugin->displays->delete($display);
+        }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
 
@@ -414,21 +483,15 @@ class LayoutService extends Service
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
         $transaction = \Craft::$app->getDb()->beginTransaction();
-
         try {
             $layout = $this->getRecordByUid($uid);
             $isNew = $layout->getIsNewRecord();
 
-            $layout->uid = $uid;
             $layout->type = $data['type'];
             $layout->elementUid = $data['elementUid'];
             $layout->theme = $data['theme'];
             $layout->hasBlocks = $data['hasBlocks'];
-            $layout->save(false);
-
-            $this->viewModesService()->saveMany($data['viewModes'] ?? [], $layout);
-            $this->blocksService()->saveMany($data['blocks'] ?? [], $layout);
-            $this->displayService()->saveMany($data['displays'] ?? [], $layout);
+            $res = $layout->save(false);
             
             $transaction->commit();
         } catch (\Throwable $e) {
@@ -494,7 +557,7 @@ class LayoutService extends Service
     public function onCraftElementSaved(string $type, string $uid)
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $layout = $this->get($theme->handle, $type, $uid);
+            $layout = $this->get($theme, $type, $uid);
             if (!$layout) {
                 $layout = $this->create([
                     'type' => $type,
@@ -522,6 +585,18 @@ class LayoutService extends Service
             }
             $this->installLayoutData($layout);
             $layoutsSaved[] = $layout->id;
+        }
+    }
+
+    /**
+     * Respond to rebuild config event
+     * 
+     * @param RebuildConfigEvent $e
+     */
+    public function rebuildConfig(RebuildConfigEvent $e)
+    {
+        foreach ($this->all() as $layout) {
+            $e->config[self::CONFIG_KEY.'.'.$layout->uid] = $layout->getConfig();
         }
     }
 
@@ -572,12 +647,13 @@ class LayoutService extends Service
     /**
      * Resolve current layout.
      * 
-     * @param  string $theme
-     * @param  mixed  $element
+     * @param  string|ThemeInterface $theme
+     * @param  mixed                 $element
      * @return ?LayoutInterface
      */
-    public function resolveForRequest(string $theme, $element): ?LayoutInterface
+    public function resolveForRequest($theme, $element): ?LayoutInterface
     {
+        $theme = $this->getThemeHandle($theme);
         $layout = null;
         if ($element instanceof Category) {
             $layout = $this->get($theme, self::CATEGORY_HANDLE, $element->getGroup()->uid);
@@ -592,21 +668,67 @@ class LayoutService extends Service
     }
 
     /**
-     * get current layout
+     * Get theme handle from a theme parameter
      * 
-     * @return ?LayoutInterface
+     * @param  string|ThemeInterface $theme
+     * @throws ThemeException
+     * @return string
      */
-    public function getCurrent(): ?LayoutInterface
+    public function getThemeHandle($theme): string
     {
-        return $this->current;
+        if ($theme instanceof ThemeInterface) {
+            return $theme->handle;
+        }
+        if (is_string($theme)) {
+            return $theme;
+        }
+        throw ThemeException::wrongParameter(debug_backtrace()[1]['function']);
+    }
+
+    /**
+     * Add a layout to internal cache
+     * 
+     * @param LayoutInterface $layout
+     */
+    protected function add(LayoutInterface $layout)
+    {
+        if (!$this->all()->firstWhere('id', $layout->id)) {
+            $this->all()->push($layout);
+        }
+    }
+
+    /**
+     * Get all available layouts
+     * 
+     * @return array
+     */
+    protected function getAvailable(): array
+    {
+        return [
+            $this->create([
+                'type' => self::DEFAULT_HANDLE,
+                'elementUid' => '',
+                'hasBlocks' => true
+            ]),
+            $this->create([
+                'type' => self::USER_HANDLE,
+                'elementUid' => ''
+            ]),
+            ...$this->createCategoryLayouts(),
+            ...$this->createEntryLayouts(),
+            ...$this->createVolumesLayouts(),
+            ...$this->createGlobalsLayouts(),
+            ...$this->createTagsLayouts()
+        ];
     }
 
     /**
      * Install layout data
      * 
-     * @param LayoutInterface $layout
+     * @param  LayoutInterface $layout
+     * @return bool
      */
-    protected function installLayoutData(LayoutInterface $layout)
+    protected function installLayoutData(LayoutInterface $layout): bool
     {
         if (!$layout->viewModes) {
             $viewMode = $this->viewModesService()->create([
@@ -617,7 +739,7 @@ class LayoutService extends Service
             $layout->viewModes = [$viewMode];
         }
         $layout->displays = $this->displayService()->createLayoutDisplays($layout);
-        $this->save($layout);
+        return $this->save($layout);
     }
 
     /**
@@ -625,7 +747,7 @@ class LayoutService extends Service
      *
      * @return array
      */
-    protected function getCategoryLayouts(): array
+    protected function createCategoryLayouts(): array
     {
         $groups = \Craft::$app->categories->getAllGroups();
         $layouts = [];
@@ -643,7 +765,7 @@ class LayoutService extends Service
      *
      * @return array
      */
-    protected function getEntryLayouts(): array
+    protected function createEntryLayouts(): array
     {
         $sections = \Craft::$app->sections->getAllSections();
         $layouts = [];
@@ -663,7 +785,7 @@ class LayoutService extends Service
      *
      * @return array
      */
-    protected function getVolumesLayouts(): array
+    protected function createVolumesLayouts(): array
     {
         $volumes = \Craft::$app->volumes->getAllVolumes();
         $layouts = [];
@@ -681,7 +803,7 @@ class LayoutService extends Service
      *
      * @return array
      */
-    protected function getGlobalsLayouts(): array
+    protected function createGlobalsLayouts(): array
     {
         $sets = \Craft::$app->globals->getAllSets();
         $layouts = [];
@@ -699,7 +821,7 @@ class LayoutService extends Service
      *
      * @return array
      */
-    protected function getTagsLayouts(): array
+    protected function createTagsLayouts(): array
     {
         $groups = \Craft::$app->tags->getAllTagGroups();
         $layouts = [];

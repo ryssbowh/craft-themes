@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\records\TablePivotRecord;
 use craft\base\Field as BaseField;
 use craft\fields\Table as CraftTable;
+use craft\helpers\StringHelper;
 
 class Table extends CraftField
 {
@@ -43,6 +44,7 @@ class Table extends CraftField
      */
     public static function create(?array $config = null): FieldInterface
     {
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $class = get_called_class();
         $field = new $class;
         $attributes = $field->safeAttributes();

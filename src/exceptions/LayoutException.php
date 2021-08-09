@@ -31,6 +31,11 @@ class LayoutException extends \Exception
         return new static("Layout with id $id couldn't be found");
     }
 
+    public static function noUid(string $uid)
+    {
+        return new static("Layout with uid $uid couldn't be found");
+    }
+
     public static function defaultUndeletable()
     {
         return new static("Default layout can't be deleted");
@@ -44,5 +49,14 @@ class LayoutException extends \Exception
     public static function noRegion(string $region)
     {
         return new static("Region $handle doesn't exist in this layout");
+    }
+
+    public static function alreadyExists(string $theme, string $type, string $uid)
+    {
+        $message = "Layout for theme $theme and type $type already exists";
+        if ($uid) {
+            $message = "Layout for theme $theme, type $type and element uid $uid already exists";
+        }
+        return new static($message);
     }
 }

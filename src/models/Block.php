@@ -59,7 +59,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @var bool
      */
-    public $active;
+    public $active = true;
 
     /**
      * @var DateTime
@@ -114,29 +114,33 @@ abstract class Block extends Model implements BlockInterface
             $options = array_merge($options, $strategyOptions->getConfig());
         }
         return [
+            'layout_id' => $this->layout->uid,
             'region' => $this->region,
             'handle' => $this->handle,
             'provider' => $this->provider,
             'order' => $this->order,
             'active' => $this->active,
-            'options' => $options,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'options' => $options
         ];
     }
 
     /**
      * @inheritDoc
      */
-    public function getLayout(): ?LayoutInterface
+    public function getLayout(): LayoutInterface
     {
-        if ($this->_layout === null) {
-            if (!$this->layout_id) {
-                $this->_layout = false;
-            } else {
-                $this->_layout = Themes::$plugin->layouts->getById($this->layout_id);
-            }
+        if (is_null($this->_layout)) {
+            $this->_layout = Themes::$plugin->layouts->getById($this->layout_id);
         }
-        return $this->_layout ?: null;
+        return $this->_layout;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLayout(LayoutInterface $layout)
+    {
+        $this->_layout = $layout;
     }
 
     /**
@@ -150,6 +154,11 @@ abstract class Block extends Model implements BlockInterface
             ['active', 'boolean'],
             [['order', 'layout_id'], 'number'],
             [['dateCreated', 'dateUpdated', 'uid', 'id', 'safe'], 'safe'],
+            ['layout', function () {
+                if (!$this->layout) {
+                    $this->addError('layout', \Craft::t('themes', 'Layout is required'));
+                }
+            }],
             ['options', function () {
                 $options = $this->options;
                 $strategyOptions = $this->cacheStrategyOptions;

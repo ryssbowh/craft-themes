@@ -12,7 +12,6 @@ use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
 use craft\events\SectionEvent;
 use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
-use craft\helpers\UrlHelper;
 use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields};
 use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
@@ -163,7 +162,44 @@ class Themes extends \craft\base\Plugin
         Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->registry->resetThemes();
                     Themes::$plugin->rules->flushCache();
+                }
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->registry->resetThemes();
+                    Themes::$plugin->rules->flushCache();
+                }
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_ENABLE_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    $extends = $event->plugin->extends;
+                    if ($extends) {
+                        \Craft::$app->plugins->enablePlugin($extends);
+                    }
+                }
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->registry->uninstallTheme($event->plugin);
+                }
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->registry->installTheme($event->plugin);
                 }
             }
         );
@@ -245,7 +281,7 @@ class Themes extends \craft\base\Plugin
                 'cache' => \Craft::$app->cache,
                 'cacheEnabled' => $this->getSettings()->blockCacheEnabled
             ],
-            'display' => DisplayService::class,
+            'displays' => DisplayService::class,
             'fields' => FieldsService::class,
             'matrix' => MatrixService::class,
             'tables' => TablesService::class,
@@ -360,12 +396,32 @@ class Themes extends \craft\base\Plugin
     protected function registerProjectConfig()
     {
         Craft::$app->projectConfig
-            ->onAdd(LayoutService::CONFIG_KEY.'.{uid}',      [$this->layouts, 'handleChanged'])
-            ->onUpdate(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts, 'handleChanged'])
-            ->onRemove(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts, 'handleDeleted']);
+            ->onAdd(LayoutService::CONFIG_KEY.'.{uid}',      [$this->layouts,   'handleChanged'])
+            ->onUpdate(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleChanged'])
+            ->onRemove(LayoutService::CONFIG_KEY.'.{uid}',   [$this->layouts,   'handleDeleted'])
+            ->onAdd(ViewModeService::CONFIG_KEY.'.{uid}',    [$this->viewModes, 'handleChanged'])
+            ->onUpdate(ViewModeService::CONFIG_KEY.'.{uid}', [$this->viewModes, 'handleChanged'])
+            ->onRemove(ViewModeService::CONFIG_KEY.'.{uid}', [$this->viewModes, 'handleDeleted'])
+            ->onAdd(BlockService::CONFIG_KEY.'.{uid}',       [$this->blocks,    'handleChanged'])
+            ->onUpdate(BlockService::CONFIG_KEY.'.{uid}',    [$this->blocks,    'handleChanged'])
+            ->onRemove(BlockService::CONFIG_KEY.'.{uid}',    [$this->blocks,    'handleDeleted'])
+            ->onAdd(DisplayService::CONFIG_KEY.'.{uid}',     [$this->displays,  'handleChanged'])
+            ->onUpdate(DisplayService::CONFIG_KEY.'.{uid}',  [$this->displays,  'handleChanged'])
+            ->onRemove(DisplayService::CONFIG_KEY.'.{uid}',  [$this->displays,  'handleDeleted'])
+            ->onAdd(FieldsService::CONFIG_KEY.'.{uid}',      [$this->fields,    'handleChanged'])
+            ->onUpdate(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleChanged'])
+            ->onRemove(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleDeleted'])
+            ->onAdd(GroupsService::CONFIG_KEY.'.{uid}',      [$this->groups,    'handleChanged'])
+            ->onUpdate(GroupsService::CONFIG_KEY.'.{uid}',   [$this->groups,    'handleChanged'])
+            ->onRemove(GroupsService::CONFIG_KEY.'.{uid}',   [$this->groups,    'handleDeleted']);
 
-        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $e) {
-            Themes::$plugin->layouts->rebuildLayoutConfig($e);
+        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $e) {
+            Themes::$plugin->layouts->rebuildConfig($e);
+            Themes::$plugin->viewModes->rebuildConfig($e);
+            Themes::$plugin->blocks->rebuildConfig($e);
+            Themes::$plugin->displays->rebuildConfig($e);
+            Themes::$plugin->groups->rebuildConfig($e);
+            Themes::$plugin->fields->rebuildConfig($e);
         });
     }
 

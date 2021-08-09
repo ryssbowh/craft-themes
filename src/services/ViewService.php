@@ -92,7 +92,7 @@ class ViewService extends Service
             //No theme is defined for that request
             return;
         }
-        if (!$layout = Themes::$plugin->layouts->resolveForRequest($theme->handle, $element)) {
+        if (!$layout = Themes::$plugin->layouts->resolveForRequest($theme, $element)) {
             //no theme layout is defined for that request
             return;
         }

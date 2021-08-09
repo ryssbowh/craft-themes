@@ -15,6 +15,7 @@ use craft\base\Element;
 use craft\base\Field as BaseField;
 use craft\fieldlayoutelements\CustomField;
 use craft\fields\Matrix as CraftMatrix;
+use craft\helpers\StringHelper;
 
 abstract class Field extends DisplayItem implements FieldInterface
 {
@@ -91,6 +92,7 @@ abstract class Field extends DisplayItem implements FieldInterface
         if ($config == null) {
             $config = $class::buildConfig(null);
         }
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $field = new $class;
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
@@ -109,6 +111,16 @@ abstract class Field extends DisplayItem implements FieldInterface
         $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
         $field->setAttributes($data, false);
         return $field->save(false);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function delete(array $data)
+    {
+        \Craft::$app->getDb()->createCommand()
+            ->delete(FieldRecord::tableName(), ['uid' => $data['uid']])
+            ->execute();
     }
 
     /**

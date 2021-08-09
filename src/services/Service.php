@@ -70,7 +70,7 @@ abstract class Service extends Component
      */
     protected function displayService(): DisplayService
     {
-        return Themes::$plugin->display;
+        return Themes::$plugin->displays;
     }
 
     /**

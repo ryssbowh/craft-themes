@@ -47,7 +47,7 @@ interface DisplayInterface
      * 
      * @param DisplayItemInterface $item
      */
-    public function setItem(?DisplayItemInterface $item);
+    public function setItem(DisplayItemInterface $item);
 
     /**
      * Group getter
@@ -61,7 +61,7 @@ interface DisplayInterface
      * 
      * @param DisplayInterface $group
      */
-    public function setGroup(?DisplayInterface $group);
+    public function setGroup(DisplayInterface $group);
 
     /**
      * Is this display a group 

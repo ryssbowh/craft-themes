@@ -54,10 +54,15 @@ class ViewMode extends Model
     public function defineRules(): array
     {
         return [
-            [['name', 'handle', 'layout_id'], 'required'],
+            [['name', 'handle'], 'required'],
             [['name', 'handle'], 'string'],
             ['layout_id', 'integer'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe']
+            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe'],
+            ['layout', function () {
+                if (!$this->layout) {
+                    $this->addError('layout', \Craft::t('themes', 'Layout is required'));
+                }
+            }],
         ];
     }
 
@@ -71,7 +76,7 @@ class ViewMode extends Model
         return [
             'name' => $this->name,
             'handle' => $this->handle,
-            'uid' => $this->uid
+            'layout_id' => $this->layout->uid
         ];
     }
 

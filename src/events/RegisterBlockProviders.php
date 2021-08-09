@@ -30,7 +30,7 @@ class RegisterBlockProviders extends Event
     public function add(BlockProviderInterface $provider)
     {
         if (isset($this->providers[$provider->handle])) {
-            throw BlockProviderException::defined($handle);
+            throw BlockProviderException::defined($provider->handle);
         }
         $this->providers[$provider->handle] = $provider;
         return $this;

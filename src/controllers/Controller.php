@@ -40,7 +40,7 @@ class Controller extends CraftController
     /**
      * @var DisplayService
      */
-    protected $display;
+    protected $displays;
 
     /**
      * @var FieldsService
@@ -69,7 +69,7 @@ class Controller extends CraftController
         $this->blocks = Themes::$plugin->blocks;
         $this->layouts = Themes::$plugin->layouts;
         $this->viewModes = Themes::$plugin->viewModes;
-        $this->display = Themes::$plugin->display;
+        $this->displays = Themes::$plugin->displays;
         $this->fields = Themes::$plugin->fields;
         $this->blockCache = Themes::$plugin->blockCache;
         $this->groups = Themes::$plugin->groups;

@@ -2,17 +2,23 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\RegisterFieldsEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
-use Ryssbowh\CraftThemes\models\fields\CraftField;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\models\Field;
+use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use craft\base\Field as BaseField;
 use craft\db\ActiveRecord;
+use craft\events\ConfigEvent;
+use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class FieldsService extends Service
 {
+    const CONFIG_KEY = 'themes.fields';
     const REGISTER_FIELDS = 'registerFields';
 
     /**
@@ -96,6 +102,98 @@ class FieldsService extends Service
     }
 
     /**
+     * Saves a field
+     * 
+     * @param  FieldInterface $field
+     * @param  bool           $validate
+     * @return bool
+     */
+    public function save(FieldInterface $field, bool $validate = true): bool
+    {
+        if ($validate and !$field->validate()) {
+            return false;
+        }
+
+        $isNew = !is_int($field->id);
+        $uid = $field->uid;
+
+        $projectConfig = \Craft::$app->getProjectConfig();
+        $configData = $field->getConfig();
+        $configPath = self::CONFIG_KEY . '.' . $uid;
+        $projectConfig->set($configPath, $configData);
+
+        $record = $this->getRecordByUid($uid);
+        $field->setAttributes($record->getAttributes());
+        
+        if ($isNew) {
+            $this->add($field);
+        }
+
+        return true;
+    }
+
+    /**
+     * Deletes a field
+     * 
+     * @param  FieldInterface $field
+     * @return bool
+     */
+    public function delete(FieldInterface $field): bool
+    {
+        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $field->uid);
+
+        $this->_fields = $this->all()->where('id', '!=', $field->id);
+
+        return true;
+    }
+
+    /**
+     * Handles a change in field config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleChanged(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $data = $event->newValue;
+        $transaction = \Craft::$app->getDb()->beginTransaction();
+        try {
+            $data['uid'] = $uid;
+            $data['display_id'] = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+            $this->getFieldClassByType($data['type'])::save($data);
+            
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Handles a deletion in field config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleDeleted(ConfigEvent $event)
+    {
+        $data = $event->oldValue;
+
+        $this->getFieldClassByType($data['type'])::delete($data);
+    }
+
+    /**
+     * Respond to rebuild config event
+     * 
+     * @param RebuildConfigEvent $e
+     */
+    public function rebuildConfig(RebuildConfigEvent $e)
+    {
+        foreach ($this->all() as $field) {
+            $e->config[self::CONFIG_KEY.'.'.$field->uid] = $field->getConfig();
+        }
+    }
+
+    /**
      * Create a field from a craft field
      * 
      * @param  BaseField $field
@@ -114,28 +212,12 @@ class FieldsService extends Service
     /**
      * Get a field for a display
      * 
-     * @param  int    $displayId
+     * @param  DisplayInterface $display
      * @return ?Field
      */
-    public function getForDisplay(int $displayId): ?Field
+    public function getForDisplay(DisplayInterface $display): ?Field
     {
-        return $this->all()->firstWhere('display_id', $displayId);
-    }
-
-    /**
-     * Saves a field data
-     * 
-     * @param  array         $data
-     * @param  DisplayRecord $display
-     * @return bool
-     */
-    public function save(array $data, DisplayRecord $display): bool
-    {
-        if (!isset($data['type'])) {
-            throw FieldException::noType();
-        }
-        $data['display_id'] = $display->id;
-        return $this->getFieldClassByType($data['type'])::save($data, $display);
+        return $this->all()->firstWhere('display_id', $display->id);
     }
 
     /**
@@ -147,6 +229,18 @@ class FieldsService extends Service
     public function getRecordByUid(string $uid): FieldRecord
     {
         return FieldRecord::findOne(['uid' => $uid]) ?? new FieldRecord(['uid' => $uid]);
+    }
+
+    /**
+     * Add a field to internal cache
+     * 
+     * @param FieldInterface $layout
+     */
+    protected function add(FieldInterface $field)
+    {
+        if (!$this->all()->firstWhere('id', $field->id)) {
+            $this->all()->push($field);
+        }
     }
 
     /**

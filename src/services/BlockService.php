@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\services;
 
 use Illuminate\Support\Collection;
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\BlockEvent;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
@@ -16,9 +17,17 @@ use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class BlockService extends Service
 {
+    const EVENT_BEFORE_SAVE = 'before_save';
+    const EVENT_AFTER_SAVE = 'after_save';
+    const EVENT_BEFORE_APPLY_DELETE = 'before_apply_delete';
+    const EVENT_AFTER_DELETE = 'after_delete';
+    const EVENT_BEFORE_DELETE = 'before_delete';
+    const CONFIG_KEY = 'themes.blocks';
+
     /**
      * @var Collection
      */
@@ -67,11 +76,158 @@ class BlockService extends Service
             $handle = $config['handle'];
             unset($config['handle']);
         }
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $block = $this->blockProviderService()->getByHandle($config['provider'])->createBlock($handle); 
         $attributes = $block->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
         $block->setAttributes($config);
         return $block;
+    }
+
+    /**
+     * Saves a block
+     * 
+     * @param  BlockInterface $block
+     * @param  bool           $validate
+     * @return bool
+     */
+    public function save(BlockInterface $block, bool $validate = true): bool
+    {
+        if ($validate and !$block->validate()) {
+            return false;
+        }
+
+        $isNew = !is_int($block->id);
+        $uid = $block->uid;
+
+        $this->triggerEvent(self::EVENT_BEFORE_SAVE, new BlockEvent([
+            'block' => $block,
+            'isNew' => $isNew
+        ]));
+
+        $projectConfig = \Craft::$app->getProjectConfig();
+        $configData = $block->getConfig();
+        $configPath = self::CONFIG_KEY . '.' . $uid;
+        $projectConfig->set($configPath, $configData);
+
+        $record = $this->getRecordByUid($uid);
+        $attributes = $record->getAttributes();
+        unset($attributes['handle']);
+        $block->setAttributes($attributes);
+        $block->afterSave();
+        
+        if ($isNew) {
+            $this->add($block);
+        }
+
+        return true;
+    }
+
+    /**
+     * Deletes a block
+     * 
+     * @param  BlockInterface $block
+     * @return bool
+     */
+    public function delete(BlockInterface $block): bool
+    {
+        $this->triggerEvent(self::EVENT_BEFORE_DELETE, new BlockEvent([
+            'block' => $block
+        ]));
+
+        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $block->uid);
+
+        $this->_blocks = $this->all()->where('id', '!=', $block->id);
+
+        return true;
+    }
+
+    /**
+     * Handles a change in block config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleChanged(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $data = $event->newValue;
+        $transaction = \Craft::$app->getDb()->beginTransaction();
+        try {
+            $block = $this->getRecordByUid($uid);
+            $isNew = $block->getIsNewRecord();
+
+            $block->provider = $data['provider'];
+            $block->region = $data['region'];
+            $block->handle = $data['handle'];
+            $block->order = $data['order'];
+            $block->options = $data['options'] ?? null;
+            $block->layout_id = Themes::$plugin->layouts->getByUid($data['layout_id'])->id;
+            $block->save(false);
+            
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        $this->triggerEvent(self::EVENT_AFTER_SAVE, new BlockEvent([
+            'block' => $block,
+            'isNew' => $isNew,
+        ]));
+    }
+
+    /**
+     * Handles a deletion in block config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleDeleted(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $block = $this->getRecordByUid($uid);
+
+        $this->triggerEvent(self::EVENT_BEFORE_APPLY_DELETE, new BlockEvent([
+            'block' => $block
+        ]));
+
+        \Craft::$app->getDb()->createCommand()
+            ->delete(BlockRecord::tableName(), ['uid' => $uid])
+            ->execute();
+
+        $this->triggerEvent(self::EVENT_AFTER_DELETE, new BlockEvent([
+            'block' => $block
+        ]));
+    }
+
+    /**
+     * Respond to rebuild config event
+     * 
+     * @param RebuildConfigEvent $e
+     */
+    public function rebuildConfig(RebuildConfigEvent $e)
+    {
+        foreach ($this->all() as $block) {
+            $e->config[self::CONFIG_KEY.'.'.$block->uid] = $block->getConfig();
+        }
+    }
+
+    /**
+     * Clean up for layout, deletes old blocks
+     * 
+     * @param LayoutInterface $layout
+     */
+    public function cleanUpLayout(LayoutInterface $layout)
+    {
+        $toKeep = array_map(function ($block) {
+            return $block->id;
+        }, $layout->blocks);
+        $toDelete = $this->all()
+            ->whereNotIn('id', $toKeep)
+            ->where('layout_id', $layout->id)
+            ->all();
+        foreach ($toDelete as $block) {
+            $this->delete($block);
+        }
     }
     
     /**
@@ -131,32 +287,14 @@ class BlockService extends Service
     }
 
     /**
-     * Saves blocks data
+     * Add a block to internal cache
      * 
-     * @param  array        $data
-     * @param  LayoutRecord $layout
+     * @param BlockInterface $layout
      */
-    public function saveMany(array $data, LayoutRecord $layout)
+    protected function add(BlockInterface $block)
     {
-        $ids = [];
-        foreach ($data as $blockData) {
-            $block = $this->getRecordByUid($blockData['uid']);
-            $block->uid = $blockData['uid'];
-            $block->provider = $blockData['provider'];
-            $block->region = $blockData['region'];
-            $block->handle = $blockData['handle'];
-            $block->order = $blockData['order'];
-            $block->options = $blockData['options'] ?? null;
-            $block->layout_id = $layout->id;
-            $block->save(false);
-            $ids[] = $block->id;
-        }
-        $toDelete = BlockRecord::find()
-            ->where(['layout_id' => $layout->id])
-            ->andWhere(['not in', 'id', $ids])
-            ->all();
-        foreach ($toDelete as $block) {
-            $block->delete();
+        if (!$this->all()->firstWhere('id', $block->id)) {
+            $this->all()->push($block);
         }
     }
 }

@@ -177,20 +177,15 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
-    public function afterUninstall()
+    public function afterThemeUninstall()
     {
-        Themes::$plugin->registry->resetThemes();
-        Themes::$plugin->layouts->uninstallThemeData($this->handle);
-        Themes::$plugin->rules->flushCache();
     }
 
     /**
      * @inheritDoc
      */
-    public function afterInstall()
+    public function afterThemeInstall()
     {
-        Themes::$plugin->registry->addTheme($this);
-        Themes::$plugin->layouts->installThemeData($this->handle);
     }
 
     /**

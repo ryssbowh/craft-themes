@@ -53,7 +53,7 @@ class CpDisplayAjaxController extends Controller
         $layout = $this->layouts->getById($layout);
 
         return [
-            'displays' => $this->display->getForLayout($layout),
+            'displays' => $this->displays->getForLayout($layout),
         ];
     }
 
@@ -107,7 +107,7 @@ class CpDisplayAjaxController extends Controller
 
         $displays = [];
         foreach ($displaysData as $data) {
-            $display = $this->display->create($data);
+            $display = $this->displays->create($data);
             if (is_string($data['viewMode_id'])) {
                 //When new view modes are created on frontend, viewMode_id will reference a view mode handle
                 $display->viewMode = $viewModesMapping[$data['viewMode_id']];   

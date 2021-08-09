@@ -102,7 +102,7 @@ class AssetRendered extends FieldDisplayer
     {
         $volume = $asset->volume;
         $theme = Themes::$plugin->registry->getCurrent();
-        $layout = Themes::$plugin->layouts->get($theme->handle, LayoutService::VOLUME_HANDLE, $volume->uid);
+        $layout = Themes::$plugin->layouts->get($theme, LayoutService::VOLUME_HANDLE, $volume->uid);
         return $layout;
     }
 

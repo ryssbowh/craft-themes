@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 namespace Ryssbowh\CraftThemes\services;
 
 use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\events\DisplayEvent;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Display;
@@ -13,6 +14,8 @@ use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\db\ActiveRecord;
+use craft\events\ConfigEvent;
+use craft\events\RebuildConfigEvent;
 use craft\fields\Matrix as CraftMatrix;
 use craft\helpers\StringHelper;
 
@@ -27,6 +30,7 @@ class DisplayService extends Service
     const EVENT_BEFORE_APPLY_DELETE = 'before_apply_delete';
     const EVENT_AFTER_DELETE = 'after_delete';
     const EVENT_BEFORE_DELETE = 'before_delete';
+    const CONFIG_KEY = 'themes.displays';
 
     /**
      * @var Collection
@@ -75,6 +79,160 @@ class DisplayService extends Service
             }
         }
         return $display;
+    }
+
+    /**
+     * Saves a display
+     * 
+     * @param  DisplayInterface $display
+     * @param  bool             $validate
+     * @return bool
+     */
+    public function save(DisplayInterface $display, bool $validate = true): bool
+    {
+        if ($validate and !$display->validate()) {
+            return false;
+        }
+
+        $isNew = !is_int($display->id);
+        $uid = $display->uid;
+
+        $this->triggerEvent(self::EVENT_BEFORE_SAVE, new DisplayEvent([
+            'display' => $display,
+            'isNew' => $isNew
+        ]));
+
+        $projectConfig = \Craft::$app->getProjectConfig();
+        $configData = $display->getConfig();
+        $configPath = self::CONFIG_KEY . '.' . $uid;
+        $projectConfig->set($configPath, $configData);
+
+        $record = $this->getRecordByUid($uid);
+        $display->setAttributes($record->getAttributes());
+        
+        if ($isNew) {
+            $this->add($display);
+        }
+
+        $display->item->display = $display;
+        if ($display->type == self::TYPE_FIELD) {
+            $this->fieldsService()->save($display->item);
+        } else {
+            $this->groupsService()->save($display->item);
+        }
+
+        return true;
+    }
+
+    /**
+     * Deletes a display
+     * 
+     * @param  DisplayInterface $display
+     * @return bool
+     */
+    public function delete(DisplayInterface $display): bool
+    {
+        $this->triggerEvent(self::EVENT_BEFORE_DELETE, new DisplayEvent([
+            'display' => $display
+        ]));
+
+        if ($display->type == self::TYPE_FIELD) {
+            $this->fieldsService()->delete($display->item);
+        } else {
+            $this->groupsService()->delete($display->item);
+        }
+
+        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
+
+        $this->_displays = $this->all()->where('id', '!=', $display->id);
+
+        return true;
+    }
+
+    /**
+     * Handles a change in display config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleChanged(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $data = $event->newValue;
+        $transaction = \Craft::$app->getDb()->beginTransaction();
+        try {
+            $display = $this->getRecordByUid($uid);
+            $isNew = $display->getIsNewRecord();
+
+            $display->type = $data['type'];
+            $display->order = $data['order'];
+            $display->group_id = isset($data['group_id']) ? Themes::$plugin->groups->getByUid($data['group_id'])->id : null;
+            $display->viewMode_id = Themes::$plugin->viewModes->getByUid($data['viewMode_id'])->id;
+            $display->save(false);
+            
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        $this->triggerEvent(self::EVENT_AFTER_SAVE, new DisplayEvent([
+            'display' => $display,
+            'isNew' => $isNew,
+        ]));
+    }
+
+    /**
+     * Handles a deletion in display config
+     * 
+     * @param ConfigEvent $event
+     */
+    public function handleDeleted(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $display = $this->getRecordByUid($uid);
+
+        $this->triggerEvent(self::EVENT_BEFORE_APPLY_DELETE, new DisplayEvent([
+            'display' => $display
+        ]));
+
+        \Craft::$app->getDb()->createCommand()
+            ->delete(DisplayRecord::tableName(), ['uid' => $uid])
+            ->execute();
+
+        $this->triggerEvent(self::EVENT_AFTER_DELETE, new DisplayEvent([
+            'display' => $display
+        ]));
+    }
+
+    /**
+     * Clean up for layout, deletes old displays
+     * 
+     * @param LayoutInterface $layout
+     */
+    public function cleanUpLayout(LayoutInterface $layout)
+    {
+        $toKeep = array_map(function ($display) {
+            return $display->id;
+        }, $layout->displays);
+        $toDelete = $this->all()
+            ->whereNotIn('id', $toKeep)
+            ->where('layout_id', $layout->id)
+            ->all();
+        foreach ($toDelete as $display) {
+            $this->delete($display);
+        }
+    }
+
+    /**
+     * Respond to rebuild config event
+     * 
+     * @param RebuildConfigEvent $e
+     */
+    public function rebuildConfig(RebuildConfigEvent $e)
+    {
+        foreach ($this->all() as $display) {
+            $e->config[self::CONFIG_KEY.'.'.$display->uid] = $display->getConfig();
+        }
     }
 
     /**
@@ -178,74 +336,6 @@ class DisplayService extends Service
     }
 
     /**
-     * Saves one display
-     * 
-     * @param  array  $data
-     * @return DisplayRecord
-     */
-    public function save(array $data): DisplayRecord
-    {
-        $display = $this->getRecordByUid($data['uid']);
-        if ($data['viewMode_id']) {
-            $viewModeId = $this->viewModesService()->getRecordByUid($data['viewMode_id'])->id;
-            $display->viewMode_id = $viewModeId;
-        } else {
-            $display->viewMode_id = null;
-        }
-        if ($data['group_id']) {
-            $groupId = $this->displayService()->getRecordByUid($data['group_id'])->id;
-            $display->group_id = $groupId;
-        } else {
-            $display->group_id = null;
-        }
-        $display->type = $data['type'];
-        $display->order = $data['order'];
-        $display->save(false);
-        if ($data['type'] == self::TYPE_FIELD) {
-            $this->fieldsService()->save($data['item'], $display);
-        } else {
-            $this->groupsService()->save($data['item'], $display);
-        }
-        return $display;
-    }
-
-    /**
-     * Saves display data for a layout
-     * 
-     * @param array        $data
-     * @param LayoutRecord $layout
-     */
-    public function saveMany(array $data, LayoutRecord $layout)
-    {
-        $ids = [];
-        $saveLater = [];
-        foreach ($data as $displayData) {
-            if ($displayData['group_id']) {
-                //Saving this display later to make sure its group has been saved
-                $saveLater[] = $displayData;
-                continue;
-            }
-            $display = $this->save($displayData);
-            $ids[$display->viewMode->id][] = $display->id;
-        }
-        foreach ($saveLater as $displayData) {
-            $display = $this->save($displayData);
-            $ids[$display->viewMode->id][] = $display->id;
-        }
-
-        foreach ($ids as $viewModeId => $displayIds) {
-            $toDelete = DisplayRecord::find()
-                ->where(['viewMode_id' => $viewModeId])
-                ->andWhere(['not in', 'id', $displayIds])
-                ->all();
-            foreach ($toDelete as $display) {
-                $display->delete();
-            }
-        }
-        $this->_displays = null;
-    }
-
-    /**
      * Create all displays for a layout.
      * Go through all craft fields defined on the layout and create display and fields for it.
      * 
@@ -301,6 +391,18 @@ class DisplayService extends Service
             }
         }
         return $displays;
+    }
+
+    /**
+     * Add a display to internal cache
+     * 
+     * @param DisplayInterface $layout
+     */
+    protected function add(DisplayInterface $display)
+    {
+        if (!$this->all()->firstWhere('id', $display->id)) {
+            $this->all()->push($display);
+        }
     }
 
     /**

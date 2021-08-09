@@ -14,6 +14,7 @@ use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 use craft\fields\Matrix as CraftMatrix;
+use craft\helpers\StringHelper;
 
 class Matrix extends CraftField implements MatrixInterface
 {
@@ -96,6 +97,7 @@ class Matrix extends CraftField implements MatrixInterface
      */
     public static function create(?array $config = null): FieldInterface
     {
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $class = get_called_class();
         $field = new $class;
         $attributes = $field->safeAttributes();

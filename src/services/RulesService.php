@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ThemeEvent;
+use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\i18n\Locale;
 use craft\models\Site;
@@ -57,7 +58,11 @@ class RulesService extends Service
         }
         if (\Craft::$app->request->getIsConsoleRequest()) {
             if ($this->setConsole and $this->console) {
-                $theme = Themes::$plugin->registry->getTheme($this->console);
+                try {
+                    $theme = Themes::$plugin->registry->getTheme($this->console);
+                } catch (ThemeException $e) {
+                    return null;
+                }
                 $this->themesRegistry()->setCurrent($theme);
                 return $theme;
             }

@@ -4,7 +4,9 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Theme;
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\events\InstallThemeEvent;
 use Ryssbowh\CraftThemes\events\ThemeEvent;
+use Ryssbowh\CraftThemes\events\UninstallThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
@@ -17,6 +19,8 @@ class ThemesRegistry extends Service
 {   
     const THEME_SET_EVENT = 'themes.set';
     const THEMES_WEBROOT = '@webroot/themes/';
+    const EVENT_AFTER_INSTALL_THEME = 'after_install_theme';
+    const EVENT_AFTER_UNINSTALL_THEME = 'after_uninstall_theme';
 
     /**
      * @var ?array
@@ -150,14 +154,45 @@ class ThemesRegistry extends Service
     }
 
     /**
-     * Add a theme manually
+     * Does a theme exist
+     * 
+     * @param  string  $handle
+     * @return boolean
+     */
+    public function hasTheme(string $handle): bool
+    {
+        return isset($this->all()[$handle]);
+    }
+
+    /**
+     * Install a theme
      *
      * @return ThemeInterface $theme
      */
-    public function addTheme(ThemeInterface $theme)
+    public function installTheme(ThemeInterface $theme)
     {
-        $this->loadThemes();
-        $this->themes[$theme->handle] = $theme;
+        $this->resetThemes();
+        Themes::$plugin->layouts->installThemeData($theme);
+        $theme->afterThemeInstall();
+        $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new InstallThemeEvent([
+            'theme' => $theme
+        ]));
+    }
+
+    /**
+     * Uninstall a theme
+     *
+     * @return ThemeInterface $theme
+     */
+    public function uninstallTheme(ThemeInterface $theme)
+    {
+        $this->resetThemes();
+        Themes::$plugin->layouts->uninstallThemeData($theme);
+        Themes::$plugin->rules->flushCache();
+        $theme->afterThemeUninstall();
+        $this->triggerEvent(self::EVENT_AFTER_UNINSTALL_THEME, new UninstallThemeEvent([
+            'theme' => $theme
+        ]));
     }
 
     /**

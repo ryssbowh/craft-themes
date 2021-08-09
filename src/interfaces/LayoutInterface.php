@@ -101,6 +101,13 @@ interface LayoutInterface
     public function hasViewMode(string $viewMode): bool;
 
     /**
+     * Get default view mode
+     * 
+     * @return ViewMode
+     */
+    public function getDefaultViewMode(): ViewMode;
+
+    /**
      * Blocks getter
      * 
      * @return array

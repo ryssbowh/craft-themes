@@ -116,7 +116,17 @@ class Layout extends Model implements LayoutInterface
             ['type', 'in', 'range' => LayoutService::TYPES],
             [['theme', 'elementUid'], 'string'],
             ['hasBlocks', 'boolean'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id', 'element'], 'safe']
+            [['dateCreated', 'dateUpdated', 'uid', 'id', 'element'], 'safe'],
+            ['theme', function () {
+                if (!Themes::$plugin->registry->hasTheme($this->theme)) {
+                    $this->addError('theme', \Craft::t('themes', 'Theme ' . $this->theme . ' doesn\'t exist'));
+                } else {
+                    $theme = Themes::$plugin->registry->getTheme($this->theme);
+                    if ($theme->isPartial()) {
+                        $this->addError('theme', \Craft::t('themes', 'Layouts can\'t be added to partial themes'));
+                    }
+                }
+            }]
         ];
     }
 
@@ -168,16 +178,7 @@ class Layout extends Model implements LayoutInterface
             'theme' => $this->theme,
             'type' => $this->type,
             'elementUid' => $this->elementUid,
-            'hasBlocks' => $this->hasBlocks,
-            'viewModes' => array_map(function ($viewMode) {
-                return $viewMode->getConfig();
-            }, $this->viewModes),
-            'blocks' => array_map(function ($block) {
-                return $block->getConfig();
-            }, $this->blocks),
-            'displays' => array_map(function ($display) {
-                return $display->getConfig();
-            }, $this->displays)
+            'hasBlocks' => $this->hasBlocks
         ];
     }
 
@@ -217,6 +218,18 @@ class Layout extends Model implements LayoutInterface
             $this->_viewModes = Themes::$plugin->viewModes->getForLayout($this);
         }
         return $this->_viewModes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDefaultViewMode(): ViewMode
+    {
+        foreach ($this->viewModes as $viewMode) {
+            if ($viewMode->handle == ViewModeService::DEFAULT_HANDLE) {
+                return $viewMode;
+            }
+        }
     }
 
     /**
@@ -268,6 +281,7 @@ class Layout extends Model implements LayoutInterface
     {
         $this->loadBlocks();
         $this->_blocks[] = $block;
+        $block->layout = $this;
         $this->getRegion($block->region)->addBlock($block);
         return $this;
     }
@@ -357,7 +371,7 @@ class Layout extends Model implements LayoutInterface
     public function getDisplays(?string $viewMode = null): array
     {
         if (is_null($this->_displays)) {
-            $this->_displays = Themes::$plugin->display->getForLayout($this);
+            $this->_displays = Themes::$plugin->displays->getForLayout($this);
         }
         if (is_null($viewMode)) {
             return $this->_displays;

@@ -54,11 +54,6 @@ class Display extends Model implements DisplayInterface
     public $uid;
 
     /**
-     * @var array
-     */
-    protected $_viewMode;
-
-    /**
      * @var DisplayItemInterface
      */
     protected $_item;
@@ -69,15 +64,25 @@ class Display extends Model implements DisplayInterface
     protected $_group;
 
     /**
+     * @var ViewMode
+     */
+    protected $_viewMode;
+
+    /**
      * @inheritDoc
      */
     public function defineRules(): array
     {
         return [
-            [['viewMode_id', 'order', 'type'], 'required'],
+            [['order', 'type'], 'required'],
             [['viewMode_id', 'order', 'group_id'], 'integer'],
             ['type', 'in', 'range' => DisplayService::TYPES],
-            [['dateCreated', 'dateUpdated', 'uid', 'id', 'viewMode'], 'safe']
+            [['dateCreated', 'dateUpdated', 'uid', 'id', 'viewMode'], 'safe'],
+            ['viewMode', function () {
+                if (!$this->viewMode) {
+                    $this->addError('viewMode', \Craft::t('View mode is required'));
+                }
+            }]
         ];
     }
 
@@ -88,11 +93,9 @@ class Display extends Model implements DisplayInterface
     {
         return [
             'viewMode_id' => $this->viewMode->uid,
-            'group_id' => $this->group ? $this->group->uid : $this->group_id,
+            'group_id' => $this->group ? $this->group->uid : null,
             'order' => $this->order,
-            'type' => $this->type,
-            'uid' => $this->uid,
-            'item' => $this->item->getConfig()
+            'type' => $this->type
         ];
     }
 
@@ -138,9 +141,9 @@ class Display extends Model implements DisplayInterface
     {
         if ($this->_item === null) {
             if ($this->type == DisplayService::TYPE_GROUP) {
-                $this->_item = Themes::$plugin->groups->getForDisplay($this->id);
+                $this->_item = Themes::$plugin->groups->getForDisplay($this);
             } else {
-                $this->_item = Themes::$plugin->fields->getForDisplay($this->id);
+                $this->_item = Themes::$plugin->fields->getForDisplay($this);
             }
         }
         return $this->_item;
@@ -149,7 +152,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function setItem(?DisplayItemInterface $item)
+    public function setItem(DisplayItemInterface $item)
     {
         $this->_item = $item;
     }
@@ -164,9 +167,9 @@ class Display extends Model implements DisplayInterface
         }
         if ($this->_group === null) {
             if (is_int($this->group_id)) {
-                $this->_group = Themes::$plugin->display->getById($this->group_id);
+                $this->_group = Themes::$plugin->displays->getById($this->group_id);
             } else {
-                $this->_group = Themes::$plugin->display->getByUid($this->group_id);
+                $this->_group = Themes::$plugin->displays->getByUid($this->group_id);
             }
         }
         return $this->_group;
@@ -175,10 +178,9 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function setGroup(?DisplayInterface $group)
+    public function setGroup(DisplayInterface $group)
     {
         $this->_group = $group;
-        $this->group_id = $group ? $group->uid : null;
     }
 
     /**
