@@ -20,7 +20,6 @@ class ThemesRegistry extends Service
     const THEME_SET_EVENT = 'themes.set';
     const THEMES_WEBROOT = '@webroot/themes/';
     const EVENT_AFTER_INSTALL_THEME = 'after_install_theme';
-    const EVENT_AFTER_UNINSTALL_THEME = 'after_uninstall_theme';
 
     /**
      * @var ?array
@@ -139,6 +138,19 @@ class ThemesRegistry extends Service
     }
 
     /**
+     * Get all themes that depends on a theme
+     * 
+     * @param  ThemeInterface $theme
+     * @return array
+     */
+    public function getDependencies(ThemeInterface $theme): array
+    {
+        return array_filter($this->all(), function ($theme2) use ($theme) {
+            return $theme2->extends == $theme->handle;
+        });
+    }
+
+    /**
      * Get a theme by handle
      * 
      * @param  string $handle
@@ -186,13 +198,19 @@ class ThemesRegistry extends Service
      */
     public function uninstallTheme(ThemeInterface $theme)
     {
-        $this->resetThemes();
         Themes::$plugin->layouts->uninstallThemeData($theme);
         Themes::$plugin->rules->flushCache();
-        $theme->afterThemeUninstall();
-        $this->triggerEvent(self::EVENT_AFTER_UNINSTALL_THEME, new UninstallThemeEvent([
-            'theme' => $theme
-        ]));
+        $this->resetThemes();
+    }
+
+    /**
+     * Disables all themes
+     */
+    public function disableAll()
+    {
+        foreach ($this->all() as $theme) {
+            \Craft::$app->plugins->disablePlugin($theme->handle);
+        }
     }
 
     /**

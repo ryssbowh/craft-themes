@@ -42,6 +42,13 @@ interface LayoutInterface
     public function getTheme(): ThemeInterface;
 
     /**
+     * Get layout regions
+     * 
+     * @return array
+     */
+    public function getRegions(): array;
+
+    /**
      * Get project config
      * 
      * @return array
@@ -82,7 +89,7 @@ interface LayoutInterface
      * @param  string $handle
      * @return ?ViewMode
      */
-    public function getViewModeByHandle(string $handle): ?ViewMode;
+    public function getViewMode(string $handle): ?ViewMode;
 
     /**
      * View modes setter
@@ -95,10 +102,18 @@ interface LayoutInterface
     /**
      * Is a view mode handle defined in this layout 
      * 
-     * @param  string  $viewMode
+     * @param  string  $handle
      * @return boolean
      */
-    public function hasViewMode(string $viewMode): bool;
+    public function hasViewMode(string $handle): bool;
+
+    /**
+     * Add a view mode
+     * 
+     * @param  ViewMode $viewMode
+     * @return LayoutInterface
+     */
+    public function addViewMode(ViewMode $viewMode): LayoutInterface;
 
     /**
      * Get default view mode
@@ -120,15 +135,16 @@ interface LayoutInterface
      * @param  array $blocks
      * @return LayoutInterface
      */
-    public function setBlocks(?array $blocks): LayoutInterface;
+    public function setBlocks(array $blocks): LayoutInterface;
 
     /**
      * Add a block
      * 
      * @param  BlockInterface $block
+     * @param  string         $region
      * @return LayoutInterface
      */
-    public function addBlock(BlockInterface $block): LayoutInterface;
+    public function addBlock(BlockInterface $block, string $region): LayoutInterface;
 
     /**
      * Get the machine name describing the element associated to this layout
@@ -136,22 +152,6 @@ interface LayoutInterface
      * @return string
      */
     public function getElementMachineName(): string;
-
-    /**
-     * Load blocks from database.
-     * If this layout doesn't define blocks it will load its blocks from the default layout
-     * 
-     * @param  boolean $force
-     * @return LayoutInterface
-     */
-    public function loadBlocks(bool $force = false): LayoutInterface;
-
-    /**
-     * Load regions from the theme
-     * 
-     * @return LayoutInterface
-     */
-    public function loadRegions(): LayoutInterface;
 
     /**
      * Get a region by handle.
@@ -163,6 +163,14 @@ interface LayoutInterface
     public function getRegion(string $handle): Region;
 
     /**
+     * Is a region defined
+     * 
+     * @param  string $handle
+     * @return bool
+     */
+    public function hasRegion(string $handle): bool;
+
+    /**
      * Get a display by handle for a view mode
      * 
      * @param  string $viewMode
@@ -170,14 +178,6 @@ interface LayoutInterface
      * @return ?DisplayInterface
      */
     public function getDisplayByHandle(string $viewMode, string $handle): ?DisplayInterface;
-
-    /**
-     * Find a block by machine name
-     * 
-     * @param  string $machineName
-     * @return ?BlockInterface
-     */
-    public function findBlock(string $machineName): ?BlockInterface;
 
     /**
      * Get all displays for a view mode
@@ -189,16 +189,18 @@ interface LayoutInterface
     /**
      * Displays setter
      * 
-     * @param array $displays
+     * @param  ?array $displays
+     * @return LayoutInterface
      */
-    public function setDisplays(array $displays);
+    public function setDisplays(?array $displays): LayoutInterface;
 
     /**
      * Replaces a display in this layout, based on its id.
      * 
      * @param  DisplayInterface $display
+     * @return LayoutInterface
      */
-    public function replaceDisplay(DisplayInterface $display);
+    public function replaceDisplay(DisplayInterface $display): LayoutInterface;
 
     /**
      * Get all visible displays
@@ -222,21 +224,4 @@ interface LayoutInterface
      * @return string
      */
     public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string;
-
-    /**
-     * Get rendering mode. Mode can be either regions or displays
-     * 
-     * @return string
-     */
-    public function getRenderingMode(): string;
-
-    /**
-     * Set rendering mode to regions
-     */
-    public function setRegionsRenderingMode();
-
-    /**
-     * Set rendering mode to displays
-     */
-    public function setDisplaysRenderingMode();
 }

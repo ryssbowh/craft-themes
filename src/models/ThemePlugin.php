@@ -13,6 +13,8 @@ use yii\base\ArrayableTrait;
 abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
     use ArrayableTrait;
+
+    protected $_regions;
     
     /**
      * array of all the template paths (including those of the parents)
@@ -156,7 +158,30 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     public function getRegions(): array
     {
-        return [];
+        if (is_null($this->_regions)) {
+            $regionsArray = $this->defineRegions();
+            if (is_null($regionsArray)) {
+                if ($parent = $this->parent) {
+                    return $parent->regions;
+                }
+            }
+            $defined = [];
+            $this->_regions = [];
+            foreach ($regionsArray ?? [] as $region) {
+                if (!isset($region['handle'])) {
+                    throw ThemeException::regionParameterMissing('handle', $this->handle);
+                }
+                if (!isset($region['name'])) {
+                    throw ThemeException::regionParameterMissing('name', $this->handle);
+                }
+                if (in_array($region['handle'], $defined)) {
+                    throw ThemeException::duplicatedRegion($this->handle, $region['handle']);
+                }
+                $defined[] = $region['handle'];
+                $this->_regions[] = $region;
+            }
+        }
+        return $this->_regions;
     }
 
     /**
@@ -227,5 +252,23 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     protected function getAssetBundles(string $urlPath): array
     {
         return array_merge($this->assetBundles['*'] ?? [], $this->assetBundles[$urlPath] ?? []);
+    }
+
+    /**
+     * Define regions as array
+     *
+     * [
+     *     [
+     *         'handle' => 'region-handle',
+     *         'name' => 'Region',
+     *         'width' => '100%' //Used in backend blocks section
+     *     ]
+     * ]
+     *
+     * Returning null will load parent's theme regions
+     */
+    protected function defineRegions(): ?array
+    {
+        return null;
     }
 }

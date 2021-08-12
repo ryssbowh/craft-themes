@@ -5,8 +5,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use craft\base\Model;
+use craft\base\Element;
 
-interface BlockInterface extends RenderableInterface
+interface BlockInterface
 {
     /**
      * Get block handle
@@ -75,4 +76,11 @@ interface BlockInterface extends RenderableInterface
      * Callback after the block has been saved
      */
     public function afterSave();
+
+    /**
+     * Render for an element
+     * 
+     * @return string
+     */
+    public function render(Element $element): string;
 }

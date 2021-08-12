@@ -159,6 +159,16 @@ abstract class Block extends Model implements BlockInterface
                     $this->addError('layout', \Craft::t('themes', 'Layout is required'));
                 }
             }],
+            ['region', function () {
+                if ($this->layout and !$this->layout->hasRegion($this->region)) {
+                    $this->addError('region', \Craft::t('themes', 'Theme ' . $this->layout->theme->handle. ' doesn\'t have a region ' . $this->region));
+                }
+            }],
+            ['provider', function () {
+                if (!Themes::$plugin->blockProviders->has($this->provider)) {
+                    $this->addError('layout', \Craft::t('themes', 'Block provider ' . $this->provider . ' is not defined'));
+                }
+            }],
             ['options', function () {
                 $options = $this->options;
                 $strategyOptions = $this->cacheStrategyOptions;

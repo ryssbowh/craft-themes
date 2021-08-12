@@ -112,6 +112,7 @@ class DisplayService extends Service
         
         if ($isNew) {
             $this->add($display);
+            $display->layout->displays = null;
         }
 
         $display->item->display = $display;
@@ -145,6 +146,7 @@ class DisplayService extends Service
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
 
         $this->_displays = $this->all()->where('id', '!=', $display->id);
+        $display->layout->displays = null;
 
         return true;
     }

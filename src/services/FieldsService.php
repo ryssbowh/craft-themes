@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\RegisterFieldsEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
@@ -177,7 +178,8 @@ class FieldsService extends Service
     public function handleDeleted(ConfigEvent $event)
     {
         $data = $event->oldValue;
-
+        $uid = $event->tokenMatches[0];
+        $data['uid'] = $uid;
         $this->getFieldClassByType($data['type'])::delete($data);
     }
 

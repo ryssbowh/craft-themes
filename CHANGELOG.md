@@ -6,10 +6,12 @@
 ### Added
 - Pro version
 - Layouts
+- View modes
 - Regions
 - Blocks
 - Field displayers
-- Files displayers
+- File displayers
+- View port rule
 
 ### Deprecated
 - Twig variable `themesRegistry`

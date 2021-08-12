@@ -9,7 +9,8 @@ A theme is just another Craft plugin, it can inherit another theme and has the s
 This Theme engine allows you to :
 - Install themes from the store or any git repository (composer, github etc)
 - Define your own themes that can extend each other
-- Choose which theme will be used for which site, language, viewport or url path. 
+- Choose which theme will be used for which site, language, viewport or url path.
+The Pro version will allow you to :
 - Assign blocks to your theme regions
 - Define your own blocks
 - Choose how your fields and assets are displayed on the front end
@@ -136,3 +137,4 @@ Craft 3.5 or over
 - install blocks in theme
 - bundleAssets as regular expressions paths  
 - preprocess functions
+- translations

@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
+use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
@@ -65,6 +66,7 @@ class ViewModeService extends Service
      * 
      * @param  ViewMode $viewMode
      * @param  bool $validate
+     * @throws ViewModeException
      * @return bool
      */
     public function save(ViewMode $viewMode, bool $validate = true): bool
@@ -73,9 +75,20 @@ class ViewModeService extends Service
             return false;
         }
 
+        if ($viewMode->layout->type == LayoutService::DEFAULT_HANDLE) {
+            throw ViewModeException::defaultLayoutNoViewModes($viewMode->layout);
+        }
+
+        $exists = $this->all()
+            ->where('layout_id', $viewMode->layout->id)
+            ->firstWhere('handle', $viewMode->handle);
+        if ($exists and $exists->id != $viewMode->id) {
+            throw ViewModeException::duplicatedHandle($exists->id, $viewMode->handle);
+        }
+
         $isNew = !is_int($viewMode->id);
         $uid = $viewMode->uid;
-
+        
         $this->triggerEvent(self::EVENT_BEFORE_SAVE, new ViewModeEvent([
             'viewMode' => $viewMode,
             'isNew' => $isNew
@@ -91,6 +104,7 @@ class ViewModeService extends Service
         
         if ($isNew) {
             $this->add($viewMode);
+            $viewMode->layout->viewModes = null;
         }
 
         return true;
@@ -116,6 +130,7 @@ class ViewModeService extends Service
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $viewMode->uid);
 
         $this->_viewModes = $this->all()->where('id', '!=', $viewMode->id);
+        $viewMode->layout->viewModes = null;
 
         return true;
     }
@@ -201,7 +216,7 @@ class ViewModeService extends Service
             ->where('layout_id', $layout->id)
             ->all();
         foreach ($toDelete as $viewMode) {
-            $this->delete($viewMode);
+            $this->delete($viewMode, true);
         }
     }
 

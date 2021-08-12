@@ -112,7 +112,7 @@ class Display extends Model implements DisplayInterface
      */
     public function getLayout(): LayoutInterface
     {
-        return $this->viewMode->layout();
+        return $this->viewMode->layout;
     }
 
     /**

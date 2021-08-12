@@ -21,13 +21,8 @@ class BlockException extends \Exception
         return new static("Block ".$class." must have a '\$name' parameter");
     }
 
-    public function noHandleInData(string $method)
+    public static function parameterMissing(string $parameter, string $method)
     {
-        return new static("Block could not be instanciated, 'handle' argument is missing in $method");  
-    }
-
-    public function noProviderInData(string $method)
-    {
-        return new static("Block could not be instanciated, 'provider' argument is missing in $method");    
+        return new static("Block could not be instanciated, '$parameter' parameter is missing in $method");
     }
 }

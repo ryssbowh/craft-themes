@@ -3,12 +3,18 @@
 namespace Ryssbowh\CraftThemes\exceptions;
 
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 
 class LayoutException extends \Exception
 {
-    public static function noTheme(string $class)
+    public static function noTheme(LayoutInterface $layout)
     {
-        return new static("Can't get layout's theme, it's not defined.");
+        return new static("Theme is not defined on layout $layout->id");
+    }
+
+    public static function parameterMissing(string $parameter, string $method)
+    {
+        return new static("Layout could not be instanciated, '$parameter' parameter is missing in $method");
     }
 
     public static function onSave()
@@ -46,16 +52,11 @@ class LayoutException extends \Exception
         return new static("$method can't be called unless the layout (".get_class($layout).") is loaded");
     }
 
-    public static function noRegion(string $region)
+    public static function alreadyExists(ThemeInterface $theme, string $type, string $uid)
     {
-        return new static("Region $handle doesn't exist in this layout");
-    }
-
-    public static function alreadyExists(string $theme, string $type, string $uid)
-    {
-        $message = "Layout for theme $theme and type $type already exists";
+        $message = "Layout for theme $theme->handle and type $type already exists";
         if ($uid) {
-            $message = "Layout for theme $theme, type $type and element uid $uid already exists";
+            $message = "Layout for theme $theme->handle, type $type and element uid $uid already exists";
         }
         return new static($message);
     }

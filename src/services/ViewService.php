@@ -329,7 +329,6 @@ class ViewService extends Service
             'attributes' => new AttributeBag,
             'layout' => $layout,
             'viewMode' => $viewMode,
-            'mode' => $layout->getRenderingMode(),
             'element' => $element
         ];
         $event = new RenderEvent([

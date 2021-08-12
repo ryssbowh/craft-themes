@@ -32,7 +32,7 @@ class Install extends Migration
 
         $this->createTable('{{%themes_layouts}}', [
             'id' => $this->primaryKey(),
-            'theme' => $this->string(255)->notNull(),
+            'themeHandle' => $this->string(255)->notNull(),
             'type' => $this->string(255)->notNull(),
             'elementUid' => $this->string(255)->notNull(),
             'hasBlocks' => $this->boolean()->defaultValue(false),
@@ -144,7 +144,7 @@ class Install extends Migration
         $this->dropForeignKey('themes_view_mode_layout', '{{%themes_view_modes}}');
         $this->dropForeignKey('themes_blocks_layout', '{{%themes_blocks}}');
         $this->dropForeignKey('themes_fields_display', '{{%themes_fields}}');
-        $this->dropForeignKey('themes_groups_display', '{{%themes_fields}}');
+        $this->dropForeignKey('themes_groups_display', '{{%themes_groups}}');
         $this->dropForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}');
         $this->dropForeignKey('themes_pivot_matrix_parent', '{{%themes_pivot_matrix}}');
         $this->dropForeignKey('themes_pivot_table_field', '{{%themes_pivot_table}}');

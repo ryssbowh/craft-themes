@@ -11,6 +11,7 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
@@ -68,18 +69,15 @@ class BlockService extends Service
             $config = $config->getAttributes();
         }
         if (!isset($config['provider'])) {
-            throw BlockException::noProviderInData(__METHOD__);
+            throw BlockException::parameterMissing('provider', __METHOD__);
         }
         if (!isset($config['handle'])) {
-            throw BlockException::noHandleInData(__METHOD__);
-        } else {
-            $handle = $config['handle'];
-            unset($config['handle']);
+            throw BlockException::parameterMissing('handle', __METHOD__);
         }
+        $handle = $config['handle'];
+        unset($config['handle']);
         $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $block = $this->blockProviderService()->getByHandle($config['provider'])->createBlock($handle); 
-        $attributes = $block->safeAttributes();
-        $config = array_intersect_key($config, array_flip($attributes));
         $block->setAttributes($config);
         return $block;
     }
@@ -118,6 +116,7 @@ class BlockService extends Service
         
         if ($isNew) {
             $this->add($block);
+            $block->layout->getRegion($block->region)->blocks = null;
         }
 
         return true;
@@ -138,6 +137,7 @@ class BlockService extends Service
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $block->uid);
 
         $this->_blocks = $this->all()->where('id', '!=', $block->id);
+        $block->layout->getRegion($block->region)->blocks = null;
 
         return true;
     }
@@ -242,18 +242,16 @@ class BlockService extends Service
     }
 
     /**
-     * Get blocks for a layout
+     * Get blocks for a region
      * 
-     * @param  LayoutInterface $layout
+     * @param  Region $region
      * @return array
      */
-    public function getForLayout(LayoutInterface $layout): array
+    public function getForRegion(Region $region): array
     {
-        if (!$layout->id) {
-            return [];
-        }
         return $this->all()
-            ->where('layout_id', $layout->id)
+            ->where('layout_id', $region->layout->id)
+            ->where('region', $region->handle)
             ->values()
             ->all();
     }

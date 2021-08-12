@@ -55,6 +55,25 @@ class BlockProvidersService extends Component
     }
 
     /**
+     * Is a provider's handle defined
+     * 
+     * @param  string  $handle
+     * @return boolean
+     */
+    public function has(string $handle): bool
+    {
+        return isset($this->all()[$handle]);
+    }
+
+    /**
+     * Reset internal cache, used for tests only
+     */
+    public function reset()
+    {
+        $this->_providers = null;
+    }
+
+    /**
      * Registers block providers
      */
     protected function register()

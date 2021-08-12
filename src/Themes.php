@@ -159,16 +159,21 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerPluginsEvents()
     {
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN,
             function (PluginEvent $event) {
+                if ($event->plugin->handle == 'themes') {
+                    Themes::$app->registry->disableAll();
+                }
                 if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->registry->resetThemes();
-                    Themes::$plugin->rules->flushCache();
+                    $deps = Themes::$plugin->registry->getDependencies($event->plugin);
+                    foreach ($deps as $theme) {
+                        \Craft::$app->plugins->disablePlugin($theme->handle);
+                    }
                 }
             }
         );
 
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
                     Themes::$plugin->registry->resetThemes();
@@ -188,9 +193,22 @@ class Themes extends \craft\base\Plugin
             }
         );
 
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->registry->resetThemes();
+                    Themes::$plugin->rules->flushCache();
+                }
+            }
+        );
+
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    $deps = Themes::$plugin->registry->getDependencies($event->plugin);
+                    foreach ($deps as $theme) {
+                        \Craft::$app->plugins->uninstallPlugin($theme->handle);
+                    }
                     Themes::$plugin->registry->uninstallTheme($event->plugin);
                 }
             }
@@ -199,6 +217,10 @@ class Themes extends \craft\base\Plugin
         Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
+                    $extends = $event->plugin->extends;
+                    if ($extends) {
+                        \Craft::$app->plugins->installPlugin($extends);
+                    }
                     Themes::$plugin->registry->installTheme($event->plugin);
                 }
             }
@@ -326,61 +348,50 @@ class Themes extends \craft\base\Plugin
     protected function registerCraftEvents()
     {
         Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_SECTION, function (SectionEvent $e) {
-            $type = LayoutService::ENTRY_HANDLE;
             foreach ($e->section->entryTypes as $entryType) {
                 $uid = $entryType->uid;
-                Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
+                Themes::$plugin->layouts->onCraftElementSaved(LayoutService::ENTRY_HANDLE, $uid);
             }
         });
         Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_ENTRY_TYPE, function (EntryTypeEvent $e) {
-            $type = LayoutService::ENTRY_HANDLE;
             $uid = $e->entryType->uid;
-            Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
+            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::ENTRY_HANDLE, $uid, $e->entryType);
         });
         Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_ENTRY_TYPE, function (EntryTypeEvent $e) {
-            $type = LayoutService::ENTRY_HANDLE;
             $uid = $e->entryType->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted($type, $uid);
+            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::ENTRY_HANDLE, $uid);
         });
         Event::on(Categories::class, Categories::EVENT_AFTER_SAVE_GROUP, function (CategoryGroupEvent $e) {
-            $type = LayoutService::CATEGORY_HANDLE;
             $uid = $e->categoryGroup->uid;
-            Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
+            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::CATEGORY_HANDLE, $uid);
         });
         Event::on(Categories::class, Categories::EVENT_AFTER_DELETE_GROUP, function (CategoryGroupEvent $e) {
-            $type = LayoutService::CATEGORY_HANDLE;
             $uid = $e->categoryGroup->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted($type, $uid);
+            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::CATEGORY_HANDLE, $uid);
         });
         Event::on(Volumes::class, Volumes::EVENT_AFTER_SAVE_VOLUME, function (VolumeEvent $e) {
-            $type = LayoutService::VOLUME_HANDLE;
             $uid = $e->volume->uid;
-            Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
+            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::VOLUME_HANDLE, $uid);
         });
         Event::on(Volumes::class, Volumes::EVENT_AFTER_DELETE_VOLUME, function (VolumeEvent $e) {
-            $type = LayoutService::VOLUME_HANDLE;
             $uid = $e->volume->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted($type, $uid);
+            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::VOLUME_HANDLE, $uid);
         });
         Event::on(Globals::class, Globals::EVENT_AFTER_SAVE_GLOBAL_SET, function (GlobalSetEvent $e) {
-            $type = LayoutService::GLOBAL_HANDLE;
             $uid = $e->globalSet->uid;
-            Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
+            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::GLOBAL_HANDLE, $uid);
         });
         Craft::$app->projectConfig->onRemove(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function(ConfigEvent $e) {
-            $type = LayoutService::GLOBAL_HANDLE;
             $uid = $e->tokenMatches[0];
-            Themes::$plugin->layouts->onCraftElementDeleted($type, $uid);
+            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::GLOBAL_HANDLE, $uid);
         });
         Event::on(Tags::class, Tags::EVENT_AFTER_SAVE_GROUP, function (TagGroupEvent $e) {
-            $type = LayoutService::TAG_HANDLE;
             $uid = $e->tagGroup->uid;
-            Themes::$plugin->layouts->onCraftElementSaved($type, $uid);
+            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::TAG_HANDLE, $uid);
         });
         Event::on(Tags::class, Tags::EVENT_AFTER_DELETE_GROUP, function (TagGroupEvent $e) {
-            $type = LayoutService::TAG_HANDLE;
             $uid = $e->tagGroup->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted($type, $uid);
+            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::TAG_HANDLE, $uid);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
             Themes::$plugin->layouts->onCraftFieldSaved($e);

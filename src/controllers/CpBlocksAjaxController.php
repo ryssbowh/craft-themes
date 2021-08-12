@@ -69,7 +69,7 @@ class CpBlocksAjaxController extends Controller
     {
         $layout = $this->layouts->getById($layout);
         return [
-            'blocks' => $this->blocks->getForLayout($layout)
+            'blocks' => $layout->blocks
         ];
     }
 
@@ -82,7 +82,6 @@ class CpBlocksAjaxController extends Controller
     {
         $_this = $this;
         $blocksData = $this->request->getRequiredParam('blocks');
-        $themeName = $this->request->getRequiredParam('theme');
         $layoutId = $this->request->getRequiredParam('layout');
 
         $layout = $this->layouts->getById($layoutId);
@@ -94,12 +93,12 @@ class CpBlocksAjaxController extends Controller
             $this->response->setStatusCode(400);
             $message = \Craft::t('themes', 'Error while saving blocks');
         } else {
-            $message = \Craft::t('themes', 'Blocks saved successfully.');
             if (!$layout->hasBlocks) {
                $layout->hasBlocks = 1;
             }
             $layout->blocks = $blocks;
             $this->layouts->save($layout, false);
+            $message = \Craft::t('themes', 'Blocks saved successfully.');
         }
 
         return [

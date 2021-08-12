@@ -88,6 +88,8 @@ Your block provider class must extends the `BlockProvider` class. Blocks defined
 
 An exception will be thrown if you register a provider which handle is already registered.
 
+### Modifying a provider's blocks
+
 You can modify blocks provided by a provider by responding to an event :
 
 ```
@@ -131,13 +133,39 @@ class MyBlock extends Block
 ```
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your block options class.
 
+### Creating/Deleting blocks programmatically
+
+Example :
+
+```
+$defaultLayout = Themes::$plugin->layouts->getDefault('theme-handle');
+$block = Themes::$plugin->blocks->createBlock([
+    'provider' => 'system',
+    'handle' => 'content'
+]);
+$defaultLayout->addBlock($block, 'region-handle');
+Themes::$plugin->layouts->save($defaultLayout);
+
+//This works too :
+
+$defaultLayout = Themes::$plugin->layouts->getDefault('theme-handle');
+$block = Themes::$plugin->blocks->createBlock([
+    'provider' => 'system',
+    'handle' => 'content',
+    'region' => 'region-handle',
+    'layout' => $defaultLayout
+]);
+Themes::$plugin->blocks->save($block);
+
+```
+
 ## Fields
 
 There are 10 types of fields defined by this plugin.
 
 5 "new" fields, which can have their own displayers :
 
-- Author : handles the author of a entry/category
+- Author : handles the author of an entry
 - File : handles the file of an asset
 - TagTitle : handles the title for a tag
 - Title : handles the title of an entry/category

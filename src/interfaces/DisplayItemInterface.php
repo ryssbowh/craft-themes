@@ -3,8 +3,9 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\models\ViewMode;
+use craft\base\Element;
 
-interface DisplayItemInterface extends RenderableInterface
+interface DisplayItemInterface
 {
     /**
      * Type getter
@@ -61,4 +62,11 @@ interface DisplayItemInterface extends RenderableInterface
      * @return array
      */
     public function eagerLoad(): array;
+
+    /**
+     * Render for an element
+     * 
+     * @return string
+     */
+    public function render(Element $element): string;
 }
