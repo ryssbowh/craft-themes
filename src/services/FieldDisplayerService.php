@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\events\FieldDisplayerEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\Field;
+use Ryssbowh\CraftThemes\models\fields\CraftField;
 
 class FieldDisplayerService extends Service
 {
@@ -69,32 +70,59 @@ class FieldDisplayerService extends Service
     }
 
     /**
+     * Does a displayer handle exists
+     * 
+     * @param  string  $handle
+     * @return boolean
+     */
+    public function hasDisplayer(string $handle)
+    {
+        return isset($this->all()[$handle]);
+    }
+
+    /**
      * Get a displayer by handle
      * 
      * @param  string $handle
-     * @param  Field  $field
+     * @throws FieldDisplayerException
      * @return ?FieldDisplayerInterface
      */
-    public function getByHandle(string $handle, Field $field): ?FieldDisplayerInterface
+    public function getByHandle(string $handle): FieldDisplayerInterface
     {
-        if (!isset($this->all()[$handle])) {
-            return null;
-        }
+        $this->ensureDisplayerIsDefined($handle);
         $class = $this->all()[$handle];
-        $class = new $class(['field' => $field]);
-        return $class;
+        return new $class;
+    }
+
+    /**
+     * Ensure a displayer handle is valid for a field class
+     * 
+     * @param  string $displayerHandle
+     * @param  Field  $field
+     * @throws FieldDisplayerException
+     */
+    public function ensureDisplayerIsValidForField(string $displayerHandle, Field $field)
+    {
+        $this->ensureDisplayerIsDefined($displayerHandle);
+        $fieldClass = get_class($field);
+        if ($field instanceof CraftField) {
+            //The field target for a craft field is the craft field itself
+            $fieldClass = get_class($field->craftField);
+        }
+        if (!in_array($displayerHandle, $this->getMapping()[$fieldClass] ?? [])) {
+            throw FieldDisplayerException::notValid($displayerHandle, $fieldClass);
+        }
     }
 
     /**
      * Get displayers for a field
      * 
      * @param  string $classFor
-     * @param  Field  $field
      * @return array
      */
-    public function getForField(string $classFor, Field $field): array
+    public function getForField(string $classFor): array
     {
-        return $this->getByHandles($this->getMapping()[$classFor] ?? [], $field);
+        return $this->getByHandles($this->getMapping()[$classFor] ?? []);
     }
 
     /**
@@ -112,20 +140,32 @@ class FieldDisplayerService extends Service
      * Get many displayers, by handle
      * 
      * @param  array  $handles
-     * @param  Field  $field
      * @return array
      */
-    protected function getByHandles(array $handles, Field $field): array
+    protected function getByHandles(array $handles): array
     {
         $_this = $this;
         $displayers = [];
         foreach ($handles as $handle) {
-            $displayer = $this->getByHandle($handle, $field);
+            $displayer = $this->getByHandle($handle);
             if ($displayer) {
                 $displayers[] = $displayer;
             }
         }
         return $displayers;
+    }
+
+    /**
+     * Ensures a displayer handle is defined
+     * 
+     * @param  string $handle
+     * @throws FieldDisplayerException
+     */
+    protected function ensureDisplayerIsDefined(string $handle)
+    {
+        if (!$this->hasDisplayer($handle)) {
+            throw FieldDisplayerException::notDefined($handle);
+        }
     }
 
     /**

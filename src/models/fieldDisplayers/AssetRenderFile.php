@@ -17,11 +17,6 @@ class AssetRenderFile extends FieldDisplayer
     public static $handle = 'asset_render_file';
 
     /**
-     * @inheritDoc
-     */
-    public $hasOptions = true;
-
-    /**
      * @var array
      */
     protected $_displayerMapping;

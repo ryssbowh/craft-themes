@@ -82,8 +82,13 @@ class Group extends DisplayItem
      * 
      * @param array $displays
      */
-    public function setDisplays(array $displays)
+    public function setDisplays(?array $displays)
     {
+        if (is_array($displays)) {
+            foreach ($displays as $display) {
+                $display->group = $this;
+            }
+        }
         $this->_displays = $displays;
     }
 
@@ -104,6 +109,14 @@ class Group extends DisplayItem
             'name' => $this->name,
             'handle' => $this->handle
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['displays']);
     }
 
     /**

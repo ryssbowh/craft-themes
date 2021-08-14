@@ -61,7 +61,6 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
         if ($this->_options === null) {
             $model = $this->getOptionsModel();
             $model->displayer = $this;
-            // $model->setAttributes($this->displayer->field->options, false);
             $this->_options = $model;
         }
         return $this->_options;

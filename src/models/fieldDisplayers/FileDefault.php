@@ -20,11 +20,6 @@ class FileDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public $hasOptions = true;
-
-    /**
-     * @inheritDoc
-     */
     public static $isDefault = true;
 
     /**

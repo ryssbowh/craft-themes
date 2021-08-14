@@ -115,6 +115,7 @@ class BlockService extends Service
         $block->afterSave();
         
         if ($isNew) {
+            //Sorting internal caches
             $this->add($block);
             $block->layout->getRegion($block->region)->blocks = null;
         }
@@ -213,14 +214,15 @@ class BlockService extends Service
 
     /**
      * Clean up for layout, deletes old blocks
-     * 
+     *
+     * @param array $blocks
      * @param LayoutInterface $layout
      */
-    public function cleanUpLayout(LayoutInterface $layout)
+    public function cleanUp(array $blocks, LayoutInterface $layout)
     {
         $toKeep = array_map(function ($block) {
             return $block->id;
-        }, $layout->blocks);
+        }, $blocks);
         $toDelete = $this->all()
             ->whereNotIn('id', $toKeep)
             ->where('layout_id', $layout->id)

@@ -3,8 +3,8 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
-use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Asset;
 
@@ -52,7 +52,7 @@ class AssetRenderedOptions extends FieldDisplayerOptions
         }
     }
 
-    public function getViewMode(Asset $asset): ?ViewMode
+    public function getViewMode(Asset $asset): ?ViewModeInterface
     {
         $volume = $asset->volume;
         $viewModeUid = $this->viewModes[$volume->uid] ?? null;

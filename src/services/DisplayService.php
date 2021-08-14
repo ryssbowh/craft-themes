@@ -7,13 +7,12 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\DisplayEvent;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Display;
-use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
-use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\fields\Matrix as CraftMatrix;
@@ -62,7 +61,7 @@ class DisplayService extends Service
      */
     public function create($config): DisplayInterface
     {
-        if ($config instanceof ActiveRecord) {
+        if ($config instanceof DisplayRecord) {
             $config = $config->getAttributes();
         }
         $config['uid'] = $config['uid'] ?? StringHelper::UUID();
@@ -111,8 +110,9 @@ class DisplayService extends Service
         $display->setAttributes($record->getAttributes());
         
         if ($isNew) {
+            //Sorting internal caches
             $this->add($display);
-            $display->layout->displays = null;
+            $display->viewMode->displays = null;
         }
 
         $display->item->display = $display;
@@ -146,7 +146,7 @@ class DisplayService extends Service
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
 
         $this->_displays = $this->all()->where('id', '!=', $display->id);
-        $display->layout->displays = null;
+        $display->viewMode->displays = null;
 
         return true;
     }
@@ -207,25 +207,6 @@ class DisplayService extends Service
     }
 
     /**
-     * Clean up for layout, deletes old displays
-     * 
-     * @param LayoutInterface $layout
-     */
-    public function cleanUpLayout(LayoutInterface $layout)
-    {
-        $toKeep = array_map(function ($display) {
-            return $display->id;
-        }, $layout->displays);
-        $toDelete = $this->all()
-            ->whereNotIn('id', $toKeep)
-            ->where('layout_id', $layout->id)
-            ->all();
-        foreach ($toDelete as $display) {
-            $this->delete($display);
-        }
-    }
-
-    /**
      * Respond to rebuild config event
      * 
      * @param RebuildConfigEvent $e
@@ -235,6 +216,28 @@ class DisplayService extends Service
         foreach ($this->all() as $display) {
             $e->config[self::CONFIG_KEY.'.'.$display->uid] = $display->getConfig();
         }
+    }
+
+    /**
+     * Populate a display from post
+     * 
+     * @param  array $data
+     * @return DisplayInterface
+     */
+    public function populateFromPost(array $data): DisplayInterface
+    {
+        $display = $this->getById($data['id']);
+        $itemData = $data['item'];
+        $type = $data['type'];
+        unset($data['item']);
+        unset($data['type']);
+        $display->setAttributes($data);
+        if ($type == self::TYPE_FIELD) {
+            Themes::$plugin->fields->populateFromPost($itemData);
+        } else {
+            Themes::$plugin->groups->populateFromPost($itemData);
+        }
+        return $display;
     }
 
     /**
@@ -277,11 +280,11 @@ class DisplayService extends Service
     /**
      * Get all displays for a view mode and a field type
      * 
-     * @param  ViewMode $viewMode
-     * @param  string   $type
+     * @param  ViewModeInterface $viewMode
+     * @param  string            $type
      * @return ?DisplayInterface
      */
-    public function getForFieldType(ViewMode $viewMode, string $type): ?DisplayInterface
+    public function getForFieldType(ViewModeInterface $viewMode, string $type): ?DisplayInterface
     {
         return $this->all()
             ->where('type', self::TYPE_FIELD)
@@ -326,57 +329,46 @@ class DisplayService extends Service
     /**
      * Get all displays for a view mode
      * 
-     * @param  ViewMode $viewMode
+     * @param  ViewModeInterface $viewMode
      * @return array
      */
-    public function getForViewMode(ViewMode $viewMode): array
+    public function getForViewMode(ViewModeInterface $viewMode): array
     {
         return $this->all()
             ->where('viewMode_id', $viewMode->id)
+            ->where('group_id', null)
             ->values()
             ->all();
     }
 
     /**
-     * Create all displays for a layout.
-     * Go through all craft fields defined on the layout and create display and fields for it.
+     * Create all displays for a view mode
      * 
-     * @param LayoutInterface $layout
+     * @param  ViewModeInterface $viewMode
+     * @return array
      */
-    public function createLayoutDisplays(LayoutInterface $layout): array
+    public function createViewModeDisplays(ViewModeInterface $viewMode): array
     {
-        $displays = [];
-        foreach ($layout->viewModes as $viewMode) {
-            //Keeping all the groups defined in this view mode 
-            $groups = array_values(array_filter($this->getForViewMode($viewMode), function ($display) {
-                return $display->type == self::TYPE_GROUP;
-            }));
-            $displays = array_merge($displays, $groups);
-            $order = $this->getNextOrder($viewMode);
-            //Getting or creating displays for fields that are not craft fields (author, title etc)
-            foreach (Themes::$plugin->fields->registeredFields as $fieldType => $fieldClass) {
-                if ($fieldClass::shouldExistOnLayout($layout)) {
-                    try {
-                        $display = $this->getForFieldType($viewMode, $fieldType);
-                    } catch (\Throwable $e) {
-                        $display = null;
-                    }
-                    if (!$display) {
-                        $display = $this->create([
-                            'type' => self::TYPE_FIELD,
-                            'viewMode' => $viewMode,
-                            'order' => $order,
-                        ]);
-                        $order++;
-                        $display->item = $fieldClass::create();
-                    }
-                    $displays[] = $display;
-                }
+        //Keeping all the groups defined in this view mode 
+        $displays = array_values(array_filter($this->getForViewMode($viewMode), function ($display) {
+            return $display->type == self::TYPE_GROUP;
+        }));
+        //Catching errors when item is not defined on group. Discarding it if error
+        foreach ($displays as $index => $display) {
+            try {
+                $display->getItem();
+            } catch (\Throwable $e) {
+                unset($displays[$index]);
             }
-            //Getting or creating displays for craft fields
-            foreach ($layout->getCraftFields() as $craftField) {
+        }
+        $order = $this->getNextOrder($viewMode);
+        //Getting or creating displays for fields that are not craft fields (author, title etc)
+        foreach (Themes::$plugin->fields->registeredFields as $fieldType => $fieldClass) {
+            if ($fieldClass::shouldExistOnLayout($viewMode->layout)) {
                 try {
-                    $display = $this->getForCraftField($craftField->id, $viewMode);
+                    //Catching errors when the display or its item are not defined
+                    $display = $this->getForFieldType($viewMode, $fieldType);
+                    $display->getItem();
                 } catch (\Throwable $e) {
                     $display = null;
                 }
@@ -387,12 +379,53 @@ class DisplayService extends Service
                         'order' => $order,
                     ]);
                     $order++;
-                    $display->item = Themes::$plugin->fields->createFromField($craftField);
+                    $display->item = $fieldClass::create();
                 }
                 $displays[] = $display;
             }
         }
+        //Getting or creating displays for craft fields
+        foreach ($viewMode->layout->getCraftFields() as $craftField) {
+            try {
+                //Catching errors when the display or its item are not defined
+                $display = $this->getForCraftField($craftField->id, $viewMode);
+                $display->getItem();
+            } catch (\Throwable $e) {
+                $display = null;
+            }
+            if (!$display) {
+                $display = $this->create([
+                    'type' => self::TYPE_FIELD,
+                    'viewMode' => $viewMode,
+                    'order' => $order,
+                ]);
+                $order++;
+                $display->item = Themes::$plugin->fields->createFromField($craftField);
+            }
+            $displays[] = $display;
+        }
+
         return $displays;
+    }
+
+    /**
+     * Clean up for layout, deletes old view modes
+     *
+     * @param array $displays
+     * @param ViewModeInterface $viewMode
+     */
+    public function cleanUp(array $displays, ViewModeInterface $viewMode)
+    {
+        $toKeep = array_map(function ($display) {
+            return $display->id;
+        }, $displays);
+        $toDelete = $this->all()
+            ->whereNotIn('id', $toKeep)
+            ->where('viewMode_id', $display->id)
+            ->all();
+        foreach ($toDelete as $display) {
+            $this->delete($display);
+        }
     }
 
     /**
@@ -410,11 +443,11 @@ class DisplayService extends Service
     /**
      * Get a display for a craft field and a view mode
      * 
-     * @param  int|null $fieldId
-     * @param  ViewMode $viewMode
+     * @param  int|null          $fieldId
+     * @param  ViewModeInterface $viewMode
      * @return ?DisplayInterface
      */
-    protected function getForCraftField(?int $fieldId = null, ViewMode $viewMode): ?DisplayInterface
+    protected function getForCraftField(?int $fieldId = null, ViewModeInterface $viewMode): ?DisplayInterface
     {
         return $this->all()
             ->where('type', self::TYPE_FIELD)
@@ -425,10 +458,10 @@ class DisplayService extends Service
     /**
      * Get next order in displays for a view mode
      * 
-     * @param  ViewMode $viewMode
+     * @param  ViewModeInterface $viewMode
      * @return int
      */
-    protected function getNextOrder(ViewMode $viewMode): ?int
+    protected function getNextOrder(ViewModeInterface $viewMode): ?int
     {
         $displays = $this->getForViewMode($viewMode);
         if (sizeof($displays) > 0) {

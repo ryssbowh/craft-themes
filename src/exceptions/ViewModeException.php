@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\exceptions;
 
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 
 class ViewModeException extends \Exception
 {
@@ -29,5 +30,10 @@ class ViewModeException extends \Exception
     public static function duplicatedHandle(int $existingId, string $handle)
     {
         return new static("View mode $existingId already has the handle $handle");
+    }
+
+    public static function notAGroup(ViewModeInterface $viewMode)
+    {
+        return new static("Only groups can be added to view modes");
     }
 }

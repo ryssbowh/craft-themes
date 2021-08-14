@@ -11,17 +11,11 @@ import { reduce } from 'lodash';
 export default {
     computed: {
         canSave: function () {
-            return (!this.isSaving && !this.isLoading && this.hasChanged);
+            return (!this.isSaving && !this.isFetching);
         },
-        isLoading: function () {
-            return reduce(this.isFetching, function (res, elem) {
-                return (res || elem);
-            }, false);
-        },
-        ...mapState(['isSaving', 'hasChanged', 'isFetching'])
+        ...mapState(['isSaving', 'isFetching'])
     },
     methods: {
-        ...mapMutations([]),
         ...mapActions(['save']),
     }
 };

@@ -9,8 +9,8 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="add-viewmode">
-                    <span class="icon add" @click="showModal = true"></span>
+                <a href="#" class="add-viewmode" @click.prevent="showModal = true">
+                    <span class="icon add"></span>
                 </a>
             </li>
         </ul>
@@ -23,7 +23,7 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
     computed: {
-        ...mapState(['viewModes', 'viewMode', 'hasChanged'])
+        ...mapState(['viewModes', 'viewMode'])
     },
     props: {
     },

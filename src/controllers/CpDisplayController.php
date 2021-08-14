@@ -45,7 +45,7 @@ class CpDisplayController extends Controller
             'title' => \Craft::t('themes', 'Display'),
             'themes' => $themes,
             'theme' => $themeName,
-            'allLayouts' => $this->layouts->getDisplayLayouts(),
+            'allLayouts' => $this->layouts->getWithDisplays(),
             'layout' => $layout ? $layout : 0
         ]);
     }

@@ -2,7 +2,6 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\models\ViewMode;
 use craft\base\Element;
 
 interface DisplayItemInterface
@@ -38,9 +37,9 @@ interface DisplayItemInterface
     /**
      * View mode getter
      * 
-     * @return ViewMode
+     * @return ViewModeInterface
      */
-    public function getViewMode(): ViewMode;
+    public function getViewMode(): ViewModeInterface;
 
     /**
      * Layout getter

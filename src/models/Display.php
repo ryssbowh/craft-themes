@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\DisplayItemInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Group;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
@@ -39,16 +40,6 @@ class Display extends Model implements DisplayInterface
     public $group_id;
 
     /**
-     * @var DateTime
-     */
-    public $dateCreated;
-
-    /**
-     * @var DateTime
-     */
-    public $dateUpdated;
-
-    /**
      * @var string
      */
     public $uid;
@@ -64,7 +55,7 @@ class Display extends Model implements DisplayInterface
     protected $_group;
 
     /**
-     * @var ViewMode
+     * @var ViewModeInterface
      */
     protected $_viewMode;
 
@@ -75,9 +66,9 @@ class Display extends Model implements DisplayInterface
     {
         return [
             [['order', 'type'], 'required'],
-            [['viewMode_id', 'order', 'group_id'], 'integer'],
+            [['order', 'group_id'], 'integer'],
             ['type', 'in', 'range' => DisplayService::TYPES],
-            [['dateCreated', 'dateUpdated', 'uid', 'id', 'viewMode'], 'safe'],
+            [['uid', 'id', 'viewMode', 'viewMode_id'], 'safe'],
             ['viewMode', function () {
                 if (!$this->viewMode) {
                     $this->addError('viewMode', \Craft::t('View mode is required'));
@@ -118,7 +109,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function getViewMode(): ViewMode
+    public function getViewMode(): ViewModeInterface
     {
         if (is_null($this->_viewMode)) {
             $this->_viewMode = Themes::$plugin->viewModes->getById($this->viewMode_id);
@@ -129,7 +120,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function setViewMode(ViewMode $viewMode)
+    public function setViewMode(ViewModeInterface $viewMode)
     {
         $this->_viewMode = $viewMode;
     }
@@ -162,15 +153,8 @@ class Display extends Model implements DisplayInterface
      */
     public function getGroup(): ?DisplayInterface
     {
-        if ($this->group_id === null) {
-            return null;
-        }
-        if ($this->_group === null) {
-            if (is_int($this->group_id)) {
-                $this->_group = Themes::$plugin->displays->getById($this->group_id);
-            } else {
-                $this->_group = Themes::$plugin->displays->getByUid($this->group_id);
-            }
+        if ($this->_group === null and is_int($this->group_id)) {
+            $this->_group = Themes::$plugin->displays->getById($this->group_id);
         }
         return $this->_group;
     }
@@ -178,9 +162,12 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function setGroup(DisplayInterface $group)
+    public function setGroup(?DisplayInterface $group)
     {
         $this->_group = $group;
+        if (is_null($group)) {
+            $this->group_id = null;
+        }
     }
 
     /**

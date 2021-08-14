@@ -12,7 +12,6 @@ use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use craft\base\Field as BaseField;
-use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
@@ -93,7 +92,7 @@ class FieldsService extends Service
      */
     public function create($config): Field
     {
-        if ($config instanceof ActiveRecord) {
+        if ($config instanceof FieldRecord) {
             $config = $config->getAttributes();
         }
         if (!isset($config['type'])) {
@@ -193,6 +192,21 @@ class FieldsService extends Service
         foreach ($this->all() as $field) {
             $e->config[self::CONFIG_KEY.'.'.$field->uid] = $field->getConfig();
         }
+    }
+
+    /**
+     * Populates a field from post
+     * 
+     * @param  array $data
+     * @return FieldInterface
+     */
+    public function populateFromPost(array $data): FieldInterface
+    {
+        $field = $this->getById($data['id']);
+        $attributes = $field->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        $field->setAttributes($data);
+        return $field;
     }
 
     /**

@@ -5,8 +5,8 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\CraftFieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Field;
-use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 
@@ -77,9 +77,9 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * Get view mode associated to this field
      * 
-     * @return ViewMode
+     * @return ViewModeInterface
      */
-    public function getViewMode(): ViewMode
+    public function getViewMode(): ViewModeInterface
     {
         return $this->display->viewMode;
     }

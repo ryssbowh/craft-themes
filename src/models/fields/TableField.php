@@ -3,8 +3,8 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Field;
-use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\Formidable\Models\Fields\LightSwitch;
 use craft\base\Field as BaseField;
 use craft\fields\Color;
@@ -87,9 +87,9 @@ class TableField extends Field
     /**
      * Get view mode associated to this field
      * 
-     * @return ViewMode
+     * @return ViewModeInterface
      */
-    public function getViewMode(): ViewMode
+    public function getViewMode(): ViewModeInterface
     {
         return $this->table->display->viewMode;
     }

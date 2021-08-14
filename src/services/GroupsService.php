@@ -94,6 +94,10 @@ class GroupsService extends Service
             $this->add($group);
         }
 
+        foreach ($group->displays as $display) {
+            Themes::$plugin->displays->save($display);
+        }
+
         return true;
     }
 
@@ -105,6 +109,11 @@ class GroupsService extends Service
      */
     public function delete(Group $group): bool
     {
+        foreach ($group->displays as $display) {
+            $display->group = null;
+            Themes::$plugin->displays->save($display);
+        }
+
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $group->uid);
 
         $this->_groups = $this->all()->where('id', '!=', $group->id);
@@ -165,6 +174,28 @@ class GroupsService extends Service
         foreach ($this->all() as $group) {
             $e->config[self::CONFIG_KEY.'.'.$group->uid] = $group->getConfig();
         }
+    }
+
+    /**
+     * Populates a group from post
+     * 
+     * @param  array $data
+     * @return Group
+     */
+    public function populateFromPost(array $data): Group
+    {
+        $group = $this->getById($data['id']);
+        $displays = [];
+        foreach ($data['displays'] as $displayData) {
+            $display = Themes::$plugin->displays->populateFromPost($displayData);
+            $display->group = $group;
+            $displays[] = $display;
+        }
+        $data['displays'] = $displays;
+        $attributes = $group->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        $group->setAttributes($data);
+        return $group;
     }
 
     /**

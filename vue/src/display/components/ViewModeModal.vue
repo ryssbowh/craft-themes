@@ -86,9 +86,6 @@ export default {
             if (newValue !== null) {
                 this.name = this.editedViewMode.name;
                 this.handle = this.editedViewMode.handle;
-            } else {
-                this.name = '';
-                this.handle = '';
             }
         }
     },
@@ -148,6 +145,8 @@ export default {
                     this.$emit('closeModal');
                 });
             }
+            this.name = '';
+            this.handle = '';
         },
         ...mapMutations([]),
         ...mapActions(['addViewMode', 'editViewMode']),

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Ryssbowh\CraftThemes\services;
 
@@ -22,7 +22,6 @@ use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
-use craft\db\ActiveRecord;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\events\ConfigEvent;
@@ -140,58 +139,6 @@ class LayoutService extends Service
     }
 
     /**
-     * Create a layout from config
-     * 
-     * @param  array|ActiveRecord $config
-     * @return LayoutInterface
-     * @throws LayoutException
-     */
-    public function create($config): LayoutInterface
-    {
-        if ($config instanceof ActiveRecord) {
-            $config = $config->getAttributes();
-        }
-        if (!isset($config['themeHandle'])) {
-            throw LayoutException::parameterMissing('themeHandle', __METHOD__);
-        }
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
-        if ($viewModesData = $config['viewModes'] ?? null) {
-            foreach ($viewModesData as $data) {
-                $viewMode = $this->viewModesService()->create($data);
-                $viewModes[] = $viewMode;
-            }
-            $config['viewModes'] = $viewModes;
-        }
-        switch ($config['type']) {
-            case self::DEFAULT_HANDLE:
-                $layout = new Layout($config);
-                break;
-            case self::CATEGORY_HANDLE:
-                $layout = new CategoryLayout($config);
-                break;
-            case self::ENTRY_HANDLE:
-                $layout = new EntryLayout($config);
-                break;
-            case self::USER_HANDLE:
-                $layout = new UserLayout($config);
-                break;
-            case self::VOLUME_HANDLE:
-                $layout = new VolumeLayout($config);
-                break;
-            case self::GLOBAL_HANDLE:
-                $layout = new GlobalLayout($config);
-                break;
-            case self::TAG_HANDLE:
-                $layout = new TagLayout($config);
-                break;
-            default:
-                throw LayoutException::unknownType($config['type']);
-        }
-        
-        return $layout;
-    }
-
-    /**
      * Get all layouts with blocks indexed by theme's handle
      * 
      * @return array
@@ -216,11 +163,10 @@ class LayoutService extends Service
      * 
      * @return array
      */
-    public function getDisplayLayouts(): array
+    public function getWithDisplays(): array
     {
         $layouts = [];
         foreach (Themes::$plugin->registry->all() as $theme) {
-            $elems = 
             $layouts[$theme->handle] = $this->all()->filter(function ($layout) use ($theme) {
                 return ($layout->hasDisplays() and $layout->themeHandle == $theme->handle);
             })->sort(function ($elem, $elem2) {
@@ -373,32 +319,17 @@ class LayoutService extends Service
         }
 
         //Saving view modes
-        foreach ($layout->viewModes as $viewMode) {
+        $viewModes = $layout->viewModes;
+        foreach ($viewModes as $viewMode) {
             Themes::$plugin->viewModes->save($viewMode);
         }
-        Themes::$plugin->viewModes->cleanUpLayout($layout);
+        Themes::$plugin->viewModes->cleanUp($viewModes, $layout);
         //Saving blocks
-        foreach ($layout->blocks as $block) {
+        $blocks = $layout->blocks;
+        foreach ($blocks as $block) {
             Themes::$plugin->blocks->save($block);
         }
-        Themes::$plugin->blocks->cleanUpLayout($layout);
-        //Saving displays, groups first
-        $groups = [];
-        $displays = [];
-        foreach ($layout->displays as $display) {
-            if ($display->type == DisplayService::TYPE_GROUP) {
-                $groups[] = $display;
-            } else {
-                $displays[] = $display;
-            }
-        }
-        foreach ($groups as $display) {
-            Themes::$plugin->displays->save($display);
-        }
-        foreach ($displays as $display) {
-            Themes::$plugin->displays->save($display);
-        }
-        Themes::$plugin->displays->cleanUpLayout($layout);
+        Themes::$plugin->blocks->cleanUp($blocks, $layout);
 
         return true;
     }
@@ -438,22 +369,6 @@ class LayoutService extends Service
         //Deleting blocks
         foreach ($layout->blocks as $block) {
             Themes::$plugin->blocks->delete($block);
-        }
-        //Deleting displays, groups last
-        $groups = [];
-        $displays = [];
-        foreach ($layout->displays as $display) {
-            if ($display->type == DisplayService::TYPE_GROUP) {
-                $groups[] = $display;
-            } else {
-                $displays[] = $display;
-            }
-        }
-        foreach ($displays as $display) {
-            Themes::$plugin->displays->delete($display);
-        }
-        foreach ($groups as $display) {
-            Themes::$plugin->displays->delete($display);
         }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
@@ -569,7 +484,7 @@ class LayoutService extends Service
     {
         $layoutsSaved = [];
         foreach ($this->displayService()->getAllForCraftField($event->field->id) as $display) {
-            $layout = $display->viewMode->layout;
+            $layout = $display->layout;
             if (in_array($layout->id, $layoutsSaved)) {
                 continue;
             }
@@ -673,6 +588,60 @@ class LayoutService extends Service
     }
 
     /**
+     * Create a layout from config
+     * 
+     * @param  array|ActiveRecord $config
+     * @return LayoutInterface
+     * @throws LayoutException
+     */
+    protected function create($config): LayoutInterface
+    {
+        if ($config instanceof LayoutRecord) {
+            $config = $config->getAttributes();
+        }
+        if (!isset($config['themeHandle'])) {
+            throw LayoutException::parameterMissing('themeHandle', __METHOD__);
+        }
+        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
+        if ($viewModesData = $config['viewModes'] ?? null) {
+            foreach ($viewModesData as $data) {
+                $viewMode = $this->viewModesService()->create($data);
+                $viewModes[] = $viewMode;
+            }
+            $config['viewModes'] = $viewModes;
+        }
+        switch ($config['type']) {
+            case self::DEFAULT_HANDLE:
+                $layout = new Layout;
+                break;
+            case self::CATEGORY_HANDLE:
+                $layout = new CategoryLayout;
+                break;
+            case self::ENTRY_HANDLE:
+                $layout = new EntryLayout;
+                break;
+            case self::USER_HANDLE:
+                $layout = new UserLayout;
+                break;
+            case self::VOLUME_HANDLE:
+                $layout = new VolumeLayout;
+                break;
+            case self::GLOBAL_HANDLE:
+                $layout = new GlobalLayout;
+                break;
+            case self::TAG_HANDLE:
+                $layout = new TagLayout;
+                break;
+            default:
+                throw LayoutException::unknownType($config['type']);
+        }
+
+        $config = array_intersect_key($config, array_flip($layout->safeAttributes()));
+        $layout->setAttributes($config);
+        return $layout;
+    }
+
+    /**
      * Add a layout to internal cache
      * 
      * @param LayoutInterface $layout
@@ -731,7 +700,9 @@ class LayoutService extends Service
             ]);
             $layout->viewModes = [$viewMode];
         }
-        $layout->displays = $this->displayService()->createLayoutDisplays($layout);
+        foreach ($layout->viewModes as $viewMode) {
+            $viewMode->displays = $this->displayService()->createViewModeDisplays($viewMode);
+        }
         return $this->save($layout);
     }
 

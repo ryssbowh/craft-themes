@@ -21,7 +21,7 @@
             <div class="body">
                 <draggable
                     item-key="id"
-                    :list="viewModeDisplays"
+                    :list="rootDisplays"
                     group="displays"
                     handle=".move"
                     @change="onDragChange"
@@ -47,20 +47,18 @@ import { reduce, filter, sortBy } from 'lodash';
 export default {
     computed: {
         isLoading: function () {
-            return reduce(this.isFetching, function (res, elem) {
-                return (res || elem);
-            }, this.isSaving);
+            return this.isFetching || this.isSaving;
         },
-        viewModeDisplays: function () {
+        rootDisplays: function () {
             if (!this.viewMode) {
                 return [];
             }
-            return sortBy(filter(this.displays, display => display.group_id == null && (display.viewMode_id === this.viewMode.id || display.viewMode_id === this.viewMode.handle)), 'order');
+            return sortBy(filter(this.displays, display => display.group_id == null), 'order');
         },
-        ...mapState(['displays', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal'])
+        ...mapState(['displays', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes'])
     },
     watch: {
-        displays: {
+        viewModes: {
             deep: true,
             handler() {
                 this.checkChanges();
@@ -83,7 +81,7 @@ export default {
                 newIndex = e.moved.newIndex;
                 movedElem = e.moved.element;
             }
-            let displays = this.viewModeDisplays;
+            let displays = this.rootDisplays;
             let newOrder = 0;
             for (let i in displays) {
                 let display = displays[i];

@@ -43,4 +43,49 @@ class CpViewModesAjaxController extends Controller
             'viewModes' => $layout->viewModes
         ];
     }
+
+    /**
+     * Get view modes for a layout
+     * 
+     * @return array
+     */
+    public function actionGet()
+    {
+        $layoutId = $this->request->getRequiredParam('layoutId');
+
+        return [
+            'viewModes' => $this->layouts->getById($layoutId)->viewModes
+        ];
+    }
+
+    /**
+     * Saves view modes
+     * 
+     * @return array
+     */
+    public function actionSave()
+    {
+        $layoutId = $this->request->getRequiredParam('layoutId');
+        $viewModesData = $this->request->getRequiredParam('viewModes');
+
+        $layout = $this->layouts->getById($layoutId);
+
+        $viewModes = [];
+        foreach ($viewModesData as $data) {
+            if ($data['id'] ?? null) {
+                $viewMode = $this->viewModes->populateFromPost($data);
+            } else {
+                $viewMode = $this->viewModes->create($data);
+            }
+            $this->viewModes->save($viewMode);
+            $viewModes[] = $viewMode;
+        }
+
+        $this->viewModes->cleanUp($viewModes, $layout);
+
+        return [
+            'viewModes' => $layout->viewModes,
+            'message' => \Craft::t('themes', 'Displays have been saved successfully')
+        ];
+    }
 }

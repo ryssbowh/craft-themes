@@ -35,14 +35,14 @@
             </div>
             <div class="options col">
                 <a href="#" @click.prevent="editGroup">{{ t('Edit') }}</a>
-                <a href="#" @click.prevent="deleteGroup" v-if="!groupDisplays.length" class="delete">{{ t('Delete') }}</a>
+                <a href="#" @click.prevent="deleteGroup" v-if="!item.displays.length" class="delete">{{ t('Delete') }}</a>
             </div>
         </div>
         <div class="displays">
-            <i v-if="!groupDisplays.length">{{ t('No displays in that group') }}</i>
+            <i v-if="!item.displays.length">{{ t('No displays in that group') }}</i>
             <draggable
                 item-key="id"
-                :list="groupDisplays"
+                :list="item.displays"
                 :group="{name: 'displays', put: canPut}"
                 handle=".move"
                 @change="onDragChange"
@@ -72,9 +72,6 @@ export default {
         },
         labelVisible: function () {
             return (!this.item.labelVisuallyHidden && !this.item.labelHidden);
-        },
-        groupDisplays: function () {
-            return filter(this.displays, (d) => d.type === 'field' && (d.group_id === this.display.id || d.group_id === this.display.uid));
         },
         ...mapState(['displays'])
     },
@@ -125,10 +122,10 @@ export default {
         },
         onDragChange: function (e) {
             if (e.added) {
-                this.updateDisplay({id: e.added.element.id, data: {group_id: this.display.id ?? this.display.uid}});
+                this.addDisplayToGroup({display: e.added.element, groupUid: this.display.uid});
             }
         },
-        ...mapMutations(['setShowGroupModal', 'updateDisplay']),
+        ...mapMutations(['setShowGroupModal', 'addDisplayToGroup']),
         ...mapActions([]),
     },
     emits: ['updateItem', 'delete'],

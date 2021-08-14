@@ -328,7 +328,7 @@ class ViewService extends Service
             'classes' => new ClassBag(['layout', 'layout-type-' . $layout->type, 'view-mode-'.$viewMode, 'layout-handle-' . $machineName]),
             'attributes' => new AttributeBag,
             'layout' => $layout,
-            'viewMode' => $viewMode,
+            'viewMode' => $layout->getViewMode($viewMode),
             'element' => $element
         ];
         $event = new RenderEvent([

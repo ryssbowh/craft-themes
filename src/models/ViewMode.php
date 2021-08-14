@@ -3,10 +3,14 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
+use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Model;
 
-class ViewMode extends Model
+class ViewMode extends Model implements ViewModeInterface
 {
     /**
      * @var int
@@ -29,16 +33,6 @@ class ViewMode extends Model
     public $handle;
 
     /**
-     * @var DateTime
-     */
-    public $dateCreated;
-
-    /**
-     * @var DateTime
-     */
-    public $dateUpdated;
-
-    /**
      * @var string
      */
     public $uid;
@@ -49,6 +43,11 @@ class ViewMode extends Model
     protected $_layout;
 
     /**
+     * @var array
+     */
+    protected $_displays;
+
+    /**
      * @inheritdoc
      */
     public function defineRules(): array
@@ -57,7 +56,7 @@ class ViewMode extends Model
             [['name', 'handle'], 'required'],
             [['name', 'handle'], 'string'],
             ['layout_id', 'integer'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe'],
+            [['uid', 'id', 'displays'], 'safe'],
             ['layout', function () {
                 if (!$this->layout) {
                     $this->addError('layout', \Craft::t('themes', 'Layout is required'));
@@ -67,9 +66,7 @@ class ViewMode extends Model
     }
 
     /**
-     * Get project config 
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getConfig(): array
     {
@@ -81,9 +78,55 @@ class ViewMode extends Model
     }
 
     /**
-     * Get layout object
-     * 
-     * @return LayoutInterface
+     * @inheritDoc
+     */
+    public function addDisplay(DisplayInterface $display)
+    {
+        if ($display->type != DisplayService::TYPE_GROUP) {
+            throw ViewModeException::notAGroup($this);
+        }
+        $display->viewMode = $this;
+        $displays = $this->displays;
+        $displays[] = $display;
+        $this->displays = $displays;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDisplays(): array
+    {
+        if (is_null($this->_displays)) {
+            $this->_displays = Themes::$plugin->displays->getForViewMode($this);
+        }
+        return $this->_displays;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDisplays(?array $displays)
+    {
+        if (is_array($displays)) {
+            foreach ($displays as $display) {
+                $display->viewMode = $this;
+            }
+        }
+        $this->_displays = $displays;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getVisibleDisplays(): array
+    {
+        return array_filter($this->displays, function ($display) {
+            return $display->group_id === null and $display->item->isVisible();
+        });
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getLayout(): LayoutInterface
     {
@@ -94,12 +137,18 @@ class ViewMode extends Model
     }
 
     /**
-     * Layout setter
-     * 
-     * @param LayoutInterface $layout
+     * @inheritDoc
      */
     public function setLayout(LayoutInterface $layout)
     {
         $this->_layout = $layout;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['displays']);
     }
 }

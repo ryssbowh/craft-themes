@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Ryssbowh\CraftThemes\services;
 
@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ViewModeEvent;
 use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
@@ -49,27 +50,42 @@ class ViewModeService extends Service
     /**
      * Creates a view mode from config
      * 
-     * @param  array|ActiveRecord $config
-     * @return ViewMode
+     * @param  array|ViewModeRecord $config
+     * @return ViewModeInterface
      */
-    public function create($config): ViewMode
+    public function create($config): ViewModeInterface
     {
-        if ($config instanceof ActiveRecord) {
+        if ($config instanceof ViewModeRecord) {
             $config = $config->getAttributes();
         }
         $config['uid'] = $config['uid'] ?? StringHelper::UUID();
-        return new ViewMode($config);
+        $displayData = null;
+        if (isset($config['displays'])) {
+            $displayData = $config['displays'];
+            unset($config['displays']);
+        }
+        $viewMode = new ViewMode;
+        $config = array_intersect_key($config, array_flip($viewMode->safeAttributes()));
+        $viewMode->setAttributes($config);
+        if ($displayData) {
+            $displays = [];
+            foreach ($displayData as $data) {
+                $displays[] = $this->displayService()->create($data);
+            }
+            $viewMode->displays = $displays;
+        }
+        return $viewMode;
     }
 
     /**
      * Save a view mode
      * 
-     * @param  ViewMode $viewMode
-     * @param  bool $validate
+     * @param  ViewModeInterface $viewMode
+     * @param  bool              $validate
      * @throws ViewModeException
      * @return bool
      */
-    public function save(ViewMode $viewMode, bool $validate = true): bool
+    public function save(ViewModeInterface $viewMode, bool $validate = true): bool
     {
         if ($validate and !$viewMode->validate()) {
             return false;
@@ -103,9 +119,29 @@ class ViewModeService extends Service
         $viewMode->setAttributes($record->getAttributes());
         
         if ($isNew) {
+            //Sorting internal caches
             $this->add($viewMode);
             $viewMode->layout->viewModes = null;
         }
+
+        //Saving displays, groups first
+        $groups = [];
+        $displays = [];
+        $allDisplays = $viewMode->displays;
+        foreach ($allDisplays as $display) {
+            if ($display->type == DisplayService::TYPE_GROUP) {
+                $groups[] = $display;
+            } else {
+                $displays[] = $display;
+            }
+        }
+        foreach ($groups as $display) {
+            Themes::$plugin->displays->save($display);
+        }
+        foreach ($displays as $display) {
+            Themes::$plugin->displays->save($display);
+        }
+        Themes::$plugin->displays->cleanup($allDisplays, $viewMode);
 
         return true;
     }
@@ -113,19 +149,37 @@ class ViewModeService extends Service
     /**
      * Deletes a view mode
      * 
-     * @param  ViewMode $layout
-     * @param  bool     $force
+     * @param  ViewModeInterface $viewMode
+     * @param  bool              $force
      * @return bool
      * @throws ViewModeException
      */
-    public function delete(ViewMode $viewMode, bool $force = false): bool
+    public function delete(ViewModeInterface $viewMode, bool $force = false): bool
     {
         if (!$force and ($viewMode->handle == self::DEFAULT_HANDLE)) {
             throw ViewModeException::defaultUndeletable();
         }
+
         $this->triggerEvent(self::EVENT_BEFORE_DELETE, new ViewModeEvent([
             'viewMode' => $viewMode
         ]));
+
+        //Deleting displays, groups last
+        $groups = [];
+        $displays = [];
+        foreach ($viewMode->displays as $display) {
+            if ($display->type == DisplayService::TYPE_GROUP) {
+                $groups[] = $display;
+            } else {
+                $displays[] = $display;
+            }
+        }
+        foreach ($displays as $display) {
+            Themes::$plugin->displays->delete($display);
+        }
+        foreach ($groups as $display) {
+            Themes::$plugin->displays->delete($display);
+        }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $viewMode->uid);
 
@@ -202,15 +256,39 @@ class ViewModeService extends Service
     }
 
     /**
-     * Clean up for layout, deletes old view modes
+     * Populates a view mode from posted data
      * 
+     * @param  array $data
+     * @return ViewModeInterface
+     */
+    public function populateFromPost(array $data): ViewModeInterface
+    {
+        $viewMode = $this->getById($data['id']);
+        $displaysData = $data['displays'];
+        unset($data['displays']);
+        $viewMode->setAttributes($data);
+        foreach ($displaysData as $data) {
+            if ($data['id'] ?? null) {
+                Themes::$plugin->displays->populateFromPost($data);
+            } else {
+                $display = Themes::$plugin->displays->create($data);
+                $viewMode->addDisplay($display);
+            }
+        }
+        return $viewMode;
+    }
+
+    /**
+     * Clean up for layout, deletes old view modes
+     *
+     * @param array $viewModes
      * @param LayoutInterface $layout
      */
-    public function cleanUpLayout(LayoutInterface $layout)
+    public function cleanUp(array $viewModes, LayoutInterface $layout)
     {
         $toKeep = array_map(function ($viewMode) {
             return $viewMode->id;
-        }, $layout->viewModes);
+        }, $viewModes);
         $toDelete = $this->all()
             ->whereNotIn('id', $toKeep)
             ->where('layout_id', $layout->id)
@@ -224,10 +302,10 @@ class ViewModeService extends Service
      * Get view mode by id
      * 
      * @param  int    $id
-     * @return ViewMode
+     * @return ViewModeInterface
      * @throws ViewModeException
      */
-    public function getById(int $id): ViewMode
+    public function getById(int $id): ViewModeInterface
     {
         if ($viewMode = $this->all()->firstWhere('id', $id)) {
             return $viewMode;
@@ -239,10 +317,10 @@ class ViewModeService extends Service
      * Get view mode by uid
      * 
      * @param  int    $id
-     * @return ViewMode
+     * @return ViewModeInterface
      * @throws ViewModeException
      */
-    public function getByUid(string $uid): ViewMode
+    public function getByUid(string $uid): ViewModeInterface
     {
         if ($viewMode = $this->all()->firstWhere('uid', $uid)) {
             return $viewMode;
@@ -271,9 +349,9 @@ class ViewModeService extends Service
      * Get a default view mode
      * 
      * @param  LayoutInterface $layout
-     * @return array
+     * @return ?ViewModeInterface
      */
-    public function getDefault(LayoutInterface $layout): ?ViewMode
+    public function getDefault(LayoutInterface $layout): ?ViewModeInterface
     {
         return $this->get($layout);
     }
@@ -283,9 +361,9 @@ class ViewModeService extends Service
      * 
      * @param  LayoutInterface $layout
      * @param  string $handle
-     * @return array
+     * @return ?ViewModeInterface
      */
-    public function get(LayoutInterface $layout, string $handle = self::DEFAULT_HANDLE): ?ViewMode
+    public function get(LayoutInterface $layout, string $handle = self::DEFAULT_HANDLE): ?ViewModeInterface
     {
         if (!$layout->id) {
             return null;
@@ -309,9 +387,9 @@ class ViewModeService extends Service
     /**
      * Add a view mode to internal cache
      * 
-     * @param ViewMode $layout
+     * @param ViewModeInterface $layout
      */
-    protected function add(ViewMode $viewMode)
+    protected function add(ViewModeInterface $viewMode)
     {
         if (!$this->all()->firstWhere('id', $viewMode->id)) {
             $this->all()->push($viewMode);

@@ -1,36 +1,44 @@
 {
-  "name": "ryssbowh/craft-themes",
-  "description": "Themes engine",
-  "type": "craft-plugin",
-  "version": "2.0",
-  "keywords": [
-    "cms",
-    "craftcms",
-    "themes"
-  ],
-  "license": "MIT",
-  "authors": [
-      {
-          "name": "The Web Puzzlers",
-          "homepage": "https://github.com/ryssbowh"
-      }
-  ],
-  "support": {
-  },
-  "require": {
-    "craftcms/cms": "3.5.* || 3.6.*",
-    "illuminate/support": "^8.3",
-    "superbig/craft3-mobiledetect": "^1.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Ryssbowh\\CraftThemes\\": "src/"
+    "name": "ryssbowh/craft-themes",
+    "description": "Themes engine",
+    "type": "craft-plugin",
+    "version": "3.0",
+    "keywords": [
+        "cms",
+        "craftcms",
+        "themes"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "The Web Puzzlers",
+            "homepage": "https://github.com/ryssbowh"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "3.5.* || 3.6.*",
+        "illuminate/support": "^8.3",
+        "superbig/craft3-mobiledetect": "^1.0"
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.0",
+        "codeception/module-asserts": "^1.0.0",
+        "codeception/module-phpbrowser": "^1.0.0",
+        "codeception/module-yii2": "^1.0.0",
+        "vlucas/phpdotenv": "^3.0",
+        "symfony/var-dumper": "^5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ryssbowh\\CraftThemes\\": "src/",
+            "Ryssbowh\\CraftThemesTests\\fixtures\\": "tests/fixtures",
+            "Ryssbowh\\CraftThemesTests\\helpers\\": "tests/helpers"
+        }
+    },
+    "extra": {
+        "name": "Themes",
+        "handle": "themes",
+        "documentationUrl": "https://github.com/ryssbowh/craft-themes",
+        "class": "Ryssbowh\\CraftThemes\\Themes"
     }
-  },
-  "extra": {
-    "name": "Themes",
-    "handle": "themes",
-    "documentationUrl": "https://github.com/ryssbowh/craft-themes",
-    "class": "Ryssbowh\\CraftThemes\\Themes"
-  }
 }

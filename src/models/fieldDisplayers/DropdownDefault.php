@@ -16,11 +16,6 @@ class DropdownDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $isDefault = true;
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Default');

@@ -247,24 +247,23 @@ class Themes extends \craft\base\Plugin
                     'themes/display/<themeName:[\w-]+>' => 'themes/cp-display',
                     'themes/display/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-display',
 
-                    'themes/ajax/displays/<layout:\d+>' => 'themes/cp-display-ajax/displays',
-                    'themes/ajax/displays/save' => 'themes/cp-display-ajax/save-layout',
-                    'themes/ajax/view-modes/<layout:\d+>' => 'themes/cp-display-ajax/view-modes',
                     'themes/ajax/blocks/save' => 'themes/cp-blocks-ajax/save-blocks',
                     'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-blocks-ajax/delete-layout',
                     'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-blocks-ajax/blocks',
                     'themes/ajax/block-providers' => 'themes/cp-blocks-ajax/block-providers',
-                    'themes/ajax/field-options/validate' => 'themes/cp-display-ajax/validate-field-options',
-                    'themes/ajax/install' => 'themes/cp-install-ajax/install',
 
+                    'themes/ajax/validate-field-options' => 'themes/cp-display-ajax/validate-field-options',
+
+                    'themes/ajax/install' => 'themes/cp-ajax/install',
                     'themes/ajax/entries/<uid:[\w-]+>' => 'themes/cp-ajax/entries',
                     'themes/ajax/categories/<uid:[\w-]+>' => 'themes/cp-ajax/categories',
                     'themes/ajax/users' => 'themes/cp-ajax/users',
+                    'themes/ajax/uid' => 'themes/cp-ajax/uid',
 
-                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
-                    'themes/ajax/viewModes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
-
-                    'themes/ajax/uid' => 'themes/cp-ajax/uid'
+                    'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
+                    'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
+                    'themes/ajax/view-modes/save' => 'themes/cp-view-modes-ajax/save',
+                    'themes/ajax/view-modes' => 'themes/cp-view-modes-ajax/get'
                 ]);
             }
         });

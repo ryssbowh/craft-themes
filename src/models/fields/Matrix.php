@@ -8,7 +8,6 @@ use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
-use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use craft\base\Field as BaseField;

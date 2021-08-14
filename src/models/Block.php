@@ -62,16 +62,6 @@ abstract class Block extends Model implements BlockInterface
     public $active = true;
 
     /**
-     * @var DateTime
-     */
-    public $dateCreated;
-
-    /**
-     * @var DateTime
-     */
-    public $dateUpdated;
-
-    /**
      * @var string
      */
     public $uid;
@@ -153,7 +143,7 @@ abstract class Block extends Model implements BlockInterface
             [['region', 'handle', 'provider'], 'string'],
             ['active', 'boolean'],
             [['order', 'layout_id'], 'number'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id', 'safe'], 'safe'],
+            [['uid', 'id', 'safe'], 'safe'],
             ['layout', function () {
                 if (!$this->layout) {
                     $this->addError('layout', \Craft::t('themes', 'Layout is required'));

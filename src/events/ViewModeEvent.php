@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Ryssbowh\CraftThemes\events;
 
@@ -7,7 +7,7 @@ use yii\base\Event;
 class ViewModeEvent extends Event
 {
     /**
-     * @var ViewMode|ViewModeRecord
+     * @var ViewModeInterface|ViewModeRecord
      */
     public $viewMode;
 

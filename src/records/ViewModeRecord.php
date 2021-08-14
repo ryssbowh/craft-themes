@@ -2,7 +2,6 @@
 
 namespace Ryssbowh\CraftThemes\records;
 
-use Ryssbowh\CraftThemes\models\ViewMode;
 use craft\db\ActiveRecord;
 
 class ViewModeRecord extends ActiveRecord

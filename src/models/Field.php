@@ -22,16 +22,6 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @var string
      */
-    public $displayerHandle;
-
-    /**
-     * @var array
-     */
-    public $options;
-
-    /**
-     * @var string
-     */
     public $type;
 
     /**
@@ -43,6 +33,11 @@ abstract class Field extends DisplayItem implements FieldInterface
      * @var string
      */
     public $craft_field_class;
+
+    /**
+     * @var string
+     */
+    protected $_displayerHandle;
 
     /**
      * @var BaseField
@@ -97,9 +92,6 @@ abstract class Field extends DisplayItem implements FieldInterface
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
         $field->setAttributes($config);
-        if ((!isset($config['options']) or !$config['options']) and $field->displayer) {
-            $field->options = $field->displayer->options->toArray();
-        }
         return $field;
     }
 
@@ -168,6 +160,26 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function getDisplayerHandle(): string
+    {
+        return $this->_displayerHandle;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDisplayerHandle(string $handle)
+    {
+        if ($handle) {
+            Themes::$plugin->fieldDisplayers->ensureDisplayerIsValidForField($handle, $this);
+        }
+        $this->_displayerHandle = $handle;
+        $this->_displayer = null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getDisplayer(): ?FieldDisplayerInterface
     {
         if (!is_null($this->_displayer)) {
@@ -176,8 +188,32 @@ abstract class Field extends DisplayItem implements FieldInterface
         if (!$this->displayerHandle) {
             return null;
         }
-        $this->_displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle, $this);
+        $this->_displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle);
+        $this->_displayer->field = $this;
         return $this->_displayer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptions(): array
+    {
+        if (!$this->displayer) {
+            return [];
+        }
+        return $this->displayer->options->toArray();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOptions(?array $options)
+    {
+        if ($this->displayer and $this->displayer->hasOptions) {
+            $attributes = $this->displayer->options->safeAttributes();
+            $options = array_intersect_key($options, array_flip($attributes));
+            $this->displayer->options->setAttributes($options);
+        }
     }
 
     /**
@@ -185,7 +221,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function getAvailableDisplayers(): array
     {
-        return Themes::$plugin->fieldDisplayers->getForField(get_class($this), $this);
+        return Themes::$plugin->fieldDisplayers->getForField(get_class($this));
     }
 
     /**
@@ -216,7 +252,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['availableDisplayers', 'name', 'handle', 'displayName']);
+        return array_merge(parent::fields(), ['availableDisplayers', 'name', 'handle', 'displayName', 'displayerHandle', 'options']);
     }
 
     /**

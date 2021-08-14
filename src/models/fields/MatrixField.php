@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\models\ViewMode;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 
 class MatrixField extends CraftField
 {
@@ -34,9 +34,9 @@ class MatrixField extends CraftField
     /**
      * Get view mode associated to this field
      * 
-     * @return ViewMode
+     * @return ViewModeInterface
      */
-    public function getViewMode(): ViewMode
+    public function getViewMode(): ViewModeInterface
     {
         return $this->matrix->display->viewMode;
     }

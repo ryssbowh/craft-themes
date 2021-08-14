@@ -24,6 +24,19 @@ class CpAjaxController extends Controller
     }
 
     /**
+     * (Re)install all layouts
+     * 
+     * @return array
+     */
+    public function actionInstall(): array
+    {
+        $this->layouts->install();
+        return [
+            'message' => \Craft::t('themes', 'Themes data has been installed')
+        ];
+    }
+
+    /**
      * @inheritDoc
      */
     public function afterAction($action, $result)

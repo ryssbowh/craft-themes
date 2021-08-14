@@ -6,7 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\DisplayItemInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
-use Ryssbowh\CraftThemes\models\ViewMode;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 
@@ -43,16 +43,6 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
     public $visuallyHidden = false;
 
     /**
-     * @var DateTime
-     */
-    public $dateCreated;
-
-    /**
-     * @var DateTime
-     */
-    public $dateUpdated;
-
-    /**
      * @var string
      */
     public $uid;
@@ -70,7 +60,7 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
         return [
             ['display_id', 'integer'],
             [['labelHidden', 'hidden', 'visuallyHidden', 'labelVisuallyHidden'], 'boolean'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id'], 'safe']
+            [['uid', 'id'], 'safe']
         ];
     }
 
@@ -110,7 +100,7 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
     /**
      * @inheritDoc
      */
-    public function getViewMode(): ViewMode
+    public function getViewMode(): ViewModeInterface
     {
         return $this->display->viewMode;
     }

@@ -13,17 +13,16 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
     computed: {
-        ...mapState(['layout', 'layouts', 'hasChanged'])
+        ...mapState(['layout', 'layouts', 'hasChanges'])
     },
     methods: {
         confirmAndChangeLayout: function (id) {
-            if (this.hasChanged && !confirm(this.t('You have unchanged changes, continue anyway ?'))) {
+            if (this.hasChanges && !confirm(this.t('You have unchanged changes, continue anyway ?'))) {
                 return;
             }
-            this.setLayoutAndFetch(id);
+            this.setLayout(id);
         },
-        ...mapMutations([]),
-        ...mapActions(['setLayoutAndFetch']),
+        ...mapActions(['setLayout']),
     }
 };
 </script>

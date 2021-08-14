@@ -2,7 +2,6 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\models\ViewMode;
 use craft\base\Element;
 
 interface DisplayInterface 
@@ -24,16 +23,16 @@ interface DisplayInterface
     /**
      * View mode interface
      * 
-     * @return ViewMode
+     * @return ViewModeInterface
      */
-    public function getViewMode(): ViewMode;
+    public function getViewMode(): ViewModeInterface;
 
     /**
      * View mode setter
      * 
      * @param ViewModeInterface $viewMode
      */
-    public function setViewMode(ViewMode $viewMode);
+    public function setViewMode(ViewModeInterface $viewMode);
 
     /**
      * Item getter
@@ -61,7 +60,7 @@ interface DisplayInterface
      * 
      * @param DisplayInterface $group
      */
-    public function setGroup(DisplayInterface $group);
+    public function setGroup(?DisplayInterface $group);
 
     /**
      * Is this display a group 

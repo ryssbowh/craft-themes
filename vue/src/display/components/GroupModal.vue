@@ -158,8 +158,8 @@ export default {
                     headers: {'X-CSRF-Token': Craft.csrfTokenValue}
                 }).then((response) => {
                     this.addDisplay({
+                        id: null,
                         type: 'group',
-                        viewMode_id: this.viewMode.id ?? this.viewMode.handle,
                         uid: response.data.uid,
                         order: this.maxOrder + 1,
                         item: {
@@ -168,7 +168,8 @@ export default {
                             visuallyHidden: false,
                             hidden: false,
                             labelHidden: false,
-                            labelVisuallyHidden: false
+                            labelVisuallyHidden: false,
+                            displays: []
                         }
                     });
                     this.closeModal();

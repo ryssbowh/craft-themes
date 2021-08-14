@@ -14,6 +14,9 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
     use ArrayableTrait;
 
+    /**
+     * @var array
+     */
     protected $_regions;
     
     /**

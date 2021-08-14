@@ -128,8 +128,8 @@ class FieldDisplayerEvent extends Event
     /**
      * Register a displayer class
      * 
-     * @param string $class
-     * @param bool   $replaceIfExisting
+     * @param  string $class
+     * @param  bool   $replaceIfExisting
      * @throws FieldDisplayerException
      */
     public function register(string $class, bool $replaceIfExisting = false)
@@ -152,8 +152,8 @@ class FieldDisplayerEvent extends Event
     /**
      * Register many displayer classes
      * 
-     * @param array[string] $displayers
-     * @param bool          $replaceIfExisting
+     * @param  array[string] $displayers
+     * @param  bool          $replaceIfExisting
      * @throws FieldDisplayerException
      */
     public function registerMany(array $displayers, bool $replaceIfExisting = false)

@@ -21,11 +21,6 @@ class AssetRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public $hasOptions = true;
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Rendered');

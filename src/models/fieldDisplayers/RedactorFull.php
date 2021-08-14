@@ -22,11 +22,6 @@ class RedactorFull extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public $hasOptions = true;
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Full');

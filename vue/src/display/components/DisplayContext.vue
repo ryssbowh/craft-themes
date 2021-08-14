@@ -30,9 +30,9 @@ export default {
             this.setTheme(this.initialTheme);
         }
         if (this.currentLayout) {
-            this.setLayoutAndFetch(this.currentLayout);
+            this.setLayout(this.currentLayout);
         } else {
-            this.setLayoutAndFetch(this.layouts[0].id);
+            this.setLayout(this.layouts[0].id);
         }
         window.addEventListener('popstate', () => {
             const url = document.location.pathname.split('/');
@@ -44,9 +44,9 @@ export default {
                 this.setTheme(url[i+1]);
             }
             if (typeof url[i+2] != 'undefined') {
-                this.setLayoutAndFetch(url[i+2]);
+                this.setLayout(url[i+2]);
             } else {
-                this.setLayoutAndFetch(this.layouts[0].id);
+                this.setLayout(this.layouts[0].id);
             }
         });
     },
@@ -56,14 +56,14 @@ export default {
             this.setTheme(theme);
             for (let i in this.layouts) {
                 if (this.layouts[i].element === layoutElement) {
-                    this.setLayoutAndFetch(this.layouts[i].id);
+                    this.setLayout(this.layouts[i].id);
                     return;
                 }
             }
-            this.setLayoutAndFetch(this.layouts[0].id);
+            this.setLayout(this.layouts[0].id);
         },
         ...mapMutations(['setTheme', 'setAllLayouts']),
-        ...mapActions(['setLayoutAndFetch']),
+        ...mapActions(['setLayout']),
     }
 };
 </script>

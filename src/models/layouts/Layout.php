@@ -10,8 +10,8 @@ use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Region;
-use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -46,16 +46,6 @@ class Layout extends Model implements LayoutInterface
      * @var boolean
      */
     public $hasBlocks = false;
-
-    /**
-     * @var DateTime
-     */
-    public $dateCreated;
-
-    /**
-     * @var DateTime
-     */
-    public $dateUpdated;
 
     /**
      * @var string
@@ -93,7 +83,7 @@ class Layout extends Model implements LayoutInterface
             ['type', 'in', 'range' => LayoutService::TYPES],
             [['themeHandle', 'elementUid'], 'string'],
             ['hasBlocks', 'boolean'],
-            [['dateCreated', 'dateUpdated', 'uid', 'id', 'element'], 'safe'],
+            [['uid', 'id', 'element'], 'safe'],
             ['themeHandle', function () {
                 if (!Themes::$plugin->registry->hasTheme($this->themeHandle)) {
                     $this->addError('themeHandle', \Craft::t('themes', 'Theme ' . $this->themeHandle . ' doesn\'t exist'));
@@ -214,7 +204,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function getDefaultViewMode(): ViewMode
+    public function getDefaultViewMode(): ViewModeInterface
     {
         foreach ($this->viewModes as $viewMode) {
             if ($viewMode->handle == ViewModeService::DEFAULT_HANDLE) {
@@ -226,7 +216,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function getViewMode(string $handle): ?ViewMode
+    public function getViewMode(string $handle): ?ViewModeInterface
     {
         foreach ($this->viewModes as $viewMode) {
             if ($viewMode->handle == $handle) {
@@ -253,7 +243,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function addViewMode(ViewMode $viewMode): LayoutInterface
+    public function addViewMode(ViewModeInterface $viewMode): LayoutInterface
     {
         $viewMode->layout = $this;
         $viewModes = $this->viewModes;
@@ -283,7 +273,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['description', 'viewModes']);
+        return array_merge(parent::fields(), ['description']);
     }
 
     /**
@@ -325,8 +315,8 @@ class Layout extends Model implements LayoutInterface
      */
     public function getRegion(string $handle): Region
     {
-        if (isset($this->_regions[$handle])) {
-            return $this->_regions[$handle];
+        if (isset($this->regions[$handle])) {
+            return $this->regions[$handle];
         }
         throw ThemeException::noRegion($this->themeHandle, $handle);
     }
@@ -337,22 +327,6 @@ class Layout extends Model implements LayoutInterface
     public function hasRegion(string $handle): bool
     {
         return isset($this->regions[$handle]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDisplays(?string $viewMode = null): array
-    {
-        if (is_null($this->_displays)) {
-            $this->_displays = Themes::$plugin->displays->getForLayout($this);
-        }
-        if (is_null($viewMode)) {
-            return $this->_displays;
-        }
-        return array_filter($this->_displays, function ($display) use ($viewMode) {
-            return $viewMode == $display->viewMode->handle;
-        });
     }
 
     /**
@@ -371,15 +345,6 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function setDisplays(?array $displays): LayoutInterface
-    {
-        $this->_displays = $displays;
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function replaceDisplay(DisplayInterface $display): LayoutInterface
     {
         foreach ($this->displays as $i => $oldDisplay) {
@@ -388,19 +353,6 @@ class Layout extends Model implements LayoutInterface
             }
         }
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getVisibleDisplays(string $viewMode): array
-    {
-        if (!$this->hasViewMode($viewMode)) {
-            throw LayoutException::noViewMode($viewMode);
-        }
-        return array_filter($this->getDisplays($viewMode), function ($display) {
-            return $display->group_id === null and $display->item->isVisible();
-        });
     }
 
     /**

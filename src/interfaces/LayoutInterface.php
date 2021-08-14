@@ -3,7 +3,6 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\models\Region;
-use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 
@@ -87,9 +86,9 @@ interface LayoutInterface
      * Get view mode by handle
      * 
      * @param  string $handle
-     * @return ?ViewMode
+     * @return ?ViewModeInterface
      */
-    public function getViewMode(string $handle): ?ViewMode;
+    public function getViewMode(string $handle): ?ViewModeInterface;
 
     /**
      * View modes setter
@@ -110,17 +109,17 @@ interface LayoutInterface
     /**
      * Add a view mode
      * 
-     * @param  ViewMode $viewMode
+     * @param  ViewModeInterface $viewMode
      * @return LayoutInterface
      */
-    public function addViewMode(ViewMode $viewMode): LayoutInterface;
+    public function addViewMode(ViewModeInterface $viewMode): LayoutInterface;
 
     /**
      * Get default view mode
      * 
-     * @return ViewMode
+     * @return ViewModeInterface
      */
-    public function getDefaultViewMode(): ViewMode;
+    public function getDefaultViewMode(): ViewModeInterface;
 
     /**
      * Blocks getter
@@ -180,34 +179,12 @@ interface LayoutInterface
     public function getDisplayByHandle(string $viewMode, string $handle): ?DisplayInterface;
 
     /**
-     * Get all displays for a view mode
-     * 
-     * @return array
-     */
-    public function getDisplays(?string $viewMode = null): array;
-
-    /**
-     * Displays setter
-     * 
-     * @param  ?array $displays
-     * @return LayoutInterface
-     */
-    public function setDisplays(?array $displays): LayoutInterface;
-
-    /**
      * Replaces a display in this layout, based on its id.
      * 
      * @param  DisplayInterface $display
      * @return LayoutInterface
      */
     public function replaceDisplay(DisplayInterface $display): LayoutInterface;
-
-    /**
-     * Get all visible displays
-     * 
-     * @return array
-     */
-    public function getVisibleDisplays(string $viewMode): array;
 
     /**
      * Get all craft fields defined on this layout's element

@@ -1,0 +1,19 @@
+{
+  "name": "ryssbowh/parent-theme",
+  "description": "Parent Theme",
+  "type": "craft-plugin",
+  "version": "1.0",
+  "autoload": {
+    "psr-4": {
+      "Ryssbowh\\tests\\themes\\parent\\": ""
+    }
+  },
+  "require": {
+    "ryssbowh/partial-theme": "1.0"
+  },
+  "extra": {
+    "name": "Parent Theme",
+    "handle": "parent-theme",
+    "class": "Ryssbowh\\tests\\themes\\parent\\ParentTheme"
+  }
+}

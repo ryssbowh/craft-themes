@@ -17,11 +17,6 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     public static $isDefault = false;
 
     /**
-     * @var boolean
-     */
-    public $hasOptions = false;
-
-    /**
      * @var Field
      */
     protected $_field;
@@ -40,13 +35,11 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     }
 
     /**
-     * Does this displayer have options
-     * 
-     * @return bool
+     * @inheritDoc
      */
     public function getHasOptions(): bool
     {
-        return $this->hasOptions;
+        return $this->getOptionsModel() != NoOptions::class;
     }
 
     /**
@@ -55,6 +48,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     public function setField($field)
     {
         $this->_field = $field;
+        $this->_options = null;
     }
 
     /**
@@ -72,13 +66,21 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     {
         if ($this->_options === null) {
             $class = $this->getOptionsModel();
-            $model = new $class([
+            $this->_options = new $class([
                 'displayer' => $this
             ]);
-            $model->setAttributes($this->field->options);
-            $this->_options = $model;
         }
         return $this->_options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOptions(array $options)
+    {
+        $attributes = $this->safeAttributes();
+        $options = array_intersect_key($options, array_flip($attributes));
+        $this->options->setAttributes($options);
     }
 
     /**
@@ -105,7 +107,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['name', 'options', 'handle']);
+        return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions']);
     }
 
     /**

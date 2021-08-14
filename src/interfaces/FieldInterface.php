@@ -60,11 +60,39 @@ interface FieldInterface
     public static function shouldExistOnLayout(LayoutInterface $layout): bool;
 
     /**
+     * Options getter
+     * 
+     * @return array
+     */
+    public function getOptions(): array;
+
+    /**
+     * Options setter
+     * 
+     * @param array $options
+     */
+    public function setOptions(?array $options);
+
+    /**
      * Get the displayer for this field
      * 
      * @return FieldDisplayerInterface
      */
     public function getDisplayer(): ?FieldDisplayerInterface;
+
+    /**
+     * Displayer handle getter
+     * 
+     * @return string
+     */
+    public function getDisplayerHandle(): string;
+
+    /**
+     * Displayer handle setter
+     * 
+     * @param string $handle
+     */
+    public function setDisplayerHandle(string $handle);
 
     /**
      * Get all the displayers that can display this field

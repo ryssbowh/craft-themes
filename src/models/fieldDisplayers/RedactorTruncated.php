@@ -17,16 +17,6 @@ class RedactorTruncated extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $isDefault = true;
-
-    /**
-     * @inheritDoc
-     */
-    public $hasOptions = true;
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Truncated');
