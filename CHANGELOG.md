@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 2.1.5 - 2021-08-17
+
+### Fixed
+- Do not register bundles for cp requests
+
 ## 2.1.4 - 2021-07-14
 
 ### Fixed

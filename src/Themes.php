@@ -119,7 +119,7 @@ class Themes extends \craft\base\Plugin
         \Yii::setAlias('@themePath', '@root/themes/' . $theme->handle);
         \Yii::setAlias('@themeWebPath', '@webroot/themes/' . $theme->handle);
         $event->roots[''] = array_merge($theme->getTemplatePaths(), $event->roots[''] ?? []);
-        if (\Craft::$app->request instanceof Request) {
+        if (\Craft::$app->request instanceof Request and \Craft::$app->request->isSiteRequest) {
             $path = \Craft::$app->request->getPathInfo(); 
             $theme->registerAssetBundles($path);
         }
