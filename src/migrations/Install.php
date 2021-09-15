@@ -117,7 +117,7 @@ class Install extends Migration
         ]);
 
         $this->addForeignKey('themes_display_view_mode', '{{%themes_displays}}', ['viewMode_id'], '{{%themes_view_modes}}', ['id'], 'CASCADE', null);
-        $this->addForeignKey('themes_display_group', '{{%themes_displays}}', ['group_id'], '{{%themes_displays}}', ['id'], 'CASCADE', null);
+        $this->addForeignKey('themes_display_group', '{{%themes_displays}}', ['group_id'], '{{%themes_groups}}', ['id'], 'SET NULL', null);
 
         $this->addForeignKey('themes_view_mode_layout', '{{%themes_view_modes}}', ['layout_id'], '{{%themes_layouts}}', ['id'], 'CASCADE', null);
 

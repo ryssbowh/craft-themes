@@ -137,11 +137,13 @@ class ViewModeService extends Service
         }
         foreach ($groups as $display) {
             Themes::$plugin->displays->save($display);
+            //Adding all group displays in the list so they are not deleted by the cleanup
+            $allDisplays = array_merge($allDisplays, $display->item->displays);
         }
         foreach ($displays as $display) {
             Themes::$plugin->displays->save($display);
         }
-        Themes::$plugin->displays->cleanup($allDisplays, $viewMode);
+        Themes::$plugin->displays->cleanUp($allDisplays, $viewMode);
 
         return true;
     }
@@ -267,14 +269,15 @@ class ViewModeService extends Service
         $displaysData = $data['displays'];
         unset($data['displays']);
         $viewMode->setAttributes($data);
+        $displays = [];
         foreach ($displaysData as $data) {
             if ($data['id'] ?? null) {
-                Themes::$plugin->displays->populateFromPost($data);
+                $displays[] = Themes::$plugin->displays->populateFromPost($data);
             } else {
-                $display = Themes::$plugin->displays->create($data);
-                $viewMode->addDisplay($display);
+                $displays[] = Themes::$plugin->displays->create($data);
             }
         }
+        $viewMode->displays = $displays;
         return $viewMode;
     }
 

@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\assets;
 
 use craft\web\AssetBundle;
-use verbb\base\assetbundles\CpAsset;
+use craft\web\assets\cp\CpAsset;
 
 class JquerySerializeJSON extends AssetBundle
 {

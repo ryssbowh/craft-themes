@@ -112,16 +112,4 @@ class CpAjaxController extends Controller
             'users' => $users
         ];
     }
-
-    /**
-     * Returns a new uid
-     * 
-     * @return array
-     */
-    public function actionUid()
-    {
-        return [
-            'uid' => StringHelper::UUID()
-        ];
-    }
 }

@@ -48,7 +48,7 @@ class Group extends DisplayItem
     public function getDisplays(): array
     {
         if ($this->_displays == null) {
-            $this->_displays = Themes::$plugin->displays->getForGroup($this->display->id);
+            $this->_displays = Themes::$plugin->displays->getForGroup($this->id);
         }
         return $this->_displays;
     }

@@ -114,6 +114,10 @@ class FieldsService extends Service
             return false;
         }
 
+        if ($field->displayer and !$field->displayer->options->validate()) {
+            return false;
+        }
+
         $isNew = !is_int($field->id);
         $uid = $field->uid;
 
@@ -197,10 +201,11 @@ class FieldsService extends Service
     /**
      * Populates a field from post
      * 
-     * @param  array $data
+     * @param  array            $data
+     * @param  DisplayInterface $display
      * @return FieldInterface
      */
-    public function populateFromPost(array $data): FieldInterface
+    public function populateFromPost(array $data, DisplayInterface $display): FieldInterface
     {
         $field = $this->getById($data['id']);
         $attributes = $field->safeAttributes();

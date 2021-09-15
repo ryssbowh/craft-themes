@@ -39,6 +39,32 @@ class GroupsService extends Service
     }
 
     /**
+     * Get group by id
+     * 
+     * @param  int $id
+     * @return Group
+     * @throws GroupException
+     */
+    public function getById(int $id): Group
+    {
+        if ($group = $this->all()->firstWhere('id', $id)) {
+            return $group;
+        }
+        throw GroupException::noId($id);
+    }
+
+    /**
+     * Get a group by uid
+     * 
+     * @param  int $uid
+     * @return ?Group
+     */
+    public function getByUid(string $uid): ?Group
+    {
+        return $this->all()->firstWhere('uid', $uid);
+    }
+
+    /**
      * Get a group for a display
      * 
      * @param  DisplayInterface $display
@@ -83,7 +109,7 @@ class GroupsService extends Service
         $uid = $group->uid;
 
         $projectConfig = \Craft::$app->getProjectConfig();
-        $configData = $display->getConfig();
+        $configData = $group->getConfig();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -180,21 +206,28 @@ class GroupsService extends Service
      * Populates a group from post
      * 
      * @param  array $data
+     * @param  DisplayInterface $display
      * @return Group
      */
-    public function populateFromPost(array $data): Group
+    public function populateFromPost(array $data, DisplayInterface $display): Group
     {
-        $group = $this->getById($data['id']);
-        $displays = [];
-        foreach ($data['displays'] as $displayData) {
-            $display = Themes::$plugin->displays->populateFromPost($displayData);
-            $display->group = $group;
-            $displays[] = $display;
+        $displaysData = $data['displays'] ?? [];
+        unset($data['displays']);
+        if (!$data['id'] ?? null) {
+            $group = $this->create($data);
+        } else {
+            $group = $this->getById($data['id']);
+            $attributes = $group->safeAttributes();
+            $data = array_intersect_key($data, array_flip($attributes));
+            $group->setAttributes($data);
         }
-        $data['displays'] = $displays;
-        $attributes = $group->safeAttributes();
-        $data = array_intersect_key($data, array_flip($attributes));
-        $group->setAttributes($data);
+        $displays = [];
+        foreach ($displaysData as $displayData) {
+            $display2 = Themes::$plugin->displays->populateFromPost($displayData);
+            $display2->group = $group;
+            $displays[] = $display2;
+        }
+        $group->displays = $displays;
         return $group;
     }
 

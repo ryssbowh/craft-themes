@@ -148,8 +148,8 @@ export default {
             this.name = '';
             this.handle = '';
         },
-        ...mapMutations([]),
-        ...mapActions(['addViewMode', 'editViewMode']),
+        ...mapMutations(['editViewMode']),
+        ...mapActions(['addViewMode']),
     },
     emits: ['closeModal'],
 };

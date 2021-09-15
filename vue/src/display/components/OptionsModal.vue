@@ -3,7 +3,7 @@
         <div class="body">
             <div class="content">
                 <form class="main" ref="form">
-                    <component :is="optionsComponent" :displayer="displayer" :options="displayer.options" :errors="displayerOptionsErrors" @updateOptions="updateOptions" :key="item.id"></component>
+                    <component :is="optionsComponent" :displayer="displayer" :options="displayer.options" :errors="displayerOptionsErrors" @updateOptions="updateOptions" :key="itemOptionsEdited.id"></component>
                 </form>
             </div>
         </div>
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import Modal from '../modal';
 
 export default {
@@ -25,7 +25,7 @@ export default {
         optionsComponent: function () {
             return 'fieldDisplayer-' + this.displayer.handle;
         },
-        ...mapState(['showOptionsModal', 'displayer', 'item', 'displayerOptionsErrors'])
+        ...mapState(['showOptionsModal', 'displayer', 'itemOptionsEdited', 'displayerOptionsErrors'])
     },
     data() {
         return {
@@ -57,13 +57,13 @@ export default {
         save () {
             let options = $(this.$refs.form).serializeJSON();
             let data = {
-                id: this.item.id,
+                id: this.itemOptionsEdited.id,
                 displayer: this.displayer.handle,
                 options: options
             };
             axios({
                 method: 'post',
-                url: Craft.getCpUrl('themes/ajax/field-options/validate'),
+                url: Craft.getCpUrl('themes/ajax/validate-field-options'),
                 data: data,
                 headers: {'X-CSRF-Token': Craft.csrfTokenValue}
             }).then((response) => {
@@ -78,8 +78,7 @@ export default {
                 this.handleError(err);
             });
         },
-        ...mapMutations(['setShowOptionsModal', 'setDisplayerOptionsError']),
-        ...mapActions(['updateOptions']),
+        ...mapMutations(['setShowOptionsModal', 'setDisplayerOptionsError', 'updateOptions'])
     },
     emits: [],
 };

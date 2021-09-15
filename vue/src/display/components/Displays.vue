@@ -1,13 +1,13 @@
 <template>
     <div class="themes-displays">
-        <div class="spinner-wrapper" v-if="isLoading">
+        <div class="spinner-wrapper" v-if="isLoading || isSaving">
           <div class="spinner"></div>
         </div>
         <div class="flex title">
-            <h2 v-if="!isLoading">{{ t('Displays') }}</h2>
+            <h2>{{ t('Displays') }}</h2>
             <a href="#" @click.prevent="newGroup">{{ t('New group') }}</a>
         </div>
-        <div class="fullwidth display-table" v-if="displays.length">
+        <div class="fullwidth display-table" v-if="rootDisplays.length">
             <div class="line head">
                 <div class="handle col"></div>
                 <div class="title col">{{ t('Title') }}</div>
@@ -20,7 +20,7 @@
             </div>
             <div class="body">
                 <draggable
-                    item-key="id"
+                    item-key="uid"
                     :list="rootDisplays"
                     group="displays"
                     handle=".move"
@@ -32,7 +32,7 @@
                 </draggable>
             </div>
         </div>
-        <p v-if="displays.length == 0 && !isLoading">
+        <p v-if="rootDisplays.length == 0 && !isLoading">
             {{ t('There are no displays for this layout') }}
         </p>
         <options-modal/>
@@ -42,7 +42,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import { reduce, filter, sortBy } from 'lodash';
+import { sortBy, cloneDeep } from 'lodash';
 
 export default {
     computed: {
@@ -50,12 +50,12 @@ export default {
             return this.isFetching || this.isSaving;
         },
         rootDisplays: function () {
-            if (!this.viewMode) {
+            if (this.viewModeIndex === null) {
                 return [];
             }
-            return sortBy(filter(this.displays, display => display.group_id == null), 'order');
+            return sortBy(this.viewModes[this.viewModeIndex].displays, 'order');
         },
-        ...mapState(['displays', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes'])
+        ...mapState(['viewModeIndex', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes'])
     },
     watch: {
         viewModes: {
@@ -67,8 +67,11 @@ export default {
     },
     methods: {
         onDragChange: function (e) {
-            if (e.added) {
-                this.updateDisplay({id: e.added.element.id, data: {group_id: null}});
+            if (e.removed) {
+                this.removeDisplay(e.removed.element);
+            } else if (e.added) {
+                e.added.element.group_id = null;
+                this.addDisplay(e.added.element);
             }
             this.rebuildOrders(e);
         },
@@ -81,21 +84,22 @@ export default {
                 newIndex = e.moved.newIndex;
                 movedElem = e.moved.element;
             }
-            let displays = this.rootDisplays;
             let newOrder = 0;
-            for (let i in displays) {
-                let display = displays[i];
+            for (let i in this.rootDisplays) {
+                let display = this.rootDisplays[i];
                 if (movedElem && newOrder == newIndex) {
                     newOrder++;
                 }
                 if (movedElem && display.id == movedElem.id) {
                     continue;
                 }
-                this.updateDisplay({id: display.id, data: {order: newOrder}});
+                // this.updateDisplay({uid: display.uid, data: {order: newOrder}});
+                display.order = newOrder;
                 newOrder++;
             }
             if (movedElem) {
-                this.updateDisplay({id: movedElem.id, data: {order: newIndex}});
+                // this.updateDisplay({uid: movedElem.uid, data: {order: newIndex}});
+                movedElem.order = newIndex;
             }
         },
         onCloseGroupModal: function () {
@@ -104,7 +108,7 @@ export default {
         newGroup: function () {
             this.setShowGroupModal({show: true});  
         },
-        ...mapMutations(['updateDisplay', 'setShowGroupModal']),
+        ...mapMutations(['updateDisplay', 'setShowGroupModal', 'addDisplay', 'removeDisplay']),
         ...mapActions(['checkChanges']),
     }
 };
