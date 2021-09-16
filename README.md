@@ -1,6 +1,6 @@
 # Craft themes
 
-### This is the 2.0 documentation, find the 1.0 documentation [there](https://github.com/ryssbowh/example-theme/blob/master/README1.md)
+### This is the 2.0 documentation, find the 1.0 documentation [there](https://github.com/ryssbowh/craft-themes/blob/master/README1.md)
 
 Tired of re-making your front-ends all over again when a lot of it could be reused ?
 
