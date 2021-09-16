@@ -137,11 +137,13 @@ class DisplayService extends Service
             'display' => $display
         ]));
 
-        if ($display->type == self::TYPE_FIELD) {
-            $this->fieldsService()->delete($display->item);
-        } else {
-            $this->groupsService()->delete($display->item);
-        }
+        try {
+            if ($display->type == self::TYPE_FIELD) {
+                $this->fieldsService()->delete($display->item);
+            } else {
+                $this->groupsService()->delete($display->item);
+            }
+        } catch (\Throwable $e) {}
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
 
@@ -232,10 +234,11 @@ class DisplayService extends Service
         unset($data['item']);
         unset($data['type']);
         $display->setAttributes($data);
+        $itemData['display'] = $display;
         if ($type == self::TYPE_FIELD) {
-            Themes::$plugin->fields->populateFromPost($itemData);
+            Themes::$plugin->fields->populateFromPost($itemData, $display);
         } else {
-            Themes::$plugin->groups->populateFromPost($itemData);
+            Themes::$plugin->groups->populateFromPost($itemData, $display);
         }
         return $display;
     }
@@ -409,7 +412,7 @@ class DisplayService extends Service
     }
 
     /**
-     * Clean up for layout, deletes old view modes
+     * Clean up for view mode, deletes old displays
      *
      * @param array $displays
      * @param ViewModeInterface $viewMode
@@ -421,7 +424,7 @@ class DisplayService extends Service
         }, $displays);
         $toDelete = $this->all()
             ->whereNotIn('id', $toKeep)
-            ->where('viewMode_id', $display->id)
+            ->where('viewMode_id', $viewMode->id)
             ->all();
         foreach ($toDelete as $display) {
             $this->delete($display);

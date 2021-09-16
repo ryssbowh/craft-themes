@@ -35,14 +35,14 @@
             </div>
             <div class="options col">
                 <a href="#" @click.prevent="editGroup">{{ t('Edit') }}</a>
-                <a href="#" @click.prevent="deleteGroup" v-if="!item.displays.length" class="delete">{{ t('Delete') }}</a>
+                <a href="#" @click.prevent="deleteGroup" v-if="!groupDisplays.length" class="delete">{{ t('Delete') }}</a>
             </div>
         </div>
         <div class="displays">
-            <i v-if="!item.displays.length">{{ t('No displays in that group') }}</i>
+            <i v-if="!groupDisplays.length">{{ t('No displays in that group') }}</i>
             <draggable
-                item-key="id"
-                :list="item.displays"
+                item-key="uid"
+                :list="groupDisplays"
                 :group="{name: 'displays', put: canPut}"
                 handle=".move"
                 @change="onDragChange"
@@ -57,7 +57,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import { filter, find } from 'lodash';
+import { sortBy } from 'lodash';
 
 export default {
     computed: {
@@ -73,13 +73,18 @@ export default {
         labelVisible: function () {
             return (!this.item.labelVisuallyHidden && !this.item.labelHidden);
         },
-        ...mapState(['displays'])
+        groupDisplays: function () {
+            return sortBy(this.item.displays, 'order');
+        },
+        ...mapState([])
     },
     props: {
         item: Object,
         display: {
             type: Object,
-            default: {}
+            default: function () {
+                return {};
+            }
         }
     },
     methods: {
@@ -111,21 +116,50 @@ export default {
             }
             this.$emit("updateItem", data);
         },
-        canPut: function (a,b,elem) {
+        canPut: function (a, b, elem) {
             return !$(elem).hasClass('group');
         },
         editGroup: function () {
             this.setShowGroupModal({show: true, editUid: this.display.uid});
         },
         deleteGroup: function () {
-            this.$emit('delete');
+            this.removeDisplay(this.display);
         },
         onDragChange: function (e) {
             if (e.added) {
+                e.added.element.group_id = null;
                 this.addDisplayToGroup({display: e.added.element, groupUid: this.display.uid});
+            } else if (e.removed) {
+                this.removeDisplayFromGroup({display: e.removed.element, groupUid: this.display.uid});
+            }
+            this.rebuildOrders(e);
+        },
+        rebuildOrders: function (e) {
+            let newIndex, movedElem;
+            if (e.added) {
+                newIndex = e.added.newIndex;
+                movedElem = e.added.element;
+            } else if (e.moved) {
+                newIndex = e.moved.newIndex;
+                movedElem = e.moved.element;
+            }
+            let newOrder = 0;
+            for (let i in this.groupDisplays) {
+                let display = this.groupDisplays[i];
+                if (movedElem && newOrder == newIndex) {
+                    newOrder++;
+                }
+                if (movedElem && display.id == movedElem.id) {
+                    continue;
+                }
+                display.order = newOrder;
+                newOrder++;
+            }
+            if (movedElem) {
+                movedElem.order = newIndex;
             }
         },
-        ...mapMutations(['setShowGroupModal', 'addDisplayToGroup']),
+        ...mapMutations(['setShowGroupModal', 'addDisplayToGroup', 'removeDisplayFromGroup', 'removeDisplay']),
         ...mapActions([]),
     },
     emits: ['updateItem', 'delete'],

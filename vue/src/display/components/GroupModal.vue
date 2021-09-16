@@ -41,8 +41,9 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import Modal from '../modal';
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
     computed: {
@@ -54,6 +55,9 @@ export default {
             }
             return null;
         },
+        displays: function () {
+            return this.viewModes[this.viewModeIndex].displays;
+        },
         groups: function () {
             return this.displays.filter((d) => d.type == 'group');
         },
@@ -63,7 +67,7 @@ export default {
         maxOrder: function () {
             return this.displays[this.displays.length - 1].order ?? 0;
         },
-        ...mapState(['displays', 'layout', 'viewMode', 'showGroupModal', 'editedGroupUid'])
+        ...mapState(['viewModeIndex', 'viewModes', 'layout', 'showGroupModal', 'editedGroupUid'])
     },
     data() {
         return {
@@ -138,7 +142,7 @@ export default {
                 this.handleError = this.t("'group' is a reserved handle");
             }
             for (let i in this.groups) {
-                if (this.groups[i].uid != this.editedGroupUid &&this.groups[i].item.handle == this.handle.trim()) {
+                if (this.groups[i].uid != this.editedGroupUid && this.groups[i].item.handle == this.handle.trim()) {
                     this.handleError = this.t('This handle is already defined');
                 }
             }
@@ -149,34 +153,25 @@ export default {
                 return;
             }
             if (this.editedGroupUid !== null) {
-                this.updateDisplay({id: this.editedGroup.id, data: {item: {name: this.name, handle: this.handle}}});
-                this.closeModal();
+                this.updateDisplay({uid: this.editedGroup.uid, data: {item: {name: this.name, handle: this.handle}}});
             } else {
-                axios({
-                    method: 'post',
-                    url: Craft.getCpUrl('themes/ajax/uid'),
-                    headers: {'X-CSRF-Token': Craft.csrfTokenValue}
-                }).then((response) => {
-                    this.addDisplay({
-                        id: null,
-                        type: 'group',
-                        uid: response.data.uid,
-                        order: this.maxOrder + 1,
-                        item: {
-                            name: this.name, 
-                            handle: this.handle,
-                            visuallyHidden: false,
-                            hidden: false,
-                            labelHidden: false,
-                            labelVisuallyHidden: false,
-                            displays: []
-                        }
-                    });
-                    this.closeModal();
-                }).catch((err) => {
-                    this.handleError(err);
+                this.addDisplay({
+                    id: null,
+                    type: 'group',
+                    uid: uuidv4(),
+                    order: this.maxOrder + 1,
+                    item: {
+                        name: this.name, 
+                        handle: this.handle,
+                        visuallyHidden: false,
+                        hidden: false,
+                        labelHidden: false,
+                        labelVisuallyHidden: false,
+                        displays: []
+                    }
                 });
             }
+            this.closeModal();
         },
         ...mapMutations(['updateDisplay', 'addDisplay'])
     },

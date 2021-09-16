@@ -151,10 +151,10 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function getGroup(): ?DisplayInterface
+    public function getGroup(): ?Group
     {
         if ($this->_group === null and is_int($this->group_id)) {
-            $this->_group = Themes::$plugin->displays->getById($this->group_id);
+            $this->_group = Themes::$plugin->groups->getById($this->group_id);
         }
         return $this->_group;
     }
@@ -162,7 +162,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function setGroup(?DisplayInterface $group)
+    public function setGroup(?Group $group)
     {
         $this->_group = $group;
         if (is_null($group)) {

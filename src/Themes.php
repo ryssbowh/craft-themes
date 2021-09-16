@@ -258,7 +258,6 @@ class Themes extends \craft\base\Plugin
                     'themes/ajax/entries/<uid:[\w-]+>' => 'themes/cp-ajax/entries',
                     'themes/ajax/categories/<uid:[\w-]+>' => 'themes/cp-ajax/categories',
                     'themes/ajax/users' => 'themes/cp-ajax/users',
-                    'themes/ajax/uid' => 'themes/cp-ajax/uid',
 
                     'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
                     'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',

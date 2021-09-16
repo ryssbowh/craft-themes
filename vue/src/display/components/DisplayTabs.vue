@@ -23,7 +23,10 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
     computed: {
-        ...mapState(['viewModes', 'viewMode'])
+        viewMode: function () {
+            return this.viewModes[this.viewModeIndex];
+        },
+        ...mapState(['viewModes', 'viewModeIndex'])
     },
     props: {
     },

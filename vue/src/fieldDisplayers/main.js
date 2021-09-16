@@ -239,7 +239,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="newTab">
+                        <input type="hidden" name="newTab" :value="options.newTab ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -362,7 +362,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="linked">
+                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -393,7 +393,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="stripped">
+                        <input type="hidden" name="stripped" :value="options.stripped ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -446,7 +446,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="showPrefix">
+                        <input type="hidden" name="showPrefix" :value="options.showPrefix ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -459,7 +459,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="showSuffix">
+                        <input type="hidden" name="showSuffix" :value="options.showSuffix ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -532,7 +532,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="newTab">
+                        <input type="hidden" name="newTab" :value="newTab ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -619,7 +619,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="linked">
+                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -648,7 +648,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="linked">
+                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -677,7 +677,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="firstName">
+                        <input type="hidden" name="firstName" :value="options.firstName ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -690,7 +690,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="lastName">
+                        <input type="hidden" name="lastName" :value="options.lastName ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -703,7 +703,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="email">
+                        <input type="hidden" name="email" :value="options.email ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -781,7 +781,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="newTab">
+                        <input type="hidden" name="newTab" :value="newTab ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -794,7 +794,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="download">
+                        <input type="hidden" name="download" :value="download ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -857,7 +857,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" name="linked">
+                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
                     </button>
                 </div>
             </div>

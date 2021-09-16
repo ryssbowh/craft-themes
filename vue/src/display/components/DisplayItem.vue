@@ -1,5 +1,5 @@
 <template>
-    <component :is="type" :item="display.item" :display="display" @updateItem="updateItem" @delete="deleteDisplay" />
+    <component :is="type" :item="display.item" :display="display" @updateItem="updateItem"/>
 </template>
 
 <script>
@@ -27,10 +27,7 @@ export default {
     },
     methods: {
         updateItem: function (data) {
-            this.updateDisplay({id: this.display.id, data:{item: data}});
-        },
-        deleteDisplay: function () {
-            this.removeDisplay(this.display.id);
+            this.updateDisplay({uid: this.display.uid, data:{item: data}});
         },
         ...mapMutations(['updateDisplay', 'removeDisplay']),
         ...mapActions([])
