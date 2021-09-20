@@ -87,7 +87,8 @@ You can choose a cache strategy for each block which defines how the block is ca
 - Url path : Will cache separately or each url path
 - Url path (with query) : Same as above but will also look at the query string
 
-Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user.
+Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user.  
+Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
 
 ## Displays
 
@@ -148,6 +149,4 @@ Craft 3.5 or over
 
 - tests
 - test email templates in console
-- install blocks in theme
-- bundleAssets as regular expressions paths
 - translations

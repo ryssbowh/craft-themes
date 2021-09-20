@@ -455,5 +455,3 @@ respond to the js event `register-block-strategy-components` and add your compon
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your strategy options class.
 
 Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockStrategies/main.js)
-
-Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.

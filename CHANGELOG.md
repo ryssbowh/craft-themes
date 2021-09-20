@@ -12,10 +12,21 @@
 - Field displayers
 - File displayers
 - View port rule
+- Asset bundle registering as regex
 
 ### Deprecated
 - Twig variable `themesRegistry`
 - Twig variable `theme`
+
+## 2.1.5 - 2021-08-17
+
+### Fixed
+- Do not register bundles for cp requests
+
+## 2.1.4 - 2021-07-14
+
+### Fixed
+- Method typo
 
 ## 2.1.3 - 2021-07-13
 
