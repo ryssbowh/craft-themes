@@ -61,7 +61,13 @@ Asset bundles can be defined in your theme class, in the `$assetBundles` propert
         CommonAssets::class
     ],
     'blog' => [
-        BlogAsset::class
+        BlogAssets::class
+    ],
+    '/$blog*$/' => [
+        BlogAssets::class
+    ],
+    '/' => [
+        HomeAssets::class
     ]
 ]
 ```
