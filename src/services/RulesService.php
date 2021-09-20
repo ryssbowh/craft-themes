@@ -2,13 +2,13 @@
 
 namespace Ryssbowh\CraftThemes\services;
 
+use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\i18n\Locale;
 use craft\models\Site;
-use superbig\mobiledetect\MobileDetect;
 use yii\caching\TagDependency;
 
 class RulesService extends Service
@@ -44,6 +44,11 @@ class RulesService extends Service
      * @var CacheInterface
      */
     public $cache;
+
+    /**
+     * @var MobileDetect
+     */
+    public $mobileDetect;
 
     /**
      * Resolve the theme for the current request, 
@@ -175,11 +180,10 @@ class RulesService extends Service
      */
     protected function getViewPort(): string
     {
-        $detect = MobileDetect::$plugin->mobileDetectService;
-        if ($detect->isPhone()) {
+        if ($this->mobileDetect->isMobile()) {
             return 'phone';
         }
-        if($detect->isTablet()) {
+        if ($this->mobileDetect->isTablet()) {
             return 'tablet';
         }
         return 'desktop';

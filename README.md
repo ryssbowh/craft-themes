@@ -9,7 +9,7 @@ A theme is just another Craft plugin, it can inherit another theme and has the s
 This Theme engine allows you to :
 - Install themes from the store or any git repository (composer, github etc)
 - Define your own themes that can extend each other
-- Choose which theme will be used for which site, language, viewport or url path.
+- Choose which theme will be used for which site, language, viewport or url path according to a set of rules.
 The Pro version will allow you to :
 - Assign blocks to your theme regions
 - Define your own blocks
@@ -79,6 +79,16 @@ This plugins comes with the following type of blocks :
 
 Blocks will be included in the project config, but for the blocks that reference an element the information will not be saved in the project config (because elements are different from an environment to another), those are : Entry, Category and User. Those blocks will need to be resaved in the new environment they are deployed to, to reference the correct element.
 
+### Caching
+
+You can choose a cache strategy for each block which defines how the block is cached. This plugin comes with 3 strategies :
+
+- Global : Will cache the same block for all urls
+- Url path : Will cache separately or each url path
+- Url path (with query) : Same as above but will also look at the query string
+
+Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user.
+
 ## Displays
 
 ![Displays](images/displays.png)
@@ -97,7 +107,7 @@ Some display will contain items that are not Craft fields, they are automaticall
 
 ![Rules](images/rules.png)
 
-Define rules in the settings to load the theme you want according to 3 parameters :
+Define rules in the settings to load the theme you want according to 4 parameters :
 - the current site
 - the current language
 - the current view port
@@ -108,6 +118,8 @@ The first rule that match will define which theme will be used. Organise your ru
 If no rules match, the default theme will be used.
 
 If no default is set, the theme engine will just not be used and your templates will be loaded from the root templates folder.
+
+You can also define there which theme should be used for console requests, this can be useful when you have commands rendering templates.
 
 ## Partial themes
 
@@ -120,6 +132,8 @@ A partial theme will not be available to select in the backend, but it can be in
 - Go to the settings and install the themes data
 - Add a rule in the settings to load a theme or set a default theme.
 - Set your templates to `themed_page` for section/categories you want to use the theme engine for
+
+Uninstalling this plugin will uninstall all themes.
 
 ## Requirements
 

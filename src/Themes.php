@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes;
 
 use Craft;
+use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
@@ -282,7 +283,8 @@ class Themes extends \craft\base\Plugin
                 'cache' => \Craft::$app->cache,
                 'cacheEnabled' => $this->getSettings()->rulesCacheEnabled,
                 'console' => $this->getSettings()->console,
-                'setConsole' => $this->getSettings()->setConsole
+                'setConsole' => $this->getSettings()->setConsole,
+                'mobileDetect' => new MobileDetect()
             ],
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
@@ -463,14 +465,6 @@ class Themes extends \craft\base\Plugin
     protected function createSettingsModel(): Settings
     {
         return new Settings();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function beforeInstall(): bool
-    {
-        return \Craft::$app->plugins->installPlugin('mobile-detect');
     }
 
     /**

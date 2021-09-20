@@ -102,7 +102,8 @@ class Layout extends Model implements LayoutInterface
     public function eagerLoadFields(Element $element, string $viewMode)
     {
         $with = [];
-        foreach ($this->getVisibleDisplays($viewMode) as $display) {
+        $viewMode = $this->getViewMode($viewMode);
+        foreach ($viewMode->getVisibleDisplays() as $display) {
             $with = array_merge($with, $display->item->eagerLoad());
         }
         \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);

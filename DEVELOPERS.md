@@ -197,7 +197,7 @@ Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLE
     $event->bundles[] = MyBundle::class;
 });
 ```  
-respond to the js event `register-fields-components` and add your component to the `event.detail` variable.
+respond to the js event `register-fields-components` and add your component and clone function to the `event.detail` variable.
 
 Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fields/main.js)
 
@@ -335,6 +335,15 @@ Example :
 Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (RenderEvent $event) {
     $event->prependTemplate('myTemplate')
         ->addVariable('myVar', 'myValue');
+});
+```
+
+Those events can also be used to override elements's classes and attributes :
+
+```
+Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (RenderEvent $event) {
+    $event->classes->add('my-class');
+    $event->attributes->add('id', 'my-id');
 });
 ```
 

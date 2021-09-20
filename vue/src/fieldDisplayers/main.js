@@ -833,7 +833,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="tag" v:model="tag">
+                        <select name="tag" v-model="tag">
                             <option value="h1">H1</option>
                             <option value="h2">H2</option>
                             <option value="h3">H3</option>

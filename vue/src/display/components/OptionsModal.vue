@@ -1,9 +1,12 @@
 <template>
     <div :class="'modal elementselectormodal options-modal displayer-' + displayer.handle" style="display:none" ref="modal">
+        <div class="header">
+            <h3>{{ t('Edit displayer options') }}</h3>
+        </div>
         <div class="body">
             <div class="content">
                 <form class="main" ref="form">
-                    <component :is="optionsComponent" :displayer="displayer" :options="displayer.options" :errors="displayerOptionsErrors" @updateOptions="updateOptions" :key="itemOptionsEdited.id"></component>
+                    <component :is="optionsComponent" :displayer="displayer" :options="options" :errors="displayerOptionsErrors" @updateOptions="updateOptions" :key="itemOptionsEdited.id"></component>
                 </form>
             </div>
         </div>
@@ -19,11 +22,15 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import Modal from '../modal';
+import { merge } from 'lodash';
 
 export default {
     computed: {
         optionsComponent: function () {
             return 'fieldDisplayer-' + this.displayer.handle;
+        },
+        options: function () {
+            return merge(this.displayer.options, this.itemOptionsEdited.options);
         },
         ...mapState(['showOptionsModal', 'displayer', 'itemOptionsEdited', 'displayerOptionsErrors'])
     },

@@ -467,7 +467,6 @@ class LayoutService extends Service
         } elseif ($element instanceof Entry) {
             $layout = $this->get($theme, self::ENTRY_HANDLE, $element->getType()->uid);
         }
-        $this->current = $layout;
         return $layout;
     }
 

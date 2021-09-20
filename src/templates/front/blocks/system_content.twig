@@ -1,7 +1,7 @@
 {% extends "blocks/block" %}
 
 {% block content %}
-    {% for display in layout.getVisibleDisplays('default') %}
+    {% for display in layout.getViewMode(viewMode).getVisibleDisplays('default') %}
         {{ display.render(element)|raw }}
     {% endfor %}
 {% endblock %}
