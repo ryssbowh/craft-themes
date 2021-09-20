@@ -3,15 +3,16 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AuthorDefaultOptions;
 use craft\base\Model;
-use craft\fields\Dropdown;
+use craft\fields\Users;
 
-class DropdownDefault extends FieldDisplayer
+class UserDefault extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'dropdown_default';
+    public static $handle = 'user_default';
 
     /**
      * @inheritDoc
@@ -29,8 +30,16 @@ class DropdownDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): String
+    public static function getFieldTarget(): string
     {
-        return Dropdown::class;
+        return Users::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return AuthorDefaultOptions::class;
     }
 }

@@ -10,6 +10,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AuthorDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryList;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryRendered;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\CheckboxesDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\ColourDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DateDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DropdownDefault;
@@ -33,6 +34,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitleDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\UserDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserInfoDefault;
 use yii\base\Event;
 
@@ -68,6 +70,7 @@ class FieldDisplayerEvent extends Event
             AuthorDefault::class,
             CategoryRendered::class,
             CategoryList::class,
+            CheckboxesDefault::class,
             ColourDefault::class,
             DateDefault::class,
             DropdownDefault::class,
@@ -91,6 +94,7 @@ class FieldDisplayerEvent extends Event
             TimeDefault::class,
             TitleDefault::class,
             UrlDefault::class,
+            UserDefault::class,
             UserInfoDefault::class
         ]);
     }

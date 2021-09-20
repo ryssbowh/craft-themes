@@ -1,0 +1,19 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% if value %}
+        {% for user in value %}
+            <p class="user">
+                {% if options.firstName %}
+                    {{ user.firstName }}
+                {% endif %}
+                {% if options.lastName %}
+                    {{ user.lastName }}
+                {% endif %}
+                {% if options.email %}
+                    ({{ user.email }})
+                {% endif %}
+                    </p>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

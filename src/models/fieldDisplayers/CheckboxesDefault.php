@@ -4,14 +4,14 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\base\Model;
-use craft\fields\Dropdown;
+use craft\fields\Checkboxes;
 
-class DropdownDefault extends FieldDisplayer
+class CheckboxesDefault extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'dropdown_default';
+    public static $handle = 'checkboxes_default';
 
     /**
      * @inheritDoc
@@ -31,6 +31,6 @@ class DropdownDefault extends FieldDisplayer
      */
     public static function getFieldTarget(): String
     {
-        return Dropdown::class;
+        return Checkboxes::class;
     }
 }

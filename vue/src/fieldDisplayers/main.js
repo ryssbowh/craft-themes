@@ -712,6 +712,8 @@ document.addEventListener("register-field-displayers-components", function(e) {
 
     e.detail['user-info_default'] = {... e.detail['author_default']}
 
+    e.detail['user_default'] = {... e.detail['author_default']}
+
     e.detail['asset_link'] = {
         props: {
             displayer: Object,
