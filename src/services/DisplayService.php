@@ -14,6 +14,7 @@ use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\events\ConfigEvent;
+use craft\events\FieldEvent;
 use craft\events\RebuildConfigEvent;
 use craft\fields\Matrix as CraftMatrix;
 use craft\helpers\StringHelper;
@@ -64,7 +65,6 @@ class DisplayService extends Service
         if ($config instanceof DisplayRecord) {
             $config = $config->getAttributes();
         }
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $itemData = $config['item'] ?? null;
         $display = new Display;
         $attributes = $display->safeAttributes();
@@ -94,7 +94,6 @@ class DisplayService extends Service
         }
 
         $isNew = !is_int($display->id);
-        $uid = $display->uid;
 
         $this->triggerEvent(self::EVENT_BEFORE_SAVE, new DisplayEvent([
             'display' => $display,
@@ -103,6 +102,7 @@ class DisplayService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $display->getConfig();
+        $uid = $configData['uid'];
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -217,6 +217,62 @@ class DisplayService extends Service
     {
         foreach ($this->all() as $display) {
             $e->config[self::CONFIG_KEY.'.'.$display->uid] = $display->getConfig();
+        }
+    }
+
+    /**
+     * Callback when a field is deleted
+     * Resave layout for which a deleted field was present
+     * 
+     * @param ConfigEvent $event
+     */
+    public function onCraftFieldDeleted(FieldEvent $event)
+    {
+        foreach ($this->getAllForCraftField($event->field->id) as $display) {
+            $this->delete($display);
+        }
+    }
+
+    /**
+     * Handles a craft field save: If the type of field has changed
+     * replaces the item in each display associated to the field.
+     * Otherwise let the item handle the change.
+     * 
+     * @param FieldEvent $event
+     */
+    public function onCraftFieldSaved(FieldEvent $event)
+    {
+        if ($event->isNew) {
+            return;
+        }
+        $field = $event->field;
+        $displays = $this->getAllForCraftField($field->id);
+        $toSave = [];
+        foreach ($displays as $display) {
+            $oldItem = $display->item;
+            $layout = $display->viewMode->layout;
+            $oldFieldClass = $oldItem->craft_field_class;
+            if ($oldItem->craft_field_class != get_class($field)) {
+                // Field has changed class, deleting old field, recreating it
+                // and copying old field attributes
+                $oldItem->delete();
+                $display->item = $this->fieldsService()->createFromField($field);
+                $display->item->setAttributes([
+                    'id' => $oldItem->id,
+                    'uid' => $oldItem->uid,
+                    'labelHidden' => $oldItem->labelHidden,
+                    'visuallyHidden' => $oldItem->labelVisuallyHidden,
+                    'labelVisuallyHidden' => $oldItem->labelVisuallyHidden,
+                    'hidden' => $display->item->hidden ?: $oldItem->hidden,
+                    'display' => $display
+                ]);
+                $this->save($display);
+            } else {
+                // Let the field deal with the change itself
+                if ($oldItem->onCraftFieldChanged($field)) {
+                    $this->save($display);
+                }
+            }
         }
     }
 

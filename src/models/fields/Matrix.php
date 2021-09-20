@@ -9,11 +9,11 @@ use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
+use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 use craft\fields\Matrix as CraftMatrix;
-use craft\helpers\StringHelper;
 
 class Matrix extends CraftField implements MatrixInterface
 {
@@ -64,7 +64,11 @@ class Matrix extends CraftField implements MatrixInterface
             }
             $fields = [];
             foreach ($craftType->fields as $craftField) {
-                $oldField = $type->getFieldById($craftField->id);
+                try {
+                    $oldField = $type->getFieldById($craftField->id);
+                } catch (\Throwable $e) {
+                    $oldField = null;
+                }
                 if (!$oldField) {
                     //New field was added to the block type, creating new field
                     $field = MatrixField::createFromField($craftField);
@@ -82,6 +86,7 @@ class Matrix extends CraftField implements MatrixInterface
                     //Field hasn't changed
                     $field = $oldField;
                 }
+                $field->matrix = $this;
                 $fields[] = $field;
             }
             $type->fields = $fields;
@@ -96,14 +101,13 @@ class Matrix extends CraftField implements MatrixInterface
      */
     public static function create(?array $config = null): FieldInterface
     {
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $class = get_called_class();
         $field = new $class;
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
         $field->setAttributes($config);
         if ($config['types'] ?? null) {
-            $field->types = static::buildMatrixTypes($config['types']);
+            $field->types = static::buildMatrixTypes($config['types'], $field);
         }
         if (!isset($config['options']) and $field->displayer) {
             $field->options = $field->displayer->options->toArray();
@@ -153,14 +157,36 @@ class Matrix extends CraftField implements MatrixInterface
                 $pivotIds[] = $pivot->id;
             }
         }
+        //deleting old field records
         $oldRecords = MatrixPivotRecord::find()
             ->where(['parent_id' => $matrix->id])
             ->andWhere(['not in', 'id', $pivotIds])
             ->all();
+        $fieldIds = [];
         foreach ($oldRecords as $record) {
-            $record->delete();
+            $fieldIds[] = $record->field_id;
         }
+        \Craft::$app->getDb()->createCommand()
+            ->delete(FieldRecord::tableName(), ['in', 'id', $fieldIds])
+            ->execute();
         return $res;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function delete(array $data)
+    {
+        parent::delete($data);
+        $fieldUids = [];
+        foreach ($data['types'] ?? [] as $typeData) {
+            foreach ($typeData['fields'] ?? [] as $fieldData) {
+                $fieldUids[] = $fieldData['uid'];
+            }
+        }
+        \Craft::$app->getDb()->createCommand()
+            ->delete(FieldRecord::tableName(), ['in', 'uid', $fieldUids])
+            ->execute();
     }
 
     /**
@@ -250,9 +276,10 @@ class Matrix extends CraftField implements MatrixInterface
      * Build matrix types from an array of data
      * 
      * @param  array  $data
+     * @param  Matrix $matrix
      * @return array
      */
-    protected static function buildMatrixTypes(array $data): array
+    protected static function buildMatrixTypes(array $data, Matrix $matrix): array
     {
         $types = [];
         foreach ($data as $typeData) {
@@ -261,6 +288,7 @@ class Matrix extends CraftField implements MatrixInterface
             $fields = [];
             foreach ($typeData['fields'] as $fieldData) {
                 $field = Themes::$plugin->fields->create($fieldData);
+                $field->matrix = $matrix;
                 if (!isset($fieldData['options']) and $field->displayer) {
                     $field->options = $field->displayer->options->toArray();
                 }

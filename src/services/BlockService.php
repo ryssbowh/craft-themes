@@ -18,7 +18,6 @@ use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
-use craft\helpers\StringHelper;
 
 class BlockService extends Service
 {
@@ -76,7 +75,6 @@ class BlockService extends Service
         }
         $handle = $config['handle'];
         unset($config['handle']);
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $block = $this->blockProviderService()->getByHandle($config['provider'])->createBlock($handle); 
         $block->setAttributes($config);
         return $block;
@@ -96,7 +94,6 @@ class BlockService extends Service
         }
 
         $isNew = !is_int($block->id);
-        $uid = $block->uid;
 
         $this->triggerEvent(self::EVENT_BEFORE_SAVE, new BlockEvent([
             'block' => $block,
@@ -105,6 +102,7 @@ class BlockService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $block->getConfig();
+        $uid = $configData['uid'];
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 

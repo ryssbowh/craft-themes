@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { cloneDeep, isEqual, merge } from 'lodash';
+import { cloneDeep, isEqual, merge, has } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 function handleError(err) {
@@ -21,28 +21,23 @@ function setWindowUrl(theme, layout) {
     window.history.pushState({}, '', url.join('/'));
 }
 
-function cloneDisplay(display) {
-    display = cloneDeep(display);
+function cloneDisplay(oldDisplay) {
+    let display = cloneDeep(oldDisplay);
     display.id = null;
     display.uid = uuidv4();
     display.viewMode_id = null;
     display.item.id = null;
     display.item.uid = null;
     if (display.type == 'group') {
+        let groupDisplays = [];
         for (let i in display.item.displays) {
-            display.item.displays[i].id = null;
-            display.item.displays[i].uid = uuidv4();
-            display.item.displays[i].group_id = null;
-            display.item.displays[i].item.id = null;
-            display.item.displays[i].item.uid = null;
+            groupDisplays.push(cloneDisplay(display.item.displays[i]));
         }
+        display.item.displays = groupDisplays;
     }
-    if (display.item.type == 'matrix') {
-        for (let i in display.item.types) {
-            for (let j in display.item.types[i].fields) {
-                display.item.types[i].fields[j].id = null;
-            }
-        }
+    if (has(window.cloneField, display.item.type)) {
+        console.log('has function');
+        window.cloneField[display.item.type](oldDisplay, display);
     }
     return display;
 }
@@ -216,8 +211,10 @@ const store = createStore({
         addViewMode({commit, state}, viewMode) {
             viewMode.layout_id = state.layout.id;
             let newDisplays = [];
-            for (let i in state.displays) {
-                newDisplays.push(cloneDisplay(state.displays[i], viewMode));
+            let display;
+            for (let i in state.viewModes[state.viewModeIndex].displays) {
+                display = state.viewModes[state.viewModeIndex].displays[i];
+                newDisplays.push(cloneDisplay(display));
             }
             viewMode.displays = newDisplays;
             commit('addViewMode', viewMode);

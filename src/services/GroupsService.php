@@ -10,7 +10,6 @@ use Ryssbowh\CraftThemes\records\GroupRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
-use craft\helpers\StringHelper;
 
 class GroupsService extends Service
 {
@@ -86,9 +85,20 @@ class GroupsService extends Service
         if ($config instanceof ActiveRecord) {
             $config = $config->getAttributes();
         }
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
+        $displayData = null;
+        if (isset($config['displays'])) {
+            $displayData = $config['displays'];
+            unset($config['displays']);
+        }
         $group = new Group;
         $group->setAttributes($config);
+        if ($displayData) {
+            $displays = [];
+            foreach ($displayData as $data) {
+                $displays[] = $this->displayService()->create($data);
+            }
+            $group->displays = $displays;
+        }
         return $group;
     }
 
@@ -106,10 +116,10 @@ class GroupsService extends Service
         }
 
         $isNew = !is_int($group->id);
-        $uid = $group->uid;
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $group->getConfig();
+        $uid = $configData['uid'];
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 

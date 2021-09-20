@@ -46,10 +46,10 @@ export default {
         checkAndCopy: function(layout) {
             if (this.hasChanged) {
                 if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                    this.copy(layout.id);
+                    this.copyLayout(layout.id);
                 }
             } else {
-                this.copy(layout.id);
+                this.copyLayout(layout.id);
             }
         },
         checkAndDelete() {
@@ -58,7 +58,7 @@ export default {
             }
         },
         ...mapMutations([]),
-        ...mapActions(['save', 'copy', 'deleteLayout'])
+        ...mapActions(['save', 'copyLayout', 'deleteLayout'])
     }
 };
 </script>

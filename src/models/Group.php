@@ -87,6 +87,7 @@ class Group extends DisplayItem
         if (is_array($displays)) {
             foreach ($displays as $display) {
                 $display->group = $this;
+                $display->viewMode = $this->viewMode;
             }
         }
         $this->_displays = $displays;

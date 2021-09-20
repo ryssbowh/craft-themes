@@ -8,7 +8,6 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\User;
-use craft\helpers\StringHelper;
 
 class CpAjaxController extends Controller
 {

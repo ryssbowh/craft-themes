@@ -11,20 +11,29 @@ class EntryRenderedOptions extends FieldDisplayerOptions
     /**
      * @var array
      */
-    public $viewModes;
+    protected $_viewModes;
 
     /**
      * @inheritDoc
      */
-    public function init()
+    public function getViewModes()
     {
-        if ($this->viewModes === null) {
-            $this->viewModes = [];
+        if ($this->_viewModes === null) {
+            $this->_viewModes = [];
             foreach ($this->displayer->getViewModes() as $typeUid => $viewModes) {
                 $keys = array_keys($viewModes['viewModes']);
-                $this->viewModes[$typeUid] = $keys[0];
+                $this->_viewModes[$typeUid] = $keys[0];
             }
         }
+        return $this->_viewModes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['viewModes']);
     }
 
     /**

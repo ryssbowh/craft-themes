@@ -97,7 +97,12 @@ class CraftField extends Field implements CraftFieldInterface
      */
     public function getAvailableDisplayers(): array
     {
-        return Themes::$plugin->fieldDisplayers->getForField(get_class($this->craftField), $this);
+        $displayers = Themes::$plugin->fieldDisplayers->getForField(get_class($this->craftField));
+        $_this = $this;
+        array_walk($displayers, function ($displayer) use ($_this) {
+            $displayer->field = $_this;
+        });
+        return $displayers;
     }
 
     /**

@@ -74,7 +74,8 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
             'labelVisuallyHidden' => $this->labelVisuallyHidden,
             'hidden' => $this->hidden,
             'visuallyHidden' => $this->visuallyHidden,
-            'display_id' => $this->display->uid
+            'display_id' => $this->display->uid,
+            'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
 

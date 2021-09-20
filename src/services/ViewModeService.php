@@ -13,7 +13,6 @@ use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
-use craft\helpers\StringHelper;
 
 class ViewModeService extends Service
 {
@@ -58,7 +57,6 @@ class ViewModeService extends Service
         if ($config instanceof ViewModeRecord) {
             $config = $config->getAttributes();
         }
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $displayData = null;
         if (isset($config['displays'])) {
             $displayData = $config['displays'];
@@ -103,7 +101,6 @@ class ViewModeService extends Service
         }
 
         $isNew = !is_int($viewMode->id);
-        $uid = $viewMode->uid;
         
         $this->triggerEvent(self::EVENT_BEFORE_SAVE, new ViewModeEvent([
             'viewMode' => $viewMode,
@@ -112,6 +109,7 @@ class ViewModeService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $viewMode->getConfig();
+        $uid = $configData['uid'];
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 

@@ -29,6 +29,20 @@ class CpViewModesAjaxController extends Controller
     }
 
     /**
+     * Get view modes for a layout
+     * 
+     * @return array
+     */
+    public function actionGet()
+    {
+        $layoutId = $this->request->getRequiredParam('layoutId');
+
+        return [
+            'viewModes' => $this->layouts->getById($layoutId)->viewModes
+        ];
+    }
+
+    /**
      * Get view modes for a theme and a layout
      * 
      * @param  string $theme
@@ -41,20 +55,6 @@ class CpViewModesAjaxController extends Controller
         $layout = Themes::$plugin->layouts->get($theme, $type, $uid);
         return [
             'viewModes' => $layout->viewModes
-        ];
-    }
-
-    /**
-     * Get view modes for a layout
-     * 
-     * @return array
-     */
-    public function actionGet()
-    {
-        $layoutId = $this->request->getRequiredParam('layoutId');
-
-        return [
-            'viewModes' => $this->layouts->getById($layoutId)->viewModes
         ];
     }
 

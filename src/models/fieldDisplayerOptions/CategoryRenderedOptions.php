@@ -11,17 +11,26 @@ class CategoryRenderedOptions extends FieldDisplayerOptions
     /**
      * @var string
      */
-    public $viewMode;
+    protected $_viewMode;
     
     /**
      * @inheritDoc
      */
-    public function init()
+    public function getViewMode()
     {
-        if ($this->viewMode === null) {
+        if ($this->_viewMode === null) {
             $keys = array_keys($this->displayer->getViewModes());
-            $this->viewMode = $keys[0];
+            $this->_viewMode = $keys[0];
         }
+        return $this->_viewMode;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['viewMode']);
     }
 
     /**

@@ -4,10 +4,10 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\TablePivotRecord;
 use craft\base\Field as BaseField;
 use craft\fields\Table as CraftTable;
-use craft\helpers\StringHelper;
 
 class Table extends CraftField
 {
@@ -44,14 +44,13 @@ class Table extends CraftField
      */
     public static function create(?array $config = null): FieldInterface
     {
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $class = get_called_class();
         $field = new $class;
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
         $field->setAttributes($config);
         if ($config['fields'] ?? null) {
-            $field->fields = static::buildFields($config['fields']);
+            $field->fields = static::buildFields($config['fields'], $field);
         }
         if (!isset($config['options']) and $field->displayer) {
             $field->options = $field->displayer->options->toArray();
@@ -105,6 +104,7 @@ class Table extends CraftField
                 //New column was added to the table
                 $field = TableField::create($newConfig);
             }
+            $field->table = $this;
             $newFields[$order] = $field;
             $order++;
         }
@@ -139,14 +139,33 @@ class Table extends CraftField
             $pivot->save(false);
             $pivotIds[] = $pivot->id;
         }
+        //deleting old field records
         $oldRecords = TablePivotRecord::find()
             ->where(['table_id' => $table->id])
             ->andWhere(['not in', 'id', $pivotIds])
             ->all();
+        $fieldIds = [];
         foreach ($oldRecords as $record) {
-            $record->delete();
+            $fieldIds[] = $record->field_id;
         }
+        \Craft::$app->getDb()->createCommand()
+            ->delete(FieldRecord::tableName(), ['in', 'id', $fieldIds])
+            ->execute();
         return $res;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function delete(array $data)
+    {
+        parent::delete($data);
+        $fieldUids = array_map(function ($field) {
+            return $field['uid'];
+        }, $data['fields'] ?? []);
+        \Craft::$app->getDb()->createCommand()
+            ->delete(FieldRecord::tableName(), ['in', 'uid', $fieldUids])
+            ->execute();
     }
 
     /**
@@ -203,16 +222,18 @@ class Table extends CraftField
     /**
      * Build table fields from an array of data
      * 
-     * @param  array  $data
+     * @param  array $data
+     * @param  Table $table
      * @return array
      */
-    protected static function buildFields(array $data): array
+    protected static function buildFields(array $data, Table $table): array
     {
         $fields = [];
         foreach ($data as $fieldData) {
             $field = Themes::$plugin->fields->create($fieldData);
             $field->handle = $fieldData['handle'];
             $field->name = $fieldData['name'];
+            $field->table = $table;
             if (!isset($fieldData['options']) and $field->displayer) {
                 $field->options = $field->displayer->options->toArray();
             }

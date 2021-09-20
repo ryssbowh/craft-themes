@@ -54,7 +54,7 @@ class CpBlocksAjaxController extends Controller
         $this->layouts->save($layout);
 
         return [
-            'message' => \Craft::t('themes', 'Layout deleted successfully.'),
+            'message' => \Craft::t('themes', 'Layout\'s blocks deleted successfully.'),
             'layout' => $layout
         ];
     }
@@ -85,7 +85,8 @@ class CpBlocksAjaxController extends Controller
         $layoutId = $this->request->getRequiredParam('layout');
 
         $layout = $this->layouts->getById($layoutId);
-        $blocks = array_map(function ($blockData) use ($_this) {
+        $blocks = array_map(function ($blockData) use ($_this, $layout) {
+            $blockData['layout'] = $layout;
             return $_this->blocks->create($blockData);
         }, $blocksData);
 

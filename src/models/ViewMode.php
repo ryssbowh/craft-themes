@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Model;
+use craft\helpers\StringHelper;
 
 class ViewMode extends Model implements ViewModeInterface
 {
@@ -73,7 +74,8 @@ class ViewMode extends Model implements ViewModeInterface
         return [
             'name' => $this->name,
             'handle' => $this->handle,
-            'layout_id' => $this->layout->uid
+            'layout_id' => $this->layout->uid,
+            'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
 

@@ -3,7 +3,6 @@
 namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
 
 class CategoryLayout extends Layout

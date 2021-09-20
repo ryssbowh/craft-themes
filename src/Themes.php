@@ -392,10 +392,10 @@ class Themes extends \craft\base\Plugin
             Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::TAG_HANDLE, $uid);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
-            Themes::$plugin->layouts->onCraftFieldSaved($e);
+            Themes::$plugin->displays->onCraftFieldSaved($e);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, function (FieldEvent $e) {
-            Themes::$plugin->layouts->onCraftFieldDeleted($e);
+            Themes::$plugin->displays->onCraftFieldDeleted($e);
         });
     }
 

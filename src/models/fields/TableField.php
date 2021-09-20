@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\Formidable\Models\Fields\LightSwitch;
@@ -18,9 +19,20 @@ use craft\fields\Url;
 
 class TableField extends Field
 {
+    /**
+     * @var string
+     */
     public $handle;
 
+    /**
+     * @var string
+     */
     public $name;
+
+    /**
+     * @var Table
+     */
+    protected $_table;
 
     /**
      * @inheritDoc
@@ -31,11 +43,26 @@ class TableField extends Field
     }
 
     /**
-     * @inheritDoc
+     * Table getter
+     * 
+     * @return ?Table
      */
-    public function getTable(): ?CraftField
+    public function getTable(): ?Table
     {
-        return Themes::$plugin->tables->getTableForField($this->id);
+        if (is_null($this->_table)) {
+            $this->_table = Themes::$plugin->tables->getTableForField($this->id);
+        }
+        return $this->_table;
+    }
+
+    /**
+     * Table setter
+     * 
+     * @param Table $table
+     */
+    public function setTable(Table $table)
+    {
+        $this->_table = $table;
     }
 
     /**
@@ -57,9 +84,22 @@ class TableField extends Field
     /**
      * @inheritDoc
      */
+    public function getDisplayName(): string
+    {
+        return $this->craft_field_class::displayName();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getAvailableDisplayers(): array
     {
-        return Themes::$plugin->fieldDisplayers->getForField($this->craft_field_class, $this);
+        $displayers = Themes::$plugin->fieldDisplayers->getForField($this->craft_field_class);
+        $_this = $this;
+        array_walk($displayers, function ($displayer) use ($_this) {
+            $displayer->field = $_this;
+        });
+        return $displayers;
     }
 
     /**
@@ -77,21 +117,21 @@ class TableField extends Field
      */
     public function getConfig(): array
     {
-        return array_merge(parent::getConfig(), [
+        $config = array_merge(parent::getConfig(), [
             'handle' => $this->handle,
             'name' => $this->name,
             'craft_field_class' => $this->craft_field_class
         ]);
+        unset($config['display_id']);
+        return $config;
     }
 
     /**
-     * Get view mode associated to this field
-     * 
-     * @return ViewModeInterface
+     * @inheritDoc
      */
-    public function getViewMode(): ViewModeInterface
+    public function getDisplay(): DisplayInterface
     {
-        return $this->table->display->viewMode;
+        return $this->table->display;
     }
 
     /**

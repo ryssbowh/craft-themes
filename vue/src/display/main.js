@@ -29,7 +29,7 @@ app.component('draggable', Draggable);
 app.component('group', Group);
 app.component('options-modal', OptionsModal);
 app.component('group-modal', GroupModal);
-app.component('display-item', DisplayItem,);
+app.component('display-item', DisplayItem);
 
 let event = new CustomEvent("register-field-displayers-components", {detail: {}});
 document.dispatchEvent(event);
@@ -47,9 +47,12 @@ for (let name in event.detail) {
 
 event = new CustomEvent("register-fields-components", {detail: {}});
 document.dispatchEvent(event);
+//Global object containing clone functions for bespoke field types
+window.cloneField = {};
 
 for (let name in event.detail) {
-    app.component('field-' + name, event.detail[name]);
+    app.component('field-' + name, event.detail[name].component);
+    window.cloneField[name] = event.detail[name].clone;
 }
 
 const FieldComponents = {
@@ -59,6 +62,7 @@ const FieldComponents = {
     }
   },
 };
+
 const Translate = {
   install(app) {
     app.config.globalProperties.t = (str, params) => {
@@ -66,6 +70,7 @@ const Translate = {
     }
   },
 };
+
 const HandleError = {
   install(app) {
     app.config.globalProperties.handleError = (err) => {

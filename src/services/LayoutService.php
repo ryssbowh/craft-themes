@@ -26,9 +26,7 @@ use craft\elements\Category;
 use craft\elements\Entry;
 use craft\events\ConfigEvent;
 use craft\events\EntryTypeEvent;
-use craft\events\FieldEvent;
 use craft\events\RebuildConfigEvent;
-use craft\helpers\StringHelper;
 
 class LayoutService extends Service
 {
@@ -294,7 +292,6 @@ class LayoutService extends Service
         }
 
         $isNew = !is_int($layout->id);
-        $uid = $layout->uid;
 
         $existing = $this->get($layout->theme, $layout->type, $layout->elementUid ?? '');
         if ($existing and $existing->id != $layout->id) {
@@ -308,6 +305,7 @@ class LayoutService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $layout->getConfig();
+        $uid = $configData['uid'];
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -343,39 +341,6 @@ class LayoutService extends Service
     public function getRecordByUid(string $uid): LayoutRecord
     {
         return LayoutRecord::findOne(['uid' => $uid]) ?? new LayoutRecord(['uid' => $uid]);
-    }
-
-    /**
-     * Deletes a layout
-     * 
-     * @param  LayoutInterface $layout
-     * @param  bool $force
-     * @return bool
-     * @throws LayoutException
-     */
-    public function delete(LayoutInterface $layout, bool $force = false): bool
-    {
-        if (!$force and ($layout->type == self::DEFAULT_HANDLE or $layout->type == self::USER_HANDLE)) {
-            throw LayoutException::defaultUndeletable();
-        }
-        $this->triggerEvent(self::EVENT_BEFORE_DELETE, new LayoutEvent([
-            'layout' => $layout
-        ]));
-
-        //Deleting view modes
-        foreach ($layout->viewModes as $viewMode) {
-            Themes::$plugin->viewModes->delete($viewMode, true);
-        }
-        //Deleting blocks
-        foreach ($layout->blocks as $block) {
-            Themes::$plugin->blocks->delete($block);
-        }
-
-        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
-
-        $this->_layouts = $this->all()->where('id', '!=', $layout->id);
-
-        return true;
     }
 
     /**
@@ -475,25 +440,6 @@ class LayoutService extends Service
     }
 
     /**
-     * Callback when a field is deleted
-     * Resave layout for which a deleted field was present
-     * 
-     * @param ConfigEvent $event
-     */
-    public function onCraftFieldDeleted(FieldEvent $event)
-    {
-        $layoutsSaved = [];
-        foreach ($this->displayService()->getAllForCraftField($event->field->id) as $display) {
-            $layout = $display->layout;
-            if (in_array($layout->id, $layoutsSaved)) {
-                continue;
-            }
-            $this->installLayoutData($layout);
-            $layoutsSaved[] = $layout->id;
-        }
-    }
-
-    /**
      * Respond to rebuild config event
      * 
      * @param RebuildConfigEvent $e
@@ -502,50 +448,6 @@ class LayoutService extends Service
     {
         foreach ($this->all() as $layout) {
             $e->config[self::CONFIG_KEY.'.'.$layout->uid] = $layout->getConfig();
-        }
-    }
-
-    /**
-     * Handles a craft field save: Replaces the display in 
-     * each layout where the craft field was referenced 
-     * (if the type of field has changed) and saves the layout.
-     * 
-     * @param FieldEvent $event
-     */
-    public function onCraftFieldSaved(FieldEvent $event)
-    {
-        if ($event->isNew) {
-            return;
-        }
-        $field = $event->field;
-        $displays = $this->displayService()->getAllForCraftField($field->id);
-        $toSave = [];
-        foreach ($displays as $display) {
-            $oldItem = $display->item;
-            $layout = $display->viewMode->layout;
-            $oldFieldClass = $oldItem->craft_field_class;
-            if ($oldItem->craft_field_class != get_class($field)) {
-                // Field has changed class, deleting old field, recreating it
-                // and copying old field attributes
-                $oldItem->delete();
-                $display->item = CraftField::createFromField($field);
-                $display->item->id = $oldItem->id;
-                $display->item->uid = $oldItem->uid;
-                $display->item->labelHidden = $oldItem->labelHidden;
-                $display->item->labelVisuallyHidden = $oldItem->labelVisuallyHidden;
-                $display->item->visuallyHidden = $oldItem->visuallyHidden;
-                $display->item->hidden = $display->item->hidden ?: $oldItem->hidden;
-                $display->item->display = $display;
-                $toSave[$layout->id] = $layout;
-            } else {
-                // Let the field deal with the change itself
-                if ($oldItem->onCraftFieldChanged($field)) {
-                    $toSave[$layout->id] = $layout;
-                }
-            }
-        }
-        foreach ($toSave as $layout) {
-            $this->save($layout);
         }
     }
 
@@ -576,7 +478,7 @@ class LayoutService extends Service
      * @throws ThemeException
      * @return string
      */
-    public function getThemeHandle($theme): string
+    protected function getThemeHandle($theme): string
     {
         if ($theme instanceof ThemeInterface) {
             return $theme->handle;
@@ -602,7 +504,6 @@ class LayoutService extends Service
         if (!isset($config['themeHandle'])) {
             throw LayoutException::parameterMissing('themeHandle', __METHOD__);
         }
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         if ($viewModesData = $config['viewModes'] ?? null) {
             foreach ($viewModesData as $data) {
                 $viewMode = $this->viewModesService()->create($data);
@@ -639,6 +540,39 @@ class LayoutService extends Service
         $config = array_intersect_key($config, array_flip($layout->safeAttributes()));
         $layout->setAttributes($config);
         return $layout;
+    }
+
+    /**
+     * Deletes a layout
+     * 
+     * @param  LayoutInterface $layout
+     * @param  bool $force
+     * @return bool
+     * @throws LayoutException
+     */
+    protected function delete(LayoutInterface $layout, bool $force = false): bool
+    {
+        if (!$force and ($layout->type == self::DEFAULT_HANDLE or $layout->type == self::USER_HANDLE)) {
+            throw LayoutException::defaultUndeletable();
+        }
+        $this->triggerEvent(self::EVENT_BEFORE_DELETE, new LayoutEvent([
+            'layout' => $layout
+        ]));
+
+        //Deleting view modes
+        foreach ($layout->viewModes as $viewMode) {
+            Themes::$plugin->viewModes->delete($viewMode, true);
+        }
+        //Deleting blocks
+        foreach ($layout->blocks as $block) {
+            Themes::$plugin->blocks->delete($block);
+        }
+
+        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
+
+        $this->_layouts = $this->all()->where('id', '!=', $layout->id);
+
+        return true;
     }
 
     /**

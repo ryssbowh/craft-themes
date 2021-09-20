@@ -3,7 +3,6 @@
 namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
 
 class EntryLayout extends Layout
@@ -57,7 +56,7 @@ class EntryLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'Entry : {name}', ['name' => $this->element->name]);
+        return \Craft::t('themes', 'Section {section} : {name}', ['section' => $this->element->section->name, 'name' => $this->element->name]);
     }
 
     /**

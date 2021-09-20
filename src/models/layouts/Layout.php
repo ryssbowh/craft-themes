@@ -159,7 +159,8 @@ class Layout extends Model implements LayoutInterface
             'themeHandle' => $this->themeHandle,
             'type' => $this->type,
             'elementUid' => $this->elementUid,
-            'hasBlocks' => $this->hasBlocks
+            'hasBlocks' => $this->hasBlocks,
+            'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
 
@@ -293,7 +294,7 @@ class Layout extends Model implements LayoutInterface
     public function setBlocks(array $blocks): LayoutInterface
     {
         foreach ($this->regions as $region) {
-            $region->blocks = null;
+            $region->blocks = [];
         }
         foreach ($blocks as $block) {
             $this->addBlock($block, $block->region);

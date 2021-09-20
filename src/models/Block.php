@@ -110,7 +110,8 @@ abstract class Block extends Model implements BlockInterface
             'provider' => $this->provider,
             'order' => $this->order,
             'active' => $this->active,
-            'options' => $options
+            'options' => $options,
+            'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
 

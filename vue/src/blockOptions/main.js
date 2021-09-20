@@ -98,7 +98,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 });
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/viewModes/'+this.theme+'/entry/'+this.block.options.type))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/entry/'+this.block.options.type))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -206,7 +206,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 });
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/viewModes/'+this.theme+'/category/'+this.block.options.group))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/category/'+this.block.options.group))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -303,7 +303,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 });
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/viewModes/'+this.theme+'/user'))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/user'))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -374,7 +374,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 return [];
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/viewModes/'+this.theme+'/user'))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/user'))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -439,7 +439,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 return [];
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/viewModes/'+this.theme+'/global/'+this.block.options.set))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/global/'+this.block.options.set))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })

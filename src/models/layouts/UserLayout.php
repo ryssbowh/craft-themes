@@ -4,7 +4,6 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\User;
-use craft\helpers\StringHelper;
 use craft\models\FieldLayout;
 
 class UserLayout extends Layout

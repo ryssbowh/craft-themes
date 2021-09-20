@@ -117,13 +117,6 @@ const store = createStore({
         setAllLayouts(state, value) {
             state.allLayouts = value;
         },
-        deleteLayout(state, layoutId) {
-            let layouts = state.allLayouts[state.theme].filter(layout => {
-                return layout.id != layoutId;
-            });
-            state.layouts = layouts;
-            state.allLayouts[state.theme] = layouts;
-        },
         setHasChanged(state, value) {
             state.hasChanged = value;
         },
@@ -244,7 +237,7 @@ const store = createStore({
                 }
             }
         },
-        copy({state, commit, dispatch}, id) {
+        copyLayout({state, commit, dispatch}, id) {
             commit('setLayout', id);
             commit('setIsCopying', true);
             commit('setHasChanged', true);
@@ -261,7 +254,7 @@ const store = createStore({
                 let layout;
                 for (let id in state.layouts) {
                     layout = state.layouts[id];
-                    if (layout.handle == 'default') {
+                    if (layout.type == 'default') {
                         return dispatch('setLayoutAndFetch', layout.id);
                     }
                 }

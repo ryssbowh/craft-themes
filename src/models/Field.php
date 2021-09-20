@@ -15,7 +15,6 @@ use craft\base\Element;
 use craft\base\Field as BaseField;
 use craft\fieldlayoutelements\CustomField;
 use craft\fields\Matrix as CraftMatrix;
-use craft\helpers\StringHelper;
 
 abstract class Field extends DisplayItem implements FieldInterface
 {
@@ -87,7 +86,6 @@ abstract class Field extends DisplayItem implements FieldInterface
         if ($config == null) {
             $config = $class::buildConfig(null);
         }
-        $config['uid'] = $config['uid'] ?? StringHelper::UUID();
         $field = new $class;
         $attributes = $field->safeAttributes();
         $config = array_intersect_key($config, array_flip($attributes));
@@ -170,9 +168,9 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function setDisplayerHandle(string $handle)
     {
-        if ($handle) {
-            Themes::$plugin->fieldDisplayers->ensureDisplayerIsValidForField($handle, $this);
-        }
+        // if ($handle) {
+        //     Themes::$plugin->fieldDisplayers->ensureDisplayerIsValidForField($handle, $this);
+        // }
         $this->_displayerHandle = $handle;
         $this->_displayer = null;
     }
@@ -221,7 +219,12 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function getAvailableDisplayers(): array
     {
-        return Themes::$plugin->fieldDisplayers->getForField(get_class($this));
+        $displayers = Themes::$plugin->fieldDisplayers->getForField(get_class($this));
+        $_this = $this;
+        array_walk($displayers, function ($displayer) use ($_this) {
+            $displayer->field = $_this;
+        });
+        return $displayers;
     }
 
     /**

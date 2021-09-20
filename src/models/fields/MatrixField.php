@@ -3,10 +3,16 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 
 class MatrixField extends CraftField
 {
+    /**
+     * @var Matrix
+     */
+    protected $_matrix;
+
     /**
      * @inheritDoc
      */
@@ -16,11 +22,26 @@ class MatrixField extends CraftField
     }
 
     /**
-     * @inheritDoc
+     * Matrix getter
+     * 
+     * @return Matrix
      */
-    public function getMatrix(): ?CraftField
+    public function getMatrix(): ?Matrix
     {
-        return Themes::$plugin->matrix->getMatrixForField($this->id);
+        if (is_null($this->_matrix)) {
+            $this->_matrix = Themes::$plugin->matrix->getMatrixForField($this->id);
+        }
+        return $this->_matrix;
+    }
+
+    /**
+     * Matrix setter
+     * 
+     * @param Matrix $matrix
+     */
+    public function setMatrix(Matrix $matrix)
+    {
+        $this->_matrix = $matrix;
     }
 
     /**
@@ -32,12 +53,20 @@ class MatrixField extends CraftField
     }
 
     /**
-     * Get view mode associated to this field
-     * 
-     * @return ViewModeInterface
+     * @inheritDoc
      */
-    public function getViewMode(): ViewModeInterface
+    public function getDisplay(): DisplayInterface
     {
-        return $this->matrix->display->viewMode;
+        return $this->matrix->display;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getConfig(): array
+    {
+        $config = parent::getConfig();
+        unset($config['display_id']);
+        return $config;
     }
 }

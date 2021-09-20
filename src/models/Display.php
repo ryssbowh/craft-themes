@@ -11,6 +11,7 @@ use Ryssbowh\CraftThemes\models\Group;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
 use craft\base\Model;
+use craft\helpers\StringHelper;
 
 class Display extends Model implements DisplayInterface
 {
@@ -86,7 +87,8 @@ class Display extends Model implements DisplayInterface
             'viewMode_id' => $this->viewMode->uid,
             'group_id' => $this->group ? $this->group->uid : null,
             'order' => $this->order,
-            'type' => $this->type
+            'type' => $this->type,
+            'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }
 

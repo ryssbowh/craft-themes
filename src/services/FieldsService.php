@@ -14,7 +14,6 @@ use Ryssbowh\CraftThemes\records\FieldRecord;
 use craft\base\Field as BaseField;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
-use craft\helpers\StringHelper;
 
 class FieldsService extends Service
 {
@@ -117,12 +116,12 @@ class FieldsService extends Service
         if ($field->displayer and !$field->displayer->options->validate()) {
             return false;
         }
-
+        
         $isNew = !is_int($field->id);
-        $uid = $field->uid;
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $field->getConfig();
+        $uid = $configData['uid'];
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -163,7 +162,9 @@ class FieldsService extends Service
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $data['uid'] = $uid;
-            $data['display_id'] = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+            if (isset($data['display_id'])) {
+                $data['display_id'] = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+            }
             $this->getFieldClassByType($data['type'])::save($data);
             
             $transaction->commit();
