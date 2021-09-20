@@ -17,7 +17,7 @@ define('CRAFT_VENDOR_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor');
 
 $devMode = true;
 
-ComposerHelper::installBootstrapTheme();
+ComposerHelper::installChildTheme();
 TestSetup::configureCraft();
 
 //This is needed during the creation of a volume

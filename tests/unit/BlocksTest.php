@@ -31,7 +31,7 @@ class BlocksTest extends Unit
         $this->layouts = Themes::getInstance()->layouts;
     }
 
-    public function testRegions()
+    public function testCountRegions()
     {
         $layout = $this->layouts->getDefault('child-theme');
         $this->assertCount(8, $layout->regions);

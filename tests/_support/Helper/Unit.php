@@ -19,9 +19,9 @@ use Craft;
  */
 class Unit extends Module
 {
-    public function installBootstrapTheme()
-    {
-        Craft::$app->plugins->init();
-        Craft::$app->plugins->installPlugin('bootstrap-theme');
-    }
+    // public function installBootstrapTheme()
+    // {
+    //     Craft::$app->plugins->init();
+    //     Craft::$app->plugins->installPlugin('bootstrap-theme');
+    // }
 }

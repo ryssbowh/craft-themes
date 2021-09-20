@@ -11,7 +11,7 @@ use Composer\Package\Locker;
 
 class ComposerHelper
 {
-    public static function installBootstrapTheme()
+    public static function installChildTheme()
     {
         $io = new BufferIO;
         $jsonPath = realpath(__DIR__ . '/../../composer.json');
