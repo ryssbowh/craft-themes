@@ -149,6 +149,5 @@ Craft 3.5 or over
 - tests
 - test email templates in console
 - install blocks in theme
-- bundleAssets as regular expressions paths  
-- preprocess functions
+- bundleAssets as regular expressions paths
 - translations

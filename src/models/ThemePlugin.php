@@ -254,7 +254,17 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     protected function getAssetBundles(string $urlPath): array
     {
-        return array_merge($this->assetBundles['*'] ?? [], $this->assetBundles[$urlPath] ?? []);
+        $pathBundles = [];
+        foreach ($this->assetBundles as $path => $bundles) {
+            if (substr($path, 0, 1) == '/' and substr($path, -1, 1) == '/' and $path != '/') {
+                if (preg_match($path, $urlPath)) {
+                    $pathBundles = array_merge($pathBundles, $bundles);
+                }
+            } else if ($path == $urlPath) {
+                $pathBundles = array_merge($pathBundles, $bundles);
+            }
+        }
+        return array_merge($this->assetBundles['*'] ?? [], $pathBundles);
     }
 
     /**

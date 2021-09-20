@@ -59,6 +59,7 @@ class ThemesRegistry extends Service
             \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
             \Craft::$app->view->registerTwigExtension(new TwigTheme);
             $path = \Craft::$app->request->getPathInfo();
+            $path = $path === '' ? '/' : $path;
             $this->currentTheme->registerAssetBundles($path);
             $this->currentTheme->afterSet();
         }
