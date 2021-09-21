@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\events\RegisterBlockCacheStrategies;
@@ -55,7 +54,7 @@ class BlockCacheService extends Service
     /**
      * Start block cahing
      * 
-     * @param  BlockInterface $block
+     * @param BlockInterface $block
      */
     public function startBlockCaching(BlockInterface $block)
     {
@@ -67,7 +66,7 @@ class BlockCacheService extends Service
     /**
      * Stop block cahing
      * 
-     * @param  BlockInterface $block
+     * @param BlockInterface $block
      */
     public function stopBlockCaching(BlockInterface $block, $data)
     {
@@ -121,8 +120,8 @@ class BlockCacheService extends Service
     /**
      * Set a block cache
      * 
-     * @param  BlockInterface $block
-     * @param  string         $data
+     * @param BlockInterface $block
+     * @param string         $data
      */
     public function setBlockCache(BlockInterface $block, string $data, TagDependency $dep)
     {

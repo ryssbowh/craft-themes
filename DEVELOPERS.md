@@ -76,6 +76,18 @@ Bundle assets will be registered automatically, the '\*' array will be registere
 
 By default, parent themes bundles will also be registered. This can be disabled with the property `$inheritsAssetBundles` of your theme class.
 
+## Layouts
+
+Templates are created by the system automatically, their types as mentionned in this readme are as follows :
+
+- Default : `default` or `LayoutService::DEFAULT_HANDLE`
+- Entry types : `entry` or `LayoutService::ENTRY_HANDLE`
+- Category groups : `category` or `LayoutService::CATEGORY_HANDLE`
+- Global sets : `global` or `LayoutService::GLOBAL_HANDLE`
+- Tag groups : `tag` or `LayoutService::TAG_HANDLE`
+- Users : `user` or `LayoutService::USER_HANDLE`
+- Volumes : `volume` or `LayoutService::VOLUME_HANDLE`
+
 ## Blocks
 
 Blocks are provided by a block provider, each provider can define several blocks. This plugin comes with a default 'System' provider.
@@ -270,17 +282,15 @@ Templates are inherited, so if you call a template that isn't defined in your th
 
 Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
-Let's say you have an `entry` layout for a entry type `blog`, a region `header`, a view mode `small`, a block `latestBlogs`, a field `content`, a field displayer `redactor`, a file displayer `image` and a group `left`. The precedence of templates would look like this, by order of importance :
-
-Layouts :
+If you have a layout of type `entry` for an entry type `blog` and a view mode `default`, the layout templates will take this precedence :
 
 ```
-layouts/entry/blog/small.twig
+layouts/entry/blog/default.twig
 layouts/entry/blog.twig
 layouts/entry.twig
 layouts/layout.twig
 ```
-Regions :
+If you have a region `header` for a layout of type `entry` for an entry type `blog`, the region templates will take this precedence :
 ```
 regions/entry/blog/region-header.twig
 regions/entry/blog/region.twig
@@ -289,14 +299,14 @@ regions/entry/region.twig
 regions/region-header.twig
 regions/region.twig
 ```
-Blocks :
+If you have a block `latestBlogs` for a layout of type `entry` for an entry type `blog` situated in a region `header`, the block templates will take this precedence :
 ```
 blocks/entry/blog/header/latestBlogs.twig
 blocks/entry/blog/latestBlogs.twig
 blocks/entry/latestBlogs.twig
 blocks/latestBlogs.twig
 ```
-Field displayers :
+If you have a field displayer `reactor` for a field `content` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the field templates will take this precedence :
 ```
 fields/entry/blog/small/redactor-content.twig
 fields/entry/blog/small/redactor.twig
@@ -307,29 +317,33 @@ fields/entry/redactor.twig
 fields/redactor-content.twig
 fields/redactor.twig
 ```
-Groups:
+If you have a group `left` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the group templates will take this precedence :
 ```
-groups/entry/blog/small/left.twig
+groups/entry/blog/small/group-left.twig
 groups/entry/blog/small/group.twig
-groups/entry/blog/left.twig
+groups/entry/blog/group-left.twig
 groups/entry/blog/group.twig
-groups/entry/left.twig
+groups/entry/group-left.twig
 groups/entry/group.twig
-groups/left.twig
+groups/group-left.twig
 groups/group.twig
 ```
-File displayers :
+If you have a file displayer `image` for a field `topImage` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the asset templates will take this precedence :
 ```
-assets/entry/blog/small/image.twig
-assets/entry/blog/image.twig
-assets/entry/image.twig
-assets/image.twig
+files/entry/blog/small/image-topImage.twig
+files/entry/blog/small/image.twig
+files/entry/blog/image-topImage.twig
+files/entry/blog/image.twig
+files/entry/image-topImage.twig
+files/entry/image.twig
+files/image-topImage.twig
+files/image.twig
 ```
 
 More templates and variables can be defined by listening to events on the `ViewService` class :
 
 - Layouts : event `BEFORE_RENDERING_LAYOUT`  
-- Assets : event `BEFORE_RENDERING_ASSET`  
+- Assets : event `BEFORE_RENDERING_FILE`  
 - Fields : event `BEFORE_RENDERING_FIELD`  
 - Blocks : event `BEFORE_RENDERING_BLOCK`  
 - Regions : event `BEFORE_RENDERING_REGION`  

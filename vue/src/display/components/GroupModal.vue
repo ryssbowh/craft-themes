@@ -138,9 +138,6 @@ export default {
             if (!this.handle.trim()) {
                 this.handleError = this.t('Handle is required');
             }
-            if (this.handle.trim() == 'group') {
-                this.handleError = this.t("'group' is a reserved handle");
-            }
             for (let i in this.groups) {
                 if (this.groups[i].uid != this.editedGroupUid && this.groups[i].item.handle == this.handle.trim()) {
                     this.handleError = this.t('This handle is already defined');

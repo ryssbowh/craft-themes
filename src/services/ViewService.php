@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -27,7 +26,7 @@ class ViewService extends Service
     const THEME_ROOT_TEMPLATE = 'themed_page';
 
     const BEFORE_RENDERING_LAYOUT = 'before_rendering_layout';
-    const BEFORE_RENDERING_ASSET = 'before_rendering_asset';
+    const BEFORE_RENDERING_FILE = 'before_rendering_file';
     const BEFORE_RENDERING_FIELD = 'before_rendering_field';
     const BEFORE_RENDERING_BLOCK = 'before_rendering_block';
     const BEFORE_RENDERING_REGION = 'before_rendering_region';
@@ -114,7 +113,7 @@ class ViewService extends Service
         $layout = $this->renderingLayout->getElementMachineName();
         $type = $this->renderingLayout->type;
         $templates = [
-            'regions/' . $type . '/' . $layout . '/region' . $region->handle,
+            'regions/' . $type . '/' . $layout . '/region-' . $region->handle,
             'regions/' . $type . '/' . $layout . '/region',
             'regions/' . $type . '/region-' . $region->handle,
             'regions/' . $type . '/region',
@@ -240,13 +239,13 @@ class ViewService extends Service
         $viewMode = $this->renderingViewMode;
         $handle = $group->handle;
         $templates = [
-            'groups/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
+            'groups/' . $type . '/' . $layout . '/' . $viewMode . '/group-' . $handle,
             'groups/' . $type . '/' . $layout . '/' . $viewMode . '/group',
-            'groups/' . $type . '/' . $layout . '/' . $handle,
+            'groups/' . $type . '/' . $layout . '/group-' . $handle,
             'groups/' . $type . '/' . $layout . '/group',
-            'groups/' . $type . '/' . $handle,
+            'groups/' . $type . '/group-' . $handle,
             'groups/' . $type . '/group',
-            'groups/' . $handle,
+            'groups/group-' . $handle,
             'groups/group'
         ];
         $variables = [
@@ -272,7 +271,7 @@ class ViewService extends Service
      * @param  FileDisplayerInterface $displayer
      * @return string
      */
-    public function renderAsset(Asset $asset, ?FileDisplayerInterface $displayer): string
+    public function renderAsset(Asset $asset, FieldInterface $field, ?FileDisplayerInterface $displayer): string
     {
         if (!$displayer) {
             return '';
@@ -281,11 +280,16 @@ class ViewService extends Service
         $type = $this->renderingLayout->type;
         $viewMode = $this->renderingViewMode;
         $handle = $displayer->handle;
+        $withField = $handle . '-' . $field->handle;
         $templates = [
-            'assets/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
-            'assets/' . $type . '/' . $layout . '/' . $handle,
-            'assets/' . $type . '/' . $handle,
-            'assets/' . $handle
+            'files/' . $type . '/' . $layout . '/' . $viewMode . '/' . $withField,
+            'files/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
+            'files/' . $type . '/' . $layout . '/' . $withField,
+            'files/' . $type . '/' . $layout . '/' . $handle,
+            'files/' . $type . '/' . $withField,
+            'files/' . $type . '/' . $handle,
+            'files/' . $withField,
+            'files/' . $handle
         ];
         $variables = [
             'asset' => $asset,
@@ -296,7 +300,7 @@ class ViewService extends Service
             'templates' => $templates,
             'variables' => $variables
         ]);
-        return $this->render(self::BEFORE_RENDERING_ASSET, $event);
+        return $this->render(self::BEFORE_RENDERING_FILE, $event);
     }
 
     /**
