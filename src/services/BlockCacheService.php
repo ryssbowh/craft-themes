@@ -41,17 +41,6 @@ class BlockCacheService extends Service
     }
 
     /**
-     * Should a block be cached 
-     * 
-     * @param  BlockInterface $block
-     * @return bool
-     */
-    public function shouldCacheBlock(BlockInterface $block): bool
-    {
-        return ($this->cacheEnabled and $block->options->cacheStrategy);
-    }
-
-    /**
      * Start block cahing
      * 
      * @param BlockInterface $block
@@ -118,20 +107,6 @@ class BlockCacheService extends Service
     }
 
     /**
-     * Set a block cache
-     * 
-     * @param BlockInterface $block
-     * @param string         $data
-     */
-    public function setBlockCache(BlockInterface $block, string $data, TagDependency $dep)
-    {
-        if (!$this->shouldCacheBlock($block)) {
-            return;
-        }
-        $this->getStrategy($block->options->cacheStrategy)->setCache($block, $data, $dep);
-    }
-
-    /**
      * Flush all block cache
      */
     public function flush()
@@ -140,12 +115,37 @@ class BlockCacheService extends Service
     }
 
     /**
+     * Should a block be cached 
+     * 
+     * @param  BlockInterface $block
+     * @return bool
+     */
+    protected function shouldCacheBlock(BlockInterface $block): bool
+    {
+        return ($this->cacheEnabled and $block->options->cacheStrategy);
+    }
+
+    /**
      * Register cache strategies
      */
-    public function register()
+    protected function register()
     {
         $event = new RegisterBlockCacheStrategies;
         $this->triggerEvent(self::REGISTER_STRATEGIES, $event);
         $this->_strategies = $event->strategies;
+    }
+
+    /**
+     * Set a block cache
+     * 
+     * @param BlockInterface $block
+     * @param string         $data
+     */
+    protected function setBlockCache(BlockInterface $block, string $data, TagDependency $dep)
+    {
+        if (!$this->shouldCacheBlock($block)) {
+            return;
+        }
+        $this->getStrategy($block->options->cacheStrategy)->setCache($block, $data, $dep);
     }
 }

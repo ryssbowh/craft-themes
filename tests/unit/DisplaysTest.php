@@ -61,7 +61,7 @@ class DisplaysTest extends Unit
     public function testDisplays()
     {
         $this->assertCount(8, $this->fileDisplayers->all());
-        $this->assertCount(30, $this->fieldDisplayers->all());
+        $this->assertCount(32, $this->fieldDisplayers->all());
         $this->assertCount(26, $this->displays->all());
 
         //User layouts

@@ -13,8 +13,10 @@ This Theme engine allows you to :
 The Pro version will allow you to :
 - Assign blocks to your theme regions
 - Define your own blocks
-- Choose how your fields and assets are displayed on the front end
-- Define your own displayers
+- Cache your blocks
+- Define your own view modes for each entry type/category groups/global sets/volumes/users layouts
+- Choose how your fields and assets are displayed on the front end depending on their view modes
+- Define your own fields and assets displayers
 
 What it doesn't allow you to do :
 - Change the backend look and feel

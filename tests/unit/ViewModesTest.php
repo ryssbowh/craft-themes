@@ -60,6 +60,15 @@ class ViewModesTest extends Unit
         $this->assertEquals($viewMode->handle, ViewModeService::DEFAULT_HANDLE);
     }
 
+    public function testDefaultLayoutDoesntHaveViewModes()
+    {
+        $layout = $this->layouts->get('child-theme', LayoutService::DEFAULT_HANDLE);
+        $viewMode = $this->viewModes->getDefault($layout);
+        $viewModes = $layout->viewModes;
+        $this->assertNull($viewMode);
+        $this->assertCount(0, $viewModes);
+    }
+
     public function testCreatingViewModes()
     {
         $fixture = $this->tester->grabFixture('sections');
