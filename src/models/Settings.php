@@ -53,13 +53,33 @@ class Settings extends Model
     public $rulesCache;
 
     /**
+     * @var string
+     */
+    public $redirectTo = 'list';
+
+    /**
      * @inheritdoc
      */
     public function defineRules(): array
     {
         return [
-            ['default', 'string'],
+            [['default', 'redirectTo'], 'string'],
             [['eagerLoad', 'devMode'], 'boolean']
+        ];
+    }
+
+    /**
+     * Redirect to options getter
+     * 
+     * @return array
+     */
+    public function getRedirectToOptions(): array
+    {
+        return [
+            ['value' => 'list', 'label' => \Craft::t('themes', 'Themes')],
+            ['value' => 'blocks', 'label' => \Craft::t('themes', 'Blocks')],
+            ['value' => 'display', 'label' => \Craft::t('themes', 'Display')],
+            ['value' =>'rules', 'label' => \Craft::t('themes', 'Rules')],
         ];
     }
 

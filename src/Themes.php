@@ -97,7 +97,7 @@ class Themes extends \craft\base\Plugin
             'label' => \Craft::t('themes', 'Theming'),
             'subnav' => [
                 'themes' => [
-                    'url' => 'themes',
+                    'url' => 'themes/list',
                     'label' => \Craft::t('themes', 'Themes'),
                 ]
             ]
@@ -235,7 +235,8 @@ class Themes extends \craft\base\Plugin
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
-                'themes' => 'themes/cp-themes'
+                'themes' => 'themes/cp-themes',
+                'themes/list' => 'themes/cp-themes/list',
             ]);
             if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
                 $event->rules = array_merge($event->rules, [

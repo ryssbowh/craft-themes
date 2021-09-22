@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -13,6 +12,14 @@ class CpThemesController extends Controller
      * @return Response
      */
     public function actionIndex()
+    {
+        $this->requirePermission('accessPlugin-themes');
+
+        $redirectTo = Themes::$plugin->settings->redirectTo;
+        return $this->redirect('themes/' . $redirectTo);
+    }
+
+    public function actionList()
     {
         $this->requirePermission('accessPlugin-themes');
 
