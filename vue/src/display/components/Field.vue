@@ -95,7 +95,7 @@ export default {
         item: Object,
         display: {
             type: Object,
-            default: {}
+            default: () => {}
         },
         moveable: {
             type: Boolean,

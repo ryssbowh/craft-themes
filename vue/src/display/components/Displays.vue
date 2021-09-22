@@ -42,7 +42,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import { sortBy, cloneDeep } from 'lodash';
+import { sortBy } from 'lodash';
 
 export default {
     computed: {

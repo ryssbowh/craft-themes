@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
-import { reduce } from 'lodash';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     computed: {

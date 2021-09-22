@@ -47,9 +47,11 @@ export default {
             if (this.hasChanged) {
                 if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
                     this.copyLayout(layout.id);
+                    Craft.cp.displayNotice(this.t('Blocks are copied, you only need to save'));
                 }
             } else {
                 this.copyLayout(layout.id);
+                Craft.cp.displayNotice(this.t('Blocks are copied, you only need to save'));
             }
         },
         checkAndDelete() {
