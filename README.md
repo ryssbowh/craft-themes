@@ -107,6 +107,41 @@ Displays can be grouped together, you can define as many groups as you want. Gro
 
 Some display will contain items that are not Craft fields, they are automatically added by the system, example : "Author" on channels.
 
+Here is a non-exhaustive list of available displayers for each type of field :
+
+"Field type","displayer","Options"
+"Title","Default","html tag, linked to element"
+
+| Field type    | displayer                  | Options                               |
+|---------------|----------------------------|---------------------------------------|
+| Title         | Default                    | html tag, linked to element           |
+| Assets        | Link to asset              | Label, new tab, download              |
+| Assets        | Rendered (volume layout)   | View mode                             |
+| Assets        | Render file                | Various options for each kind of file |
+| Category      | List                       | Output as links                       |
+| Category      | Rendered (category layout) | View mode                             |
+| Checkboxes    | Default                    |                                       |
+| Colour        | Default                    |                                       |
+| Date          | Default                    | Format                                |
+| Dropdown      | Default                    |                                       |
+| Email         | Default                    | Output as link                        |
+| Entries       | Link to entry              | Label, new tab                        |
+| Entries       | Rendered (entry layout)    | View mode                             |
+| Matrix        | Default                    |                                       |
+| Multi select  | Default                    |                                       |
+| Number        | Default                    | Decimals, Show prefix/suffix          |
+| Plain text    | Full                       |                                       |
+| Plain text    | Truncated                  | Limit, ellipsis, link to entry        |
+| Radio buttons | Default                    |                                       |
+| Lightswitch   | Default                    |                                       |
+| Table         | Default                    |                                       |
+| Tag           | List                       |                                       |
+| Tag           | Rendered (tag layout)      | View mode                             |
+| Time          | Default                    | Format                                |
+| Url           | Default                    | New tab                               |
+| Users         | Default                    | Show firstname/surname/email          |
+| Users         | Rendered (user layout)     | View mode                             |
+
 ## Rules settings
 
 ![Rules](images/rules.png)
@@ -155,3 +190,4 @@ Craft 3.5 or over
 - translations
 - custom templates
 - deployment/config
+- users rendered displayer
