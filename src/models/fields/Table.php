@@ -171,6 +171,17 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
+    public function populateFromPost(array $data)
+    {
+        $attributes = $this->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        $data['fields'] = $this->buildFields($data['fields'], $this);
+        $this->setAttributes($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         $config = parent::getConfig();

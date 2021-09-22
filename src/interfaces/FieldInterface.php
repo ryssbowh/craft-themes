@@ -52,6 +52,13 @@ interface FieldInterface
     public static function delete(array $data);
 
     /**
+     * Populate this field from post data
+     * 
+     * @param array  $data
+     */
+    public function populateFromPost(array $data);
+
+    /**
      * Should this field exist on a layout, called during the creation of a layout
      * 
      * @param  LayoutInterface $layout

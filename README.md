@@ -154,3 +154,4 @@ Craft 3.5 or over
 - test email templates in console
 - translations
 - custom templates
+- deployment/config

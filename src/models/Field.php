@@ -106,6 +106,16 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function populateFromPost(array $data)
+    {
+        $attributes = $this->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        $this->setAttributes($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function delete(array $data)
     {
         \Craft::$app->getDb()->createCommand()

@@ -209,9 +209,7 @@ class FieldsService extends Service
     public function populateFromPost(array $data, DisplayInterface $display): FieldInterface
     {
         $field = $this->getById($data['id']);
-        $attributes = $field->safeAttributes();
-        $data = array_intersect_key($data, array_flip($attributes));
-        $field->setAttributes($data);
+        $field->populateFromPost($data);
         return $field;
     }
 

@@ -192,6 +192,17 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
+    public function populateFromPost(array $data)
+    {
+        $attributes = $this->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        $data['types'] = $this->buildMatrixTypes($data['types'], $this);
+        $this->setAttributes($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         $config = parent::getConfig();
