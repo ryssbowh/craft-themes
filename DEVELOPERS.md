@@ -299,12 +299,12 @@ regions/entry/region.twig
 regions/region-header.twig
 regions/region.twig
 ```
-If you have a block `latestBlogs` for a layout of type `entry` for an entry type `blog` situated in a region `header`, the block templates will take this precedence :
+If you have a block `latestBlogs` of a provider `system` for a layout of type `entry` for an entry type `blog` situated in a region `header`, the block templates will take this precedence :
 ```
-blocks/entry/blog/header/latestBlogs.twig
-blocks/entry/blog/latestBlogs.twig
-blocks/entry/latestBlogs.twig
-blocks/latestBlogs.twig
+blocks/entry/blog/header/system_latestBlogs.twig
+blocks/entry/blog/system_latestBlogs.twig
+blocks/entry/system_latestBlogs.twig
+blocks/system_latestBlogs.twig
 ```
 If you have a field displayer `reactor` for a field `content` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the field templates will take this precedence :
 ```
