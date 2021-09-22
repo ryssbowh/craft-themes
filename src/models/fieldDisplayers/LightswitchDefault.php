@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
@@ -12,6 +11,11 @@ class LightswitchDefault extends FieldDisplayer
      * @inheritDoc
      */
     public static $handle = 'lightswitch_default';
+
+    /**
+     * @inheritDoc
+     */
+    public static $isDefault = true;
 
     /**
      * @inheritDoc
