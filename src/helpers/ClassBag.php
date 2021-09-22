@@ -78,6 +78,16 @@ class ClassBag
     }
 
     /**
+     * Get amount of classes
+     * 
+     * @return int
+     */
+    public function size(): int
+    {
+        return sizeof($this->classes);
+    }
+
+    /**
      * @inheritDoc
      */
     public function __toString()

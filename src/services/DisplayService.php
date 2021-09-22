@@ -76,6 +76,7 @@ class DisplayService extends Service
             } else {
                 $display->item = $this->groupsService()->create($itemData);
             }
+            $display->item->display = $display;
         }
         return $display;
     }

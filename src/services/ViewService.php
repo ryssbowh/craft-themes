@@ -75,20 +75,20 @@ class ViewService extends Service
      * If a theme is set and the section of the element being rendered is set to 'themed_page'
      * then we'll look for the theme layout for that section and add it to the template variables.
      * 
-     * @param  TemplateEvent $event
+     * @param TemplateEvent $event
      */
     public function beforeRenderPage(TemplateEvent $event)
     {
-        if (!$element = \Craft::$app->urlManager->getMatchedElement()) {
-            //no elements have matched that request
-            return;
-        }
         if ($event->template != self::THEME_ROOT_TEMPLATE) {
             //This is not a theme driven template
             return;
         }
         if (!$theme = $this->themesRegistry()->getCurrent()) {
             //No theme is defined for that request
+            return;
+        }
+        if (!$element = \Craft::$app->urlManager->getMatchedElement()) {
+            //no elements have matched that request
             return;
         }
         if (!$layout = Themes::$plugin->layouts->resolveForRequest($theme, $element)) {

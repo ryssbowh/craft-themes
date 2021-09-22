@@ -54,13 +54,15 @@ class ThemesRegistry extends Service
         } elseif ($theme instanceof ThemeInterface) {
             $this->currentTheme = $theme;
         }
-        if ($this->currentTheme and \Craft::$app->request->getIsSiteRequest()) {
+        if ($this->currentTheme) {
             \Yii::setAlias('@themePath', $theme->basePath);
             \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
             \Craft::$app->view->registerTwigExtension(new TwigTheme);
-            $path = \Craft::$app->request->getPathInfo();
-            $path = $path === '' ? '/' : $path;
-            $this->currentTheme->registerAssetBundles($path);
+            if (\Craft::$app->request->getIsSiteRequest()) {
+                $path = \Craft::$app->request->getPathInfo();
+                $path = $path === '' ? '/' : $path;
+                $this->currentTheme->registerAssetBundles($path);
+            }
             $this->currentTheme->afterSet();
         }
         $this->triggerEvent(
@@ -78,7 +80,7 @@ class ThemesRegistry extends Service
     /**
      * Register the current theme templates
      * 
-     * @param  RegisterTemplateRootsEvent $event
+     * @param RegisterTemplateRootsEvent $event
      */
     public function registerCurrentThemeTemplates(RegisterTemplateRootsEvent $event)
     {

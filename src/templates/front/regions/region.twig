@@ -1,4 +1,4 @@
-<div class="{{ classes|raw }}" {{ attributes|raw }}>
+<div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
 	{% for _block in region.blocks %}
         {{ _block.render(element)|raw }}
 	{% endfor %}

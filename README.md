@@ -10,11 +10,12 @@ This Theme engine allows you to :
 - Install themes from the store or any git repository (composer, github etc)
 - Define your own themes that can extend each other
 - Choose which theme will be used for which site, language, viewport or url path according to a set of rules.
+
 The Pro version will allow you to :
 - Assign blocks to your theme regions
 - Define your own blocks
 - Cache your blocks
-- Define your own view modes for each entry type/category groups/global sets/volumes/users layouts
+- Define your own view modes for each entry types/category groups/global sets/tag groups/volumes/users layouts
 - Choose how your fields and assets are displayed on the front end depending on their view modes
 - Define your own fields and assets displayers
 
@@ -34,21 +35,21 @@ The building of a page is based on the notion of layouts, regions, blocks, view 
 | Category    | Category group  | Yes             | Yes                              |
 | Entry       | Entry type      | Yes             | Yes                              |
 | Global      | Global set      | No              | Yes                              |
-| Tag         | Tag             | No              | Yes                              |
+| Tag         | Tag group       | No              | Yes                              |
 | User        | User            | No              | Yes                              |
 | Volume      | Volume          | No              | Yes                              |
 
 **Regions** they are defined by the theme itself, blocks can be assigned to them.
 
-**Blocks** are defined on the layouts that allow it, they can be assigned to a region of the theme.
+**Blocks** are defined on the layouts that allow them, they can be assigned to a region of the theme.
 
-**Displays** define how a field is rendered on the front end, each field will have a displayer with some options. This plugin comes with default displayers for each type of craft field. Displays can be organised in groups.
+**Displays** define how fields and assets are rendered on the front end, each field/asset will have a displayer with some options. This plugin comes with default displayers for each type of craft field and each kind of asset. Displays can be organised in groups.
 
 **View modes** define a set of displayers and options for a layout and a view mode. Every Layout that can have view modes comes with a default one. This allows you to render an element differently in different parts of the page.
 
 For a layout to be rendered on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the block/displayer engines will be skipped entirely.
 
-This theme engine comes with default blocks and field displayers, that might not fit your needs. To learn how to define new blocks, field and file displayers, see the [developers readme](DEVELOPERS.md)
+This theme engine comes with default blocks and field/asset displayers, that might not fit your needs. To learn how to define new blocks, field and asset displayers, see the [developers readme](DEVELOPERS.md)
 
 ## Themes list
 

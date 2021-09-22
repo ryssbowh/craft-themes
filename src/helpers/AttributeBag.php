@@ -83,6 +83,16 @@ class AttributeBag
     }
 
     /**
+     * Get amount of attributes
+     * 
+     * @return int
+     */
+    public function size(): int
+    {
+        return sizeof($this->attributes);
+    }
+
+    /**
      * @inheritDoc
      */
     public function __toString()
