@@ -208,6 +208,6 @@ Craft 3.5 or over
 - tests
 - test email templates in console
 - translations
-- custom templates
+- custom layouts
 - deployment/config
 - users rendered displayer

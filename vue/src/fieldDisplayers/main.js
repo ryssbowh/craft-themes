@@ -174,6 +174,8 @@ document.addEventListener("register-field-displayers-components", function(e) {
 
     e.detail['tag_rendered'] = {... e.detail['category_rendered']};
 
+    e.detail['user_rendered'] = {... e.detail['category_rendered']};
+
     e.detail['asset_rendered'] = {
         props: {
             displayer: Object,

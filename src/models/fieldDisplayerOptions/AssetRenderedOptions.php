@@ -46,7 +46,7 @@ class AssetRenderedOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            ['viewModes', 'validateViewModes']
+            ['viewModes', 'validateViewModes', 'skipOnEmpty' => false]
         ];
     }
 

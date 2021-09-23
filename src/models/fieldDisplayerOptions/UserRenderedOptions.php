@@ -2,6 +2,6 @@
 
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
-class CategoryRenderedOptions extends ViewModeOptions
+class UserRenderedOptions extends ViewModeOptions
 {
 }

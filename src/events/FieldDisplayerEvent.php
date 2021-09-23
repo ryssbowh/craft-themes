@@ -36,6 +36,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserInfoDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\UserRendered;
 use yii\base\Event;
 
 class FieldDisplayerEvent extends Event
@@ -95,7 +96,8 @@ class FieldDisplayerEvent extends Event
             TitleDefault::class,
             UrlDefault::class,
             UserDefault::class,
-            UserInfoDefault::class
+            UserInfoDefault::class,
+            UserRendered::class
         ]);
     }
 
