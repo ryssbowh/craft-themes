@@ -107,40 +107,60 @@ Displays can be grouped together, you can define as many groups as you want. Gro
 
 Some display will contain items that are not Craft fields, they are automatically added by the system, example : "Author" on channels.
 
-Here is a non-exhaustive list of available displayers for each type of field :
+Here is a list of available displayers for each type of field :
 
-"Field type","displayer","Options"
-"Title","Default","html tag, linked to element"
+| Field type    | displayer                  | Options                                          |
+|---------------|----------------------------|--------------------------------------------------|
+| Title         | Default                    | html tag, linked to element                      |
+| Assets        | Link to asset              | Label, new tab, download                         |
+| Assets        | Rendered (volume layout)   | View mode                                        |
+| Assets        | Render file                | Various options for each kind of file, see below |
+| Category      | List                       | Output as links                                  |
+| Category      | Rendered (category layout) | View mode                                        |
+| Checkboxes    | Default                    |                                                  |
+| Colour        | Default                    |                                                  |
+| Date          | Default                    | Format                                           |
+| Dropdown      | Default                    |                                                  |
+| Email         | Default                    | Output as link                                   |
+| Entries       | Link to entry              | Label, new tab                                   |
+| Entries       | Rendered (entry layout)    | View mode                                        |
+| Matrix        | Default                    |                                                  |
+| Multi select  | Default                    |                                                  |
+| Number        | Default                    | Decimals, Show prefix/suffix                     |
+| Plain text    | Full                       |                                                  |
+| Plain text    | Truncated                  | Limit, ellipsis, link to entry                   |
+| Radio buttons | Default                    |                                                  |
+| Lightswitch   | Default                    |                                                  |
+| Table         | Default                    |                                                  |
+| Tag           | List                       |                                                  |
+| Tag           | Rendered (tag layout)      | View mode                                        |
+| Time          | Default                    | Format                                           |
+| Url           | Default                    | New tab, label                                   |
+| Users         | Default                    | Show firstname/surname/email                     |
+| Users         | Rendered (user layout)     | View mode                                        |
 
-| Field type    | displayer                  | Options                               |
-|---------------|----------------------------|---------------------------------------|
-| Title         | Default                    | html tag, linked to element           |
-| Assets        | Link to asset              | Label, new tab, download              |
-| Assets        | Rendered (volume layout)   | View mode                             |
-| Assets        | Render file                | Various options for each kind of file |
-| Category      | List                       | Output as links                       |
-| Category      | Rendered (category layout) | View mode                             |
-| Checkboxes    | Default                    |                                       |
-| Colour        | Default                    |                                       |
-| Date          | Default                    | Format                                |
-| Dropdown      | Default                    |                                       |
-| Email         | Default                    | Output as link                        |
-| Entries       | Link to entry              | Label, new tab                        |
-| Entries       | Rendered (entry layout)    | View mode                             |
-| Matrix        | Default                    |                                       |
-| Multi select  | Default                    |                                       |
-| Number        | Default                    | Decimals, Show prefix/suffix          |
-| Plain text    | Full                       |                                       |
-| Plain text    | Truncated                  | Limit, ellipsis, link to entry        |
-| Radio buttons | Default                    |                                       |
-| Lightswitch   | Default                    |                                       |
-| Table         | Default                    |                                       |
-| Tag           | List                       |                                       |
-| Tag           | Rendered (tag layout)      | View mode                             |
-| Time          | Default                    | Format                                |
-| Url           | Default                    | New tab                               |
-| Users         | Default                    | Show firstname/surname/email          |
-| Users         | Rendered (user layout)     | View mode                             |
+And a list of available file displayers :  
+Every file type will have the displayer "Link to asset" available, with options label, new tab and download.
+
+| File type  | displayer       | Options                                       |
+|------------|-----------------|-----------------------------------------------|
+| Audio      | Html audio      | Show controls, muted, autoplay                |
+| HTML       | Iframe          | Width, height                                 |
+| HTML       | Raw             |                                               |
+| HTML       | Code            |                                               |
+| image      | Full image      |                                               |
+| Image      | Image transform | Transform or custom                           |
+| Javascript | Raw             |                                               |
+| Javascript | Code            |                                               |
+| PHP        | Raw             |                                               |
+| PHP        | Code            |                                               |
+| JSON       | Raw             |                                               |
+| JSON       | Code            |                                               |
+| Text       | Raw             |                                               |
+| Text       | Code            |                                               |
+| Video      | HTML Video      | Width, height, show controls, muted, autoplay |
+| XML        | Raw             |                                               |
+| XML        | Code            |                                               |
 
 ## Rules settings
 
