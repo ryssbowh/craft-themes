@@ -12,12 +12,18 @@ class UrlDefaultOptions extends FieldDisplayerOptions
     public $newTab = true;
 
     /**
+     * @var string
+     */
+    public $label;
+
+    /**
      * @inheritDoc
      */
     public function defineRules(): array
     {
         return [
-            ['newTab', 'boolean']
+            ['newTab', 'boolean'],
+            ['label', 'string']
         ];
     }
 }

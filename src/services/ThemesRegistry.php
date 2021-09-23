@@ -57,6 +57,7 @@ class ThemesRegistry extends Service
         if ($this->currentTheme) {
             \Yii::setAlias('@themePath', $theme->basePath);
             \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
+            \Yii::setAlias('@themeWebPath', '@themesWebPath/' . $theme->handle);
             \Craft::$app->view->registerTwigExtension(new TwigTheme);
             if (\Craft::$app->request->getIsSiteRequest()) {
                 $path = \Craft::$app->request->getPathInfo();

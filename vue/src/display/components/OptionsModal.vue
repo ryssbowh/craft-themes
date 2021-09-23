@@ -63,6 +63,7 @@ export default {
     methods: {
         save () {
             let options = $(this.$refs.form).serializeJSON();
+            console.log(options);
             let data = {
                 id: this.itemOptionsEdited.id,
                 displayer: this.displayer.handle,

@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fileDisplayerOptions;
 
 use Ryssbowh\CraftThemes\models\FileDisplayerOptions;
@@ -23,6 +22,7 @@ class ImageTransformOptions extends FileDisplayerOptions
     {
         return [
             [['transform', 'custom'], 'string'],
+            ['transform', 'required'],
             ['custom', 'required', 'when' => function ($model) {
                 return $model->transform == '_custom';
             }],

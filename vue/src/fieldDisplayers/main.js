@@ -1,4 +1,5 @@
 import './main.scss';
+import { merge } from 'lodash';
 
 document.addEventListener("register-field-displayers-components", function(e) {
 
@@ -15,7 +16,8 @@ document.addEventListener("register-field-displayers-components", function(e) {
             getDisplayer: function (kind) {
                 for (let i in this.displayer.displayersMapping[kind].displayers) {
                     let displayer = this.displayer.displayersMapping[kind].displayers[i];
-                    if (this.displayers[kind] && this.displayers[kind].displayer == displayer.handle) {
+                    if (this.displayers[kind] == displayer.handle) {
+                        displayer.options = merge(displayer.options, this.options.displayers[kind].options);
                         return displayer;
                     }
                 }
@@ -35,19 +37,18 @@ document.addEventListener("register-field-displayers-components", function(e) {
         },
         data: function () {
             return {
-                displayers: [],
+                displayers: {},
                 currentKind: null,
             };
         },
         created: function () {
-            this.displayers = this.options.displayers;
+            for (let i in this.options.displayers) {
+                this.displayers[i] = this.options.displayers[i].displayer;
+            }
             this.currentKind = Object.keys(this.displayer.displayersMapping)[0];
             for (let i in this.displayer.displayersMapping) {
                 if (typeof this.displayers[i] == 'undefined') {
-                    this.displayers[i] = {
-                        displayer: '',
-                        options: {}
-                    };
+                    this.displayers[i] = '';
                 }
             }
         },
@@ -76,7 +77,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                                 </div>
                                 <div class="input ltr">
                                     <div class="select">
-                                        <select :name="'displayers['+handle+'][displayer]'" v-model="displayers[handle].displayer">
+                                        <select :name="'displayers['+handle+'][displayer]'" v-model="displayers[handle]">
                                             <option v-for="displayer,key in elem.displayers" :value="displayer.handle" v-bind:key="key">{{ displayer.name }}</option>
                                         </select>
                                     </div>
@@ -223,6 +224,14 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 return this.errors[field] ?? [];
             }
         },
+        data: function () {
+            return {
+                label: ''
+            }
+        },
+        created() {
+            this.label = this.options.label;
+        },
         mounted: function () {
             this.$nextTick(() => {
                 Craft.initUiElements(this.$el);
@@ -230,6 +239,20 @@ document.addEventListener("register-field-displayers-components", function(e) {
         },
         template: `
         <div>
+            <div class="field">
+                <div class="heading">
+                    <label>{{ t('Label') }}</label>
+                </div>
+                <div class="instructions">
+                    <p>{{ t('Leave blank to use the url itself') }}</p>
+                </div>
+                <div class="input ltr">
+                    <input type="text" class="fullwidth text" name="label" v-model="label">
+                </div>
+                <ul class="errors" v-if="errorList('label')">
+                    <li v-for="error in errorList('label')">{{ error }}</li>
+                </ul>
+            </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Open in new tab') }}</label>

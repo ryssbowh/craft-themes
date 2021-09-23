@@ -231,6 +231,9 @@ document.addEventListener("register-file-displayers-components", function(e) {
         created: function () {
             this.transform = this.displayer.options.transform;
             this.custom = this.displayer.options.custom;
+            if (!this.transform) {
+                // this.transform = Object.keys(this.displayer.imageTransforms)[0];
+            }
         },
         methods: {
             errorList: function (field) {
@@ -340,7 +343,7 @@ document.addEventListener("register-file-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][newTab]'">
+                        <input type="hidden" :name="'displayers['+kind+'][options][newTab]'" :value="newTab ? 1 : ''">
                     </button>
                 </div>
             </div>
@@ -353,7 +356,7 @@ document.addEventListener("register-file-displayers-components", function(e) {
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][download]'">
+                        <input type="hidden" :name="'displayers['+kind+'][options][download]'" :value="download ? 1 : ''">
                     </button>
                 </div>
             </div>

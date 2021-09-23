@@ -24,6 +24,6 @@ class Code extends FileDisplayer
      */
     public static function getKindTargets()
     {
-        return ['javascript', 'html', 'php', 'text', 'xml'];
+        return ['javascript', 'html', 'php', 'text', 'xml', 'json'];
     }
 }
