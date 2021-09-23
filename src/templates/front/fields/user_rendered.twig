@@ -1,0 +1,8 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% set viewMode = craft.themes.viewModes.getByUid(options.viewMode) %}
+    {% for user in value %}
+        {{ craft.themes.view.renderLayout(displayer.userLayout, viewMode.handle, user)|raw }}
+    {% endfor %}
+{% endblock %}

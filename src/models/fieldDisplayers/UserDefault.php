@@ -1,9 +1,8 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AuthorDefaultOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserDefaultOptions;
 use craft\base\Model;
 use craft\fields\Users;
 
@@ -40,6 +39,6 @@ class UserDefault extends FieldDisplayer
      */
     public function getOptionsModel(): string
     {
-        return AuthorDefaultOptions::class;
+        return UserDefaultOptions::class;
     }
 }

@@ -11,7 +11,13 @@
                     {{ user.lastName }}
                 {% endif %}
                 {% if options.email %}
-                    ({{ user.email }})
+                    ({% if options.linkEmail %}
+                        <a href="mailto:{{ user.email }}">
+                    {% endif %}
+                    {{ user.email }}
+                    {% if options.linkEmail %}
+                        </a>
+                    {% endif %})
                 {% endif %}
                     </p>
         {% endfor %}

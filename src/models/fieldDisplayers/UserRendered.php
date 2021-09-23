@@ -42,13 +42,23 @@ class UserRendered extends FieldDisplayer
     }
 
     /**
+     * Get the layout associated to users
+     * 
+     * @return LayoutInterface
+     */
+    public function getUserLayout(): LayoutInterface
+    {
+        return Themes::$plugin->layouts->get($this->getTheme(), LayoutService::USER_HANDLE);
+    }
+
+    /**
      * Get view modes for user layout
      * 
      * @return array
      */
     public function getViewModes(): array
     {
-        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::USER_HANDLE);
+        $layout = $this->userLayout;
         $viewModes = [];
         foreach ($layout->getViewModes() as $viewMode) {
             $viewModes[$viewMode->uid] = $viewMode->name;

@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
-class AuthorDefaultOptions extends FieldDisplayerOptions
+class UserDefaultOptions extends FieldDisplayerOptions
 {
     /**
      * @var boolean
@@ -22,12 +22,17 @@ class AuthorDefaultOptions extends FieldDisplayerOptions
     public $email = false;
 
     /**
+     * @var boolean
+     */
+    public $linkEmail = false;
+
+    /**
      * @inheritDoc
      */
     public function defineRules(): array
     {
         return [
-            [['firstName', 'lastName', 'email'], 'boolean']
+            [['firstName', 'lastName', 'email', 'linkEmail'], 'boolean']
         ];
     }
 }

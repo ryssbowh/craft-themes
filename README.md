@@ -136,7 +136,7 @@ Here is a list of available displayers for each type of field :
 | Tag           | Rendered (tag layout)      | View mode                                        |
 | Time          | Default                    | Format                                           |
 | Url           | Default                    | New tab, label                                   |
-| Users         | Default                    | Show firstname/surname/email                     |
+| Users         | Default                    | Show firstname/surname/email, link email         |
 | Users         | Rendered (user layout)     | View mode                                        |
 
 And a list of available file displayers :  

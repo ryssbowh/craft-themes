@@ -3,7 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AuthorDefaultOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserDefaultOptions;
 use Ryssbowh\CraftThemes\models\fields\UserInfo;
 use craft\base\Model;
 
@@ -40,6 +40,6 @@ class UserInfoDefault extends FieldDisplayer
      */
     public function getOptionsModel(): string
     {
-        return AuthorDefaultOptions::class;
+        return UserDefaultOptions::class;
     }
 }

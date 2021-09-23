@@ -9,7 +9,13 @@
             {{ value.lastName }}
         {% endif %}
         {% if options.email %}
+            ({% if options.linkEmail %}
+                <a href="mailto:{{ value.email }}">
+            {% endif %}
             {{ value.email }}
+            {% if options.linkEmail %}
+                </a>
+            {% endif %})
         {% endif %}
     {% endif %}
 {% endblock %}

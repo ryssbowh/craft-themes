@@ -732,6 +732,19 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     </button>
                 </div>
             </div>
+            <div class="field">
+                <div class="heading">
+                    <label>{{ t('Link email') }}</label>
+                </div>
+                <div class="input ltr">                    
+                    <button type="button" :class="{lightswitch: true, on: options.linkEmail}">
+                        <div class="lightswitch-container">
+                            <div class="handle"></div>
+                        </div>
+                        <input type="hidden" name="linkEmail" :value="options.linkEmail ? 1 : ''">
+                    </button>
+                </div>
+            </div>
         </div>`
     };
 
