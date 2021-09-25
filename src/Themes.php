@@ -285,6 +285,8 @@ class Themes extends \craft\base\Plugin
                 'cacheEnabled' => $this->getSettings()->rulesCacheEnabled,
                 'console' => $this->getSettings()->console,
                 'setConsole' => $this->getSettings()->setConsole,
+                'cp' => $this->getSettings()->cp,
+                'setCp' => $this->getSettings()->setCp,
                 'mobileDetect' => new MobileDetect()
             ],
             'layouts' => LayoutService::class,

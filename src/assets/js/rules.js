@@ -37,17 +37,19 @@ Craft.Themes.RulesTable = Craft.EditableTable.extend({
     }
 });
 
-function showHideConsoleThemeField(show) {
+function toggleSelectThemeField(show, selectClass) {
     if (show) {
-        $('.console-themes').slideDown();
+        $(selectClass).slideDown();
     } else {
-        $('.console-themes').slideUp();
+        $(selectClass).slideUp(); 
     }
 }
 
 $(function() { 
-    showHideConsoleThemeField($('.console-lightswitch').hasClass('on'));
     $('.console-lightswitch').on('change', function(){
-        showHideConsoleThemeField($('.console-lightswitch').hasClass('on'));
+        toggleSelectThemeField($('.console-lightswitch').hasClass('on'), '.console-theme');
+    });
+    $('.cp-lightswitch').on('change', function(){
+        toggleSelectThemeField($('.cp-lightswitch').hasClass('on'), '.cp-theme');
     });
 });

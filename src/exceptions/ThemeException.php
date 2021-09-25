@@ -28,4 +28,10 @@ class ThemeException extends \Exception
     {
         return new static("Theme $handle is missing a $parameter parameter in a region definition");
     }
+
+    public static function rootsRegistered(?ThemeInterface $theme)
+    {
+        $message = $theme ? "Unable to set the theme to " . $theme->handle : "Unable to unset the theme";
+        return new static($message . ": You must do this earlier in the request, before the view template roots are registered");
+    }
 }

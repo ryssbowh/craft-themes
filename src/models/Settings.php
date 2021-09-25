@@ -25,7 +25,17 @@ class Settings extends Model
     /**
      * @var boolean
      */
-    public $setConsole = true;
+    public $setConsole = false;
+
+    /**
+     * @var ?string
+     */
+    public $cp;
+
+    /**
+     * @var boolean
+     */
+    public $setCp = false;
 
     /**
      * @var boolean

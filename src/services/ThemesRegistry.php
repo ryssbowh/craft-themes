@@ -17,7 +17,7 @@ use craft\models\Site;
 
 class ThemesRegistry extends Service
 {   
-    const THEME_SET_EVENT = 'themes.set';
+    const EVENT_THEME_SET = 'themes.set';
     const THEMES_WEBROOT = '@webroot/themes/';
     const EVENT_AFTER_INSTALL_THEME = 'after_install_theme';
 
@@ -30,6 +30,13 @@ class ThemesRegistry extends Service
      * @var ?ThemeInterface
      */
     protected $currentTheme;
+
+    /**
+     * Have the template roots been registered
+     * 
+     * @var boolean
+     */
+    public $rootsRegistered = false;
 
     /**
      * Get theme for the current site
@@ -50,31 +57,33 @@ class ThemesRegistry extends Service
     public function setCurrent($theme): ?ThemeInterface
     {
         if (is_string($theme)) {
-            $this->currentTheme = $this->getTheme($theme);
-        } elseif ($theme instanceof ThemeInterface) {
-            $this->currentTheme = $theme;
+            $theme = $this->getTheme($theme);
         }
-        if ($this->currentTheme) {
-            \Yii::setAlias('@themePath', $theme->basePath);
-            \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
-            \Yii::setAlias('@themeWebPath', '@themesWebPath/' . $theme->handle);
-            \Craft::$app->view->registerTwigExtension(new TwigTheme);
-            if (\Craft::$app->request->getIsSiteRequest()) {
-                $path = \Craft::$app->request->getPathInfo();
-                $path = $path === '' ? '/' : $path;
-                $this->currentTheme->registerAssetBundles($path);
-            }
-            $this->currentTheme->afterSet();
+        if ($this->rootsRegistered) {
+            throw ThemeException::rootsRegistered($theme);
         }
+
+        $this->currentTheme = $theme;
+        if (!$theme) {
+            \Craft::info("Theme has been unset", __METHOD__);
+            return null;
+        }
+
+        \Yii::setAlias('@themePath', $theme->basePath);
+        \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
+        \Yii::setAlias('@themeWebPath', '@themesWebPath/' . $theme->handle);
+        \Craft::$app->view->registerTwigExtension(new TwigTheme);
+        if (\Craft::$app->request->getIsSiteRequest()) {
+            $path = \Craft::$app->request->getPathInfo();
+            $path = $path === '' ? '/' : $path;
+            $this->currentTheme->registerAssetBundles($path);
+        }
+        $this->currentTheme->afterSet();
         $this->triggerEvent(
-            self::THEME_SET_EVENT, 
+            self::EVENT_THEME_SET, 
             new ThemeEvent(['theme' => $this->currentTheme])
         );
-        if (!$this->currentTheme) {
-            \Craft::info("No theme found for request", __METHOD__);
-        } else {
-            \Craft::info("Theme has been set to : " . $this->currentTheme->name, __METHOD__);
-        }
+        \Craft::info("Theme has been set to " . $this->currentTheme->name, __METHOD__);
         return $this->currentTheme;
     }
 
@@ -85,6 +94,7 @@ class ThemesRegistry extends Service
      */
     public function registerCurrentThemeTemplates(RegisterTemplateRootsEvent $event)
     {
+        $this->rootsRegistered = true;
         if (!$this->currentTheme) {
             return;
         }

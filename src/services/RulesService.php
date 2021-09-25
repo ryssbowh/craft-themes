@@ -36,6 +36,16 @@ class RulesService extends Service
     public $setConsole;
 
     /**
+     * @var ?string
+     */
+    public $cp;
+
+    /**
+     * @var boolean
+     */
+    public $setCp;
+
+    /**
      * @var boolean
      */
     public $cacheEnabled;
@@ -59,42 +69,39 @@ class RulesService extends Service
     public function resolveCurrentTheme(): ?ThemeInterface
     {
         if (\Craft::$app->request->getIsCpRequest()) {
+            if ($this->setCp and $this->cp) {
+                $theme = $this->themesRegistry()->hasTheme($this->cp) ? $this->cp : null;
+                return $this->themesRegistry()->setCurrent($theme);
+            }
             return null;
         }
         if (\Craft::$app->request->getIsConsoleRequest()) {
             if ($this->setConsole and $this->console) {
-                try {
-                    $theme = Themes::$plugin->registry->getTheme($this->console);
-                } catch (ThemeException $e) {
-                    return null;
-                }
-                $this->themesRegistry()->setCurrent($theme);
-                return $theme;
+                $theme = $this->themesRegistry()->hasTheme($this->console) ? $this->console : null;
+                return $this->themesRegistry()->setCurrent($theme);
             }
             return null;
         }
+        /**
+         * Resolve site request, from cache if set.
+         * Cache result for faster execution
+         */
         $path = \Craft::$app->request->getFullPath();
         $currentSite = \Craft::$app->sites->getCurrentSite();
         $currentUrl = $currentSite->getBaseUrl().$path;
         $viewPort = $this->getViewPort();
         $cached = $this->getCache($currentUrl, $viewPort);
-        $theme = null;
+
         if ($cached === null) {
-            return null;
-        }
-        if (is_string($cached)) {
-            $theme = Themes::$plugin->registry->getTheme($cached);
+            $theme = null;
+        } elseif (is_string($cached)) {
+            $theme = $this->themesRegistry()->hasTheme($cached) ? $cached : null;
         } else {
-            $themeName = $this->resolveRules($path, $currentSite, $viewPort);
-            $this->setCache($currentUrl, $viewPort, $themeName);
-            if ($themeName) {
-                $theme = Themes::$plugin->registry->getTheme($themeName);
-            }
+            $theme = $this->resolveRules($path, $currentSite, $viewPort);
+            $this->setCache($currentUrl, $viewPort, $theme);
         }
-        if ($theme) {
-            $this->themesRegistry()->setCurrent($theme);
-        }
-        return $theme;
+
+        return $this->themesRegistry()->setCurrent($theme);
     }
 
     /**

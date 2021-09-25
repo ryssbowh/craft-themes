@@ -9,6 +9,8 @@ class TwigTheme extends AbstractExtension
 {
     /**
      * inheritDoc
+     *
+     * @deprecated 3.0
      */
     public function getGlobals()
     {
