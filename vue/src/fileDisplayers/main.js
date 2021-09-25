@@ -308,7 +308,7 @@ document.addEventListener("register-file-displayers-components", function(e) {
         <div>
             <div class="field">
                 <div class="heading">
-                    <label class="required">{{ t('Label') }}</label>
+                    <label class="required">{{ t('Label', {}, 'app') }}</label>
                 </div>
                 <div class="input ltr">                    
                     <div class="select">

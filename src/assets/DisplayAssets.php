@@ -2,10 +2,9 @@
 
 namespace Ryssbowh\CraftThemes\assets;
 
-use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-class DisplayAssets extends AssetBundle
+class DisplayAssets extends ThemesBaseAssets
 {
     public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
@@ -21,13 +20,4 @@ class DisplayAssets extends AssetBundle
         FieldDisplayerAsset::class,
         FileDisplayerAsset::class
     ];
-
-    /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-        $this->sourcePath = realpath($this->sourcePath);
-    }
 }

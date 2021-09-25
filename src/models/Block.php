@@ -22,16 +22,6 @@ abstract class Block extends Model implements BlockInterface
     public static $handle;
 
     /**
-     * @var string
-     */
-    public $name = '';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = '';
-
-    /**
      * @var int
      */
     public $id;
@@ -87,9 +77,6 @@ abstract class Block extends Model implements BlockInterface
         }
         if (!$this->provider) {
             throw BlockException::noProvider(get_called_class());
-        }
-        if (!$this->name) {
-            throw BlockException::noName(get_called_class());
         }
     }
 
@@ -196,6 +183,14 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
+    public function getLongDescription(): string
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getMachineName(): string
     {
         return $this->provider . '_' . $this::$handle;
@@ -206,7 +201,7 @@ abstract class Block extends Model implements BlockInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['handle', 'options', 'errors', 'cacheStrategyOptions']);
+        return array_merge(parent::fields(), ['name', 'handle', 'options', 'errors', 'cacheStrategyOptions', 'smallDescription', 'longDescription']);
     }
 
     /**

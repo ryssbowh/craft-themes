@@ -10,10 +10,10 @@
         <div class="fullwidth display-table" v-if="rootDisplays.length">
             <div class="line head">
                 <div class="handle col"></div>
-                <div class="title col">{{ t('Title') }}</div>
-                <div class="handle col">{{ t('Handle') }}</div>
+                <div class="title col">{{ t('Title', {}, 'app') }}</div>
+                <div class="handle col">{{ t('Handle', {}, 'app') }}</div>
                 <div class="type col">{{ t('Type') }}</div>
-                <div class="label col">{{ t('Label') }}</div>
+                <div class="label col">{{ t('Label', {}, 'app') }}</div>
                 <div class="visibility col">{{ t('Visibility') }}</div>
                 <div class="displayer col">{{ t('Displayer') }}</div>
                 <div class="options col">{{ t('Options') }}</div>

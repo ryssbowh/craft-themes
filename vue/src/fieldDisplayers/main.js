@@ -243,7 +243,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         <div>
             <div class="field">
                 <div class="heading">
-                    <label>{{ t('Label') }}</label>
+                    <label>{{ t('Label', {}, 'app') }}</label>
                 </div>
                 <div class="instructions">
                     <p>{{ t('Leave blank to use the url itself') }}</p>
@@ -301,8 +301,8 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 <div class="input ltr">                    
                     <div class="select">
                         <select name="format" v-model="format">
-                            <option value="H:i:s">{{ t('Full : 13:25:36') }}</option>
-                            <option value="H:iY">{{ t('Without seconds : 13:25') }}</option>
+                            <option value="H:i:s">{{ t('Full : {timeFormat}', {timeFormat: '13:25:36'}) }}</option>
+                            <option value="H:iY">{{ t('Without seconds : {timeFormat}', {timeFormat: '13:25'}) }}</option>
                             <option value="custom">{{ t('Custom') }}</option>
                         </select>
                     </div>
@@ -523,7 +523,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         <div>
             <div class="field">
                 <div class="heading">
-                    <label class="required">{{ t('Label') }}</label>
+                    <label class="required">{{ t('Label', {}, 'app') }}</label>
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
@@ -594,9 +594,9 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 <div class="input ltr">                    
                     <div class="select">
                         <select name="format" v-model="format">
-                            <option value="d/m/Y H:i:s">{{ t('Full : 31/10/2005 13:25:13') }}</option>
-                            <option value="d/m/Y">{{ t('Date : 31/10/2005') }}</option>
-                            <option value="H:i">{{ t('Time : 13:25') }}</option>
+                            <option value="d/m/Y H:i:s">{{ t('Full : {dateFormat}', {dateFormat: '31/10/2005 13:25:13'}) }}</option>
+                            <option value="d/m/Y">{{ t('Date : {dateFormat}', {dateFormat: '31/10/2005'}) }}</option>
+                            <option value="H:i">{{ t('Time : {timeFormat}', {timeFormat: '13:25'}) }}</option>
                             <option value="custom">{{ t('Custom') }}</option>
                         </select>
                     </div>
@@ -786,7 +786,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         <div>
             <div class="field">
                 <div class="heading">
-                    <label class="required">{{ t('Label') }}</label>
+                    <label class="required">{{ t('Label', {}, 'app') }}</label>
                 </div>
                 <div class="input ltr">                    
                     <div class="select">

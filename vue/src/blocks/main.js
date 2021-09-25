@@ -28,12 +28,12 @@ for (let name in event.detail) {
 }
 
 const Translate = {
-    install(app) {
-        app.config.globalProperties.t = (str, params) => {
-            return window.Craft.t('themes', str, params);
-        }
-    },
-}
+  install(app) {
+    app.config.globalProperties.t = (str, params, category = 'themes') => {
+      return window.Craft.t(category, str, params);
+    }
+  },
+};
 const HandleError = {
   install(app) {
     app.config.globalProperties.handleError = (err) => {

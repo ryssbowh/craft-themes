@@ -36,7 +36,7 @@ class SystemBlockProvider extends BlockProvider
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'System');
+        return \Craft::t('app', 'System');
     }
 
     /**

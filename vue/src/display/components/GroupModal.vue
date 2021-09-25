@@ -8,7 +8,7 @@
                 <form class="main">
                     <div class="field width-100">
                         <div class="heading">
-                            <label class="required" for="name">{{ t('Name') }}</label>
+                            <label class="required" for="name">{{ t('Name', {}, 'app') }}</label>
                         </div>
                         <div class="input ltr">
                             <input type="text" id="name" :class="{text: true, fullwidth:true, error: nameError}" v-model="name" maxlength="255" required>
@@ -19,7 +19,7 @@
                     </div>
                     <div class="field width-100">
                         <div class="heading">
-                            <label class="required" for="handle">{{ t('Handle') }}</label>
+                            <label class="required" for="handle">{{ t('Handle', {}, 'app') }}</label>
                         </div>
                         <div class="input ltr">
                             <input type="text" id="handle" :class="{text: true, fullwidth:true, error: handleError}" v-model="handle" maxlength="255" required>
@@ -33,8 +33,8 @@
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="closeModal">{{ t('Close') }}</button>
-                <button type="button" class="btn submit" @click="save">{{ t('Save') }}</button>
+                <button type="button" class="btn" @click="closeModal">{{ t('Close', {}, 'app') }}</button>
+                <button type="button" class="btn submit" @click="save">{{ t('Save', {}, 'app') }}</button>
             </div>
         </div>
     </div>

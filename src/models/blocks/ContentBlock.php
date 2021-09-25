@@ -9,20 +9,29 @@ class ContentBlock extends Block
     /**
      * @var string
      */
-    public $name = 'Content';
-
-    /**
-     * @var string
-     */
     public static $handle = 'content';
 
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $smallDescription = 'Displays the main page content';
+    public function getName(): string
+    {
+        return \Craft::t('app', 'Content');
+    }
 
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $longDescription = 'Should be present on each block layout';
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Displays the main page content');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLongDescription(): string
+    {
+        return \Craft::t('themes', 'Should be present on each block layout');
+    }
 }

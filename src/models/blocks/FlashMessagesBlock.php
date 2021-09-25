@@ -11,20 +11,29 @@ class FlashMessagesBlock extends Block
     /**
      * @var string
      */
-    public $name = 'Messages';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = 'Displays system messages';
-
-    /**
-     * @var string
-     */
-    public $longDescription = 'Will fetch the message from the \'notice\' and \'error\' session flash data';
-
-    /**
-     * @var string
-     */
     public static $handle = 'flash-messages';
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return \Craft::t('themes', 'Messages');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Displays system messages');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLongDescription(): string
+    {
+        return \Craft::t('themes', 'Will fetch the message from the \'notice\' and \'error\' session flash data');
+    }
 }

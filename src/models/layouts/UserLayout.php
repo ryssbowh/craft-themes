@@ -18,7 +18,7 @@ class UserLayout extends Layout
      */
     public function getDescription(): string
     {
-        return \Craft::t('themes', 'User');
+        return \Craft::t('app', 'User');
     }
 
     /**

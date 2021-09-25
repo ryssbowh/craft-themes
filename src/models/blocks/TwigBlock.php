@@ -11,22 +11,31 @@ class TwigBlock extends Block
     /**
      * @var string
      */
-    public $name = 'Twig';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = 'Custom twig code';
-
-    /**
-     * @var string
-     */
-    public $longDescription = 'Define custom twig to render this block. Variable `block` will be available';
-
-    /**
-     * @var string
-     */
     public static $handle = 'twig';
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return \Craft::t('themes', 'Twig');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Custom twig code');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLongDescription(): string
+    {
+        return \Craft::t('themes', 'Define custom twig to render this block. Variable `block` will be available');
+    }
 
     /**
      * @inheritDoc

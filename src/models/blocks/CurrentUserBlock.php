@@ -14,17 +14,23 @@ class CurrentUserBlock extends Block
     /**
      * @var string
      */
-    public $name = 'Current user';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = 'Displays the current user';
-
-    /**
-     * @var string
-     */
     public static $handle = 'current-user';
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return \Craft::t('themes', 'Current user');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Displays the current user');
+    }
 
     /**
      * @inheritDoc

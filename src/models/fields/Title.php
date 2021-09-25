@@ -44,6 +44,6 @@ class Title extends Field
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Title');
+        return \Craft::t('app', 'Title');
     }
 }

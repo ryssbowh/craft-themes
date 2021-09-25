@@ -12,8 +12,8 @@
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="setShowOptionsModal(false)">{{ t('Close') }}</button>
-                <button type="button" class="btn submit" @click="save">{{ t('Save') }}</button>
+                <button type="button" class="btn" @click="setShowOptionsModal(false)">{{ t('Close', {}, 'app') }}</button>
+                <button type="button" class="btn submit" @click="save">{{ t('Save', {}, 'app') }}</button>
             </div>
         </div>
     </div>

@@ -16,7 +16,7 @@
                     <div class="preview {{ hasPreview ? '' : 'no-preview' }}">
                         <img src="{{ theme.getPreviewimage() }}" />
                         {% if not hasPreview %}
-                            <p class="no-preview-p">{{ 'No preview available' }}</p>
+                            <p class="no-preview-p">{{ 'No preview available'|t('themes') }}</p>
                         {% endif %}
                     </div>
                     <div class="infos">
@@ -31,10 +31,10 @@
                                                 <li><a href="{{ url('settings/plugins/'~theme.handle) }}">{{ "Settings"|t('app') }}</a></li>
                                             {% endif %}
                                             {% if manageDisplay %}
-                                                <li><a href="{{ url('themes/display/'~theme.handle) }}">{{ "Manage display"|t('app') }}</a></li>
+                                                <li><a href="{{ url('themes/display/'~theme.handle) }}">{{ "Manage display"|t('themes') }}</a></li>
                                             {% endif %}
                                             {% if manageBlocks %}
-                                                <li><a href="{{ url('themes/blocks/'~theme.handle) }}">{{ "Manage blocks"|t('app') }}</a></li>
+                                                <li><a href="{{ url('themes/blocks/'~theme.handle) }}">{{ "Manage blocks"|t('themes') }}</a></li>
                                             {% endif %}
                                         </ul>
                                     </div>

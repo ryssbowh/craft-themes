@@ -2,12 +2,12 @@
   <form class="options-inner" ref="form">
     <div class="field caching-section">
       <div class="heading">
-        <label>Caching</label>                                    
+        <label>{{ t('Caching') }}</label>                                    
       </div>
       <div class="input ltr">                    
         <div class="select">
           <select id="type" name="cacheStrategy" :value="block.options.cacheStrategy" @input="updateOptions({cacheStrategy: $event.target.value})">
-            <option value="">No cache</option>
+            <option value="">{{ t('No cache') }}</option>
             <option :value="strategy.handle" v-for="strategy in cacheStrategies" v-bind:key="strategy.handle">{{ strategy.name }}</option>
           </select>
         </div>

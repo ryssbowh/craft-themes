@@ -15,27 +15,36 @@ class UserBlock extends Block
     /**
      * @var string
      */
-    public $name = 'User';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = 'Displays a user';
-
-    /**
-     * @var string
-     */
-    public $longDescription = 'Choose a user and a view mode to display';
-
-    /**
-     * @var string
-     */
     public static $handle = 'user';
 
     /**
      * @var User
      */
     protected $_user;
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return \Craft::t('app', 'User');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Displays a user');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLongDescription(): string
+    {
+        return \Craft::t('themes', 'Choose a user and a view mode to display');
+    }
 
     /**
      * @inheritDoc

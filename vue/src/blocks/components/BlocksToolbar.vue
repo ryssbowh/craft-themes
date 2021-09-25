@@ -10,8 +10,8 @@
         </ul>
       </div>
     </div>
-    <button href="#" class="btn submit" v-if="!isCopying && layout.type!='default'" @click.prevent="checkAndDelete">{{ t('Delete') }}</button>
-    <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save') }}</button>
+    <button href="#" class="btn submit" v-if="!isCopying && layout.type!='default'" @click.prevent="checkAndDelete">{{ t('Delete', {}, 'app') }}</button>
+    <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
   </div>
 </template>
 

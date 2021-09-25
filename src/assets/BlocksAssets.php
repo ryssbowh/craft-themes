@@ -2,10 +2,9 @@
 
 namespace Ryssbowh\CraftThemes\assets;
 
-use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-class BlocksAssets extends AssetBundle
+class BlocksAssets extends ThemesBaseAssets
 {
     public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
@@ -20,13 +19,4 @@ class BlocksAssets extends AssetBundle
         CpAsset::class,
         JquerySerializeJSON::class
     ];
-
-    /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-        $this->sourcePath = realpath($this->sourcePath);
-    }
 }

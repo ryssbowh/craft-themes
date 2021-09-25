@@ -15,27 +15,36 @@ class CategoryBlock extends Block
     /**
      * @var string
      */
-    public $name = 'Category';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = 'Displays a category';
-
-    /**
-     * @var string
-     */
-    public $longDescription = 'Choose a category and a view mode to display';
-
-    /**
-     * @var string
-     */
     public static $handle = 'category';
 
     /**
      * @var Category
      */
     protected $_category;
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return \Craft::t('app', 'Category');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Displays a category');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLongDescription(): string
+    {
+        return \Craft::t('themes', 'Choose a category and a view mode to display');
+    }
 
     /**
      * @inheritDoc

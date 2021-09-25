@@ -5,12 +5,12 @@ namespace Ryssbowh\CraftThemes\assets;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-class ThemesAssets extends AssetBundle
+class ListAssets extends AssetBundle
 {
     public $sourcePath = __DIR__ . '/dist';
 
     public $css = [
-        'themes.css'
+        'list.css'
     ];
 
     public $depends = [

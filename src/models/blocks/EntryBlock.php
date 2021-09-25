@@ -15,27 +15,36 @@ class EntryBlock extends Block
     /**
      * @var string
      */
-    public $name = 'Entry';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = 'Displays an entry';
-
-    /**
-     * @var string
-     */
-    public $longDescription = 'Choose an entry and a view mode to display';
-
-    /**
-     * @var string
-     */
     public static $handle = 'entry';
 
     /**
      * @var Entry
      */
     protected $_entry;
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return \Craft::t('app', 'Entry');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Displays an entry');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLongDescription(): string
+    {
+        return \Craft::t('themes', 'Choose an entry and a view mode to display');
+    }
 
     /**
      * @inheritDoc

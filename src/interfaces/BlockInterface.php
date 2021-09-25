@@ -10,6 +10,26 @@ use craft\base\Element;
 interface BlockInterface
 {
     /**
+     * Name getter
+     * 
+     * @return string
+     */
+    public function getName(): string;
+    
+    /**
+     * Small description getter
+     * 
+     * @return string
+     */
+    public function getSmallDescription(): string;
+    /**
+     * Long description getter
+     * 
+     * @return string
+     */
+    public function getLongDescription(): string;
+
+    /**
      * Get block handle
      * 
      * @return string

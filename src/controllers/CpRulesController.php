@@ -33,7 +33,7 @@ class CpRulesController extends Controller
         list($sites, $languages) = $this->parseSites();
         $cols = [
             'enabled' => [
-                'heading' => \Craft::t('themes', 'Enabled'),
+                'heading' => \Craft::t('app', 'Enabled'),
                 'type' => 'lightswitch',
                 'class' => 'thin enabled'
             ],
@@ -44,7 +44,7 @@ class CpRulesController extends Controller
                 'placeholder' => \Craft::t('themes', 'Enter path here')
             ],
             'site' => [
-                'heading' => \Craft::t('themes', 'Site'),
+                'heading' => \Craft::t('app', 'Site'),
                 'type' => 'select',
                 'options' => ['' => \Craft::t('themes', 'Any')] + $sites,
                 'class' => 'site cell'

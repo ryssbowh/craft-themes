@@ -2,7 +2,7 @@
 namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\assets\ThemesAssets;
+use Ryssbowh\CraftThemes\assets\ListAssets;
 
 class CpThemesController extends Controller
 {
@@ -26,7 +26,7 @@ class CpThemesController extends Controller
     {
         $this->requirePermission('accessPlugin-themes');
 
-        \Craft::$app->view->registerAssetBundle(ThemesAssets::class);
+        \Craft::$app->view->registerAssetBundle(ListAssets::class);
 
         return $this->renderTemplate('themes/cp/themes', [
             'title' => \Craft::t('themes', 'Themes'),

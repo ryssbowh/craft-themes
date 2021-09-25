@@ -15,27 +15,36 @@ class GlobalBlock extends Block
     /**
      * @var string
      */
-    public $name = 'Global';
-
-    /**
-     * @var string
-     */
-    public $smallDescription = 'Displays a global set';
-
-    /**
-     * @var string
-     */
-    public $longDescription = 'Choose a global set and a view mode to display';
-
-    /**
-     * @var string
-     */
     public static $handle = 'global';
 
     /**
      * @var GlobalSet
      */
     protected $_global;
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return \Craft::t('app', 'Global');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSmallDescription(): string
+    {
+        return \Craft::t('themes', 'Displays a global set');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLongDescription(): string
+    {
+        return \Craft::t('themes', 'Choose a global set and a view mode to display');
+    }
 
     /**
      * @inheritDoc

@@ -1,6 +1,6 @@
 <template>
     <div id="action-buttons" class="flex">
-        <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save') }}</button>
+        <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
     </div>
 </template>
 

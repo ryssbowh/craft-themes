@@ -110,7 +110,7 @@ document.addEventListener("register-block-option-components", function(e) {
         template: `
         <div class="field">
             <div class="heading">
-                <label>{{ t('Entry type') }}</label>
+                <label>{{ t('Entry Type', {}, 'app') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
@@ -125,7 +125,7 @@ document.addEventListener("register-block-option-components", function(e) {
         </div>
         <div class="field">
             <div class="heading">
-                <label>{{ t('Entry') }}</label>
+                <label>{{ t('Entry', {}, 'app') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
@@ -233,7 +233,7 @@ document.addEventListener("register-block-option-components", function(e) {
         </div>
         <div class="field">
             <div class="heading">
-                <label>{{ t('Category') }}</label>
+                <label>{{ t('Category', {}, 'app') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
@@ -315,7 +315,7 @@ document.addEventListener("register-block-option-components", function(e) {
         template: `
         <div class="field">
             <div class="heading">
-                <label>{{ t('User') }}</label>
+                <label>{{ t('User', {}, 'app') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
@@ -451,7 +451,7 @@ document.addEventListener("register-block-option-components", function(e) {
         template: `
         <div class="field">
             <div class="heading">
-                <label>{{ t('Global set') }}</label>
+                <label>{{ t('Global Set', {}, 'app') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
