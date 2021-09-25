@@ -8,7 +8,7 @@ A theme is just another Craft plugin, it can inherit another theme and has the s
 
 A rule system allows you to set which theme will be used for which site, language or url path.
 
-## 2.0 breaking changes
+## Update from 1.0 breaking changes
 
 Themes are now regular plugins, they will not be installed in the `themes` folder anymore.
 

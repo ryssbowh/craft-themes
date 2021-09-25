@@ -1,8 +1,8 @@
 # Developers
 
-## 3.0 breaking changes
+## Update from 2.0 breaking changes :
 
-- Main class must inherit `Ryssbowh\CraftThemes\models\ThemePlugin`
+- Main plugin class must inherit `Ryssbowh\CraftThemes\models\ThemePlugin`
 
 ### Deprecated
 
@@ -15,7 +15,7 @@ The following twig variables are deprecated and will be removed in a future vers
 
 ### Inheritance
 
-Themes can extend each other with the method `getExtends(): bool` of their main class.  
+Themes can extend each other with the method `getExtends(): string` of their main class.  
 Parent themes will be installed automatically when installing a theme in the backend.
 
 ### Assets (images, fonts etc)
@@ -75,6 +75,11 @@ Asset bundles can be defined in your theme class, in the `$assetBundles` propert
 Bundle assets will be registered automatically, the '\*' array will be registered on every request.
 
 By default, parent themes bundles will also be registered. This can be disabled with the property `$inheritsAssetBundles` of your theme class.
+
+### Setting theme manually
+
+You can set a theme manually on the theme registry : `Themes::$plugin->registry->setCurrent('theme-handle')`. You **must** do this before the View template roots are registered for the mode site (`View::TEMPLATE_MODE_SITE`) or an exception will be thrown.  
+Template roots can only be registered once on Craft.
 
 ## Layouts
 

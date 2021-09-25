@@ -140,7 +140,7 @@ Here is a list of available displayers for each type of field :
 | Users         | Rendered (user layout)     | View mode                                        |
 
 And a list of available file displayers :  
-Every file type will have the displayer "Link to asset" available, with options label, new tab and download.
+Every file type will also have the displayer "Link to asset" available, with options label, new tab and download.
 
 | File type  | displayer       | Options                                       |
 |------------|-----------------|-----------------------------------------------|
@@ -184,6 +184,11 @@ You can also define there which theme should be used for console requests, this 
 
 A partial theme will not be available to select in the backend, but it can be inherited from. You will see them in the themes list, but won't be able to define blocks/displays for them.
 
+## Console/CP requests
+
+If you have templates requested during a CP or Console request for the site mode (`View::TEMPLATE_MODE_SITE`), you must set the Console/CP themes in the rules section if you want your theme to takeover those templates. A good example for that would be emails sent when using the backend or during a queue.  
+On Craft pro you can specify the setting 'HTML Email Template', this template won't be found in your theme unless the CP requests theme has been set in your rules.
+
 ## Installation
 
 - run `composer require ryssbowh/craft-themes:^3.0`
@@ -206,8 +211,6 @@ Craft 3.5 or over
 ## Roadmap
 
 - tests
-- test email templates in console
 - translations
 - custom layouts
 - deployment/config
-- users rendered displayer
