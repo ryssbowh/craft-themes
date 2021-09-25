@@ -1,0 +1,60 @@
+<?php
+namespace Ryssbowh\CraftThemes\helpers;
+
+use Ryssbowh\CraftThemes\services\DisplayService;
+use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\services\ViewModeService;
+
+class ProjectConfigHelper
+{
+    private static $_processedDisplays = false;
+    private static $_processedLayouts = false;
+
+    /**
+     * Ensure all displays config changes are processed immediately.
+     *
+     * @param bool $force Whether to proceed even if YAML changes are not currently being applied
+     */
+    public static function ensureAllDisplaysProcessed(bool $force = false)
+    {
+        $projectConfig = Craft::$app->getProjectConfig();
+
+        if (static::$_processedDisplays || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+            return;
+        }
+
+        static::$_processedDisplays = true;
+
+        $allDisplays = $projectConfig->get(DisplayService::CONFIG_KEY, true) ?? [];
+
+        foreach ($allDisplays as $uid => $data) {
+            $projectConfig->processConfigChanges(DisplayService::CONFIG_KEY . '.' . $uid, false, null, $force);
+        }
+    }
+
+    /**
+     * Ensure all layouts config changes are processed immediately.
+     *
+     * @param bool $force Whether to proceed even if YAML changes are not currently being applied
+     */
+    public static function ensureAllLayoutsProcessed(bool $force = false)
+    {
+        $projectConfig = Craft::$app->getProjectConfig();
+
+        if (static::$_processedLayouts || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+            return;
+        }
+
+        static::$_processedLayouts = true;
+
+        $allLayouts = $projectConfig->get(LayoutService::CONFIG_KEY, true) ?? [];
+        $allViewModes = $projectConfig->get(ViewModeService::CONFIG_KEY, true) ?? [];
+
+        foreach ($allLayouts as $uid => $data) {
+            $projectConfig->processConfigChanges(DisplayService::CONFIG_KEY . '.' . $uid, false, null, $force);
+        }
+        foreach ($allViewModes as $uid => $data) {
+            $projectConfig->processConfigChanges(ViewModeService::CONFIG_KEY . '.' . $uid, false, null, $force);
+        }
+    }
+}
