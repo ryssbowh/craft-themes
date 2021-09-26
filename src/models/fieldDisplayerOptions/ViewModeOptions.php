@@ -22,7 +22,7 @@ class ViewModeOptions extends FieldDisplayerOptions
     {
         if ($this->_viewMode === null) {
             $keys = array_keys($this->displayer->getViewModes());
-            $this->_viewMode = $keys[0];
+            $this->_viewMode = $keys[0] ?? null;
         }
         return $this->_viewMode;
     }
@@ -30,9 +30,9 @@ class ViewModeOptions extends FieldDisplayerOptions
     /**
      * View mode setter
      * 
-     * @param string $viewMode uid
+     * @param null|string $viewMode uid
      */
-    public function setViewMode(string $viewMode)
+    public function setViewMode(?string $viewMode)
     {
         $this->_viewMode = $viewMode;
     }

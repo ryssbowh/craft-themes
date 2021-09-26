@@ -47,11 +47,12 @@ class TagRendered extends FieldDisplayer
      * 
      * @return LayoutInterface
      */
-    public function getTagLayout(): LayoutInterface
+    public function getTagLayout(): ?LayoutInterface
     {
-        $group = $this->getTagGroup();
-        $layout = Themes::$plugin->layouts->get($this->theme, LayoutService::TAG_HANDLE, $group->uid);
-        return $layout;
+        if ($group = $this->getTagGroup()) {
+            return Themes::$plugin->layouts->get($this->theme, LayoutService::TAG_HANDLE, $group->uid);
+        }
+        return null;
     }
 
     /**
@@ -61,11 +62,12 @@ class TagRendered extends FieldDisplayer
      */
     public function getViewModes(): array
     {
-        $group = $this->getTagGroup();
-        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::TAG_HANDLE, $group->uid);
         $viewModes = [];
-        foreach ($layout->getViewModes() as $viewMode) {
-            $viewModes[$viewMode->uid] = $viewMode->name;
+        if ($group = $this->getTagGroup()) {
+            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::TAG_HANDLE, $group->uid);
+            foreach ($layout->getViewModes() as $viewMode) {
+                $viewModes[$viewMode->uid] = $viewMode->name;
+            }
         }
         return $viewModes;
     }
@@ -83,7 +85,7 @@ class TagRendered extends FieldDisplayer
      * 
      * @return CategoryGroup
      */
-    protected function getTagGroup(): TagGroup
+    protected function getTagGroup(): ?TagGroup
     {
         $elems = explode(':', $this->field->craftField->source);
         return \Craft::$app->tags->getTagGroupByUid($elems[1]);
