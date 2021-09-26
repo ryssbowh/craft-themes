@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\RegisterFieldsEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\models\Field;
@@ -14,6 +15,7 @@ use Ryssbowh\CraftThemes\records\FieldRecord;
 use craft\base\Field as BaseField;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class FieldsService extends Service
 {
@@ -121,7 +123,7 @@ class FieldsService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $field->getConfig();
-        $uid = $configData['uid'];
+        $uid = $field->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -157,15 +159,21 @@ class FieldsService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
+        ProjectConfigHelper::ensureAllDisplaysProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
-            $data['uid'] = $uid;
             if (isset($data['display_id'])) {
-                $data['display_id'] = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+                $display = Themes::$plugin->displays->getRecordByUid($data['display_id']);
+                $data['display_id'] = Themes::$plugin->displays->getRecordByUid($data['display_id'])->id;
             }
-            $this->getFieldClassByType($data['type'])::save($data);
+            //Forward to each type of field :
+            $this->getFieldClassByType($data['type'])::save($uid, $data);
             
             $transaction->commit();
         } catch (\Throwable $e) {
@@ -184,7 +192,7 @@ class FieldsService extends Service
         $data = $event->oldValue;
         $uid = $event->tokenMatches[0];
         $data['uid'] = $uid;
-        $this->getFieldClassByType($data['type'])::delete($data);
+        $this->getFieldClassByType($data['type'])::delete($uid, $data);
     }
 
     /**
@@ -194,8 +202,9 @@ class FieldsService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $field) {
-            $e->config[self::CONFIG_KEY.'.'.$field->uid] = $field->getConfig();
+            $e->config[$parts[0]][$parts[1]][$field->uid] = $field->getConfig();
         }
     }
 

@@ -22,7 +22,7 @@ class UrlDefaultOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            ['newTab', 'boolean'],
+            ['newTab', 'boolean', 'trueValue' => true, 'falseValue' => false],
             ['label', 'string']
         ];
     }

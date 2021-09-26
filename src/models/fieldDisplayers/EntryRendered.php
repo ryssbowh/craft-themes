@@ -128,15 +128,19 @@ class EntryRendered extends FieldDisplayer
     protected function getEntryViewModes(string $uid): array
     {
         $section = \Craft::$app->sections->getSectionByUid($uid);
-        $type = $section->getEntryTypes()[0];
-        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
-        $viewModes = [];
-        foreach ($layout->getViewModes() as $viewMode) {
-            $viewModes[$viewMode->handle] = $viewMode->name;
+        $types = [];
+        if ($section) {
+            $type = $section->getEntryTypes()[0];
+            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
+            $viewModes = [];
+            foreach ($layout->getViewModes() as $viewMode) {
+                $viewModes[$viewMode->handle] = $viewMode->name;
+            }
+            $types[] = [$type->uid => [
+                'type' => $type->name,
+                'viewModes' => $viewModes
+            ]];
         }
-        return [$type->uid => [
-            'type' => $type->name,
-            'viewModes' => $viewModes
-        ]];
+        return $types;
     }
 }

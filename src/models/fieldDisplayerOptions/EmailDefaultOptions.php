@@ -17,7 +17,7 @@ class EmailDefaultOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            ['linked', 'boolean']       
+            ['linked', 'boolean', 'trueValue' => true, 'falseValue' => false]       
         ];
     }
 }

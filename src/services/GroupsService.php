@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\models\Group;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
@@ -10,6 +11,7 @@ use Ryssbowh\CraftThemes\records\GroupRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class GroupsService extends Service
 {
@@ -119,7 +121,7 @@ class GroupsService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $group->getConfig();
-        $uid = $configData['uid'];
+        $uid = $group->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -164,13 +166,19 @@ class GroupsService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
+        ProjectConfigHelper::ensureAllDisplaysProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $group = $this->getRecordByUid($uid);
 
-            $group->display_id = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+            $group->display_id = Themes::$plugin->displays->getRecordByUid($data['display_id'])->id;
+
             $group->name = $data['name'];
             $group->handle = $data['handle'];
             $group->labelHidden = $data['labelHidden'];
@@ -207,8 +215,9 @@ class GroupsService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $group) {
-            $e->config[self::CONFIG_KEY.'.'.$group->uid] = $group->getConfig();
+            $e->config[$parts[0]][$parts[1]][$group->uid] = $group->getConfig();
         }
     }
 

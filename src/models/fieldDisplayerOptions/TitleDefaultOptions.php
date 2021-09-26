@@ -24,7 +24,7 @@ class TitleDefaultOptions extends FieldDisplayerOptions
         return [
             ['tag', 'string'],
             ['tag', 'in', 'range' => ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']],
-            ['linked', 'boolean']
+            ['linked', 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 }

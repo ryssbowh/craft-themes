@@ -39,17 +39,19 @@ interface FieldInterface
     /**
      * Saves a field from an array of data
      * 
+     * @param  array  $uid
      * @param  array  $data
      * @return bool
      */
-    public static function save(array $data): bool;
+    public static function save(string $uid, array $data): bool;
 
     /**
      * Deletes a field record
      * 
+     * @param array  $uid
      * @param array  $data
      */
-    public static function delete(array $data);
+    public static function delete(string $uid, array $data);
 
     /**
      * Populate this field from post data

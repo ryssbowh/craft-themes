@@ -74,7 +74,7 @@ class Settings extends Model
     {
         return [
             [['default', 'redirectTo'], 'string'],
-            [['eagerLoad', 'devMode'], 'boolean']
+            [['eagerLoad', 'devMode'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 

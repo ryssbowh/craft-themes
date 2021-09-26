@@ -27,6 +27,7 @@ use craft\elements\Entry;
 use craft\events\ConfigEvent;
 use craft\events\EntryTypeEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class LayoutService extends Service
 {
@@ -209,7 +210,7 @@ class LayoutService extends Service
         }
         $layouts = $this->all()
             ->whereNotIn('id', $ids)
-            ->where(['themeHandle' => $theme->handle])
+            ->where('themeHandle', $theme->handle)
             ->all();
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
@@ -305,7 +306,7 @@ class LayoutService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $layout->getConfig();
-        $uid = $configData['uid'];
+        $uid = $layout->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -352,6 +353,10 @@ class LayoutService extends Service
     {
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $layout = $this->getRecordByUid($uid);
@@ -405,10 +410,9 @@ class LayoutService extends Service
     /**
      * Callback when an element (entry type, category group etc) is deleted
      * 
-     * @param string $type
      * @param string $uid
      */
-    public function onCraftElementDeleted(string $type, string $uid)
+    public function onCraftElementDeleted(string $uid)
     {
         $layouts = $this->all()->filter(function ($layout) use ($uid) {
             return $layout->elementUid == $uid;
@@ -424,8 +428,13 @@ class LayoutService extends Service
      * @param string $type
      * @param string $uid
      */
-    public function onCraftElementSaved(string $type, string $uid, $type2 = null)
+    public function onCraftElementSaved(string $type, string $uid = '')
     {
+        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+            // If Craft is applying Yaml changes it means we have the layouts/displays defined
+            // in config, and don't need to respond to these events as it would create duplicates
+            return;
+        }
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
             $layout = $this->get($theme, $type, $uid);
             if (!$layout) {
@@ -446,8 +455,9 @@ class LayoutService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $layout) {
-            $e->config[self::CONFIG_KEY.'.'.$layout->uid] = $layout->getConfig();
+            $e->config[$parts[0]][$parts[1]][$layout->uid] = $layout->getConfig();
         }
     }
 
@@ -563,8 +573,10 @@ class LayoutService extends Service
             Themes::$plugin->viewModes->delete($viewMode, true);
         }
         //Deleting blocks
-        foreach ($layout->blocks as $block) {
-            Themes::$plugin->blocks->delete($block);
+        if ($layout->hasBlocks) {
+            foreach ($layout->blocks as $block) {
+                Themes::$plugin->blocks->delete($block);
+            }
         }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);

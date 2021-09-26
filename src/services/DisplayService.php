@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\DisplayEvent;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
@@ -103,7 +104,7 @@ class DisplayService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $display->getConfig();
-        $uid = $configData['uid'];
+        $uid = $display->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -161,8 +162,13 @@ class DisplayService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
+        ProjectConfigHelper::ensureAllViewModesProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $display = $this->getRecordByUid($uid);
@@ -170,8 +176,8 @@ class DisplayService extends Service
 
             $display->type = $data['type'];
             $display->order = $data['order'];
-            $display->group_id = isset($data['group_id']) ? Themes::$plugin->groups->getByUid($data['group_id'])->id : null;
-            $display->viewMode_id = Themes::$plugin->viewModes->getByUid($data['viewMode_id'])->id;
+            $display->group_id = isset($data['group_id']) ? Themes::$plugin->groups->getRecordByUid($data['group_id'])->id : null;
+            $display->viewMode_id = Themes::$plugin->viewModes->getRecordByUid($data['viewMode_id'])->id;
             $display->save(false);
             
             $transaction->commit();
@@ -216,8 +222,9 @@ class DisplayService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $display) {
-            $e->config[self::CONFIG_KEY.'.'.$display->uid] = $display->getConfig();
+            $e->config[$parts[0]][$parts[1]][$display->uid] = $display->getConfig();
         }
     }
 
@@ -243,6 +250,11 @@ class DisplayService extends Service
      */
     public function onCraftFieldSaved(FieldEvent $event)
     {
+        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+            // If Craft is applying Yaml changes it means we have the fields defined
+            // in config, and don't need to respond to these events as it would create duplicates
+            return;
+        }
         if ($event->isNew) {
             return;
         }

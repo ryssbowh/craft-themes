@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ViewModeEvent;
 use Ryssbowh\CraftThemes\exceptions\ViewModeException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
@@ -13,6 +14,7 @@ use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class ViewModeService extends Service
 {
@@ -109,7 +111,7 @@ class ViewModeService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $viewMode->getConfig();
-        $uid = $configData['uid'];
+        $uid = $viewMode->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -196,8 +198,13 @@ class ViewModeService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
+        ProjectConfigHelper::ensureAllLayoutsProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $viewMode = $this->getRecordByUid($uid);
@@ -205,7 +212,7 @@ class ViewModeService extends Service
 
             $viewMode->handle = $data['handle'];
             $viewMode->name = $data['name'];
-            $viewMode->layout_id = Themes::$plugin->layouts->getByUid($data['layout_id'])->id;
+            $viewMode->layout_id = Themes::$plugin->layouts->getRecordByUid($data['layout_id'])->id;
             $viewMode->save(false);
             
             $transaction->commit();
@@ -250,8 +257,9 @@ class ViewModeService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $viewMode) {
-            $e->config[self::CONFIG_KEY.'.'.$viewMode->uid] = $viewMode->getConfig();
+            $e->config[$parts[0]][$parts[1]][$viewMode->uid] = $viewMode->getConfig();
         }
     }
 

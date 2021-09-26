@@ -1,8 +1,10 @@
 {% extends "fields/_field" %}
 
 {% block content %}
-    {% set viewMode = craft.themes.viewModes.getByUid(options.viewMode) %}
-    {% for tag in value %}
-        {{ craft.themes.view.renderLayout(displayer.tagLayout, viewMode.handle, tag)|raw }}
-    {% endfor %}
+    {% if options.viewMode %}
+        {% set viewMode = craft.themes.viewModes.getByUid(options.viewMode) %}
+        {% for tag in value %}
+            {{ craft.themes.view.renderLayout(displayer.tagLayout, viewMode.handle, tag)|raw }}
+        {% endfor %}
+    {% endif %}
 {% endblock %}

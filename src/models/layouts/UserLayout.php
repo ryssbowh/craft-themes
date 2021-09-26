@@ -42,7 +42,15 @@ class UserLayout extends Layout
      */
     public function getCraftFields(): array
     {
-        return \Craft::$app->getFields()->getLayoutByType(User::class)->getFields();
+        return $this->fieldLayout->getFields();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldLayout(): ?FieldLayout
+    {
+        return \Craft::$app->getFields()->getLayoutByType(User::class);
     }
 
     /**

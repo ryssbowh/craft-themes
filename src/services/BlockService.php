@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\BlockEvent;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
@@ -18,6 +19,7 @@ use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class BlockService extends Service
 {
@@ -102,7 +104,7 @@ class BlockService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $block->getConfig();
-        $uid = $configData['uid'];
+        $uid = $block->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -148,6 +150,7 @@ class BlockService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
+        ProjectConfigHelper::ensureAllLayoutsProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
         $transaction = \Craft::$app->getDb()->beginTransaction();
@@ -160,7 +163,7 @@ class BlockService extends Service
             $block->handle = $data['handle'];
             $block->order = $data['order'];
             $block->options = $data['options'] ?? null;
-            $block->layout_id = Themes::$plugin->layouts->getByUid($data['layout_id'])->id;
+            $block->layout_id = Themes::$plugin->layouts->getRecordByUid($data['layout_id'])->id;
             $block->save(false);
             
             $transaction->commit();
@@ -205,8 +208,9 @@ class BlockService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $block) {
-            $e->config[self::CONFIG_KEY.'.'.$block->uid] = $block->getConfig();
+            $e->config[$parts[0]][$parts[1]][$block->uid] = $block->getConfig();
         }
     }
 

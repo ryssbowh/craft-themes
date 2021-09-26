@@ -17,7 +17,7 @@ class RedactorFullOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            ['stripped', 'boolean'],
+            ['stripped', 'boolean', 'trueValue' => true, 'falseValue' => false],
         ];
     }
 }

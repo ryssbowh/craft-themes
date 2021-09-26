@@ -11,9 +11,8 @@ use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDis
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
-use craft\events\SectionEvent;
 use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
-use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields};
+use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields, Users};
 use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
 use craft\web\View;
@@ -346,62 +345,70 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Listens to Entries/Categories/Fields deletions and additions
+     * Listens to Entries/Categories/Volumes/Tags/Globals/Fields deletions and additions
      */
     protected function registerCraftEvents()
     {
-        Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_SECTION, function (SectionEvent $e) {
-            foreach ($e->section->entryTypes as $entryType) {
-                $uid = $entryType->uid;
-                Themes::$plugin->layouts->onCraftElementSaved(LayoutService::ENTRY_HANDLE, $uid);
-            }
-        });
-        Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_ENTRY_TYPE, function (EntryTypeEvent $e) {
-            $uid = $e->entryType->uid;
-            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::ENTRY_HANDLE, $uid, $e->entryType);
-        });
-        Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_ENTRY_TYPE, function (EntryTypeEvent $e) {
-            $uid = $e->entryType->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::ENTRY_HANDLE, $uid);
-        });
-        Event::on(Categories::class, Categories::EVENT_AFTER_SAVE_GROUP, function (CategoryGroupEvent $e) {
-            $uid = $e->categoryGroup->uid;
-            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::CATEGORY_HANDLE, $uid);
-        });
-        Event::on(Categories::class, Categories::EVENT_AFTER_DELETE_GROUP, function (CategoryGroupEvent $e) {
-            $uid = $e->categoryGroup->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::CATEGORY_HANDLE, $uid);
-        });
-        Event::on(Volumes::class, Volumes::EVENT_AFTER_SAVE_VOLUME, function (VolumeEvent $e) {
-            $uid = $e->volume->uid;
-            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::VOLUME_HANDLE, $uid);
-        });
-        Event::on(Volumes::class, Volumes::EVENT_AFTER_DELETE_VOLUME, function (VolumeEvent $e) {
-            $uid = $e->volume->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::VOLUME_HANDLE, $uid);
-        });
-        Event::on(Globals::class, Globals::EVENT_AFTER_SAVE_GLOBAL_SET, function (GlobalSetEvent $e) {
-            $uid = $e->globalSet->uid;
-            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::GLOBAL_HANDLE, $uid);
-        });
-        Craft::$app->projectConfig->onRemove(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function(ConfigEvent $e) {
-            $uid = $e->tokenMatches[0];
-            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::GLOBAL_HANDLE, $uid);
-        });
-        Event::on(Tags::class, Tags::EVENT_AFTER_SAVE_GROUP, function (TagGroupEvent $e) {
-            $uid = $e->tagGroup->uid;
-            Themes::$plugin->layouts->onCraftElementSaved(LayoutService::TAG_HANDLE, $uid);
-        });
-        Event::on(Tags::class, Tags::EVENT_AFTER_DELETE_GROUP, function (TagGroupEvent $e) {
-            $uid = $e->tagGroup->uid;
-            Themes::$plugin->layouts->onCraftElementDeleted(LayoutService::TAG_HANDLE, $uid);
-        });
+        $layouts = $this->layouts;
+        Craft::$app->projectConfig
+            ->onAdd(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::ENTRY_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onUpdate(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::ENTRY_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onRemove(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementDeleted($e->tokenMatches[0]);
+            })
+            ->onAdd(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::CATEGORY_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onUpdate(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::CATEGORY_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onRemove(Categories::CONFIG_CATEGORYROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementDeleted($e->tokenMatches[0]);
+            })
+            ->onAdd(Volumes::CONFIG_VOLUME_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::VOLUME_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onUpdate(Volumes::CONFIG_VOLUME_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::VOLUME_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onRemove(Volumes::CONFIG_VOLUME_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementDeleted($e->tokenMatches[0]);
+            })
+            ->onAdd(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::GLOBAL_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onUpdate(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::GLOBAL_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onRemove(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementDeleted($e->tokenMatches[0]);
+            })
+            ->onAdd(Tags::CONFIG_TAGGROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::TAG_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onUpdate(Tags::CONFIG_TAGGROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::TAG_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onRemove(Tags::CONFIG_TAGGROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementDeleted($e->tokenMatches[0]);
+            })
+            ->onAdd(Users::CONFIG_USERLAYOUT_KEY, function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::USER_HANDLE);
+            })
+            ->onUpdate(Users::CONFIG_USERLAYOUT_KEY, function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::USER_HANDLE);
+            });
+
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
             Themes::$plugin->displays->onCraftFieldSaved($e);
         });
-        Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, function (FieldEvent $e) {
-            Themes::$plugin->displays->onCraftFieldDeleted($e);
-        });
+        // Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, function (FieldEvent $e) {
+        //     Themes::$plugin->displays->onCraftFieldDeleted($e);
+        // });
     }
 
     /**
@@ -422,12 +429,12 @@ class Themes extends \craft\base\Plugin
             ->onAdd(DisplayService::CONFIG_KEY.'.{uid}',     [$this->displays,  'handleChanged'])
             ->onUpdate(DisplayService::CONFIG_KEY.'.{uid}',  [$this->displays,  'handleChanged'])
             ->onRemove(DisplayService::CONFIG_KEY.'.{uid}',  [$this->displays,  'handleDeleted'])
-            ->onAdd(FieldsService::CONFIG_KEY.'.{uid}',      [$this->fields,    'handleChanged'])
-            ->onUpdate(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleChanged'])
-            ->onRemove(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleDeleted'])
             ->onAdd(GroupsService::CONFIG_KEY.'.{uid}',      [$this->groups,    'handleChanged'])
             ->onUpdate(GroupsService::CONFIG_KEY.'.{uid}',   [$this->groups,    'handleChanged'])
-            ->onRemove(GroupsService::CONFIG_KEY.'.{uid}',   [$this->groups,    'handleDeleted']);
+            ->onRemove(GroupsService::CONFIG_KEY.'.{uid}',   [$this->groups,    'handleDeleted'])
+            ->onAdd(FieldsService::CONFIG_KEY.'.{uid}',      [$this->fields,    'handleChanged'])
+            ->onUpdate(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleChanged'])
+            ->onRemove(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleDeleted']);
 
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $e) {
             Themes::$plugin->layouts->rebuildConfig($e);

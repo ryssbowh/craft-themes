@@ -12,7 +12,6 @@ use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use craft\base\Element;
 use craft\base\Model;
-use craft\helpers\StringHelper;
 
 abstract class Block extends Model implements BlockInterface
 {
@@ -96,9 +95,8 @@ abstract class Block extends Model implements BlockInterface
             'handle' => $this->handle,
             'provider' => $this->provider,
             'order' => $this->order,
-            'active' => $this->active,
-            'options' => $options,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'active' => (bool)$this->active,
+            'options' => $options
         ];
     }
 
@@ -129,7 +127,7 @@ abstract class Block extends Model implements BlockInterface
         return [
             [['region', 'handle', 'provider', 'order', 'active'], 'required'],
             [['region', 'handle', 'provider'], 'string'],
-            ['active', 'boolean'],
+            ['active', 'boolean', 'trueValue' => true, 'falseValue' => false],
             [['order', 'layout_id'], 'number'],
             [['uid', 'id', 'safe'], 'safe'],
             ['layout', function () {

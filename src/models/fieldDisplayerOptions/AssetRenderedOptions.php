@@ -66,7 +66,10 @@ class AssetRenderedOptions extends FieldDisplayerOptions
     public function getViewMode(Asset $asset): ?ViewModeInterface
     {
         $volume = $asset->volume;
-        $viewModeUid = $this->viewModes[$volume->uid] ?? null;
-        return $viewModeUid ? Themes::$plugin->viewModes->getByUid($viewModeUid) : null;
+        if ($volume) {
+            $viewModeUid = $this->viewModes[$volume->uid] ?? null;
+            return $viewModeUid ? Themes::$plugin->viewModes->getByUid($viewModeUid) : null;
+        }
+        return null;
     }
 }

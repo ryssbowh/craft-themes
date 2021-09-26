@@ -48,12 +48,13 @@ class CategoryRendered extends FieldDisplayer
      * 
      * @return LayoutInterface
      */
-    public function getGroupLayout(): LayoutInterface
+    public function getGroupLayout(): ?LayoutInterface
     {
-        $group = $this->getCategoryGroup();
-        $theme = Themes::$plugin->registry->getCurrent();
-        $layout = Themes::$plugin->layouts->get($theme, LayoutService::CATEGORY_HANDLE, $group->uid);
-        return $layout;
+        if ($group = $this->getCategoryGroup()) {
+            $theme = Themes::$plugin->registry->getCurrent();
+            return Themes::$plugin->layouts->get($theme, LayoutService::CATEGORY_HANDLE, $group->uid);
+        }
+        return null;
     }
 
     /**
@@ -63,11 +64,12 @@ class CategoryRendered extends FieldDisplayer
      */
     public function getViewModes(): array
     {
-        $group = $this->getCategoryGroup();
-        $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::CATEGORY_HANDLE, $group->uid);
         $viewModes = [];
-        foreach ($layout->getViewModes() as $viewMode) {
-            $viewModes[$viewMode->uid] = $viewMode->name;
+        if ($group = $this->getCategoryGroup()) {
+            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::CATEGORY_HANDLE, $group->uid);
+            foreach ($layout->getViewModes() as $viewMode) {
+                $viewModes[$viewMode->uid] = $viewMode->name;
+            }
         }
         return $viewModes;
     }
@@ -85,7 +87,7 @@ class CategoryRendered extends FieldDisplayer
      * 
      * @return CategoryGroup
      */
-    protected function getCategoryGroup(): CategoryGroup
+    protected function getCategoryGroup(): ?CategoryGroup
     {
         $elems = explode(':', $this->field->craftField->source);
         return \Craft::$app->categories->getGroupByUid($elems[1]);

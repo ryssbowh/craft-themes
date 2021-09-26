@@ -18,7 +18,7 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\base\Model;
-use craft\helpers\StringHelper;
+use craft\models\FieldLayout;
 
 class Layout extends Model implements LayoutInterface
 {
@@ -82,7 +82,7 @@ class Layout extends Model implements LayoutInterface
             [['type', 'themeHandle'], 'required'],
             ['type', 'in', 'range' => LayoutService::TYPES],
             [['themeHandle', 'elementUid'], 'string'],
-            ['hasBlocks', 'boolean'],
+            ['hasBlocks', 'boolean', 'trueValue' => true, 'falseValue' => false],
             [['uid', 'id', 'element'], 'safe'],
             ['themeHandle', function () {
                 if (!Themes::$plugin->registry->hasTheme($this->themeHandle)) {
@@ -160,8 +160,7 @@ class Layout extends Model implements LayoutInterface
             'themeHandle' => $this->themeHandle,
             'type' => $this->type,
             'elementUid' => $this->elementUid,
-            'hasBlocks' => $this->hasBlocks,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'hasBlocks' => (bool)$this->hasBlocks
         ];
     }
 
@@ -371,6 +370,14 @@ class Layout extends Model implements LayoutInterface
     public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string
     {
         return Themes::$plugin->view->renderLayout($this, $viewMode, $element);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldLayout(): ?FieldLayout
+    {
+        return null;
     }
 
     /**

@@ -33,7 +33,7 @@ class LinkOptions extends FileDisplayerOptions
     {
         return [
             [['label', 'custom'], 'string'],
-            [['newTab', 'download'], 'boolean'],
+            [['newTab', 'download'], 'boolean', 'trueValue' => true, 'falseValue' => false],
             ['custom', 'required', 'when' => function ($model) {
                 return $model->label == 'custom';
             }],
