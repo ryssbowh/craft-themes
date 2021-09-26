@@ -573,8 +573,10 @@ class LayoutService extends Service
             Themes::$plugin->viewModes->delete($viewMode, true);
         }
         //Deleting blocks
-        foreach ($layout->blocks as $block) {
-            Themes::$plugin->blocks->delete($block);
+        if ($layout->hasBlocks) {
+            foreach ($layout->blocks as $block) {
+                Themes::$plugin->blocks->delete($block);
+            }
         }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
