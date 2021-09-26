@@ -18,6 +18,7 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\base\Model;
+use craft\models\FieldLayout;
 
 class Layout extends Model implements LayoutInterface
 {
@@ -369,6 +370,14 @@ class Layout extends Model implements LayoutInterface
     public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string
     {
         return Themes::$plugin->view->renderLayout($this, $viewMode, $element);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldLayout(): ?FieldLayout
+    {
+        return null;
     }
 
     /**

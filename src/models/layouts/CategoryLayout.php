@@ -59,6 +59,14 @@ class CategoryLayout extends Layout
      */
     public function getCraftFields(): array
     {
-        return $this->element->getFieldLayout()->getFields();
+        return $this->fieldLayout->getFields();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldLayout(): ?FieldLayout
+    {
+        return $this->element->getFieldLayout();
     }
 }

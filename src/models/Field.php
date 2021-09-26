@@ -13,8 +13,6 @@ use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
 use craft\base\Field as BaseField;
-use craft\fieldlayoutelements\CustomField;
-use craft\fields\Matrix as CraftMatrix;
 
 abstract class Field extends DisplayItem implements FieldInterface
 {
@@ -235,21 +233,6 @@ abstract class Field extends DisplayItem implements FieldInterface
             $displayer->field = $_this;
         });
         return $displayers;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        foreach ($this->layout->element->fieldLayout->tabs as $tab) {
-            foreach ($tab->elements as $element) {
-                if (get_class($element) == CustomField::class and $element->field->handle == $this->handle) {
-                    return $element->label ?? $element->field->name;
-                }
-            }
-        }
-        return '';
     }
 
     /**

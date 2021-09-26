@@ -428,7 +428,7 @@ class LayoutService extends Service
      * @param string $type
      * @param string $uid
      */
-    public function onCraftElementSaved(string $type, string $uid)
+    public function onCraftElementSaved(string $type, string $uid = '')
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
             $layout = $this->get($theme, $type, $uid);

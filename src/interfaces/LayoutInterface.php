@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\interfaces;
 use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
+use craft\models\FieldLayout;
 
 interface LayoutInterface
 {
@@ -192,6 +193,13 @@ interface LayoutInterface
      * @return array
      */
     public function getCraftFields(): array;
+
+    /**
+     * Get layout's element field layout
+     * 
+     * @return FieldLayout
+     */
+    public function getFieldLayout(): ?FieldLayout;
 
     /**
      * Render this layout for an element

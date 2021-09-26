@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
+use craft\fieldlayoutelements\CustomField;
 
 class CraftField extends Field implements CraftFieldInterface
 {
@@ -39,6 +40,21 @@ class CraftField extends Field implements CraftFieldInterface
     public function onCraftFieldChanged(BaseField $field): bool
     {
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        foreach ($this->layout->fieldLayout->tabs as $tab) {
+            foreach ($tab->elements as $element) {
+                if (get_class($element) == CustomField::class and $element->field->handle == $this->handle) {
+                    return $element->label ?? $element->field->name;
+                }
+            }
+        }
+        return '';
     }
 
     /**
