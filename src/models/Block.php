@@ -96,7 +96,7 @@ abstract class Block extends Model implements BlockInterface
             'handle' => $this->handle,
             'provider' => $this->provider,
             'order' => $this->order,
-            'active' => $this->active,
+            'active' => (bool)$this->active,
             'options' => $options,
             'uid' => $this->uid ?? StringHelper::UUID()
         ];

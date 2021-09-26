@@ -160,7 +160,7 @@ class Layout extends Model implements LayoutInterface
             'themeHandle' => $this->themeHandle,
             'type' => $this->type,
             'elementUid' => $this->elementUid,
-            'hasBlocks' => $this->hasBlocks,
+            'hasBlocks' => (bool)$this->hasBlocks,
             'uid' => $this->uid ?? StringHelper::UUID()
         ];
     }

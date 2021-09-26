@@ -70,10 +70,10 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
     public function getConfig(): array
     {
         return [
-            'labelHidden' => $this->labelHidden,
-            'labelVisuallyHidden' => $this->labelVisuallyHidden,
-            'hidden' => $this->hidden,
-            'visuallyHidden' => $this->visuallyHidden,
+            'labelHidden' => (bool)$this->labelHidden,
+            'labelVisuallyHidden' => (bool)$this->labelVisuallyHidden,
+            'hidden' => (bool)$this->hidden,
+            'visuallyHidden' => (bool)$this->visuallyHidden,
             'display_id' => $this->display->uid,
             'uid' => $this->uid ?? StringHelper::UUID()
         ];
