@@ -409,10 +409,9 @@ class LayoutService extends Service
     /**
      * Callback when an element (entry type, category group etc) is deleted
      * 
-     * @param string $type
      * @param string $uid
      */
-    public function onCraftElementDeleted(string $type, string $uid)
+    public function onCraftElementDeleted(string $uid)
     {
         $layouts = $this->all()->filter(function ($layout) use ($uid) {
             return $layout->elementUid == $uid;
@@ -428,7 +427,7 @@ class LayoutService extends Service
      * @param string $type
      * @param string $uid
      */
-    public function onCraftElementSaved(string $type, string $uid, $type2 = null)
+    public function onCraftElementSaved(string $type, string $uid)
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
             $layout = $this->get($theme, $type, $uid);
