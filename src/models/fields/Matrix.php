@@ -128,9 +128,9 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public static function save(array $data): bool
+    public static function save(string $uid, array $data): bool
     {
-        $matrix = Themes::$plugin->fields->getRecordByUid($data['uid']);
+        $matrix = Themes::$plugin->fields->getRecordByUid($uid);
         $types = $data['types'] ?? [];
         unset($data['types']);
         $field = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
@@ -144,7 +144,8 @@ class Matrix extends CraftField implements MatrixInterface
             unset($typeData['fields']);
             $type = Themes::$plugin->matrix->getMatrixBlockTypeByUid($typeData['type_uid']);
             foreach ($fields as $order => $fieldData) {
-                $field = Themes::$plugin->fields->getRecordByUid($fieldData['uid']);
+                $field = Themes::$plugin->fields->getRecordByUid($fieldData['fieldUid']);
+                unset($fieldData['fieldUid']);
                 $fieldData['craft_field_id'] = \Craft::$app->fields->getFieldByUid($fieldData['craft_field_id'])->id;
                 $field->setAttributes($fieldData, false);
                 $field->save(false);
@@ -175,9 +176,9 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public static function delete(array $data)
+    public static function delete(string $uid, array $data)
     {
-        parent::delete($data);
+        parent::delete($uid, $data);
         $fieldUids = [];
         foreach ($data['types'] ?? [] as $typeData) {
             foreach ($typeData['fields'] ?? [] as $fieldData) {

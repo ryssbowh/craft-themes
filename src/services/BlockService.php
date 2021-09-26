@@ -19,6 +19,7 @@ use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class BlockService extends Service
 {
@@ -103,7 +104,7 @@ class BlockService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $block->getConfig();
-        $uid = $configData['uid'];
+        $uid = $block->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 

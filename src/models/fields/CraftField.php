@@ -15,9 +15,9 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
-    public static function save(array $data): bool
+    public static function save(string $uid, array $data): bool
     {
-        $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
+        $field = Themes::$plugin->fields->getRecordByUid($uid);
         $craftField = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
         $data['craft_field_id'] = $craftField->id;
         $data['craft_field_class'] = get_class($craftField);

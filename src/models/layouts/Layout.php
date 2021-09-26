@@ -18,7 +18,6 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\base\Model;
-use craft\helpers\StringHelper;
 
 class Layout extends Model implements LayoutInterface
 {
@@ -160,8 +159,7 @@ class Layout extends Model implements LayoutInterface
             'themeHandle' => $this->themeHandle,
             'type' => $this->type,
             'elementUid' => $this->elementUid,
-            'hasBlocks' => (bool)$this->hasBlocks,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'hasBlocks' => (bool)$this->hasBlocks
         ];
     }
 

@@ -27,6 +27,7 @@ use craft\elements\Entry;
 use craft\events\ConfigEvent;
 use craft\events\EntryTypeEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class LayoutService extends Service
 {
@@ -305,7 +306,7 @@ class LayoutService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $layout->getConfig();
-        $uid = $configData['uid'];
+        $uid = $layout->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 

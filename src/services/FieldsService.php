@@ -15,6 +15,7 @@ use Ryssbowh\CraftThemes\records\FieldRecord;
 use craft\base\Field as BaseField;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class FieldsService extends Service
 {
@@ -122,7 +123,7 @@ class FieldsService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $field->getConfig();
-        $uid = $configData['uid'];
+        $uid = $field->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -167,15 +168,12 @@ class FieldsService extends Service
         }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
-            $data['uid'] = $uid;
             if (isset($data['display_id'])) {
                 $display = Themes::$plugin->displays->getRecordByUid($data['display_id']);
-                if (!$display) {
-                    dd($data);
-                }
                 $data['display_id'] = Themes::$plugin->displays->getRecordByUid($data['display_id'])->id;
             }
-            $this->getFieldClassByType($data['type'])::save($data);
+            //Forward to each type of field :
+            $this->getFieldClassByType($data['type'])::save($uid, $data);
             
             $transaction->commit();
         } catch (\Throwable $e) {
@@ -194,7 +192,7 @@ class FieldsService extends Service
         $data = $event->oldValue;
         $uid = $event->tokenMatches[0];
         $data['uid'] = $uid;
-        $this->getFieldClassByType($data['type'])::delete($data);
+        $this->getFieldClassByType($data['type'])::delete($uid, $data);
     }
 
     /**

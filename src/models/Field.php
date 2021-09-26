@@ -96,9 +96,9 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public static function save(array $data): bool
+    public static function save(string $uid, array $data): bool
     {
-        $field = Themes::$plugin->fields->getRecordByUid($data['uid']);
+        $field = Themes::$plugin->fields->getRecordByUid($uid);
         $field->setAttributes($data, false);
         return $field->save(false);
     }
@@ -116,10 +116,10 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public static function delete(array $data)
+    public static function delete(string $uid, array $data)
     {
         \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['uid' => $data['uid']])
+            ->delete(FieldRecord::tableName(), ['uid' => $uid])
             ->execute();
     }
 

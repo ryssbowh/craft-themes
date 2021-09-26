@@ -8,7 +8,6 @@ use Ryssbowh\CraftThemes\interfaces\DisplayItemInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use craft\base\Model;
-use craft\helpers\StringHelper;
 
 abstract class DisplayItem extends Model implements DisplayItemInterface
 {
@@ -74,8 +73,7 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
             'labelVisuallyHidden' => (bool)$this->labelVisuallyHidden,
             'hidden' => (bool)$this->hidden,
             'visuallyHidden' => (bool)$this->visuallyHidden,
-            'display_id' => $this->display->uid,
-            'uid' => $this->uid ?? StringHelper::UUID()
+            'display_id' => $this->display->uid
         ];
     }
 

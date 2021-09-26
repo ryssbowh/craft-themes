@@ -11,6 +11,7 @@ use Ryssbowh\CraftThemes\records\GroupRecord;
 use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class GroupsService extends Service
 {
@@ -120,7 +121,7 @@ class GroupsService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $group->getConfig();
-        $uid = $configData['uid'];
+        $uid = $group->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
@@ -176,7 +177,8 @@ class GroupsService extends Service
         try {
             $group = $this->getRecordByUid($uid);
 
-            $group->display_id = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+            $group->display_id = Themes::$plugin->displays->getRecordByUid($data['display_id'])->id;
+
             $group->name = $data['name'];
             $group->handle = $data['handle'];
             $group->labelHidden = $data['labelHidden'];

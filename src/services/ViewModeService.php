@@ -14,6 +14,7 @@ use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\helpers\StringHelper;
 
 class ViewModeService extends Service
 {
@@ -110,7 +111,7 @@ class ViewModeService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $viewMode->getConfig();
-        $uid = $configData['uid'];
+        $uid = $viewMode->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 

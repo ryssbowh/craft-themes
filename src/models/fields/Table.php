@@ -115,9 +115,9 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
-    public static function save(array $data): bool
+    public static function save(string $uid, array $data): bool
     {
-        $table = Themes::$plugin->fields->getRecordByUid($data['uid']);
+        $table = Themes::$plugin->fields->getRecordByUid($uid);
         $craftField = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
         $data['craft_field_id'] = $craftField->id;
         $data['craft_field_class'] = get_class($craftField);
@@ -127,7 +127,8 @@ class Table extends CraftField
         $res = $table->save(false);
         $pivotIds = [];
         foreach ($fields as $order => $fieldData) {
-            $field = Themes::$plugin->fields->getRecordByUid($fieldData['uid']);
+            $field = Themes::$plugin->fields->getRecordByUid($fieldData['fieldUid']);
+            unset($fieldData['fieldUid']);
             $field->setAttributes($fieldData, false);
             $field->save(false);
             $pivot = Themes::$plugin->tables->getTablePivotRecord($table->id, $field->id);
@@ -157,9 +158,9 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
-    public static function delete(array $data)
+    public static function delete(string $uid, array $data)
     {
-        parent::delete($data);
+        parent::delete($uid, $data);
         $fieldUids = array_map(function ($field) {
             return $field['uid'];
         }, $data['fields'] ?? []);
@@ -186,7 +187,9 @@ class Table extends CraftField
     {
         $config = parent::getConfig();
         $config['fields'] = array_map(function ($field) {
-            return $field->getConfig();
+            $config = $field->getConfig();
+            $config['fieldUid'] = $field->uid ?? StringHelper::UUID();
+            return $config;
         }, $this->fields);
         return $config;
     }

@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\models\fields\MatrixField;
 use craft\base\Model;
+use craft\helpers\StringHelper;
 use craft\models\MatrixBlockType;
 
 class DisplayMatrixType extends Model
@@ -34,7 +35,9 @@ class DisplayMatrixType extends Model
         return [
             'type_uid' => $this->type->uid,
             'fields' => array_map(function ($field) {
-                return $field->getConfig();
+                $config = $field->getConfig();
+                $config['fieldUid'] = $field->uid ?? StringHelper::UUID();
+                return $config;
             }, $this->fields)
         ];
     }

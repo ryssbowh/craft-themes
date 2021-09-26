@@ -104,7 +104,7 @@ class DisplayService extends Service
 
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $display->getConfig();
-        $uid = $configData['uid'];
+        $uid = $display->uid ?? StringHelper::UUID();
         $configPath = self::CONFIG_KEY . '.' . $uid;
         $projectConfig->set($configPath, $configData);
 
