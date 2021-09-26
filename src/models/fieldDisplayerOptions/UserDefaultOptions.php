@@ -32,7 +32,7 @@ class UserDefaultOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            [['firstName', 'lastName', 'email', 'linkEmail'], 'boolean']
+            [['firstName', 'lastName', 'email', 'linkEmail'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 }

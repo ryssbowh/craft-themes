@@ -28,7 +28,7 @@ class EntryLinkOptions extends FieldDisplayerOptions
     {
         return [
             [['label', 'custom'], 'string'],
-            ['newTab', 'boolean'],
+            ['newTab', 'boolean', 'trueValue' => true, 'falseValue' => false],
             ['label', 'in', 'range' => ['title', 'custom']],
             ['custom', 'required', 'when' => function ($model) {
                 return $model->label == 'custom';

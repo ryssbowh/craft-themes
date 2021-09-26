@@ -29,7 +29,7 @@ class RedactorTruncatedOptions extends FieldDisplayerOptions
         return [
             ['truncated', 'required'],
             ['truncated', 'integer', 'min' => 1],
-            ['linked', 'boolean'],
+            ['linked', 'boolean', 'trueValue' => true, 'falseValue' => false],
             ['ellipsis', 'string']
         ];
     }

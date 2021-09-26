@@ -200,6 +200,10 @@ class ViewModeService extends Service
         ProjectConfigHelper::ensureAllLayoutsProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $viewMode = $this->getRecordByUid($uid);

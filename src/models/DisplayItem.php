@@ -59,7 +59,7 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
     {
         return [
             ['display_id', 'integer'],
-            [['labelHidden', 'hidden', 'visuallyHidden', 'labelVisuallyHidden'], 'boolean'],
+            [['labelHidden', 'hidden', 'visuallyHidden', 'labelVisuallyHidden'], 'boolean', 'trueValue' => true, 'falseValue' => false],
             [['uid', 'id'], 'safe']
         ];
     }

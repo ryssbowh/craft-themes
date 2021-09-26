@@ -209,7 +209,7 @@ class LayoutService extends Service
         }
         $layouts = $this->all()
             ->whereNotIn('id', $ids)
-            ->where(['themeHandle' => $theme->handle])
+            ->where('themeHandle', $theme->handle)
             ->all();
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
@@ -352,6 +352,10 @@ class LayoutService extends Service
     {
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $layout = $this->getRecordByUid($uid);

@@ -129,7 +129,7 @@ abstract class Block extends Model implements BlockInterface
         return [
             [['region', 'handle', 'provider', 'order', 'active'], 'required'],
             [['region', 'handle', 'provider'], 'string'],
-            ['active', 'boolean'],
+            ['active', 'boolean', 'trueValue' => true, 'falseValue' => false],
             [['order', 'layout_id'], 'number'],
             [['uid', 'id', 'safe'], 'safe'],
             ['layout', function () {

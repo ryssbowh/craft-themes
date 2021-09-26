@@ -27,7 +27,7 @@ class NumberDefaultOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            [['showPrefix', 'showSuffix'], 'boolean'],
+            [['showPrefix', 'showSuffix'], 'boolean', 'trueValue' => true, 'falseValue' => false],
             ['decimals', 'integer']
         ];
     }

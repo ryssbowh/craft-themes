@@ -82,7 +82,7 @@ class Layout extends Model implements LayoutInterface
             [['type', 'themeHandle'], 'required'],
             ['type', 'in', 'range' => LayoutService::TYPES],
             [['themeHandle', 'elementUid'], 'string'],
-            ['hasBlocks', 'boolean'],
+            ['hasBlocks', 'boolean', 'trueValue' => true, 'falseValue' => false],
             [['uid', 'id', 'element'], 'safe'],
             ['themeHandle', function () {
                 if (!Themes::$plugin->registry->hasTheme($this->themeHandle)) {

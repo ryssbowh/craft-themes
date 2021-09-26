@@ -27,7 +27,7 @@ class HtmlAudioOptions extends FileDisplayerOptions
     public function defineRules(): array
     {
         return [
-            [['controls', 'muted', 'autoplay'], 'boolean'],
+            [['controls', 'muted', 'autoplay'], 'boolean', 'trueValue' => true, 'falseValue' => false],
         ];
     }
 }

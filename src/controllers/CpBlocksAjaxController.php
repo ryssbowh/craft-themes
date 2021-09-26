@@ -49,7 +49,7 @@ class CpBlocksAjaxController extends Controller
     public function actionDeleteLayout(int $id): array
     {
         $layout = $this->layouts->getById($id);
-        $layout->hasBlocks = 0;
+        $layout->hasBlocks = false;
         $layout->blocks = [];
         $this->layouts->save($layout);
 
@@ -95,7 +95,7 @@ class CpBlocksAjaxController extends Controller
             $message = \Craft::t('themes', 'Error while saving blocks');
         } else {
             if (!$layout->hasBlocks) {
-               $layout->hasBlocks = 1;
+               $layout->hasBlocks = true;
             }
             $layout->blocks = $blocks;
             $this->layouts->save($layout, false);
