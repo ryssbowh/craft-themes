@@ -1,7 +1,7 @@
 <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}{% if group.visuallyHidden %} style="display=:none"{% endif %}>
     {% block label %}
         {% if not group.labelHidden %}
-            <label class="group-label" {% if group.labelVisuallyHidden %}display="none"{% endif %}>
+            <label class="group-label" {% if group.labelVisuallyHidden %}style="display:none"{% endif %}>
                 {{ group.name }}
             </label>
         {% endif %}

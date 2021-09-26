@@ -55,7 +55,7 @@ class Install extends Migration
             'id' => $this->primaryKey(),
             'order' => $this->integer(11),
             'type' => $this->string(255)->notNull(),
-            'viewMode_id' => $this->integer(11)->notNull(),
+            'viewMode_id' => $this->integer(11),
             'group_id' => $this->integer(11),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),

@@ -109,9 +109,9 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function getViewMode(): ViewModeInterface
+    public function getViewMode(): ?ViewModeInterface
     {
-        if (is_null($this->_viewMode)) {
+        if (is_null($this->_viewMode) and $this->viewMode_id) {
             $this->_viewMode = Themes::$plugin->viewModes->getById($this->viewMode_id);
         }
         return $this->_viewMode;
@@ -120,7 +120,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function setViewMode(ViewModeInterface $viewMode)
+    public function setViewMode(?ViewModeInterface $viewMode)
     {
         $this->_viewMode = $viewMode;
     }

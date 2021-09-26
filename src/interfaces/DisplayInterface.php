@@ -26,14 +26,14 @@ interface DisplayInterface
      * 
      * @return ViewModeInterface
      */
-    public function getViewMode(): ViewModeInterface;
+    public function getViewMode(): ?ViewModeInterface;
 
     /**
      * View mode setter
      * 
      * @param ViewModeInterface $viewMode
      */
-    public function setViewMode(ViewModeInterface $viewMode);
+    public function setViewMode(?ViewModeInterface $viewMode);
 
     /**
      * Item getter
