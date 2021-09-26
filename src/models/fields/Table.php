@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\TablePivotRecord;
 use craft\base\Field as BaseField;
 use craft\fields\Table as CraftTable;
+use craft\helpers\StringHelper;
 
 class Table extends CraftField
 {
