@@ -182,7 +182,7 @@ class Matrix extends CraftField implements MatrixInterface
         $fieldUids = [];
         foreach ($data['types'] ?? [] as $typeData) {
             foreach ($typeData['fields'] ?? [] as $fieldData) {
-                $fieldUids[] = $fieldData['uid'];
+                $fieldUids[] = $fieldData['fieldUid'];
             }
         }
         \Craft::$app->getDb()->createCommand()
