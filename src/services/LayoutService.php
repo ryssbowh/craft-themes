@@ -430,6 +430,11 @@ class LayoutService extends Service
      */
     public function onCraftElementSaved(string $type, string $uid = '')
     {
+        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+            // If Craft is applying Yaml changes it means we have the layouts/displays defined
+            // in config, and don't need to respond to these events as it would create duplicates
+            return;
+        }
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
             $layout = $this->get($theme, $type, $uid);
             if (!$layout) {
