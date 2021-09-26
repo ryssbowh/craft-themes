@@ -162,7 +162,7 @@ class DisplayService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
-        ProjectConfigHelper::ensureAllLayoutsProcessed();
+        ProjectConfigHelper::ensureAllViewModesProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
         $transaction = \Craft::$app->getDb()->beginTransaction();

@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ViewModeEvent;
 use Ryssbowh\CraftThemes\exceptions\ViewModeException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
@@ -196,6 +197,7 @@ class ViewModeService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
+        ProjectConfigHelper::ensureAllLayoutsProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
         $transaction = \Craft::$app->getDb()->beginTransaction();

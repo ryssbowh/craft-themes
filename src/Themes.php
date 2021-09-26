@@ -350,6 +350,11 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerCraftEvents()
     {
+        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+            // If Craft is applying Yaml changes it means we have the layouts/displays defined
+            // in config, and don't need to respond to these events as it would create duplicates
+            return;
+        }
         Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_SECTION, function (SectionEvent $e) {
             foreach ($e->section->entryTypes as $entryType) {
                 $uid = $entryType->uid;

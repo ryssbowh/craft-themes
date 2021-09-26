@@ -9,6 +9,7 @@ class ProjectConfigHelper
 {
     private static $_processedDisplays = false;
     private static $_processedLayouts = false;
+    private static $_processedViewModes = false;
 
     /**
      * Ensure all displays config changes are processed immediately.
@@ -17,7 +18,7 @@ class ProjectConfigHelper
      */
     public static function ensureAllDisplaysProcessed(bool $force = false)
     {
-        $projectConfig = Craft::$app->getProjectConfig();
+        $projectConfig = \Craft::$app->getProjectConfig();
 
         if (static::$_processedDisplays || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
             return;
@@ -39,7 +40,7 @@ class ProjectConfigHelper
      */
     public static function ensureAllLayoutsProcessed(bool $force = false)
     {
-        $projectConfig = Craft::$app->getProjectConfig();
+        $projectConfig = \Craft::$app->getProjectConfig();
 
         if (static::$_processedLayouts || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
             return;
@@ -48,11 +49,29 @@ class ProjectConfigHelper
         static::$_processedLayouts = true;
 
         $allLayouts = $projectConfig->get(LayoutService::CONFIG_KEY, true) ?? [];
-        $allViewModes = $projectConfig->get(ViewModeService::CONFIG_KEY, true) ?? [];
 
         foreach ($allLayouts as $uid => $data) {
-            $projectConfig->processConfigChanges(DisplayService::CONFIG_KEY . '.' . $uid, false, null, $force);
+            $projectConfig->processConfigChanges(LayoutService::CONFIG_KEY . '.' . $uid, false, null, $force);
         }
+    }
+
+    /**
+     * Ensure all layouts config changes are processed immediately.
+     *
+     * @param bool $force Whether to proceed even if YAML changes are not currently being applied
+     */
+    public static function ensureAllViewModesProcessed(bool $force = false)
+    {
+        $projectConfig = \Craft::$app->getProjectConfig();
+
+        if (static::$_processedViewModes || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+            return;
+        }
+
+        static::$_processedViewModes = true;
+
+        $allViewModes = $projectConfig->get(ViewModeService::CONFIG_KEY, true) ?? [];
+
         foreach ($allViewModes as $uid => $data) {
             $projectConfig->processConfigChanges(ViewModeService::CONFIG_KEY . '.' . $uid, false, null, $force);
         }
