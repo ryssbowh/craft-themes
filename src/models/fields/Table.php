@@ -163,7 +163,7 @@ class Table extends CraftField
     {
         parent::delete($uid, $data);
         $fieldUids = array_map(function ($field) {
-            return $field['uid'];
+            return $field['fieldUid'];
         }, $data['fields'] ?? []);
         \Craft::$app->getDb()->createCommand()
             ->delete(FieldRecord::tableName(), ['in', 'uid', $fieldUids])
