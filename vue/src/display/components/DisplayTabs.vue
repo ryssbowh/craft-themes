@@ -4,12 +4,12 @@
             <li v-for="mode, index in viewModes" v-bind:key="index" :id="'tab-'+index">
                 <a :class="{'sel': viewMode.handle === mode.handle}" @click.prevent="">
                     <span @click.prevent="setViewMode(index)">{{ mode.name }}</span>
-                    <span class="icon edit" @click.prevent="editViewMode(index)"></span>
+                    <span class="icon edit" @click.prevent="editViewMode(index)" :title="t('Edit View Mode')"></span>
                     <span v-if="mode.handle != 'default'" class="icon delete" @click.prevent="deleteViewMode(index)"></span>
                 </a>
             </li>
             <li>
-                <a href="#" class="add-viewmode" @click.prevent="showModal = true">
+                <a href="#" class="add-viewmode" @click.prevent="showModal = true" :title="t('Add View Mode')">
                     <span class="icon add"></span>
                 </a>
             </li>

@@ -36,7 +36,6 @@ function cloneDisplay(oldDisplay) {
         display.item.displays = groupDisplays;
     }
     if (has(window.cloneField, display.item.type)) {
-        console.log('has function');
         window.cloneField[display.item.type](oldDisplay, display);
     }
     return display;

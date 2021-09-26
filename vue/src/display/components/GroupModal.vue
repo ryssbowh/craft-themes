@@ -44,6 +44,7 @@
 import { mapMutations, mapState } from 'vuex';
 import Modal from '../modal';
 import { v4 as uuidv4 } from 'uuid';
+import HandleGenerator from '../HandleGenerator'
 
 export default {
     computed: {
@@ -82,24 +83,19 @@ export default {
     watch: {
         showGroupModal: function () {
             if (this.showGroupModal) {
-                if (!this.popup) {
-                    this.createModal();
-                } else {
-                    this.popup.show();
-                }
+                this.popup.show();
             } else {
                 this.popup.hide();
             }
             this.updategenerator();
-            this.removeErrors();
             if (this.editedGroupUid) {
                 this.name = this.editedGroup.item.name;
                 this.handle = this.editedGroup.item.handle;
-            } else {
-                this.name = '';
-                this.handle = '';
             }
         }
+    },
+    mounted() {
+        this.createModal();
     },
     beforeUnmount () {
         this.popup.destroy();
@@ -108,9 +104,13 @@ export default {
         createModal: function () {
             this.popup = new Modal(this.$refs.modal, {
                 hideOnEsc: false,
-                hideOnShadeClick: false
+                hideOnShadeClick: false,
+                autoShow: false
             });
-            this.handleGenerator = new Craft.HandleGenerator('.modal-group #name', '.modal-group #handle');
+            this.handleGenerator = new HandleGenerator('.modal-group #name', '.modal-group #handle');
+            this.handleGenerator.callback = (value) => {
+                this.handle = value;
+            };
             this.updategenerator();
         },
         updategenerator: function () {
