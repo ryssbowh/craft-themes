@@ -20,7 +20,7 @@ class UserBlock extends Block
     /**
      * @var User
      */
-    protected $_user;
+    protected $_user = false;
 
     /**
      * @inheritDoc
@@ -61,7 +61,7 @@ class UserBlock extends Block
      */
     public function getUserLayout(): LayoutInterface
     {
-        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::USER_HANDLE, '');
+        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::USER_HANDLE);
     }
 
     /**
@@ -71,7 +71,7 @@ class UserBlock extends Block
      */
     public function getUser(): User
     {
-        if ($this->_user === null) {
+        if ($this->_user === false) {
             $this->_user = User::find()->uid($this->options->user)->one();
         }
         return $this->_user;

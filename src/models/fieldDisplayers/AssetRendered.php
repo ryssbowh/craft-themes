@@ -74,7 +74,7 @@ class AssetRendered extends FieldDisplayer
             if (!$volume) {
                 continue;
             }
-            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::VOLUME_HANDLE, $volume->uid);
+            $layout = $volume->getLayout($this->getTheme());
             $volumeViewModes = [];
             foreach ($layout->viewModes as $viewMode) {
                 $volumeViewModes[$viewMode->uid] = $viewMode->name;
@@ -85,20 +85,6 @@ class AssetRendered extends FieldDisplayer
             ];
         }
         return $viewModes;
-    }
-
-    /**
-     * Get the layout for an asset
-     * 
-     * @param  Asset  $asset
-     * @return LayoutInterface
-     */
-    public function getVolumeLayout(Asset $asset): LayoutInterface
-    {
-        $volume = $asset->volume;
-        $theme = Themes::$plugin->registry->getCurrent();
-        $layout = Themes::$plugin->layouts->get($theme, LayoutService::VOLUME_HANDLE, $volume->uid);
-        return $layout;
     }
 
     /**

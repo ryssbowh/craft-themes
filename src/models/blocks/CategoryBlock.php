@@ -20,7 +20,7 @@ class CategoryBlock extends Block
     /**
      * @var Category
      */
-    protected $_category;
+    protected $_category = false;
 
     /**
      * @inheritDoc
@@ -80,9 +80,9 @@ class CategoryBlock extends Block
      * 
      * @return Category
      */
-    public function getCategory(): Category
+    public function getCategory(): ?Category
     {
-        if ($this->_category === null) {
+        if ($this->_category === false) {
             $this->_category = Category::find()->uid($this->options->category)->one();
         }
         return $this->_category;
@@ -93,7 +93,7 @@ class CategoryBlock extends Block
      * 
      * @return LayoutInterface
      */
-    public function getCategoryLayout(): LayoutInterface
+    public function getCategoryLayout(): ?LayoutInterface
     {
         return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::CATEGORY_HANDLE, $this->options->group);
     }

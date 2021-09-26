@@ -20,7 +20,7 @@ class GlobalBlock extends Block
     /**
      * @var GlobalSet
      */
-    protected $_global;
+    protected $_global = false;
 
     /**
      * @inheritDoc
@@ -82,7 +82,7 @@ class GlobalBlock extends Block
      */
     public function getGlobalSet(): GlobalSet
     {
-        if ($this->_global === null) {
+        if ($this->_global === false) {
             $this->_global = GlobalSet::find()->uid($this->options->set)->one();
         }
         return $this->_global;

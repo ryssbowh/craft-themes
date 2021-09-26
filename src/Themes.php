@@ -5,13 +5,20 @@ use Craft;
 use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
+use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
+use craft\base\Volume;
+use craft\elements\GlobalSet;
+use craft\events\DefineBehaviorsEvent;
 use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
+use craft\models\CategoryGroup;
+use craft\models\EntryType;
+use craft\models\TagGroup;
 use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields, Users};
 use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
@@ -52,10 +59,11 @@ class Themes extends \craft\base\Plugin
 
         self::$plugin = $this;
 
-        \Yii::setAlias('@themesWebPath', '@webroot/themes');
-        \Yii::setAlias('@themesWeb', '@web/themes');
+        \Craft::setAlias('@themesWebPath', '@webroot/themes');
+        \Craft::setAlias('@themesWeb', '@web/themes');
 
         $this->registerServices();
+        $this->registerBehaviors();
         $this->registerPermissions();
         $this->registerClearCacheEvent();
         $this->registerProjectConfig();
@@ -152,6 +160,30 @@ class Themes extends \craft\base\Plugin
                 'settings' => $this->getSettings()
             ]
         );
+    }
+
+    /**
+     * Attach custom behaviors to Entry types, Global sets, Category group, Volumes and Tags
+     */
+    protected function registerBehaviors()
+    {
+        $types = [
+            EntryType::class => LayoutService::ENTRY_HANDLE,
+            CategoryGroup::class => LayoutService::CATEGORY_HANDLE,
+            Volume::class => LayoutService::VOLUME_HANDLE,
+            TagGroup::class => LayoutService::TAG_HANDLE,
+            GlobalSet::class => LayoutService::GLOBAL_HANDLE,
+        ];
+        foreach ($types as $class => $type) {
+            Event::on($class::className(), $class::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) use ($type) {
+                $event->sender->attachBehaviors([
+                    'themeLayout' => [
+                        'class' => LayoutBehavior::class,
+                        'type' => $type
+                    ]
+                ]);
+            });
+        }
     }
 
     /**
@@ -254,7 +286,6 @@ class Themes extends \craft\base\Plugin
                     'themes/ajax/block-providers' => 'themes/cp-blocks-ajax/block-providers',
 
                     'themes/ajax/validate-field-options' => 'themes/cp-display-ajax/validate-field-options',
-
                     'themes/ajax/install' => 'themes/cp-ajax/install',
                     'themes/ajax/entries/<uid:[\w-]+>' => 'themes/cp-ajax/entries',
                     'themes/ajax/categories/<uid:[\w-]+>' => 'themes/cp-ajax/categories',

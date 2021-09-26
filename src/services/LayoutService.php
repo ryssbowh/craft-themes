@@ -253,9 +253,8 @@ class LayoutService extends Service
      */
     public function get($theme, string $type, string $elementUid = ''): ?LayoutInterface
     {
-        $theme = $this->getThemeHandle($theme);
         $layout = $this->all()
-            ->where('themeHandle', $theme)
+            ->where('themeHandle', $this->getThemeHandle($theme))
             ->where('elementUid', $elementUid)
             ->firstWhere('type', $type);
         return $layout;

@@ -50,7 +50,7 @@ class TagRendered extends FieldDisplayer
     public function getTagLayout(): ?LayoutInterface
     {
         if ($group = $this->getTagGroup()) {
-            return Themes::$plugin->layouts->get($this->theme, LayoutService::TAG_HANDLE, $group->uid);
+            return $group->getLayout($this->theme);
         }
         return null;
     }
@@ -64,7 +64,7 @@ class TagRendered extends FieldDisplayer
     {
         $viewModes = [];
         if ($group = $this->getTagGroup()) {
-            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::TAG_HANDLE, $group->uid);
+            $layout = $group->getLayout($this->theme);
             foreach ($layout->getViewModes() as $viewMode) {
                 $viewModes[$viewMode->uid] = $viewMode->name;
             }

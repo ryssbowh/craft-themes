@@ -33,6 +33,16 @@ class AssetRenderedOptions extends FieldDisplayerOptions
     }
 
     /**
+     * View modes setter
+     * 
+     * @param array $viewModes
+     */
+    public function setViewModes(array $viewModes)
+    {
+        $this->_viewModes = $viewModes;
+    }
+
+    /**
      * @inheritDoc
      */
     public function fields()

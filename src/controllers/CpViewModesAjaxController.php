@@ -54,7 +54,7 @@ class CpViewModesAjaxController extends Controller
     {
         $layout = Themes::$plugin->layouts->get($theme, $type, $uid);
         return [
-            'viewModes' => $layout->viewModes
+            'viewModes' => $layout ? $layout->viewModes : []
         ];
     }
 

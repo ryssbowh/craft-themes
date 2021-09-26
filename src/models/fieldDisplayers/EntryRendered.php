@@ -82,7 +82,7 @@ class EntryRendered extends FieldDisplayer
         $viewModes = [];
         foreach ($sections as $section) {
             foreach ($section->getEntryTypes() as $type) {
-                $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
+                $layout = $type->getLayout($this->getTheme());
                 $viewModes2 = [];
                 foreach ($layout->getViewModes() as $viewMode) {
                     $viewModes2[$viewMode->uid] = $viewMode->name;
@@ -107,7 +107,7 @@ class EntryRendered extends FieldDisplayer
         $viewModes = [];
         foreach ($sections as $section) {
             $type = $section->getEntryTypes()[0];
-            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
+            $layout = $type->getLayout($this->getTheme());
             $viewModes2 = [];
             foreach ($layout->getViewModes() as $viewMode) {
                 $viewModes2[$viewMode->uid] = $viewMode->name;
@@ -131,7 +131,7 @@ class EntryRendered extends FieldDisplayer
         $types = [];
         if ($section) {
             $type = $section->getEntryTypes()[0];
-            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::ENTRY_HANDLE, $type->uid);
+            $layout = $type->getLayout($this->getTheme());
             $viewModes = [];
             foreach ($layout->getViewModes() as $viewMode) {
                 $viewModes[$viewMode->handle] = $viewMode->name;

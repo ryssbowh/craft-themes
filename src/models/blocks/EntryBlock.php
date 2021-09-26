@@ -20,7 +20,7 @@ class EntryBlock extends Block
     /**
      * @var Entry
      */
-    protected $_entry;
+    protected $_entry = false;
 
     /**
      * @inheritDoc
@@ -82,7 +82,7 @@ class EntryBlock extends Block
      */
     public function getEntry(): Entry
     {
-        if ($this->_entry === null) {
+        if ($this->_entry === false) {
             $this->_entry = Entry::find()->uid($this->options->entry)->one();
         }
         return $this->_entry;

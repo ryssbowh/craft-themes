@@ -51,8 +51,7 @@ class CategoryRendered extends FieldDisplayer
     public function getGroupLayout(): ?LayoutInterface
     {
         if ($group = $this->getCategoryGroup()) {
-            $theme = Themes::$plugin->registry->getCurrent();
-            return Themes::$plugin->layouts->get($theme, LayoutService::CATEGORY_HANDLE, $group->uid);
+            return $group->getCurrentThemeLayout();
         }
         return null;
     }
@@ -66,8 +65,7 @@ class CategoryRendered extends FieldDisplayer
     {
         $viewModes = [];
         if ($group = $this->getCategoryGroup()) {
-            $layout = Themes::$plugin->layouts->get($this->getTheme(), LayoutService::CATEGORY_HANDLE, $group->uid);
-            foreach ($layout->getViewModes() as $viewMode) {
+            foreach ($group->getLayout($this->getTheme())->viewModes as $viewMode) {
                 $viewModes[$viewMode->uid] = $viewMode->name;
             }
         }
