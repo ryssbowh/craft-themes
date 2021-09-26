@@ -22,7 +22,7 @@ class UserRendered extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Rendered');
+        return \Craft::t('themes', 'Rendered as view mode');
     }
 
     /**

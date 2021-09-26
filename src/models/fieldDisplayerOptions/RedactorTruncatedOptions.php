@@ -9,7 +9,7 @@ class RedactorTruncatedOptions extends FieldDisplayerOptions
     /**
      * @var boolean
      */
-    public $linked = false;
+    public $linked = true;
 
     /**
      * @var integer

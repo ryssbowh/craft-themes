@@ -112,6 +112,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         },
         created: function () {
             this.viewModes = this.options.viewModes;
+            console.log(this.viewModes);
         },
         template: `
         <div>
@@ -129,6 +130,11 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 <ul class="errors" v-if="errorList('viewMode-'+typeUid)">
                     <li v-for="error in errorList('viewMode-'+typeUid)">{{ error }}</li>
                 </ul>
+            </div>
+            <div class="field" v-if="displayer.viewModes.length == 0">
+                <div class="warning with-icon">
+                    {{ t("It seems this field doesn't have any valid source") }}
+                </div>
             </div>
         </div>`
     };
@@ -168,6 +174,9 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 <ul class="errors" v-if="errorList('viewMode')">
                     <li v-for="error in errorList('viewMode')">{{ error }}</li>
                 </ul>
+                <div class="warning with-icon" v-if="!viewMode">
+                    {{ t("It seems this field doesn't have any valid source") }}
+                </div>
             </div>
         </div>`
     };
@@ -211,6 +220,11 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 <ul class="errors" v-if="errorList('viewMode-'+volumeUid)">
                     <li v-for="error in errorList('viewMode-'+volumeUid)">{{ error }}</li>
                 </ul>
+            </div>
+            <div class="field" v-if="displayer.viewModes.length == 0">
+                <div class="warning with-icon">
+                    {{ t("It seems this field doesn't have any valid source") }}
+                </div>
             </div>
         </div>`
     };
