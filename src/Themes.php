@@ -349,11 +349,11 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerCraftEvents()
     {
-        // if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
-        //     // If Craft is applying Yaml changes it means we have the layouts/displays defined
-        //     // in config, and don't need to respond to these events as it would create duplicates
-        //     return;
-        // }
+        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+            // If Craft is applying Yaml changes it means we have the layouts/displays defined
+            // in config, and don't need to respond to these events as it would create duplicates
+            return;
+        }
         $layouts = $this->layouts;
         Craft::$app->projectConfig
             ->onAdd(Sections::CONFIG_ENTRYTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
