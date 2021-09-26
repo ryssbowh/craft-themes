@@ -162,7 +162,7 @@ class BlockService extends Service
             $block->handle = $data['handle'];
             $block->order = $data['order'];
             $block->options = $data['options'] ?? null;
-            $block->layout_id = Themes::$plugin->layouts->getByUid($data['layout_id'])->id;
+            $block->layout_id = Themes::$plugin->layouts->getRecordByUid($data['layout_id'])->id;
             $block->save(false);
             
             $transaction->commit();

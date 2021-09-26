@@ -169,7 +169,11 @@ class FieldsService extends Service
         try {
             $data['uid'] = $uid;
             if (isset($data['display_id'])) {
-                $data['display_id'] = Themes::$plugin->displays->getByUid($data['display_id'])->id;
+                $display = Themes::$plugin->displays->getRecordByUid($data['display_id']);
+                if (!$display) {
+                    dd($data);
+                }
+                $data['display_id'] = Themes::$plugin->displays->getRecordByUid($data['display_id'])->id;
             }
             $this->getFieldClassByType($data['type'])::save($data);
             

@@ -176,8 +176,8 @@ class DisplayService extends Service
 
             $display->type = $data['type'];
             $display->order = $data['order'];
-            $display->group_id = isset($data['group_id']) ? Themes::$plugin->groups->getByUid($data['group_id'])->id : null;
-            $display->viewMode_id = Themes::$plugin->viewModes->getByUid($data['viewMode_id'])->id;
+            $display->group_id = isset($data['group_id']) ? Themes::$plugin->groups->getRecordByUid($data['group_id'])->id : null;
+            $display->viewMode_id = Themes::$plugin->viewModes->getRecordByUid($data['viewMode_id'])->id;
             $display->save(false);
             
             $transaction->commit();

@@ -211,7 +211,7 @@ class ViewModeService extends Service
 
             $viewMode->handle = $data['handle'];
             $viewMode->name = $data['name'];
-            $viewMode->layout_id = Themes::$plugin->layouts->getByUid($data['layout_id'])->id;
+            $viewMode->layout_id = Themes::$plugin->layouts->getRecordByUid($data['layout_id'])->id;
             $viewMode->save(false);
             
             $transaction->commit();
