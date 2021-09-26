@@ -161,6 +161,10 @@ class FieldsService extends Service
         ProjectConfigHelper::ensureAllDisplaysProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $data['uid'] = $uid;
@@ -196,8 +200,9 @@ class FieldsService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $field) {
-            $e->config[self::CONFIG_KEY.'.'.$field->uid] = $field->getConfig();
+            $e->config[$parts[0]][$parts[1]][$field->uid] = $field->getConfig();
         }
     }
 

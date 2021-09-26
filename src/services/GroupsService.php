@@ -168,6 +168,10 @@ class GroupsService extends Service
         ProjectConfigHelper::ensureAllDisplaysProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $group = $this->getRecordByUid($uid);
@@ -209,8 +213,9 @@ class GroupsService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $group) {
-            $e->config[self::CONFIG_KEY.'.'.$group->uid] = $group->getConfig();
+            $e->config[$parts[0]][$parts[1]][$group->uid] = $group->getConfig();
         }
     }
 

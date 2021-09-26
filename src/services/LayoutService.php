@@ -450,8 +450,9 @@ class LayoutService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $layout) {
-            $e->config[self::CONFIG_KEY.'.'.$layout->uid] = $layout->getConfig();
+            $e->config[$parts[0]][$parts[1]][$layout->uid] = $layout->getConfig();
         }
     }
 

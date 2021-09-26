@@ -256,8 +256,9 @@ class ViewModeService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $viewMode) {
-            $e->config[self::CONFIG_KEY.'.'.$viewMode->uid] = $viewMode->getConfig();
+            $e->config[$parts[0]][$parts[1]][$viewMode->uid] = $viewMode->getConfig();
         }
     }
 

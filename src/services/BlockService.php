@@ -208,7 +208,7 @@ class BlockService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         foreach ($this->all() as $block) {
-            $e->config[self::CONFIG_KEY.'.'.$block->uid] = $block->getConfig();
+            $e->config[self::CONFIG_KEY][$block->uid] = $block->getConfig();
         }
     }
 

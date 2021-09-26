@@ -165,6 +165,10 @@ class DisplayService extends Service
         ProjectConfigHelper::ensureAllViewModesProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if (!$data) {
+            //This can happen when fixing broken states
+            return;
+        }
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $display = $this->getRecordByUid($uid);
@@ -218,8 +222,9 @@ class DisplayService extends Service
      */
     public function rebuildConfig(RebuildConfigEvent $e)
     {
+        $parts = explode('.', self::CONFIG_KEY);
         foreach ($this->all() as $display) {
-            $e->config[self::CONFIG_KEY.'.'.$display->uid] = $display->getConfig();
+            $e->config[$parts[0]][$parts[1]][$display->uid] = $display->getConfig();
         }
     }
 

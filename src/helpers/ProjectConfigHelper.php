@@ -56,7 +56,7 @@ class ProjectConfigHelper
     }
 
     /**
-     * Ensure all layouts config changes are processed immediately.
+     * Ensure all view modes config changes are processed immediately.
      *
      * @param bool $force Whether to proceed even if YAML changes are not currently being applied
      */
