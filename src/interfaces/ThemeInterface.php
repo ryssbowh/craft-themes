@@ -76,6 +76,20 @@ interface ThemeInterface
     public function afterSet();
 
     /**
+     * Get theme preferences
+     * 
+     * @return ThemePreferencesInterface
+     */
+    public function getPreferences(): ThemePreferencesInterface;
+
+    /**
+     * Get theme preferences model
+     * 
+     * @return ThemePreferencesInterface
+     */
+    public function getPreferencesModel(): ThemePreferencesInterface;
+
+    /**
      * Preview image for the theme, returns a web url
      * 
      * @return string

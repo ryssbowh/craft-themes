@@ -69,4 +69,12 @@ class MatrixField extends CraftField
         unset($config['display_id']);
         return $config;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render($value = null): string
+    {
+        return Themes::$plugin->view->renderField($this, $value);
+    }
 }

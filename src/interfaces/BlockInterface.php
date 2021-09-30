@@ -98,9 +98,9 @@ interface BlockInterface
     public function afterSave();
 
     /**
-     * Render for an element
+     * Render this block
      * 
      * @return string
      */
-    public function render(Element $element): string;
+    public function render(): string;
 }

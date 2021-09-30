@@ -9,7 +9,6 @@ use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
-use Ryssbowh\CraftThemes\models\PageLayout;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
@@ -18,10 +17,8 @@ use Ryssbowh\CraftThemes\models\layouts\Layout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
 use Ryssbowh\CraftThemes\models\layouts\UserLayout;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
-use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
-use Ryssbowh\CraftThemes\records\ViewModeRecord;
-use Ryssbowh\CraftThemes\services\DisplayService;
+use craft\base\Element;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\events\ConfigEvent;
@@ -45,8 +42,6 @@ class LayoutService extends Service
     const VOLUME_HANDLE = 'volume';
     const GLOBAL_HANDLE = 'global';
     const TAG_HANDLE = 'tag';
-
-    const TYPES = [self::DEFAULT_HANDLE, self::CATEGORY_HANDLE, self::ENTRY_HANDLE, self::USER_HANDLE, self::VOLUME_HANDLE, self::GLOBAL_HANDLE, self::TAG_HANDLE];
 
     /**
      * @var Collection
@@ -138,7 +133,7 @@ class LayoutService extends Service
     }
 
     /**
-     * Get all layouts with blocks indexed by theme's handle
+     * Get all layouts that can have blocks indexed by theme's handle
      * 
      * @return array
      */
@@ -147,7 +142,7 @@ class LayoutService extends Service
         $layouts = [];
         foreach (Themes::$plugin->registry->all() as $theme) {
             $layouts[$theme->handle] = $this->all()->filter(function ($layout) use ($theme) {
-                return ($layout->canHaveUrls() and $layout->themeHandle == $theme->handle);
+                return ($layout->canHaveBlocks() and $layout->themeHandle == $theme->handle);
             })->sort(function ($elem, $elem2) {
                 return strcasecmp($elem->description, $elem2->description);
             })->map(function ($layout) {
@@ -191,7 +186,6 @@ class LayoutService extends Service
      * Install layouts for a theme, will deletes orphans
      * 
      * @param  ThemeInterface $theme
-     * @throws ThemeException
      * @return bool
      */
     public function installThemeData(ThemeInterface $theme): bool
@@ -221,8 +215,7 @@ class LayoutService extends Service
     /**
      * Deletes all layouts for a theme
      * 
-     * @param  ThemeInterface $theme
-     * @throws ThemeException
+     * @param ThemeInterface $theme
      */
     public function uninstallThemeData(ThemeInterface $theme)
     {
@@ -322,6 +315,7 @@ class LayoutService extends Service
             Themes::$plugin->viewModes->save($viewMode);
         }
         Themes::$plugin->viewModes->cleanUp($viewModes, $layout);
+
         //Saving blocks
         $blocks = $layout->blocks;
         foreach ($blocks as $block) {
@@ -464,10 +458,10 @@ class LayoutService extends Service
      * Resolve current layout.
      * 
      * @param  string|ThemeInterface $theme
-     * @param  mixed                 $element
-     * @return ?LayoutInterface
+     * @param  ?Element              $element
+     * @return LayoutInterface
      */
-    public function resolveForRequest($theme, $element): ?LayoutInterface
+    public function resolveForRequest($theme, ?Element $element): LayoutInterface
     {
         $theme = $this->getThemeHandle($theme);
         $layout = null;
@@ -475,6 +469,9 @@ class LayoutService extends Service
             $layout = $this->get($theme, self::CATEGORY_HANDLE, $element->getGroup()->uid);
         } elseif ($element instanceof Entry) {
             $layout = $this->get($theme, self::ENTRY_HANDLE, $element->getType()->uid);
+        }
+        if (!$layout) {
+            $layout = $this->getDefault($theme);
         }
         return $layout;
     }

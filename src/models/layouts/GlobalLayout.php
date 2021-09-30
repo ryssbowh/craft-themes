@@ -2,16 +2,17 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\elements\User;
-use craft\models\FieldLayout;
 
 class GlobalLayout extends Layout
 {
+    use ElementLayoutTrait;
+
     /**
      * @var string
      */
-    public $type = LayoutService::GLOBAL_HANDLE;
+    protected $_type = LayoutService::GLOBAL_HANDLE;
 
     /**
      * @inheritDoc
@@ -22,32 +23,11 @@ class GlobalLayout extends Layout
             ['elementUid', 'required'],
         ]);
     }
-    
-    /**
-     * @inheritDoc
-     */
-    protected function loadElement()
-    {
-        foreach (\Craft::$app->globals->getAllSets() as $set) {
-            if ($set->uid == $this->elementUid) {
-                return $set;
-            }
-        }
-        return null;
-    }
 
     /**
      * @inheritDoc
      */
-    public function hasDisplays(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function canHaveUrls(): bool
+    public function canHaveBlocks(): bool
     {
         return false;
     }
@@ -63,16 +43,13 @@ class GlobalLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getCraftFields(): array
+    protected function loadElement()
     {
-        return $this->fieldLayout->getFields();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFieldLayout(): ?FieldLayout
-    {
-        return $this->element->getFieldLayout();
+        foreach (\Craft::$app->globals->getAllSets() as $set) {
+            if ($set->uid == $this->elementUid) {
+                return $set;
+            }
+        }
+        return null;
     }
 }

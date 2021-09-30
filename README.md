@@ -3,10 +3,11 @@
 ### This is the 3.x documentation
 ### Find the developers readme [there](DEVELOPERS.md)
 
-Tired of re-making your front-ends all over again when a lot of it could be reused ? 
-A theme is just another Craft plugin, it can inherit another theme and has the same functions as any other plugin, settings, migrations etc. 
+Define the look and feel of your frontend with themes. You can use themes contributed by others or create your own.  
+Themes can inherit one another and as any plugin, have settings, migrations etc. 
+The Pro version will give you total control on how your sections/categories/tags/users/globals/assets and their fields are displayed.
 
-This Theme engine allows you to :
+This basic version will allow you to :
 - Install themes from the store or any git repository (composer, github etc)
 - Define your own themes that can extend each other
 - Choose which theme will be used for which site, language, viewport or url path according to a set of rules.
@@ -23,7 +24,7 @@ What it doesn't allow you to do :
 - Change the backend look and feel
 - Override plugins templates (unless specific case, see developers readme)
 
-## Basic notions
+## Basic notions (Pro)
 
 The building of a page is based on the notion of layouts, regions, blocks, view modes and displays (or groups of displays).
 
@@ -47,8 +48,6 @@ The building of a page is based on the notion of layouts, regions, blocks, view 
 
 **View modes** define a set of displayers and options for a layout and a view mode. Every Layout that can have view modes comes with a default one. This allows you to render an element differently in different parts of the page.
 
-For a layout to be rendered on the front end when visiting a url, its associated element (Section, Category etc) must define its template to `themed_page`, or the block/displayer engines will be skipped entirely.
-
 This theme engine comes with default blocks and field/asset displayers, that might not fit your needs. To learn how to define new blocks, field and asset displayers, see the [developers readme](DEVELOPERS.md)
 
 ## Themes list
@@ -57,7 +56,25 @@ This theme engine comes with default blocks and field/asset displayers, that mig
 
 The Menu item Theming -> Themes displays the list of themes installed on the system and some shortcut links.
 
-## Blocks
+## Rules
+
+![Rules](images/rules.png)
+
+Define rules in the settings to load the theme you want according to 4 parameters :
+- the current site
+- the current language
+- the current view port
+- the current url path, this can also be a regular expression if enclosed in slashes. example `/^blog*/`. Enter `/` for the homepage.
+
+The first rule that match will define which theme will be used. Organise your rules to have the most specific first.
+
+If no rules match, the default theme will be used.
+
+If no default is set, the theme engine will just not be used and your templates will be loaded from the root templates folder.
+
+You can also define there which theme should be used for console requests, this can be useful when you have commands rendering templates.
+
+## Blocks (Pro)
 
 ![Blocks](images/blocks.png)
 
@@ -93,7 +110,7 @@ You can choose a cache strategy for each block which defines how the block is ca
 Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user.  
 Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
 
-## Displays
+## Displays (Pro)
 
 ![Displays](images/displays.png)
 
@@ -162,24 +179,6 @@ Every file type will also have the displayer "Link to asset" available, with opt
 | XML        | Raw             |                                               |
 | XML        | Code            |                                               |
 
-## Rules settings
-
-![Rules](images/rules.png)
-
-Define rules in the settings to load the theme you want according to 4 parameters :
-- the current site
-- the current language
-- the current view port
-- the current url path, this can also be a regular expression if enclosed in slashes. example `/^blog*/`. Enter `/` for the homepage.
-
-The first rule that match will define which theme will be used. Organise your rules to have the most specific first.
-
-If no rules match, the default theme will be used.
-
-If no default is set, the theme engine will just not be used and your templates will be loaded from the root templates folder.
-
-You can also define there which theme should be used for console requests, this can be useful when you have commands rendering templates.
-
 ## Partial themes
 
 A partial theme will not be available to select in the backend, but it can be inherited from. You will see them in the themes list, but won't be able to define blocks/displays for them.
@@ -191,13 +190,14 @@ On Craft pro you can specify the setting 'HTML Email Template', this template wo
 
 ## Installation
 
-- run `composer require ryssbowh/craft-themes:^3.0`
-- Activate plugin
-- Go to the settings and install the themes data
+- run `composer require ryssbowh/craft-themes:^3.0` and install plugin
+- Install a theme
 - Add a rule in the settings to load a theme or set a default theme.
-- Set your templates to `themed_page` for section/categories you want to use the theme engine for
+- If you're using the Pro version, your Sections/Category group templates should extend or look like [themed_page](src/templates/front/themed_page.twig) and render your theme's regions
 
 Uninstalling this plugin will uninstall all themes.
+
+Installing a theme that extends another will automatically install that other theme.
 
 ## Requirements
 
@@ -210,7 +210,6 @@ Craft 3.5 or over
 
 ## Roadmap
 
-- tests
+- more tests
 - translations
 - custom layouts
-- deployment/config

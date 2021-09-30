@@ -1,1 +1,5 @@
-<code>{{ asset.getContents }}</code>
+{% extends "files/_file" %}
+
+{% block content %}
+    <code>{{ asset.getContents|raw }}</code>
+{% endblock %}

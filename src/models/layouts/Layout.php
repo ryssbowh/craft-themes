@@ -28,11 +28,6 @@ class Layout extends Model implements LayoutInterface
     public $id;
 
     /**
-     * @var string
-     */
-    public $type = LayoutService::DEFAULT_HANDLE;
-
-    /**
      * @var int
      */
     public $themeHandle;
@@ -51,6 +46,11 @@ class Layout extends Model implements LayoutInterface
      * @var string
      */
     public $uid;
+
+    /**
+     * @var string
+     */
+    protected $_type = LayoutService::DEFAULT_HANDLE;
 
     /**
      * Element associated with this layout (entry type, user, category group etc)
@@ -79,8 +79,7 @@ class Layout extends Model implements LayoutInterface
     public function defineRules(): array
     {
         return [
-            [['type', 'themeHandle'], 'required'],
-            ['type', 'in', 'range' => LayoutService::TYPES],
+            [['themeHandle'], 'required'],
             [['themeHandle', 'elementUid'], 'string'],
             ['hasBlocks', 'boolean', 'trueValue' => true, 'falseValue' => false],
             [['uid', 'id', 'element'], 'safe'],
@@ -99,6 +98,14 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
+    public function getType(): string
+    {
+        return $this->_type;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function eagerLoadFields(Element $element, string $viewMode)
     {
         $with = [];
@@ -112,7 +119,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function canHaveUrls(): bool
+    public function canHaveBlocks(): bool
     {
         return true;
     }
@@ -274,7 +281,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['description']);
+        return array_merge(parent::fields(), ['type', 'description']);
     }
 
     /**

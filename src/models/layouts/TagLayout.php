@@ -2,31 +2,26 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\elements\User;
-use craft\models\FieldLayout;
 
 class TagLayout extends Layout
 {
+    use ElementLayoutTrait;
+
     /**
      * @var string
      */
-    public $type = LayoutService::TAG_HANDLE;
+    protected $_type = LayoutService::TAG_HANDLE;
 
     /**
      * @inheritDoc
      */
-    protected function loadElement()
+    public function defineRules(): array
     {
-        return \Craft::$app->tags->getTagGroupByUid($this->elementUid);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasDisplays(): bool
-    {
-        return true;
+        return array_merge(parent::defineRules(), [
+            ['elementUid', 'required'],
+        ]);
     }
 
     /**
@@ -40,7 +35,7 @@ class TagLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function canHaveUrls(): bool
+    public function canHaveBlocks(): bool
     {
         return false;
     }
@@ -48,24 +43,8 @@ class TagLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getCraftFields(): array
+    protected function loadElement()
     {
-        return $this->fieldLayout->getFields();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFieldLayout(): ?FieldLayout
-    {
-        return $this->element->getFieldLayout();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getElementMachineName(): string
-    {
-        return 'tag';
+        return \Craft::$app->tags->getTagGroupByUid($this->elementUid);
     }
 }

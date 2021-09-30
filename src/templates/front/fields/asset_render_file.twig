@@ -1,8 +1,7 @@
 {% extends "fields/_field" %}
 
 {% macro render(asset, field, options) %}
-    {{ d(options.getDisplayerForKind(asset.kind)) }}
-    {{ craft.themes.view.renderAsset(asset, field, options.getDisplayerForKind(asset.kind))|raw }}
+    {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind))|raw }}
 {% endmacro %}
 
 {% block content %}

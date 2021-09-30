@@ -34,7 +34,7 @@ class CpDisplayAjaxController extends Controller
      */
     public function actionValidateFieldOptions(): array
     {
-        $fieldId = $this->request->getBodyParam('id');
+        $fieldId = $this->request->getBodyParam('fieldId');
         $displayerHandle = $this->request->getRequiredParam('displayer');
         $optionsData = $this->request->getRequiredParam('options');
 

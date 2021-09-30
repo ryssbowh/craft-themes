@@ -153,6 +153,10 @@ const store = createStore({
             state.itemOptionsEdited = item;
             state.showOptionsModal = true;
         },
+        resetDisplayerOptions(state) {
+            state.displayer = {};
+            state.itemOptionsEdited = {};
+        },
         setShowOptionsModal(state, value) {
             state.showOptionsModal = value;  
         },

@@ -2,15 +2,17 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\models\FieldLayout;
 
 class EntryLayout extends Layout
 {
+    use ElementLayoutTrait;
+
     /**
      * @var string
      */
-    public $type = LayoutService::ENTRY_HANDLE;
+    protected $_type = LayoutService::ENTRY_HANDLE;
 
     /**
      * @inheritDoc
@@ -20,35 +22,6 @@ class EntryLayout extends Layout
         return array_merge(parent::defineRules(), [
             ['elementUid', 'required'],
         ]);
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    protected function loadElement()
-    {
-        foreach (\Craft::$app->sections->getAllEntryTypes() as $entryType) {
-            if ($entryType->uid == $this->elementUid) {
-                return $entryType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasDisplays(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getElementMachineName(): string
-    {
-        return $this->element->handle;
     }
 
     /**
@@ -62,16 +35,13 @@ class EntryLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getCraftFields(): array
+    protected function loadElement()
     {
-        return $this->fieldLayout->getFields();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFieldLayout(): ?FieldLayout
-    {
-        return $this->element->getFieldLayout();
+        foreach (\Craft::$app->sections->getAllEntryTypes() as $entryType) {
+            if ($entryType->uid == $this->elementUid) {
+                return $entryType;
+            }
+        }
+        return null;
     }
 }

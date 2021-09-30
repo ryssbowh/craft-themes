@@ -1,13 +1,13 @@
-<div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}{% if field.visuallyHidden %} style="display:none"{% endif %}>
+<div class="{{ containerClasses|raw }}"{% if containerAttributes.size() %} {{ containerAttributes|raw }}{% endif %}>
     {% block label %}
         {% if not field.labelHidden %}
-            <label class="field-label"{% if field.labelVisuallyHidden %} style="display:none"{% endif %}>
+            <label class="{{ labelClasses|raw }}"{% if labelAttributes.size() %} {{ labelAttributes|raw }}{% endif %}>
                 {{ field.name }}
             </label>
         {% endif %}
     {% endblock %}
 
-    <div class="field-content">
+    <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
         {% block content %}
             {{ value }}
         {% endblock %}

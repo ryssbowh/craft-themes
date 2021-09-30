@@ -2,7 +2,6 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\models\Group;
 use craft\base\Element;
 
 interface DisplayInterface 
@@ -52,16 +51,16 @@ interface DisplayInterface
     /**
      * Group getter
      * 
-     * @return ?Group
+     * @return ?GroupInterface
      */
-    public function getGroup(): ?Group;
+    public function getGroup(): ?GroupInterface;
 
     /**
      * Group setter
      * 
-     * @param Group $group
+     * @param GroupInterface $group
      */
-    public function setGroup(?Group $group);
+    public function setGroup(?GroupInterface $group);
 
     /**
      * Is this display a group 
@@ -71,10 +70,9 @@ interface DisplayInterface
     public function isGroup(): bool;
 
     /**
-     * Render this display for an element
+     * Render this display
      * 
-     * @param  Element $element
      * @return string
      */
-    public function render(Element $element): string;
+    public function render(): string;
 }

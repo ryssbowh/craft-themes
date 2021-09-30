@@ -1,3 +1,6 @@
 {% import "_includes/macros" as macros %}
+{% extends "files/_file" %}
 
-{{ macros.assetLink(asset, options) }}
+{% block content %}
+    {{ macros.assetLink(asset, options) }}
+{% endblock %}

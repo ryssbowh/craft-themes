@@ -2,21 +2,17 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\elements\User;
-use craft\models\FieldLayout;
 
 class VolumeLayout extends Layout
 {
+    use ElementLayoutTrait;
+
     /**
      * @var string
      */
-    public $type = LayoutService::VOLUME_HANDLE;
-
-    /**
-     * @var boolean
-     */
-    protected $_hasDisplays = true;
+    protected $_type = LayoutService::VOLUME_HANDLE;
 
     /**
      * @inheritDoc
@@ -31,30 +27,6 @@ class VolumeLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected function loadElement()
-    {
-        return \Craft::$app->volumes->getVolumeByUid($this->elementUid);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasDisplays(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function canHaveUrls(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getDescription(): string
     {
         return \Craft::t('themes', 'Volume : {name}', ['name' => $this->element->name]);
@@ -63,16 +35,16 @@ class VolumeLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getCraftFields(): array
+    public function canHaveBlocks(): bool
     {
-        return $this->fieldLayout->getFields();
+        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function getFieldLayout(): ?FieldLayout
+    protected function loadElement()
     {
-        return $this->element->getFieldLayout();
+        return \Craft::$app->volumes->getVolumeByUid($this->elementUid);
     }
 }

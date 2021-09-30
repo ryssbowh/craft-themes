@@ -152,11 +152,11 @@ document.addEventListener("register-field-displayers-components", function(e) {
         },
         data: function () {
             return {
-                viewMode: null
+                viewModeUid: null
             }
         },
         created: function () {
-            this.viewMode = this.options.viewMode;
+            this.viewModeUid = this.options.viewModeUid;
         },
         template: `
         <div>
@@ -166,15 +166,15 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="viewMode" v-model="viewMode">
+                        <select name="viewModeUid" v-model="viewModeUid">
                             <option v-for="label, uid in displayer.viewModes" :value="uid">{{ label }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('viewMode')">
-                    <li v-for="error in errorList('viewMode')">{{ error }}</li>
+                <ul class="errors" v-if="errorList('viewModeUid')">
+                    <li v-for="error in errorList('viewModeUid')">{{ error }}</li>
                 </ul>
-                <div class="warning with-icon" v-if="!viewMode">
+                <div class="warning with-icon" v-if="!viewModeUid">
                     {{ t("It seems this field doesn't have any valid source") }}
                 </div>
             </div>

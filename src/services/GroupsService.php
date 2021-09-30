@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\models\Group;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\GroupPivotRecord;
@@ -46,7 +47,7 @@ class GroupsService extends Service
      * @return Group
      * @throws GroupException
      */
-    public function getById(int $id): Group
+    public function getById(int $id): GroupInterface
     {
         if ($group = $this->all()->firstWhere('id', $id)) {
             return $group;
@@ -58,9 +59,9 @@ class GroupsService extends Service
      * Get a group by uid
      * 
      * @param  int $uid
-     * @return ?Group
+     * @return ?GroupInterface
      */
-    public function getByUid(string $uid): ?Group
+    public function getByUid(string $uid): ?GroupInterface
     {
         return $this->all()->firstWhere('uid', $uid);
     }
@@ -71,7 +72,7 @@ class GroupsService extends Service
      * @param  DisplayInterface $display
      * @return ?Field
      */
-    public function getForDisplay(DisplayInterface $display): ?Group
+    public function getForDisplay(DisplayInterface $display): ?GroupInterface
     {
         return $this->all()->firstWhere('display_id', $display->id);
     }
@@ -80,9 +81,9 @@ class GroupsService extends Service
      * Create a group from config
      * 
      * @param  array|ActiveRecord $config
-     * @return Group
+     * @return GroupInterface
      */
-    public function create($config): Group
+    public function create($config): GroupInterface
     {
         if ($config instanceof ActiveRecord) {
             $config = $config->getAttributes();
@@ -107,11 +108,11 @@ class GroupsService extends Service
     /**
      * Saves a group
      * 
-     * @param  Group $group
+     * @param  GroupInterface $group
      * @param  bool  $validate
      * @return bool
      */
-    public function save(Group $group, bool $validate = true): bool
+    public function save(GroupInterface $group, bool $validate = true): bool
     {
         if ($validate and !$group->validate()) {
             return false;
@@ -142,10 +143,10 @@ class GroupsService extends Service
     /**
      * Deletes a group
      * 
-     * @param  Group $group
+     * @param  GroupInterface $group
      * @return bool
      */
-    public function delete(Group $group): bool
+    public function delete(GroupInterface $group): bool
     {
         foreach ($group->displays as $display) {
             $display->group = null;
@@ -226,9 +227,9 @@ class GroupsService extends Service
      * 
      * @param  array $data
      * @param  DisplayInterface $display
-     * @return Group
+     * @return GroupInterface
      */
-    public function populateFromPost(array $data, DisplayInterface $display): Group
+    public function populateFromPost(array $data, DisplayInterface $display): GroupInterface
     {
         $displaysData = $data['displays'] ?? [];
         unset($data['displays']);
@@ -264,9 +265,9 @@ class GroupsService extends Service
     /**
      * Add a group to internal cache
      * 
-     * @param Group $group
+     * @param GroupInterface $group
      */
-    protected function add(Group $group)
+    protected function add(GroupInterface $group)
     {
         if (!$this->all()->firstWhere('id', $group->id)) {
             $this->all()->push($group);

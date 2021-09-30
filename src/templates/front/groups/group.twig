@@ -1,16 +1,16 @@
-<div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}{% if group.visuallyHidden %} style="display=:none"{% endif %}>
+<div class="{{ containerClasses|raw }}"{% if containerAttributes.size() %} {{ containerAttributes|raw }}{% endif %}>
     {% block label %}
         {% if not group.labelHidden %}
-            <label class="group-label" {% if group.labelVisuallyHidden %}style="display:none"{% endif %}>
+            <label class="{{ labelClasses }}"{% if labelAttributes.size() %} {{ labelAttributes|raw }}{% endif %}>
                 {{ group.name }}
             </label>
         {% endif %}
     {% endblock %}
 
-    <div class="group-content">
+    <div class="{{ classes }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
         {% block content %}
-            {% for display in group.visibleDisplays %}
-                {{ display.render(element)|raw }}
+            {% for display in visibleDisplays %}
+                {{ display.render()|raw }}
             {% endfor %}
         {% endblock %}
     </div>

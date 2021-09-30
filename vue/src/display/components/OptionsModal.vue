@@ -45,6 +45,7 @@ export default {
                 this.popup.show();
             } else {
                 this.popup.hide();
+                this.resetDisplayerOptions();
             }
         },
     },
@@ -64,7 +65,7 @@ export default {
         save () {
             let options = $(this.$refs.form).serializeJSON();
             let data = {
-                id: this.itemOptionsEdited.id,
+                fieldId: this.itemOptionsEdited.id,
                 displayer: this.displayer.handle,
                 options: options
             };
@@ -80,12 +81,13 @@ export default {
                     this.updateOptions(options);
                     this.setShowOptionsModal(false);
                     this.setDisplayerOptionsError({});
+                    this.resetDisplayerOptions();
                 }
             }).catch((err) => {
                 this.handleError(err);
             });
         },
-        ...mapMutations(['setShowOptionsModal', 'setDisplayerOptionsError', 'updateOptions'])
+        ...mapMutations(['setShowOptionsModal', 'setDisplayerOptionsError', 'updateOptions', 'resetDisplayerOptions'])
     },
     emits: [],
 };

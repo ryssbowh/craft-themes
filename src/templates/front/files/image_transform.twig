@@ -1,2 +1,6 @@
-{% set transform = options.transform == '_custom' ? options.custom|json_decode : options.transform %}
-{{ asset.getImg(transform) }}
+{% extends "files/_file" %}
+
+{% block content %}
+    {% set transform = options.transform == '_custom' ? options.custom|json_decode : options.transform %}
+    {{ asset.getImg(transform) }}
+{% endblock %}

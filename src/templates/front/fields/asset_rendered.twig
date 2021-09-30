@@ -4,7 +4,7 @@
     {% for asset in value %}
         {% set viewMode = options.getViewMode(asset) %}
         {% if viewMode %}
-            {{ craft.themes.view.renderLayout(asset.volume.currentThemeLayout, viewMode.handle, asset)|raw }}
+            {{ asset.volume.currentThemeLayout.render(asset, viewMode.handle)|raw }}
         {% endif %}
     {% endfor %}
 {% endblock %}

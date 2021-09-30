@@ -137,6 +137,14 @@ class TableField extends Field
     /**
      * @inheritDoc
      */
+    public function render($value = null): string
+    {
+        return Themes::$plugin->view->renderField($this, $value);
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected static function buildConfig($column): array
     {
         switch ($column['type']) {

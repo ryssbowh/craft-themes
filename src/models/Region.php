@@ -38,9 +38,7 @@ class Region extends Model implements RegionInterface
     protected $_blocks;
 
     /**
-     * Blocks getter
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getBlocks(): array
     {
@@ -58,9 +56,7 @@ class Region extends Model implements RegionInterface
     }
 
     /**
-     * Blocks setter
-     * 
-     * @param array $blocks
+     * @inheritDoc
      */
     public function setBlocks(?array $blocks)
     {
@@ -74,9 +70,7 @@ class Region extends Model implements RegionInterface
     }
 
     /**
-     * Theme getter
-     * 
-     * @return ThemeInterface
+     * @inheritDoc
      */
     public function getTheme(): ThemeInterface
     {
@@ -84,9 +78,7 @@ class Region extends Model implements RegionInterface
     }
 
     /**
-     * Add a block to this region
-     * 
-     * @param BlockInterface $block
+     * @inheritDoc
      */
     public function addBlock(BlockInterface $block)
     {
@@ -98,13 +90,10 @@ class Region extends Model implements RegionInterface
     }
 
     /**
-     * Render this region for an element
-     * 
-     * @param  Element $element
-     * @return string
+     * @inheritDoc
      */
-    public function render(Element $element): string
+    public function render(): string
     {
-        return Themes::$plugin->view->renderRegion($this, $element);
+        return Themes::$plugin->view->renderRegion($this);
     }
 }

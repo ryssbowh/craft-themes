@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
@@ -11,30 +12,43 @@ class ViewModeOptions extends FieldDisplayerOptions
     /**
      * @var string
      */
-    protected $_viewMode;
+    protected $_viewModeUid;
     
     /**
      * View mode getter
      * 
      * @return string
      */
-    public function getViewMode()
+    public function getViewModeUid()
     {
-        if ($this->_viewMode === null) {
+        if ($this->_viewModeUid === null) {
             $keys = array_keys($this->displayer->getViewModes());
-            $this->_viewMode = $keys[0] ?? null;
+            $this->_viewModeUid = $keys[0] ?? null;
         }
-        return $this->_viewMode;
+        return $this->_viewModeUid;
     }
 
     /**
      * View mode setter
      * 
-     * @param null|string $viewMode uid
+     * @param null|string $viewModeUid
      */
-    public function setViewMode(?string $viewMode)
+    public function setViewModeUid(?string $viewModeUid)
     {
-        $this->_viewMode = $viewMode;
+        $this->_viewModeUid = $viewModeUid;
+    }
+
+    /**
+     * Get the view mode
+     * 
+     * @return ?ViewModeInterface
+     */
+    public function getViewMode(): ?ViewModeInterface
+    {
+        if ($this->_viewModeUid) {
+            return Themes::$plugin->viewModes->getByUid($this->_viewModeUid);
+        }
+        return null;
     }
 
     /**
@@ -42,7 +56,7 @@ class ViewModeOptions extends FieldDisplayerOptions
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['viewMode']);
+        return array_merge(parent::fields(), ['viewModeUid']);
     }
 
     /**
@@ -51,7 +65,7 @@ class ViewModeOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            ['viewMode', 'validateViewMode', 'skipOnEmpty' => false]
+            ['viewModeUid', 'validateViewMode', 'skipOnEmpty' => false]
         ];
     }
 
@@ -60,8 +74,8 @@ class ViewModeOptions extends FieldDisplayerOptions
      */
     public function validateViewMode()
     {
-        if (!isset($this->displayer->getViewModes()[$this->viewMode])) {
-            $this->addError('viewMode', \Craft::t('themes', 'View mode is invalid'));
+        if (!isset($this->displayer->getViewModes()[$this->_viewModeUid])) {
+            $this->addError('viewModeUid', \Craft::t('themes', 'View mode is invalid'));
         }
     }
 }

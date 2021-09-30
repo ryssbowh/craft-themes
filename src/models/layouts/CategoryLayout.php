@@ -2,16 +2,18 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\models\FieldLayout;
 
 class CategoryLayout extends Layout
 {
+    use ElementLayoutTrait;
+
     /**
      * @var string
      */
-    public $type = LayoutService::CATEGORY_HANDLE;
-    
+    protected $_type = LayoutService::CATEGORY_HANDLE;
+
     /**
      * @inheritDoc
      */
@@ -25,30 +27,6 @@ class CategoryLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected function loadElement()
-    {
-        return \Craft::$app->categories->getGroupByUid($this->elementUid);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getElementMachineName(): string
-    {
-        return $this->element->handle;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasDisplays(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getDescription(): string
     {
         return \Craft::t('themes', 'Category : {name}', ['name' => $this->element->name]);
@@ -57,16 +35,8 @@ class CategoryLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getCraftFields(): array
+    protected function loadElement()
     {
-        return $this->fieldLayout->getFields();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFieldLayout(): ?FieldLayout
-    {
-        return $this->element->getFieldLayout();
+        return \Craft::$app->categories->getGroupByUid($this->elementUid);
     }
 }

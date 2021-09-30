@@ -6,7 +6,9 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\interfaces\ThemePreferencesInterface;
 use Ryssbowh\CraftThemes\models\PageLayout;
+use Ryssbowh\CraftThemes\models\ThemePreferences;
 use craft\base\Plugin;
 use yii\base\ArrayableTrait;
 
@@ -50,6 +52,11 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      * @var boolean
      */
     protected $inheritsAssets = true;
+
+    /**
+     * @var ThemePreferencesInterface
+     */
+    protected $_preferences;
 
     /**
      * @inheritDoc
@@ -139,13 +146,22 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     }
 
     /**
-     * Get layout for this theme
-     * 
-     * @return LayoutInterface
+     * @inheritDoc
      */
-    public function getLayout(): LayoutInterface
+    public function getPreferences(): ThemePreferencesInterface
     {
-        return Themes::$plugin->layouts->getLayout($this);
+        if (!$this->_preferences) {
+            $this->_preferences = $this->getPreferencesModel();
+        }
+        return $this->_preferences;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPreferencesModel(): ThemePreferencesInterface
+    {
+        return new ThemePreferences;
     }
 
     /**

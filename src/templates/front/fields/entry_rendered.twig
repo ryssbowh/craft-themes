@@ -1,10 +1,11 @@
 {% extends "fields/_field" %}
 
 {% block content %}
-    {% if options.viewMode %}
-        {% set viewMode = craft.themes.viewModes.getByUid(options.viewMode) %}
-        {% for entry in value %}
-            {{ craft.themes.view.renderLayout(displayer.groupLayout, viewMode.handle, entry)|raw }}
-        {% endfor %}
-    {% endif %}
+    {% for entry in value %}
+        {% set layout = entry.type.currentThemeLayout %}
+        {% set viewMode = options.getEntryViewMode(entry) %}
+        {% if viewMode and layout %}
+            {{ layout.render(entry, viewMode.handle)|raw }}
+        {% endif %}
+    {% endfor %}
 {% endblock %}

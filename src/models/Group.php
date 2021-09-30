@@ -2,10 +2,11 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
 
-class Group extends DisplayItem
+class Group extends DisplayItem implements GroupInterface
 {
     /**
      * @var string
@@ -41,9 +42,7 @@ class Group extends DisplayItem
     }
 
     /**
-     * Displays getter
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getDisplays(): array
     {
@@ -66,9 +65,7 @@ class Group extends DisplayItem
     }
 
     /**
-     * Visible displays getter
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function getVisibleDisplays(): array
     {
@@ -78,9 +75,7 @@ class Group extends DisplayItem
     }
 
     /**
-     * Displays setter
-     * 
-     * @param array $displays
+     * @inheritDoc
      */
     public function setDisplays(?array $displays)
     {
@@ -123,8 +118,8 @@ class Group extends DisplayItem
     /**
      * @inheritDoc
      */
-    public function render(Element $element): string
+    public function render(): string
     {
-        return Themes::$plugin->view->renderGroup($this, $element);
+        return Themes::$plugin->view->renderGroup($this);
     }
 }

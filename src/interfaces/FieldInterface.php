@@ -116,4 +116,12 @@ interface FieldInterface
      * @return string
      */
     public function getDisplayName(): string;
+
+    /**
+     * Render this item.
+     *
+     * @param  mixed $value
+     * @return string
+     */
+    public function render($value = null): string;
 }

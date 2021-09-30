@@ -5,9 +5,9 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\DisplayItemInterface;
+use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
-use Ryssbowh\CraftThemes\models\Group;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
 use craft\base\Model;
@@ -50,7 +50,7 @@ class Display extends Model implements DisplayInterface
     protected $_item;
 
     /**
-     * @var Group
+     * @var GroupInterface
      */
     protected $_group;
 
@@ -151,7 +151,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function getGroup(): ?Group
+    public function getGroup(): ?GroupInterface
     {
         if ($this->_group === null and is_int($this->group_id)) {
             $this->_group = Themes::$plugin->groups->getById($this->group_id);
@@ -162,7 +162,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function setGroup(?Group $group)
+    public function setGroup(?GroupInterface $group)
     {
         $this->_group = $group;
         if (is_null($group)) {
@@ -181,8 +181,8 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function render(Element $element): string
+    public function render(): string
     {
-        return $this->item->render($element);
+        return $this->item->render();
     }
 }

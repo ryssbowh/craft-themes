@@ -3,10 +3,12 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EntryRenderedOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Model;
+use craft\elements\Entry;
 use craft\fields\Entries;
 
 class EntryRendered extends FieldDisplayer

@@ -37,16 +37,17 @@ class UserInfo extends Field
     /**
      * @inheritDoc
      */
-    public function render(Element $element): string
+    public function getName(): string
     {
-        return Themes::$plugin->view->renderField($this, $element, $element);
+        return \Craft::t('themes', 'User Info');
     }
 
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public function render($value = null): string
     {
-        return \Craft::t('themes', 'User Info');
+        $value = Themes::$plugin->view->renderingElement;
+        return Themes::$plugin->view->renderField($this, $value);
     }
 }

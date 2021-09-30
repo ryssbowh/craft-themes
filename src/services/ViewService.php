@@ -6,12 +6,13 @@ use Ryssbowh\CraftThemes\events\RenderEvent;
 use Ryssbowh\CraftThemes\helpers\AttributeBag;
 use Ryssbowh\CraftThemes\helpers\ClassBag;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\interfaces\CraftFieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
+use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
-use Ryssbowh\CraftThemes\models\Group;
-use Ryssbowh\CraftThemes\models\Region;
-use Ryssbowh\CraftThemes\models\fields\CraftField;
+use Ryssbowh\CraftThemes\interfaces\RegionInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Element;
 use craft\elements\Asset;
@@ -23,32 +24,12 @@ class ViewService extends Service
 {
     const TEMPLATE_CACHE_TAG = 'themes.templates';
 
-    const THEME_ROOT_TEMPLATE = 'themed_page';
-
     const BEFORE_RENDERING_LAYOUT = 'before_rendering_layout';
     const BEFORE_RENDERING_FILE = 'before_rendering_file';
     const BEFORE_RENDERING_FIELD = 'before_rendering_field';
     const BEFORE_RENDERING_BLOCK = 'before_rendering_block';
     const BEFORE_RENDERING_REGION = 'before_rendering_region';
     const BEFORE_RENDERING_GROUP = 'before_rendering_group';
-
-    /**
-     * View mode being rendered
-     * @var ?string
-     */
-    protected $renderingViewMode = LayoutService::DEFAULT_HANDLE;
-
-    /**
-     * Layout being rendered
-     * @var ?LayoutInterface
-     */
-    protected $renderingLayout;
-
-    /**
-     * Region being rendered
-     * @var ?Region
-     */
-    protected $renderingRegion;
 
     /**
      * @var boolean
@@ -71,6 +52,30 @@ class ViewService extends Service
     public $cache;
 
     /**
+     * View mode being rendered
+     * @var ?ViewModeInterface
+     */
+    protected $_renderingViewMode;
+
+    /**
+     * Layout being rendered
+     * @var ?LayoutInterface
+     */
+    protected $_renderingLayout;
+
+    /**
+     * Region being rendered
+     * @var ?Region
+     */
+    protected $_renderingRegion;
+
+    /**
+     * Element being rendered
+     * @var ?Element
+     */
+    protected $_renderingElement;
+
+    /**
      * Handle current page rendering.
      * If a theme is set and the section of the element being rendered is set to 'themed_page'
      * then we'll look for the theme layout for that section and add it to the template variables.
@@ -79,39 +84,41 @@ class ViewService extends Service
      */
     public function beforeRenderPage(TemplateEvent $event)
     {
-        if ($event->template != self::THEME_ROOT_TEMPLATE) {
-            //This is not a theme driven template
-            return;
-        }
-        if (!$theme = $this->themesRegistry()->getCurrent()) {
+        if (!$theme = $this->themesRegistry()->current) {
             //No theme is defined for that request
             return;
         }
-        if (!$element = \Craft::$app->urlManager->getMatchedElement()) {
-            //no elements have matched that request
-            return;
+        $element = \Craft::$app->urlManager->getMatchedElement();
+        $layout = Themes::$plugin->layouts->resolveForRequest($theme, $element);
+        $viewMode = $layout->getViewMode('default');
+        if ($this->eagerLoad and $element) {
+            $layout->eagerLoadFields($element, $viewMode->handle);
         }
-        if (!$layout = Themes::$plugin->layouts->resolveForRequest($theme, $element)) {
-            //no theme layout is defined for that request
-            return;
-        }
-        $this->renderingLayout = $layout;
-        $event->variables['element'] = $element;
-        $event->variables['layout'] = $layout;
+        $this->_renderingLayout = $layout;
+        $this->_renderingViewMode = $viewMode;
+        $this->_renderingElement = $element;
+        $variables = $this->getTemplateVariables([
+            'classes' => new ClassBag($theme->preferences->getLayoutClasses($layout)),
+            'attributes' => new AttributeBag($theme->preferences->getLayoutAttributes($layout)),
+            'visibleDisplays' => $viewMode->visibleDisplays
+        ]);
+        $event2 = $this->triggerRenderingEvent(self::BEFORE_RENDERING_LAYOUT, [], $variables);
+        $event->variables = array_merge($event->variables, $event2->variables);
     }
 
     /**
      * Renders a region
      * 
      * @param  Region  $region
-     * @param  Element $element
      * @return string
      */
-    public function renderRegion(Region $region, Element $element): string
+    public function renderRegion(RegionInterface $region): string
     {
-        $this->renderingRegion = $region;
+        $oldRegion = $this->renderingRegion;
+        $this->_renderingRegion = $region;
         $layout = $this->renderingLayout->getElementMachineName();
         $type = $this->renderingLayout->type;
+        $theme = $this->themesRegistry()->current;
         $templates = [
             'regions/' . $type . '/' . $layout . '/region-' . $region->handle,
             'regions/' . $type . '/' . $layout . '/region',
@@ -120,19 +127,14 @@ class ViewService extends Service
             'regions/region-' . $region->handle, 
             'regions/region'
         ];
-        $variables = [
-            'classes' => new ClassBag(['region', $region->handle]),
-            'attributes' => new AttributeBag(['id' => $region->handle]),
+        $variables = $this->getTemplateVariables([
+            'classes' => new ClassBag($theme->preferences->getRegionClasses($region)),
+            'attributes' => new AttributeBag($theme->preferences->getRegionAttributes($region)),
             'region' => $region,
-            'layout' => $this->renderingLayout,
-            'viewMode' => $this->renderingViewMode,
-            'element' => $element,
-        ];
-        $event = new RenderEvent([
-            'templates' => $templates,
-            'variables' => $variables
         ]);
-        return $this->render(self::BEFORE_RENDERING_REGION, $event);
+        $html = $this->render(self::BEFORE_RENDERING_REGION, $templates, $variables);
+        $this->_renderingRegion = $oldRegion;
+        return $html;
     }
 
     /**
@@ -142,7 +144,7 @@ class ViewService extends Service
      * @param  Element        $element
      * @return string
      */
-    public function renderBlock(BlockInterface $block, Element $element): string
+    public function renderBlock(BlockInterface $block): string
     {
         $cache = $this->blockCacheService()->getBlockCache($block);
         if ($cache !== null) {
@@ -153,6 +155,7 @@ class ViewService extends Service
         $layout = $this->renderingLayout->getElementMachineName();
         $machineName = $block->getMachineName();
         $type = $this->renderingLayout->type;
+        $theme = $this->themesRegistry()->current;
         $templates = [
             'blocks/' . $type . '/' . $layout . '/' . $region . '/' . $machineName,
             'blocks/' . $type . '/' . $layout . '/' . $machineName,
@@ -160,19 +163,13 @@ class ViewService extends Service
             'blocks/' . $machineName, 
             'blocks/block'
         ];
-        $variables = [
-            'classes' => new ClassBag(['block', $block->getMachineName()]),
+        $variables = $this->getTemplateVariables([
+            'classes' => new ClassBag($theme->preferences->getBlockClasses($block)),
+            'attributes' => new ClassBag($theme->preferences->getBlockAttributes($block)),
             'attributes' => new AttributeBag,
             'block' => $block,
-            'layout' => $this->renderingLayout,
-            'viewMode' => $this->renderingViewMode,
-            'element' => $element,
-        ];
-        $event = new RenderEvent([
-            'templates' => $templates,
-            'variables' => $variables
         ]);
-        $data = $this->render(self::BEFORE_RENDERING_BLOCK, $event);
+        $data = $this->render(self::BEFORE_RENDERING_BLOCK, $templates, $variables);
         $this->blockCacheService()->stopBlockCaching($block, $data);
         return $data;
     }
@@ -181,18 +178,18 @@ class ViewService extends Service
      * Renders a field
      * 
      * @param  FieldInterface $field
-     * @param  Element        $element
      * @param  mixed          $value
      * @return string
      */
-    public function renderField(FieldInterface $field, Element $element, $value): string
+    public function renderField(FieldInterface $field, $value): string
     {
         if (!$displayer = $field->getDisplayer()) {
             return '';
         }
         $layout = $this->renderingLayout->getElementMachineName();
+        $theme = $this->themesRegistry()->current;
         $type = $this->renderingLayout->type;
-        $viewMode = $this->renderingViewMode;
+        $viewMode = $this->renderingViewMode->handle;
         $handle = $displayer->handle;
         $withField = $handle . '-' . $field->handle;
         $templates = [
@@ -205,42 +202,39 @@ class ViewService extends Service
             'fields/' . $withField,
             'fields/' . $handle
         ];
-        $variables = [
-            'classes' => new ClassBag(['field', 'field-' . $field->handle, $displayer->handle]),
-            'attributes' => new AttributeBag,
+        $variables = $this->getTemplateVariables([
+            'classes' => new ClassBag($theme->preferences->getFieldClasses($field)),
+            'attributes' => new AttributeBag($theme->preferences->getFieldAttributes($field)),
+            'containerClasses' => new ClassBag($theme->preferences->getFieldContainerClasses($field)),
+            'containerAttributes' => new AttributeBag($theme->preferences->getFieldContainerAttributes($field)),
+            'labelClasses' => new ClassBag($theme->preferences->getFieldLabelClasses($field)),
+            'labelAttributes' => new AttributeBag($theme->preferences->getFieldLabelAttributes($field)),
             'field' => $field,
-            'display' => $field->display,
-            'layout' => $this->renderingLayout,
-            'viewMode' => $this->renderingViewMode,
-            'element' => $element,
             'displayer' => $displayer,
             'options' => $displayer->getOptions(),
             'value' => $value,
-            'craftField' => ($field instanceof CraftField ? $field->craftField : null)
-        ];
-        $event = new RenderEvent([
-            'templates' => $templates,
-            'variables' => $variables
+            'craftField' => ($field instanceof CraftFieldInterface ? $field->craftField : null)
         ]);
-        return $this->render(self::BEFORE_RENDERING_FIELD, $event);
+        return $this->render(self::BEFORE_RENDERING_FIELD, $templates, $variables);
     }
 
     /**
      * Renders a group
      * 
-     * @param  Group   $group
-     * @param  Element $element
+     * @param  GroupInterface $group
+     * @param  Element        $element
      * @return string
      */
-    public function renderGroup(Group $group, Element $element): string
+    public function renderGroup(GroupInterface $group): string
     {
         $layout = $this->renderingLayout->getElementMachineName();
         $type = $this->renderingLayout->type;
+        $theme = $this->themesRegistry()->current;
         $viewMode = $this->renderingViewMode;
         $handle = $group->handle;
         $templates = [
-            'groups/' . $type . '/' . $layout . '/' . $viewMode . '/group-' . $handle,
-            'groups/' . $type . '/' . $layout . '/' . $viewMode . '/group',
+            'groups/' . $type . '/' . $layout . '/' . $viewMode->handle . '/group-' . $handle,
+            'groups/' . $type . '/' . $layout . '/' . $viewMode->handle . '/group',
             'groups/' . $type . '/' . $layout . '/group-' . $handle,
             'groups/' . $type . '/' . $layout . '/group',
             'groups/' . $type . '/group-' . $handle,
@@ -248,42 +242,40 @@ class ViewService extends Service
             'groups/group-' . $handle,
             'groups/group'
         ];
-        $variables = [
-            'classes' => new ClassBag(['group', 'group-' . $group->handle]),
-            'attributes' => new AttributeBag,
+        $variables = $this->getTemplateVariables([
+            'classes' => new ClassBag($theme->preferences->getGroupClasses($group)),
+            'attributes' => new AttributeBag($theme->preferences->getGroupAttributes($group)),
+            'containerClasses' => new ClassBag($theme->preferences->getGroupContainerClasses($group)),
+            'containerAttributes' => new AttributeBag($theme->preferences->getGroupContainerAttributes($group)),
+            'labelClasses' => new ClassBag($theme->preferences->getGroupLabelClasses($group)),
+            'labelAttributes' => new AttributeBag($theme->preferences->getGroupLabelAttributes($group)),
             'group' => $group,
-            'display' => $group->display,
-            'layout' => $this->renderingLayout,
-            'viewMode' => $this->renderingViewMode,
-            'element' => $element
-        ];
-        $event = new RenderEvent([
-            'templates' => $templates,
-            'variables' => $variables
+            'visibleDisplays' => $group->visibleDisplays
         ]);
-        return $this->render(self::BEFORE_RENDERING_GROUP, $event);
+        return $this->render(self::BEFORE_RENDERING_GROUP, $templates, $variables);
     }
 
     /**
-     * Renders an asset
+     * Renders an asset file
      * 
      * @param  Asset                  $asset
      * @param  FileDisplayerInterface $displayer
      * @return string
      */
-    public function renderAsset(Asset $asset, FieldInterface $field, ?FileDisplayerInterface $displayer): string
+    public function renderFile(Asset $asset, FieldInterface $field, ?FileDisplayerInterface $displayer): string
     {
         if (!$displayer) {
             return '';
         }
+        $theme = $this->themesRegistry()->current;
         $layout = $this->renderingLayout->getElementMachineName();
         $type = $this->renderingLayout->type;
         $viewMode = $this->renderingViewMode;
         $handle = $displayer->handle;
         $withField = $handle . '-' . $field->handle;
         $templates = [
-            'files/' . $type . '/' . $layout . '/' . $viewMode . '/' . $withField,
-            'files/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
+            'files/' . $type . '/' . $layout . '/' . $viewMode->handle . '/' . $withField,
+            'files/' . $type . '/' . $layout . '/' . $viewMode->handle . '/' . $handle,
             'files/' . $type . '/' . $layout . '/' . $withField,
             'files/' . $type . '/' . $layout . '/' . $handle,
             'files/' . $type . '/' . $withField,
@@ -291,16 +283,14 @@ class ViewService extends Service
             'files/' . $withField,
             'files/' . $handle
         ];
-        $variables = [
+        $variables = $this->getTemplateVariables([
+            'classes' => new ClassBag($theme->preferences->getFileClasses($asset, $field, $displayer)),
+            'attributes' => new AttributeBag($theme->preferences->getFileAttributes($asset, $field, $displayer)),
             'asset' => $asset,
             'displayer' => $displayer,
             'options' => $displayer->options
-        ];
-        $event = new RenderEvent([
-            'templates' => $templates,
-            'variables' => $variables
         ]);
-        return $this->render(self::BEFORE_RENDERING_FILE, $event);
+        return $this->render(self::BEFORE_RENDERING_FILE, $templates, $variables);
     }
 
     /**
@@ -316,53 +306,73 @@ class ViewService extends Service
         if ($this->eagerLoad) {
             $layout->eagerLoadFields($element, $viewMode);
         }
+        $theme = $this->themesRegistry()->current;
+        $viewMode = $layout->getViewMode($viewMode);
         $oldLayout = $this->renderingLayout;
         $oldViewMode = $this->renderingViewMode;
-        $this->renderingLayout = $layout;
-        $this->renderingViewMode = $viewMode;
+        $oldElement = $this->renderingElement;
+        $this->_renderingLayout = $layout;
+        $this->_renderingViewMode = $viewMode;
+        $this->_renderingElement = $element;
         $machineName = $layout->getElementMachineName();
         $type = $layout->type;
         $templates = [
-            'layouts/' . $type . '/' . $machineName . '/' . $viewMode,
+            'layouts/' . $type . '/' . $machineName . '/' . $viewMode->handle,
             'layouts/' . $type . '/' . $machineName,
+            'layouts/' . $type . '/layout',
             'layouts/' . $type,
             'layouts/layout'
         ];
-        $variables = [
-            'classes' => new ClassBag(['layout', 'layout-type-' . $layout->type, 'view-mode-'.$viewMode, 'layout-handle-' . $machineName]),
-            'attributes' => new AttributeBag,
-            'layout' => $layout,
-            'viewMode' => $layout->getViewMode($viewMode),
-            'element' => $element
-        ];
-        $event = new RenderEvent([
-            'templates' => $templates,
-            'variables' => $variables,
+        $variables = $this->getTemplateVariables([
+            'classes' => new ClassBag($theme->preferences->getLayoutClasses($layout, true)),
+            'attributes' => new AttributeBag($theme->preferences->getLayoutAttributes($layout, true)),
+            'visibleDisplays' => $viewMode->visibleDisplays
         ]);
-        $html = $this->render(self::BEFORE_RENDERING_LAYOUT, $event);
-        $this->renderingLayout = $oldLayout;
-        $this->renderingViewMode = $oldViewMode;
+        $html = $this->render(self::BEFORE_RENDERING_LAYOUT, $templates, $variables);
+        $this->_renderingLayout = $oldLayout;
+        $this->_renderingViewMode = $oldViewMode;
+        $this->_renderingElement = $oldElement;
         return $html;
     }
 
     /**
      * Get the current rendering view mode
      * 
-     * @return ?string
+     * @return ?ViewModeInterface
      */
-    public function getRenderingViewMode(): ?string
+    public function getRenderingViewMode(): ?ViewModeInterface
     {
-        return $this->renderingViewMode;
+        return $this->_renderingViewMode;
     }
 
     /**
      * Get the current rendering layout
      * 
-     * @return LayoutInterface
+     * @return ?LayoutInterface
      */
     public function getRenderingLayout(): ?LayoutInterface
     {
-        return $this->renderingLayout;
+        return $this->_renderingLayout;
+    }
+
+    /**
+     * Get the current rendering region
+     * 
+     * @return ?RegionInterface
+     */
+    public function getRenderingRegion(): ?RegionInterface
+    {
+        return $this->_renderingRegion;
+    }
+
+    /**
+     * Get the current rendering element
+     * 
+     * @return ?Element
+     */
+    public function getRenderingElement(): ?Element
+    {
+        return $this->_renderingElement;
     }
 
     /**
@@ -377,16 +387,35 @@ class ViewService extends Service
      * Renders an array of templates
      *
      * @param  string $eventType
-     * @param  Event $event
+     * @param  array  $templates
+     * @param  array  $variables
      * @return string
      */
-    protected function render(string $eventType, Event $event): string
+    protected function render(string $eventType, array $templates, array $variables): string
     {
-        $this->triggerEvent($eventType, $event);
+        $event = $this->triggerRenderingEvent($eventType, $templates, $variables);
         $template = $this->resolveTemplateFromCache($event->templates);   
         $html = $this->getDevModeHtml($event->templates, $template, $event->variables);
         $html .= \Craft::$app->view->renderTemplate($template, $event->variables);
         return $html;
+    }
+
+    /**
+     * Triggers an event
+     * 
+     * @param  string $eventType
+     * @param  array  $templates
+     * @param  array  $variables
+     * @return Event
+     */
+    protected function triggerRenderingEvent(string $eventType, array $templates, array $variables): Event
+    {
+        $event = new RenderEvent([
+            'templates' => $templates,
+            'variables' => $variables
+        ]);
+        $this->triggerEvent($eventType, $event);
+        return $event;
     }
 
     /**
@@ -398,7 +427,7 @@ class ViewService extends Service
     protected function resolveTemplateFromCache(array $templates): string
     {
         if ($this->templateCacheEnabled) {
-            $key = \Craft::$app->cache->buildKey($templates);
+            $key = $this->cache->buildKey($templates);
             $template = $this->cache->get($key);
             if ($template !== false) {
                 return $template;
@@ -447,5 +476,20 @@ class ViewService extends Service
             $html .= "<!-- " . $name . ' (' . (gettype($variable) == 'object' ? get_class($variable) : gettype($variable)) . ")-->";
         }
         return $html;
+    }
+
+    /**
+     * Add default variables to an array
+     * 
+     * @param  array  $variables
+     * @return array
+     */
+    protected function getTemplateVariables(array $variables = []): array
+    {
+        $variables['element'] = $this->renderingElement;
+        $variables['layout'] = $this->renderingLayout;
+        $variables['region'] = $this->renderingRegion;
+        $variables['viewMode'] = $this->renderingViewMode;
+        return $variables;
     }
 }

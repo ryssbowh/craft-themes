@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\models\Region;
@@ -10,21 +9,26 @@ use craft\models\FieldLayout;
 interface LayoutInterface
 {
     /**
+     * Type getter
+     * 
+     * @return string
+     */
+    public function getType(): string;
+
+    /**
      * Eager load layout fields
      * 
-     * @param  Element $element
-     * @param  string  $viewMode
+     * @param Element $element
+     * @param string  $viewMode
      */
     public function eagerLoadFields(Element $element, string $viewMode);
 
     /**
-     * Can this layout have urls, for entries or categories for example
-     * or not, for users or tags for example.
-     * Layouts that can have urls can be assigned blocks, others can't
+     * Can this layout be assigned blocks
      * 
      * @return bool
      */
-    public function canHaveUrls(): bool;
+    public function canHaveBlocks(): bool;
 
     /**
      * Can this layout define displays.

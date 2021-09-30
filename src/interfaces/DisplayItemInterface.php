@@ -61,11 +61,4 @@ interface DisplayItemInterface
      * @return array
      */
     public function eagerLoad(): array;
-
-    /**
-     * Render for an element
-     * 
-     * @return string
-     */
-    public function render(Element $element): string;
 }

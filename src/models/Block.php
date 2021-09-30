@@ -283,8 +283,8 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function render(Element $element): string
+    public function render(): string
     {
-        return Themes::$plugin->view->renderBlock($this, $element);
+        return Themes::$plugin->view->renderBlock($this);
     }
 }

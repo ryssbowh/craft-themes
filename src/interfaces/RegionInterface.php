@@ -35,9 +35,9 @@ interface RegionInterface
     public function addBlock(BlockInterface $block);
 
     /**
-     * Render for an element
+     * Render this region
      * 
      * @return string
      */
-    public function render(Element $element): string;
+    public function render(): string;
 }

@@ -2,16 +2,19 @@
 
 namespace Ryssbowh\CraftThemes\models\layouts;
 
+use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\User;
 use craft\models\FieldLayout;
 
 class UserLayout extends Layout
 {
+    use ElementLayoutTrait;
+
     /**
      * @var string
      */
-    public $type = LayoutService::USER_HANDLE;
+    protected $_type = LayoutService::USER_HANDLE;
 
     /**
      * @inheritDoc
@@ -24,25 +27,9 @@ class UserLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function hasDisplays(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function canHaveUrls(): bool
+    public function canHaveBlocks(): bool
     {
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCraftFields(): array
-    {
-        return $this->fieldLayout->getFields();
     }
 
     /**

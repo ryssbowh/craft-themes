@@ -2,6 +2,6 @@
 
 {% block content %}
     {% if value %}
-        {{ craft.themes.view.renderAsset(value, field, options.getDisplayerForKind(value.kind))|raw }}
+        {{ craft.themes.view.renderFile(value, field, options.getDisplayerForKind(value.kind))|raw }}
     {% endif %}
 {% endblock %}

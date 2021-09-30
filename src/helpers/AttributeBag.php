@@ -29,7 +29,7 @@ class AttributeBag
         if (!is_array($index)) {
             $index = [$index => $value];
         }
-        $this->classes = array_merge($this->attributes, $index);
+        $this->attributes = array_merge($this->attributes, $index);
         return $this;
     }
 

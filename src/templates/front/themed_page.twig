@@ -1,5 +1,3 @@
-{% do layout.eagerLoadFields(element, 'default') %}
-
 <!DOCTYPE html>
 <html lang="{{ currentSite.language }}">
     {% block head %}
@@ -11,10 +9,12 @@
         </head>
     {% endblock %}
     {% block body %}
-        <body>
-            {% for region in layout.regions %}
-                {{ region.render(element)|raw }}
-            {% endfor %}
+        <body class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
+            {% block regions %}
+                {% for region in layout.regions %}
+                    {{ region.render()|raw }}
+                {% endfor %}
+            {% endblock %}
         </body>
     {% endblock %}
 </html>

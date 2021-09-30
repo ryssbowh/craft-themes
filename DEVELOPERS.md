@@ -35,7 +35,7 @@ Define a partial theme with the method `isPartial(): bool` of the plugin class.
 
 Create a new plugin, it's main class must extend `Ryssbowh\CraftThemes\models\ThemePlugin`.
 
-You could for example create a `themes` folder at the root, and add it as a composer repository by modifying the root `composer.json` :
+You could for example create a `themes` folder at the root, and add it as a composer repository by addong to the root `composer.json` :
 
 ```
 "repositories": [
@@ -50,7 +50,6 @@ You could for example create a `themes` folder at the root, and add it as a comp
 ```
 
 You can then require your theme as any other package.  
-When it's installed, enable it in the backend.
 
 ### Asset Bundles
 
@@ -74,12 +73,11 @@ Asset bundles can be defined in your theme class, in the `$assetBundles` propert
 
 Bundle assets will be registered automatically, the '\*' array will be registered on every request.
 
-By default, parent themes bundles will also be registered. This can be disabled with the property `$inheritsAssetBundles` of your theme class.
+By default, parent theme bundles will also be registered. This can be disabled with the property `$inheritsAssetBundles` of your theme class.
 
 ### Setting theme manually
 
-You can set a theme manually on the theme registry : `Themes::$plugin->registry->setCurrent('theme-handle')`. You **must** do this before the View template roots are registered for the mode site (`View::TEMPLATE_MODE_SITE`) or an exception will be thrown.  
-Template roots can only be registered once on Craft.
+You can set a theme manually on the theme registry : `Themes::$plugin->registry->setCurrent('theme-handle')`. Because Template roots can only be registered once on Craft, you **must** do this before the View template roots are registered for the mode site (`View::TEMPLATE_MODE_SITE`) or an exception will be thrown.
 
 ## Layouts
 
@@ -371,6 +369,11 @@ Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (Ren
     $event->attributes->add('id', 'my-id');
 });
 ```
+
+### Theme preferences
+
+Each Theme can gain control on the classes and attributes defined for each layout/block/field/file/group/region by defining a [preference class](src/models/ThemePreferences.php).  
+To override the preferences for your theme, override the method `getPreferencesModel(): ThemePreferencesInterface` of its main class.
 
 ### Dev mode
 
