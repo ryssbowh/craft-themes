@@ -64,6 +64,22 @@ document.addEventListener("register-block-strategy-components", function(e) {
                     <li v-for="error in errors('cachePerUser')">{{ error }}</li>
                 </ul>
             </div>
+            <div class="field">
+                <div class="heading">
+                    <label>{{ t('Cache depends on view port') }}</label>
+                </div>
+                <div class="input ltr">                 
+                    <button type="button" :class="{lightswitch: true, on: block.options.cachePerViewport}" data-field="cachePerViewport">
+                        <div class="lightswitch-container">
+                            <div class="handle"></div>
+                        </div>
+                        <input type="hidden">
+                    </button>
+                </div>
+                <ul class="errors" v-if="errors('cachePerViewport')">
+                    <li v-for="error in errors('cachePerViewport')">{{ error }}</li>
+                </ul>
+            </div>
         </div>`
     };
 

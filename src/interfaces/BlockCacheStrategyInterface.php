@@ -22,6 +22,13 @@ interface BlockCacheStrategyInterface
     public function getName(): string;
 
     /**
+     * Get strategy description
+     * 
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
      * get a block cache data.
      * Returns null if cache is not set.
      * 

@@ -72,7 +72,7 @@ If no rules match, the default theme will be used.
 
 If no default is set, the theme engine will just not be used and your templates will be loaded from the root templates folder.
 
-You can also define there which theme should be used for console requests, this can be useful when you have commands rendering templates.
+You can also define there which theme should be used for console/cp requests, this can be useful when you have commands/cp rendering templates (when sending emails for example).
 
 ## Blocks (Pro)
 
@@ -107,7 +107,7 @@ You can choose a cache strategy for each block which defines how the block is ca
 - Url path : Will cache separately or each url path
 - Url path (with query) : Same as above but will also look at the query string
 
-Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user.  
+Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user or their view ports (mobile, tablet or desktop).  
 Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
 
 ## Displays (Pro)

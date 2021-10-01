@@ -11,6 +11,7 @@
             <option :value="strategy.handle" v-for="strategy in cacheStrategies" v-bind:key="strategy.handle">{{ strategy.name }}</option>
           </select>
         </div>
+        <div class="instructions">{{ strategyDescription }}</div>
       </div>
       <component :is="cacheStrategyOptionsComponent" :block="block" @updateOptions="updateOptions"></component>  
     </div>
@@ -23,6 +24,14 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
   computed: {
+    strategyDescription: function () {
+      for (let i in this.cacheStrategies) {
+        if (this.cacheStrategies[i].handle == this.block.options.cacheStrategy) {
+          return this.cacheStrategies[i].description;
+        }
+      }
+      return '';
+    },
     optionsComponent: function () {
       return this.block.provider + '-' + this.block.handle;
     },

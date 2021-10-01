@@ -8,7 +8,7 @@
         <h3>Blocks</h3>
       </div>
       <div v-for="provider in providers" v-bind:key="provider.handle">
-        <h5 class="sub-heading slide" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>
+        <h5 class="sub-heading slide" :class="{closed: !slideStates[provider.handle]}" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>
         <transition name="slide">
           <div>
             <draggable v-if="slideStates[provider.handle]"
@@ -176,8 +176,9 @@ export default {
         pointer-events: none;
     }
     .regions {
-        background: white;
+        width: 60%;
         flex-grow: 1;
+        background: white;
         * {
             box-sizing: border-box;
         }
@@ -189,11 +190,11 @@ export default {
         justify-content: space-between;
     }
     .blocks-sidebar, .regions, .options {
-        max-height: calc(100vh - 320px);
+        min-height: calc(100vh - 320px);
         overflow-y: auto;
     }
     .blocks-sidebar {
-        width: 30%;
+        width: 20%;
         max-width: 300px;
     }
     h5.sub-heading {
@@ -204,7 +205,7 @@ export default {
         border-bottom: 1px solid rgba(96, 125, 159, 0.25);
     }
     .options {
-        width: 30%;
+        width: 20%;
         max-width: 300px;
         transition: width 0.3s;
     }

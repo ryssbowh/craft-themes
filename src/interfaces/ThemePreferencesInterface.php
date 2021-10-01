@@ -170,5 +170,5 @@ interface ThemePreferencesInterface
      * @param  FileDisplayerInterface $displayer
      * @return array
      */
-    public function getFileAttributes(Asset $asset, FieldInterface $field, FileDisplayerInterface $displayer): array
+    public function getFileAttributes(Asset $asset, FieldInterface $field, FileDisplayerInterface $displayer): array;
 }

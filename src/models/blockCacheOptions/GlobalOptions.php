@@ -17,12 +17,17 @@ class GlobalOptions extends BlockCacheStrategyOptions
     public $cachePerUser = false;
 
     /**
+     * @var bool
+     */
+    public $cachePerViewport = false;
+
+    /**
      * @inheritDoc
      */
     public function defineRules(): array
     {
         return [
-            [['cachePerAuthenticated', 'cachePerUser'], 'boolean', 'trueValue' => true, 'falseValue' => false],
+            [['cachePerAuthenticated', 'cachePerUser', 'cachePerViewport'], 'boolean', 'trueValue' => true, 'falseValue' => false],
         ];
     }
 }

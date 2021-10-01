@@ -30,6 +30,14 @@ class PathBlockCache extends BlockCacheStrategy
     /**
      * @inheritDoc
      */
+    public function getDescription(): string
+    {
+        return \Craft::t('themes', 'Block will be cached differently for each url regardless of query string (what comes after ?)');
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): BlockCacheStrategyOptions
     {
         return new GlobalOptions;

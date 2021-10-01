@@ -15,9 +15,17 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
     /**
      * @inheritDoc
      */
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
-        return ['handle', 'name'];
+        return ['handle', 'name', 'description'];
     }
 
     /**

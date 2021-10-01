@@ -38,6 +38,14 @@ class QueryBlockCache extends BlockCacheStrategy
     /**
      * @inheritDoc
      */
+    public function getDescription(): string
+    {
+        return \Craft::t('themes', 'Block will be cached differently for each url');
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function getKey(BlockInterface $block): string
     {
         $key = [\Craft::$app->request->getFullPath() . '?' . \Craft::$app->request->getQueryStringWithoutPath()];

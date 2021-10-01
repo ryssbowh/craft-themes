@@ -12,9 +12,11 @@
                     <div class="handle"></div>
                 </div>
             </button>
-            <div class="move icon"></div>
-            <div v-if="!original" :class="'settings icon' + (blockOptionId == block.index ? ' active' : '')" @click="setBlockOptions(block)"></div>
-            <div v-if="!original" class="delete icon" @click="$emit('remove', block)"></div>
+            <div class="actions">
+                <div class="move icon"></div>
+                <div v-if="!original" :class="'settings icon' + (blockOptionId == block.index ? ' active' : '')" @click="setBlockOptions(block)"></div>
+                <div v-if="!original" class="delete icon" @click="$emit('remove', block)"></div>
+            </div>
         </div>
     </div>
 </template>
@@ -63,8 +65,12 @@ export default {
     .red-star {
         color: red;
     }
+    .actions {
+        display: flex;
+    }
     .inner {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
     }
     &:not(.original) {
