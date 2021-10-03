@@ -45,57 +45,59 @@ class ShortcutsService extends Service
             'data-layout-shortcut' => $id
         ]);
         $js = "shortcutData['$id'] = [";
-        if ($element instanceof Entry) {
-            $perm = 'editEntries:' . $layout->elementUid;
-            if (\Craft::$app->user->checkPermission($perm)) {
+        if (\Craft::$app->user->checkPermission('accessCp')) {
+            if ($element instanceof Entry) {
+                $perm = 'editEntries:' . $layout->elementUid;
+                if (\Craft::$app->user->checkPermission($perm)) {
+                    $js .= "{
+                        url: '" . UrlHelper::cpUrl('entries/' . $element->section->handle . '/' . $element->id) . "',
+                        label: '" . \Craft::t('themes', 'Edit Entry') . "',
+                    },";
+                }
+            }
+            if ($element instanceof Category) {
+                $perm = 'editCategories:' . $layout->elementUid;
+                if (\Craft::$app->user->checkPermission($perm)) {
+                    $js .= "{
+                        url: '" . UrlHelper::cpUrl('categories/' . $element->group->handle . '/' . $element->id) . "',
+                        label: '" . \Craft::t('themes', 'Edit Category') . "',
+                    },";
+                }
+            }
+            if ($element instanceof User) {
+                if (\Craft::$app->user->checkPermission('editUsers')) {
+                    $js .= "{
+                        url: '" . UrlHelper::cpUrl('users/' . $element->id) . "',
+                        label: '" . \Craft::t('themes', 'Edit User') . "',
+                    },";
+                }
+            }
+            if ($element instanceof GlobalSet) {
+                $perm = 'editGlobalSet:' . $layout->elementUid;
+                if (\Craft::$app->user->checkPermission($perm)) {
+                    $js .= "{
+                        url: '" . UrlHelper::cpUrl('globals/' . $element->handle) . "',
+                        label: '" . \Craft::t('themes', 'Edit Global') . "',
+                    },";
+                }
+            }
+            if (\Craft::$app->user->checkPermission('manageThemesBlocks')) {
+                if ($layout->hasBlocks) {
+                    $url = UrlHelper::cpUrl('themes/blocks/' . $theme . '/' . $layout->id);
+                } else {
+                    $url = UrlHelper::cpUrl('themes/blocks/' . $theme . '/' . $this->layoutService()->getDefault($theme)->id);
+                }
                 $js .= "{
-                    url: '" . UrlHelper::cpUrl('entries/' . $element->section->handle . '/' . $element->id) . "',
-                    label: '" . \Craft::t('themes', 'Edit Entry') . "',
+                    url: '" . $url . "',
+                    label: '" . \Craft::t('themes', 'Edit Blocks') . "',
                 },";
             }
-        }
-        if ($element instanceof Category) {
-            $perm = 'editCategories:' . $layout->elementUid;
-            if (\Craft::$app->user->checkPermission($perm)) {
+            if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplay')) {
                 $js .= "{
-                    url: '" . UrlHelper::cpUrl('categories/' . $element->group->handle . '/' . $element->id) . "',
-                    label: '" . \Craft::t('themes', 'Edit Category') . "',
-                },";
+                    url: '" . UrlHelper::cpUrl('themes/display/' . $theme . '/' . $layout->id) . "',
+                    label: '" . \Craft::t('themes', 'Edit Displays') . "',
+                }";
             }
-        }
-        if ($element instanceof User) {
-            if (\Craft::$app->user->checkPermission('editUsers')) {
-                $js .= "{
-                    url: '" . UrlHelper::cpUrl('users/' . $element->id) . "',
-                    label: '" . \Craft::t('themes', 'Edit User') . "',
-                },";
-            }
-        }
-        if ($element instanceof GlobalSet) {
-            $perm = 'editGlobalSet:' . $layout->elementUid;
-            if (\Craft::$app->user->checkPermission($perm)) {
-                $js .= "{
-                    url: '" . UrlHelper::cpUrl('globals/' . $element->handle) . "',
-                    label: '" . \Craft::t('themes', 'Edit Global') . "',
-                },";
-            }
-        }
-        if (\Craft::$app->user->checkPermission('manageThemesBlocks')) {
-            if ($layout->hasBlocks) {
-                $url = UrlHelper::cpUrl('themes/blocks/' . $theme . '/' . $layout->id);
-            } else {
-                $url = UrlHelper::cpUrl('themes/blocks/' . $theme . '/' . $this->layoutService()->getDefault($theme)->id);
-            }
-            $js .= "{
-                url: '" . $url . "',
-                label: '" . \Craft::t('themes', 'Edit Blocks') . "',
-            },";
-        }
-        if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplay')) {
-            $js .= "{
-                url: '" . UrlHelper::cpUrl('themes/display/' . $theme . '/' . $layout->id) . "',
-                label: '" . \Craft::t('themes', 'Edit Displays') . "',
-            }";
         }
         $this->js .= $js .'];';
         \Craft::$app->view->registerJs($this->js, View::POS_BEGIN, 'themes-shortcuts');
