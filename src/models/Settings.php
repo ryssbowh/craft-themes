@@ -68,13 +68,18 @@ class Settings extends Model
     public $redirectTo = 'list';
 
     /**
+     * @var boolean
+     */
+    public $showShortcuts = true;
+
+    /**
      * @inheritdoc
      */
     public function defineRules(): array
     {
         return [
             [['default', 'redirectTo'], 'string'],
-            [['eagerLoad', 'devMode'], 'boolean', 'trueValue' => true, 'falseValue' => false]
+            [['eagerLoad', 'devMode', 'showShortcuts'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 

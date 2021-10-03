@@ -365,8 +365,8 @@ Those events can also be used to override elements's classes and attributes :
 
 ```
 Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (RenderEvent $event) {
-    $event->classes->add('my-class');
-    $event->attributes->add('id', 'my-id');
+    $e->variables['classes']->add('my-class');
+    $e->variables['attributes']->add('id', 'my-id');
 });
 ```
 
@@ -375,9 +375,11 @@ Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (Ren
 Each Theme can gain control on the classes and attributes defined for each layout/block/field/file/group/region by defining a [preference class](src/models/ThemePreferences.php).  
 To override the preferences for your theme, override the method `getPreferencesModel(): ThemePreferencesInterface` of its main class.
 
-### Dev mode
+### Debug
 
-The available templates and variables can be printed as html comments by enabling the option in the themes plugin settings.
+The available templates and variables can be printed as html comments by enabling the option in the settings.
+
+Shortcuts for layout management can be shown on the frontend by enabling the option in the settings.
 
 ### Root templates folder
 

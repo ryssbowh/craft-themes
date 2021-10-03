@@ -1,0 +1,50 @@
+.themes-shortcuts {
+    position: absolute;
+    right: 0;
+}
+
+.themes-shortcuts .cog {
+    position: absolute;
+    height: 25px;
+    width: 25px;
+    background: no-repeat center/15px url('images/cog.png') white;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 5px;
+    border: 1px solid #929292;
+    border-radius: 3px;
+    right: 0;
+}
+
+.themes-shortcuts .list {
+    position:  absolute;
+    top: 24px;
+    right: 0px;
+    background-color: white;
+    display: none;
+    z-index: 999;
+    overflow: hidden;
+}
+
+.themes-shortcuts .list ul {
+    border: 1px solid #929292;
+    border-radius: 3px;
+    border-top-right-radius: 0;
+    padding: 2px 5px;
+    list-style-type: none;
+    margin: 0;
+}
+
+.themes-shortcuts .list a {
+    white-space: nowrap;
+}
+
+.themes-shortcuts.open .cog {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.themes-shortcuts.open .list {
+    display: block;
+}

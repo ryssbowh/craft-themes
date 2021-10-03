@@ -8,7 +8,7 @@ use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
@@ -70,6 +70,7 @@ class Themes extends \craft\base\Plugin
         $this->registerPluginsEvents();
         $this->registerCraftEvents();
         $this->registerTwigVariables();
+        $this->registerShortcuts();
 
         Event::on(
             Application::class, 
@@ -133,6 +134,20 @@ class Themes extends \craft\base\Plugin
         return $item;
     }
 
+    protected function registerShortcuts()
+    {
+        if ($this->getSettings()->showShortcuts and
+            \Craft::$app->request->isSiteRequest and
+            \Craft::$app->user->checkPermission('viewThemesShortcuts')
+        ) {
+            Event::on(
+                ViewService::class,
+                ViewService::BEFORE_RENDERING_LAYOUT,
+                [$this->shortcuts, 'registerLayout']
+            );
+        }
+    }
+
     /**
      * Registers twig variables
      */
@@ -142,8 +157,7 @@ class Themes extends \craft\base\Plugin
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
             function (Event $event) {
-                $variable = $event->sender;
-                $variable->set('themes', ThemesVariable::class);
+                $event->sender->set('themes', ThemesVariable::class);
             }
         );
     }
@@ -319,6 +333,7 @@ class Themes extends \craft\base\Plugin
                 'setCp' => $this->getSettings()->setCp,
                 'mobileDetect' => new MobileDetect()
             ],
+            'shortcuts' => ShortcutsService::class,
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
             'blocks' => BlockService::class,
@@ -484,7 +499,7 @@ class Themes extends \craft\base\Plugin
                 UserPermissions::class,
                 UserPermissions::EVENT_REGISTER_PERMISSIONS,
                 function (RegisterUserPermissionsEvent $event) {
-                    $event->permissions['themes'] = [
+                    $event->permissions[\Craft::t('themes', 'Themes')] = [
                         'manageThemesBlocks' => [
                             'label' => \Craft::t('themes', 'Manage blocks')
                         ],
@@ -493,6 +508,9 @@ class Themes extends \craft\base\Plugin
                         ],
                         'manageThemesRules' => [
                             'label' => \Craft::t('themes', 'Manage rules')
+                        ],
+                        'viewThemesShortcuts' => [
+                            'label' => \Craft::t('themes', 'View frontend shortcuts')
                         ]
                     ];
                 }

@@ -13,6 +13,14 @@
 }}
 {{ 
     forms.lightswitchField({
+        label: 'Frontend shortcuts'|t('themes'),
+        name: 'showShortcuts',
+        on: settings.showShortcuts,
+        instructions: 'Show edition shortcuts on the front end.'|t('themes')
+    }) 
+}}
+{{ 
+    forms.lightswitchField({
         label: 'Eager loading'|t('themes'),
         name: 'eagerLoad',
         on: settings.eagerLoad,
