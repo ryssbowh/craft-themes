@@ -24,7 +24,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import { filter, sortBy } from 'lodash';
+import { filter, sortBy, forEach } from 'lodash';
 import Block from './Block.vue';
 import Draggable from 'vuedraggable';
 
@@ -35,23 +35,48 @@ export default {
         return this.region.handle == block.region;
       }), 'order');
     },
-    ...mapState(['blocks', 'theme', 'element']),
+    ...mapState(['blocks']),
   },
   props: {
     region: Object
   },
   methods: {
     changed: function (evt) {
+      let newIndex;
+      let element;
+      let block;
+      let blocks;
       if (evt.added) {
-        let block = {...evt.added.element};
+        newIndex = evt.added.newIndex;
+        block = {...evt.added.element};
         block.region = this.region.handle;
-        block.order = evt.added.newIndex;
+        block.order = newIndex;
         if (block.index === undefined) {
           block.active = true;
           this.addBlock(block);
         } else {
           this.updateBlock(block);
         }
+        blocks = [...this.regionBlocks];
+      } else if (evt.moved) {
+        newIndex = evt.moved.newIndex;
+        block = evt.moved.element;
+        blocks = [...this.regionBlocks];
+      } else {
+        blocks = filter(this.regionBlocks, (b) => b.index !== evt.removed.element.index);
+      }
+      let newOrder = 0;
+      for (let i in blocks) {
+        let block2 = blocks[i];
+        if (i !== newIndex) {
+          block2.order = newOrder;
+        }
+        newOrder++;
+        this.updateBlock(block2);
+      }
+      if (block) {
+        block.order = newIndex;
+        this.updateBlock(block);
       }
     },
     ...mapMutations(['addBlock', 'removeBlock', 'updateBlock']),
