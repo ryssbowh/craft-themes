@@ -7,7 +7,7 @@ Define the look and feel of your frontend with themes. You can use themes contri
 Themes can inherit one another and as any plugin, have settings, migrations etc. 
 The Pro version will give you total control on how your sections/categories/tags/users/globals/assets and their fields are displayed.
 
-This basic version will allow you to :
+The basic version will allow you to :
 - Install themes from the store or any git repository (composer, github etc)
 - Define your own themes that can extend each other
 - Choose which theme will be used for which site, language, viewport or url path according to a set of rules.
@@ -23,32 +23,6 @@ The Pro version will allow you to :
 What it doesn't allow you to do :
 - Change the backend look and feel
 - Override plugins templates (unless specific case, see developers readme)
-
-## Basic notions (Pro)
-
-The building of a page is based on the notion of layouts, regions, blocks, view modes and displays (or groups of displays).
-
-**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 7 types of layouts :
-
-| Layout type | Associated with | Can have blocks | Can have displays and view modes |
-|-------------|-----------------|-----------------|----------------------------------|
-| Default     |                 | Yes             | No                               |
-| Category    | Category group  | Yes             | Yes                              |
-| Entry       | Entry type      | Yes             | Yes                              |
-| Global      | Global set      | No              | Yes                              |
-| Tag         | Tag group       | No              | Yes                              |
-| User        | User            | No              | Yes                              |
-| Volume      | Volume          | No              | Yes                              |
-
-**Regions** they are defined by the theme itself, blocks can be assigned to them.
-
-**Blocks** are defined on the layouts that allow them, they can be assigned to a region of the theme.
-
-**Displays** define how fields and assets are rendered on the front end, each field/asset will have a displayer with some options. This plugin comes with default displayers for each type of craft field and each kind of asset. Displays can be organised in groups.
-
-**View modes** define a set of displayers and options for a layout and a view mode. Every Layout that can have view modes comes with a default one. This allows you to render an element differently in different parts of the page.
-
-This theme engine comes with default blocks and field/asset displayers, that might not fit your needs. To learn how to define new blocks, field and asset displayers, see the [developers readme](DEVELOPERS.md)
 
 ## Themes list
 
@@ -76,6 +50,32 @@ If no default is set, the theme engine will just not be used and your templates 
 
 If you have templates requested during a CP or Console request for the site mode (`View::TEMPLATE_MODE_SITE`), you must set the Console/CP themes in the rules section if you want your theme to takeover those templates. A good example for that would be emails sent when using the backend or during a queue.  
 On Craft pro you can specify the setting 'HTML Email Template', this template won't be found in your theme unless the CP requests theme has been set in your rules.
+
+## Basic notions (Pro)
+
+The building of a page is based on the notion of layouts, regions, blocks, view modes and displays (or groups of displays).
+
+**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 7 types of layouts :
+
+| Layout type | Associated with | Can have blocks | Can have displays and view modes |
+|-------------|-----------------|-----------------|----------------------------------|
+| Default     |                 | Yes             | No                               |
+| Category    | Category group  | Yes             | Yes                              |
+| Entry       | Entry type      | Yes             | Yes                              |
+| Global      | Global set      | No              | Yes                              |
+| Tag         | Tag group       | No              | Yes                              |
+| User        | User            | No              | Yes                              |
+| Volume      | Volume          | No              | Yes                              |
+
+**Regions** they are defined by the theme itself, blocks can be assigned to them.
+
+**Blocks** are defined on the layouts that allow them, they can be assigned to a region of the theme.
+
+**Displays** define how fields and assets are rendered on the front end, each field/asset will have a displayer with some options. This plugin comes with default displayers for each type of craft field and each kind of asset. Displays can be organised in groups.
+
+**View modes** define a set of displayers and options for a layout and a view mode. Every Layout that can have view modes comes with a default one. This allows you to render an element differently in different parts of the page.
+
+This theme engine comes with default blocks and field/asset displayers, that might not fit your needs. To learn how to define new blocks, field and asset displayers, see the [developers readme](DEVELOPERS.md)
 
 ## Blocks (Pro)
 
@@ -209,5 +209,4 @@ Craft 3.5 or over
 ## Roadmap
 
 - more tests
-- translations
 - custom layouts
