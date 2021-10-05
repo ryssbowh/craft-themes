@@ -72,7 +72,10 @@ If no rules match, the default theme will be used.
 
 If no default is set, the theme engine will just not be used and your templates will be loaded from the root templates folder.
 
-You can also define there which theme should be used for console/cp requests, this can be useful when you have commands/cp rendering templates (when sending emails for example).
+### Console/CP requests
+
+If you have templates requested during a CP or Console request for the site mode (`View::TEMPLATE_MODE_SITE`), you must set the Console/CP themes in the rules section if you want your theme to takeover those templates. A good example for that would be emails sent when using the backend or during a queue.  
+On Craft pro you can specify the setting 'HTML Email Template', this template won't be found in your theme unless the CP requests theme has been set in your rules.
 
 ## Blocks (Pro)
 
@@ -182,11 +185,6 @@ Every file type will also have the displayer "Link to asset" available, with opt
 ## Partial themes
 
 A partial theme will not be available to select in the backend, but it can be inherited from. You will see them in the themes list, but won't be able to define blocks/displays for them.
-
-## Console/CP requests
-
-If you have templates requested during a CP or Console request for the site mode (`View::TEMPLATE_MODE_SITE`), you must set the Console/CP themes in the rules section if you want your theme to takeover those templates. A good example for that would be emails sent when using the backend or during a queue.  
-On Craft pro you can specify the setting 'HTML Email Template', this template won't be found in your theme unless the CP requests theme has been set in your rules.
 
 ## Installation
 
