@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { cloneDeep, isEqual, merge, has } from 'lodash';
+import { cloneDeep, isEqual, merge, has, filter } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 function handleError(err) {
@@ -10,14 +10,18 @@ function handleError(err) {
     }
 }
 
-function setWindowUrl(theme, layout) {
+function setWindowUrl(theme, layout, viewMode) {
     let url = document.location.pathname.split('/');
     let i = url.findIndex(e => e == 'display');
     if (i === -1) {
         return;
     }
+    if (url[i+1] == theme && url[i+2] == layout && url[i+3] == viewMode) {
+        return;
+    }
     url[i+1] = theme;
     url[i+2] = layout;
+    url[i+3] = viewMode;
     window.history.pushState({}, '', url.join('/'));
 }
 
@@ -53,7 +57,7 @@ const store = createStore({
             hasChanges: false,
             viewModes: [],
             originalViewModes: [],
-            viewModeIndex: null,
+            viewMode: null,
             showOptionsModal: false,
             showGroupModal: false,
             editedGroupUid: null,
@@ -71,7 +75,6 @@ const store = createStore({
             for (let i in state.layouts) {
                 if (state.layouts[i].id == id) {
                     state.layout = state.layouts[i];
-                    setWindowUrl(state.theme, id);
                     break;
                 }
             }
@@ -82,8 +85,8 @@ const store = createStore({
         setIsFetching(state, value) {
             state.isFetching = value;
         },
-        setViewMode(state, index) {
-            state.viewModeIndex = index;
+        setViewMode(state, viewMode) {
+            state.viewMode = viewMode;
         },
         setViewModes(state, value) {
             state.viewModes = value;
@@ -93,22 +96,28 @@ const store = createStore({
         addViewMode(state, viewMode) {
             state.viewModes.push(viewMode);
         },
-        editViewMode(state, {index, name}) {
-            state.viewModes[index].name = name;
+        editViewMode(state, {originalHandle, name, handle}) {
+            for (let i in state.viewModes) {
+                if (state.viewModes[i].handle == originalHandle) {
+                    state.viewModes[i].name = name;
+                    state.viewModes[i].handle = handle;
+                    return;
+                }
+            }
         },
-        deleteViewMode(state, index) {
-            state.viewModes.splice(index, 1);
+        deleteViewMode(state, viewMode) {
+            state.viewModes = filter(state.viewModes, (mode) => mode.handle != viewMode.handle);
         },
         setDisplays(state, displays) {
-            state.viewModes[state.viewModeIndex].displays = displays;
+            state.viewMode.displays = displays;
         },
         setHasChanges(state, value) {
             state.hasChanges = value;
         },
         updateDisplay(state, {uid, data}) {
             let display;
-            for (let i in state.viewModes[state.viewModeIndex].displays) {
-                display = state.viewModes[state.viewModeIndex].displays[i];
+            for (let i in state.viewMode.displays) {
+                display = state.viewMode.displays[i];
                 if (display.uid != uid) {
                     continue;
                 }
@@ -117,16 +126,16 @@ const store = createStore({
             }
         },
         removeDisplay(state, display) {
-            let displays = state.viewModes[state.viewModeIndex].displays.filter(display2 => display2.uid != display.uid);
-            state.viewModes[state.viewModeIndex].displays = displays;
+            let displays = state.viewMode.displays.filter(display2 => display2.uid != display.uid);
+            state.viewMode.displays = displays;
         },
         addDisplay(state, display) {
-            state.viewModes[state.viewModeIndex].displays.push(display);
+            state.viewMode.displays.push(display);
         },
         removeDisplayFromGroup(state, {display, groupUid}) {
             let group;
-            for (let i in state.viewModes[state.viewModeIndex].displays) {
-                group = state.viewModes[state.viewModeIndex].displays[i];
+            for (let i in state.viewMode.displays) {
+                group = state.viewMode.displays[i];
                 if (group.uid != groupUid) {
                     continue;
                 }
@@ -136,8 +145,8 @@ const store = createStore({
         },
         addDisplayToGroup(state, {display, groupUid}) {
             let group;
-            for (let i in state.viewModes[state.viewModeIndex].displays) {
-                group = state.viewModes[state.viewModeIndex].displays[i];
+            for (let i in state.viewMode.displays) {
+                group = state.viewMode.displays[i];
                 if (group.uid != groupUid) {
                     continue;
                 }
@@ -172,16 +181,32 @@ const store = createStore({
         }
     },
     actions: {
-        setLayout({commit, dispatch}, id) {
-            commit('setLayout', id);
-            dispatch('fetchViewModes');
+        setLayout({commit, dispatch}, {layoutId, viewModeHandle}) {
+            commit('setLayout', layoutId);
+            dispatch('fetchViewModes', viewModeHandle);
         },
-        fetchViewModes({state, commit}) {
+        setViewModeByHandle({state, dispatch}, handle) {
+            for (let i in state.viewModes) {
+                if (state.viewModes[i].handle == handle) {
+                    dispatch('setViewMode', state.viewModes[i]);
+                    break;
+                }
+            }
+        },
+        setViewMode({commit, state}, viewMode) {
+            commit('setViewMode', viewMode);
+            setWindowUrl(state.theme, state.layout.id, viewMode.handle);
+        },
+        fetchViewModes({state, commit, dispatch}, viewModeHandle) {
             commit('setIsFetching', true);
             return axios.post(Craft.getCpUrl('themes/ajax/view-modes'), {layoutId: state.layout.id})
             .then((response) => {
                 commit('setViewModes', response.data.viewModes);
-                commit('setViewMode', 0);
+                if (viewModeHandle) {
+                    dispatch('setViewModeByHandle', viewModeHandle);
+                } else {
+                    dispatch('setViewMode', state.viewModes[0]);
+                }
             })
             .catch((err) => {
                 handleError(err);
@@ -211,21 +236,27 @@ const store = createStore({
                 commit('setIsSaving', false);
             })
         },
-        addViewMode({commit, state}, viewMode) {
+        editViewMode({state, commit}, {originalHandle, name, handle}) {
+            if (originalHandle != handle) {
+                setWindowUrl(state.theme, state.layout.id, handle);
+            }
+            commit('editViewMode', {originalHandle: originalHandle, name: name, handle: handle});
+        },
+        addViewMode({commit, state, dispatch}, viewMode) {
             viewMode.layout_id = state.layout.id;
             let newDisplays = [];
             let display;
-            for (let i in state.viewModes[state.viewModeIndex].displays) {
-                display = state.viewModes[state.viewModeIndex].displays[i];
+            for (let i in state.viewMode.displays) {
+                display = state.viewMode.displays[i];
                 newDisplays.push(cloneDisplay(display));
             }
             viewMode.displays = newDisplays;
             commit('addViewMode', viewMode);
-            commit('setViewMode', state.viewModes.length - 1);
+            dispatch('setViewMode', viewMode);
         },
-        deleteViewMode({commit}, index) {
-            commit('deleteViewMode', index);
-            commit('setViewMode', 0);
+        deleteViewMode({commit, state}, viewMode) {
+            commit('deleteViewMode', viewMode);
+            commit('setViewMode', state.viewModes[0]);
         },
         checkChanges({state, commit}) {
             commit('setHasChanges', !isEqual(state.originalViewModes, state.viewModes));

@@ -15,6 +15,9 @@ function setWindowUrl(theme, layout) {
     if (i === -1) {
         return;
     }
+    if (url[i+1] == theme && url[i+2] == layout) {
+        return;
+    }
     url[i+1] = theme;
     url[i+2] = layout;
     window.history.pushState({}, '', url.join('/'));
@@ -175,10 +178,10 @@ const store = createStore({
                 }
                 if (isNew) {
                     commit('addLayout', res.data.layout);
-                    setWindowUrl(state.theme, res.data.layout.id);
                 } else {
                     commit('updateLayout', res.data.layout);
                 }
+                setWindowUrl(state.theme, res.data.layout.id);
                 commit('setOriginals', res.data.blocks);
                 commit('setBlocks', cloneDeep(res.data.blocks));
                 commit('setLayout', res.data.layout);

@@ -56,7 +56,7 @@ export default {
             return null;
         },
         displays: function () {
-            return this.viewModes[this.viewModeIndex].displays;
+            return this.viewMode.displays;
         },
         groups: function () {
             return this.displays.filter((d) => d.type == 'group');
@@ -67,7 +67,7 @@ export default {
         maxOrder: function () {
             return this.displays[this.displays.length - 1].order ?? 0;
         },
-        ...mapState(['viewModeIndex', 'viewModes', 'layout', 'showGroupModal', 'editedGroupUid'])
+        ...mapState(['layout', 'showGroupModal', 'editedGroupUid'])
     },
     data() {
         return {

@@ -22,7 +22,7 @@
                             <label class="required" for="handle">{{ t('Handle', {}, 'app') }}</label>
                         </div>
                         <div class="input ltr">
-                            <input type="text" id="handle" :class="{text: true, fullwidth:true, error: handleError}" :disabled="edit !== null" v-model="handle" maxlength="255" required>
+                            <input type="text" id="handle" :class="{text: true, fullwidth:true, error: handleError}" :disabled="mode == 'edit' && editedViewMode.handle == 'default'" v-model="handle" maxlength="255" required>
                         </div>
                         <ul class="errors" v-if="handleError">
                             <li>{{ handleError }}</li>
@@ -41,16 +41,13 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import HandleGenerator from '../../HandleGenerator'
 
 export default {
     computed: {
-        editedViewMode: function () {
-            if (this.edit === null) {
-                return null;
-            }
-            return this.viewModes[this.edit];
+        mode: function () {
+            return (this.editedViewMode === null ? 'add' : 'edit');
         },
         hasError: function () {
             return this.handleError || this.nameError;
@@ -59,7 +56,7 @@ export default {
     },
     props: {
         showModal: Boolean,
-        edit: null
+        editedViewMode: null
     },
     data() {
         return {
@@ -79,9 +76,9 @@ export default {
                 this.popup.hide();
             }
         },
-        edit: function (newValue) {
+        editedViewMode: function () {
             this.updateGenerator();
-            if (newValue !== null) {
+            if (this.mode == 'edit') {
                 this.name = this.editedViewMode.name;
                 this.handle = this.editedViewMode.handle;
             }
@@ -107,7 +104,7 @@ export default {
             this.updateGenerator();
         },
         updateGenerator: function () {
-            if (this.editedViewMode === null) {
+            if (this.mode == 'add') {
                 this.handleGenerator.startListening();
             } else {
                 this.handleGenerator.stopListening();
@@ -146,15 +143,14 @@ export default {
             if (this.hasError) {
                 return;
             }
-            if (this.editedViewMode !== null) {
-                this.editViewMode({index: this.edit, name: this.name});
+            if (this.mode == 'edit') {
+                this.editViewMode({originalHandle: this.editedViewMode.handle, name: this.name, handle: this.handle});
             } else {
                 this.addViewMode({name: this.name, handle: this.handle});
             }
-            this.$emit('closeModal');
+            this.closeModal();
         },
-        ...mapMutations(['editViewMode']),
-        ...mapActions(['addViewMode']),
+        ...mapActions(['addViewMode', 'editViewMode']),
     },
     emits: ['closeModal'],
 };

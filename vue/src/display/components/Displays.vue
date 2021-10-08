@@ -33,7 +33,7 @@
             </div>
         </div>
         <p v-if="rootDisplays.length == 0 && !isLoading">
-            {{ t('There are no displays for this layout') }}
+            {{ t('There are no displays for this view mode') }}
         </p>
         <options-modal/>
         <group-modal @closeModal="setShowGroupModal({show: false})"/>
@@ -50,12 +50,12 @@ export default {
             return this.isFetching || this.isSaving;
         },
         rootDisplays: function () {
-            if (this.viewModeIndex === null) {
+            if (!this.viewMode) {
                 return [];
             }
-            return sortBy(this.viewModes[this.viewModeIndex].displays, 'order');
+            return sortBy(this.viewMode.displays, 'order');
         },
-        ...mapState(['viewModeIndex', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes'])
+        ...mapState(['viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes'])
     },
     watch: {
         viewModes: {

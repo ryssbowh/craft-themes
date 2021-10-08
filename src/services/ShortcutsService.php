@@ -39,6 +39,7 @@ class ShortcutsService extends Service
         $this->initShortcuts();
         $layout = $e->variables['layout'];
         $element = $e->variables['element'];
+        $viewMode = $e->variables['viewMode'];
         $theme = $this->themesRegistry()->current->handle;
         $id = StringHelper::UUID();
         $e->addAttribute([
@@ -94,7 +95,7 @@ class ShortcutsService extends Service
             }
             if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplay')) {
                 $js .= "{
-                    url: '" . UrlHelper::cpUrl('themes/display/' . $theme . '/' . $layout->id) . "',
+                    url: '" . UrlHelper::cpUrl('themes/display/' . $theme . '/' . $layout->id) . '/' . $viewMode->handle . "',
                     label: '" . \Craft::t('themes', 'Edit Displays') . "',
                 }";
             }

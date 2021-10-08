@@ -52,13 +52,17 @@ export default {
                 this.setLayoutAndFetch(layout.id);
             }
         }
-        let _this = this;
         window.addEventListener('popstate', () => {
             const url = document.location.pathname.split('/');
             let i = url.findIndex(e => e == 'blocks');
             if (i !== -1) {
-                _this.setTheme(url[i+1]);
-                _this.setLayoutAndFetch(url[i+2]);
+                this.setTheme(url[i+1]);
+            }
+            if (typeof url[i+2] != 'undefined') {
+                this.setLayoutAndFetch(url[i+2]);
+            } else {
+                layout = this.getDefaultLayout();
+                this.setLayoutAndFetch(layout.id);
             }
         });
     },

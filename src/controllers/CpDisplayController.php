@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\assets\DisplayAssets;
@@ -16,7 +15,7 @@ class CpDisplayController extends Controller
      * @param  int|null    $layout
      * @return Response
      */
-    public function actionIndex(?string $themeName = null, int $layout = null)
+    public function actionIndex(?string $themeName = null, int $layout = null, string $viewModeHandle = '')
     {
         $this->requirePermission('manageThemesDisplay');
         $themes = $this->registry->getNonPartials(false, true);
@@ -46,7 +45,8 @@ class CpDisplayController extends Controller
             'themes' => $themes,
             'theme' => $themeName,
             'allLayouts' => $this->layouts->getWithDisplays(),
-            'layout' => $layout ? $layout : 0
+            'layout' => $layout ? $layout : 0,
+            'viewModeHandle' => $viewModeHandle,
         ]);
     }
 }

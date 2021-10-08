@@ -9,6 +9,7 @@
             :themes="{{ themes|json_encode }}"
             :all-layouts="{{ allLayouts|json_encode }}"
             :current-layout="{{ layout }}"
+            :current-view-mode-handle="'{{ viewModeHandle }}'"
         />
     {% endif %}
 {% endblock %}

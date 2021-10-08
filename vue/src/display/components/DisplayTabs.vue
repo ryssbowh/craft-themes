@@ -3,37 +3,34 @@
         <ul>
             <li v-for="mode, index in viewModes" v-bind:key="index" :id="'tab-'+index">
                 <a :class="{'sel': viewMode.handle === mode.handle}" @click.prevent="">
-                    <span @click.prevent="setViewMode(index)">{{ mode.name }}</span>
-                    <span class="icon edit" @click.prevent="editViewMode(index)" :title="t('Edit View Mode')"></span>
-                    <span v-if="mode.handle != 'default'" class="icon delete" @click.prevent="deleteViewMode(index)"></span>
+                    <span @click.prevent="setViewMode(mode)">{{ mode.name }}</span>
+                    <span class="icon edit" @click.prevent="editViewMode(mode)" :title="t('Edit View Mode')"></span>
+                    <span v-if="mode.handle != 'default'" class="icon delete" @click.prevent="deleteViewMode(mode)"></span>
                 </a>
             </li>
             <li>
-                <a href="#" class="add-viewmode" @click.prevent="showModal = true" :title="t('Add View Mode')">
+                <a href="#" class="add-viewmode" @click.prevent="addViewMode" :title="t('Add View Mode')">
                     <span class="icon add"></span>
                 </a>
             </li>
         </ul>
-        <view-mode-modal :show-modal="showModal" :edit="edit" @closeModal="onCloseModal"/>
+        <view-mode-modal :show-modal="showModal" :editedViewMode="edited" @closeModal="onCloseModal"/>
     </nav>
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     computed: {
-        viewMode: function () {
-            return this.viewModes[this.viewModeIndex];
-        },
-        ...mapState(['viewModes', 'viewModeIndex'])
+        ...mapState(['viewModes', 'viewMode'])
     },
     props: {
     },
     data() {
         return {
             showModal: false,
-            edit: null
+            edited: null
         }
     },
     methods: {
@@ -41,12 +38,15 @@ export default {
             this.edit = null;
             this.showModal = false;
         },
-        editViewMode: function (index) {
-            this.edit = index;
+        addViewMode: function () {
+            this.edited = null;
             this.showModal = true;
         },
-        ...mapMutations(['setViewMode']),
-        ...mapActions(['deleteViewMode']),
+        editViewMode: function (viewMode) {
+            this.edited = viewMode;
+            this.showModal = true;
+        },
+        ...mapActions(['deleteViewMode', 'setViewMode'])
     }
 };
 </script>

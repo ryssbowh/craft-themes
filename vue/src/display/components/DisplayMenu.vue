@@ -20,7 +20,7 @@ export default {
             if (this.hasChanges && !confirm(this.t('You have unsaved changes, continue anyway ?'))) {
                 return;
             }
-            this.setLayout(id);
+            this.setLayout({layoutId: id});
         },
         ...mapActions(['setLayout']),
     }

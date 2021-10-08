@@ -16,13 +16,14 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
     computed: {
-        ...mapState(['theme', 'layouts', 'layout'])
+        ...mapState(['theme', 'layouts', 'layout', 'viewMode'])
     },
     props: {
         initialTheme: String,
         themes: Object,
         allLayouts: Object,
-        currentLayout: Number
+        currentLayout: Number,
+        currentViewModeHandle: String
     },
     created () {
         this.setAllLayouts(this.allLayouts);
@@ -30,23 +31,31 @@ export default {
             this.setTheme(this.initialTheme);
         }
         if (this.currentLayout) {
-            this.setLayout(this.currentLayout);
+            this.setLayout({layoutId: this.currentLayout, viewModeHandle: this.currentViewModeHandle});
         } else {
-            this.setLayout(this.layouts[0].id);
+            this.setLayout({layoutId: this.layouts[0].id});
         }
         window.addEventListener('popstate', () => {
             const url = document.location.pathname.split('/');
             let i = url.findIndex(e => e == 'display');
+            let viewModeHandle = '';
+            let layoutId;
             if (i === -1) {
                 return;
             }
             if (typeof url[i+1] != 'undefined' && url[i+1] != this.theme) {
                 this.setTheme(url[i+1]);
             }
-            if (typeof url[i+2] != 'undefined') {
-                this.setLayout(url[i+2]);
-            } else {
-                this.setLayout(this.layouts[0].id);
+            if (typeof url[i+2] != 'undefined' && url[i+2] != this.layout.id) {
+                layoutId = url[i+2];
+            }
+            if (typeof url[i+3] != 'undefined') {
+                viewModeHandle = url[i+3];
+            }
+            if (layoutId) {
+                this.setLayout({layoutId: url[i+2], viewModeHandle: viewModeHandle});
+            } else if (viewModeHandle) {
+                this.setViewModeByHandle(viewModeHandle);
             }
         });
     },
@@ -56,14 +65,14 @@ export default {
             this.setTheme(theme);
             for (let i in this.layouts) {
                 if (this.layouts[i].element === layoutElement) {
-                    this.setLayout(this.layouts[i].id);
+                    this.setLayout({layoutId: this.layouts[i].id});
                     return;
                 }
             }
-            this.setLayout(this.layouts[0].id);
+            this.setLayout({layoutId: this.layouts[0].id});
         },
         ...mapMutations(['setTheme', 'setAllLayouts']),
-        ...mapActions(['setLayout']),
+        ...mapActions(['setLayout', 'setViewModeByHandle']),
     }
 };
 </script>

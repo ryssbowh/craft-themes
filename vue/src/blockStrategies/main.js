@@ -66,7 +66,7 @@ document.addEventListener("register-block-strategy-components", function(e) {
             </div>
             <div class="field">
                 <div class="heading">
-                    <label>{{ t('Cache depends on view port') }}</label>
+                    <label>{{ t('Cache depends on view port (mobile, tablet or desktop)') }}</label>
                 </div>
                 <div class="input ltr">                 
                     <button type="button" :class="{lightswitch: true, on: block.options.cachePerViewport}" data-field="cachePerViewport">

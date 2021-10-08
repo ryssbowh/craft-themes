@@ -293,6 +293,7 @@ class Themes extends \craft\base\Plugin
                     'themes/display' => 'themes/cp-display',
                     'themes/display/<themeName:[\w-]+>' => 'themes/cp-display',
                     'themes/display/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-display',
+                    'themes/display/<themeName:[\w-]+>/<layout:\d+>/<viewModeHandle:[\w-]+>' => 'themes/cp-display',
 
                     'themes/ajax/blocks/save' => 'themes/cp-blocks-ajax/save-blocks',
                     'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-blocks-ajax/delete-layout',
