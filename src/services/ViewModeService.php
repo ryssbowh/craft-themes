@@ -91,7 +91,7 @@ class ViewModeService extends Service
             return false;
         }
 
-        if ($viewMode->layout->type == LayoutService::DEFAULT_HANDLE) {
+        if ($viewMode->layout->type == LayoutService::DEFAULT_HANDLE and $viewMode->handle != self::DEFAULT_HANDLE) {
             throw ViewModeException::defaultLayoutNoViewModes($viewMode->layout);
         }
 

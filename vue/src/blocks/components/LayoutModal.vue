@@ -1,7 +1,7 @@
 <template>
-    <div class="modal elementselectormodal modal-group" style="display:none" ref="modal">
+    <div class="modal elementselectormodal modal-layout" style="display:none" ref="modal">
         <div class="header">
-            <h3>{{ editedGroupUid ? t('Edit group') : t('Add group') }}</h3>
+            <h3>{{ editedLayoutUid ? t('Edit layout') : t('Create layout') }}</h3>
         </div>
         <div class="body">
             <div class="content">
@@ -41,33 +41,28 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import { filter } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import HandleGenerator from '../../HandleGenerator'
 
 export default {
     computed: {
-        editedGroup: function () {
-            for (let i in this.groups) {
-                if (this.groups[i].uid == this.editedGroupUid) {
-                    return this.groups[i];
+        editedLayout: function () {
+            for (let i in this.layouts) {
+                if (this.layouts[i].uid == this.editedLayoutUid) {
+                    return this.layouts[i];
                 }
             }
             return null;
         },
-        displays: function () {
-            return this.viewModes[this.viewModeIndex].displays;
-        },
-        groups: function () {
-            return this.displays.filter((d) => d.type == 'group');
+        customLayouts: function () {
+            return filter(this.layouts, (layout) => {return layout.type == 'custom'});
         },
         hasError: function () {
             return this.handleError || this.nameError;
         },
-        maxOrder: function () {
-            return this.displays[this.displays.length - 1].order ?? 0;
-        },
-        ...mapState(['viewModeIndex', 'viewModes', 'layout', 'showGroupModal', 'editedGroupUid'])
+        ...mapState(['layouts', 'showLayoutModal', 'editedLayoutUid', 'theme'])
     },
     data() {
         return {
@@ -80,16 +75,16 @@ export default {
         }
     },
     watch: {
-        showGroupModal: function () {
-            if (this.showGroupModal) {
+        showLayoutModal: function () {
+            if (this.showLayoutModal) {
                 this.modal.show();
             } else {
                 this.modal.hide();
             }
             this.updategenerator();
-            if (this.editedGroupUid) {
-                this.name = this.editedGroup.item.name;
-                this.handle = this.editedGroup.item.handle;
+            if (this.editedLayoutUid) {
+                this.name = this.editedLayout.name;
+                this.handle = this.editedLayout.elementUid;
             }
         }
     },
@@ -106,14 +101,14 @@ export default {
                 hideOnShadeClick: false,
                 autoShow: false
             });
-            this.handleGenerator = new HandleGenerator('.modal-group #name', '.modal-group #handle');
+            this.handleGenerator = new HandleGenerator('.modal-layout #name', '.modal-layout #handle');
             this.handleGenerator.callback = (value) => {
                 this.handle = value;
             };
             this.updategenerator();
         },
         updategenerator: function () {
-            if (this.editedGroupUid === null) {
+            if (this.editedLayoutUid === null) {
                 this.handleGenerator.startListening();
             } else {
                 this.handleGenerator.stopListening();
@@ -125,6 +120,9 @@ export default {
         },
         closeModal () {
             this.$emit('closeModal');
+            this.name = '';
+            this.handle = '';
+            this.removeErrors();
         },
         validateModal: function () {
             this.removeErrors();
@@ -134,8 +132,8 @@ export default {
             if (!this.handle.trim()) {
                 this.handleError = this.t('Handle is required');
             }
-            for (let i in this.groups) {
-                if (this.groups[i].uid != this.editedGroupUid && this.groups[i].item.handle == this.handle.trim()) {
+            for (let i in this.customLayouts) {
+                if (this.customLayouts[i].uid != this.editedLayoutUid && this.customLayouts[i].elementUid == this.handle.trim()) {
                     this.handleError = this.t('This handle is already defined');
                 }
             }
@@ -145,28 +143,23 @@ export default {
             if (this.hasError) {
                 return;
             }
-            if (this.editedGroupUid !== null) {
-                this.updateDisplay({uid: this.editedGroup.uid, data: {item: {name: this.name, handle: this.handle}}});
+            if (this.editedLayoutUid !== null) {
+                this.updateCustomLayout({name: this.name, elementUid: this.handle});
             } else {
-                this.addDisplay({
+                this.createLayout({
                     id: null,
-                    type: 'group',
+                    type: 'custom',
+                    themeHandle: this.theme,
                     uid: uuidv4(),
-                    order: this.maxOrder + 1,
-                    item: {
-                        name: this.name, 
-                        handle: this.handle,
-                        visuallyHidden: false,
-                        hidden: false,
-                        labelHidden: false,
-                        labelVisuallyHidden: false,
-                        displays: []
-                    }
+                    name: this.name,
+                    elementUid: this.handle,
+                    hasBlocks: true,
+                    description: this.t('Custom : {name}', {name: this.name})
                 });
             }
             this.closeModal();
         },
-        ...mapMutations(['updateDisplay', 'addDisplay'])
+        ...mapActions(['createLayout', 'updateCustomLayout'])
     },
     emits: ['closeModal'],
 };

@@ -263,6 +263,14 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getRegionsTemplate(): string
+    {
+        return 'regions';
+    }
+
+    /**
      * Get bundle assets for a url path
      * 
      * @param  string $urlPath

@@ -1,5 +1,4 @@
 /** global: Craft */
-/** global: Garnish */
 /**
  * Handle Generator
  */

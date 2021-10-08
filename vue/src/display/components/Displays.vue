@@ -5,7 +5,7 @@
         </div>
         <div class="flex title">
             <h2>{{ t('Displays') }}</h2>
-            <a href="#" @click.prevent="newGroup">{{ t('New group') }}</a>
+            <a href="#" @click.prevent="setShowGroupModal({show: true})">{{ t('New group') }}</a>
         </div>
         <div class="fullwidth display-table" v-if="rootDisplays.length">
             <div class="line head">
@@ -36,7 +36,7 @@
             {{ t('There are no displays for this layout') }}
         </p>
         <options-modal/>
-        <group-modal @closeModal="onCloseGroupModal"/>
+        <group-modal @closeModal="setShowGroupModal({show: false})"/>
     </div>
 </template>
 
@@ -101,12 +101,6 @@ export default {
                 // this.updateDisplay({uid: movedElem.uid, data: {order: newIndex}});
                 movedElem.order = newIndex;
             }
-        },
-        onCloseGroupModal: function () {
-            this.setShowGroupModal({show: false});
-        },
-        newGroup: function () {
-            this.setShowGroupModal({show: true});  
         },
         ...mapMutations(['updateDisplay', 'setShowGroupModal', 'addDisplay', 'removeDisplay']),
         ...mapActions(['checkChanges']),

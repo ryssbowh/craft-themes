@@ -102,4 +102,11 @@ interface ThemeInterface
      * @return bool
      */
     public function getHasPreview(): bool;
+
+    /**
+     * Get the base template for rendering regions
+     * 
+     * @return string
+     */
+    public function getRegionsTemplate(): string;
 }

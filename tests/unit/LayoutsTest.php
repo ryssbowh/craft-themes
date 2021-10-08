@@ -13,6 +13,7 @@ use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
+use Ryssbowh\CraftThemes\models\layouts\CustomLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\GlobalLayout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
@@ -103,6 +104,39 @@ class LayoutsTest extends Unit
         $layout = $this->layouts->get('child-theme', LayoutService::TAG_HANDLE, $group->uid);
         $this->assertNull($layout);
         $this->assertCount(7, $this->layouts->getForTheme('child-theme'));
+    }
+
+    public function testCustomLayouts()
+    {
+        $layout = $this->layouts->createCustom([
+            'name' => 'my-layout',
+            'elementUid' => 'my-layout',
+            'themeHandle' => 'child-theme'
+        ]);
+        $layout2 = $this->layouts->createCustom([
+            'name' => 'my-layout',
+            'elementUid' => 'my-layout',
+            'themeHandle' => 'parent-theme'
+        ]);
+        $layout3 = $this->layouts->createCustom([
+            'name' => 'my-layout',
+            'elementUid' => 'my-layout',
+            'themeHandle' => 'child-theme'
+        ]);
+        $this->assertInstanceOf(CustomLayout::class, $layout);
+        $this->assertTrue($this->layouts->save($layout));
+        $this->assertCount(25, $this->layouts->all());
+        $this->assertInstanceOf(CustomLayout::class, $this->layouts->getCustom('child-theme', 'my-layout'));
+        $this->assertTrue($this->layouts->save($layout2));
+        $this->assertCount(26, $this->layouts->all());
+        $this->assertInstanceOf(CustomLayout::class, $this->layouts->getCustom('parent-theme', 'my-layout'));
+        $this->assertFalse($this->layouts->save($layout3));
+        $this->assertTrue($this->layouts->deleteCustom($layout));
+        $this->assertCount(25, $this->layouts->all());
+        $this->assertTrue($this->layouts->deleteCustom($layout2));
+        $this->assertCount(24, $this->layouts->all());
+        $this->assertNull($this->layouts->getCustom('child-theme', 'my-layout'));
+        $this->assertNull($this->layouts->getCustom('parent-theme', 'my-layout'));
     }
 
     public function testUninstallTheme()

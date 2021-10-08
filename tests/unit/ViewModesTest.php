@@ -46,7 +46,7 @@ class ViewModesTest extends Unit
 
     public function testViewModesAreCreated()
     {
-        $this->assertCount(22, $this->viewModes->all());
+        $this->assertCount(24, $this->viewModes->all());
     }
 
     public function testUserLayoutHasDefaultViewMode()
@@ -58,15 +58,6 @@ class ViewModesTest extends Unit
         $this->assertInstanceOf(ViewMode::class, $viewModes[0]);
         $this->assertEquals($viewMode, $viewModes[0]);
         $this->assertEquals($viewMode->handle, ViewModeService::DEFAULT_HANDLE);
-    }
-
-    public function testDefaultLayoutDoesntHaveViewModes()
-    {
-        $layout = $this->layouts->get('child-theme', LayoutService::DEFAULT_HANDLE);
-        $viewMode = $this->viewModes->getDefault($layout);
-        $viewModes = $layout->viewModes;
-        $this->assertNull($viewMode);
-        $this->assertCount(0, $viewModes);
     }
 
     public function testCreatingViewModes()
@@ -81,7 +72,7 @@ class ViewModesTest extends Unit
         ]);
         $this->assertInstanceOf(ViewMode::class, $viewMode);
         $this->assertTrue($this->viewModes->save($viewMode));
-        $this->assertCount(23, $this->viewModes->all());
+        $this->assertCount(25, $this->viewModes->all());
         $this->assertCount(2, $layout->viewModes);
 
         $viewMode = $this->viewModes->create([
@@ -90,7 +81,7 @@ class ViewModesTest extends Unit
         ]);
         $layout->addViewMode($viewMode);
         $this->assertTrue($this->layouts->save($layout));
-        $this->assertCount(24, $this->viewModes->all());
+        $this->assertCount(26, $this->viewModes->all());
         $this->assertCount(3, $layout->viewModes);
 
         //Try saving duplicated view mode
@@ -118,7 +109,7 @@ class ViewModesTest extends Unit
         ]);
         $this->viewModes->save($viewMode);
         $this->assertTrue($this->viewModes->delete($viewMode));
-        $this->assertCount(22, $this->viewModes->all());
+        $this->assertCount(24, $this->viewModes->all());
         $this->assertCount(1, $layout->viewModes);
 
         $viewMode = $this->viewModes->create([

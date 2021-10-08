@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import BlocksToolbar from './components/BlocksToolbar.vue';
 import BlocksContext from './components/BlocksContext.vue';
+import LayoutModal from './components/LayoutModal'
 import Blocks from './components/Blocks.vue';
 import { store } from './stores/store.js';
 
@@ -12,6 +13,8 @@ const app = createApp({
     }
 });
 app.use(store);
+
+app.component('layout-modal', LayoutModal);
 
 let event = new CustomEvent("register-block-option-components", {detail: {}});
 document.dispatchEvent(event);

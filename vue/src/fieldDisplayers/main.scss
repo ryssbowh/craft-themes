@@ -6,7 +6,7 @@
 
 .displayers-config {
     position: relative;
-    height: 300px;
+    height: calc(100% - 2px);
     border-radius: 3px;
     border: 1px solid rgba(96, 125, 159, 0.25);
     background-clip: padding-box;

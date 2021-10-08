@@ -51,6 +51,7 @@
         />
       </div>
     </div>
+    <layout-modal @closeModal="setShowLayoutModal({show: false})"/>
   </div>
 </template>
 
@@ -100,7 +101,7 @@ export default {
         this.fetchProviders();
     },
     methods: {
-        ...mapMutations([]),
+        ...mapMutations(['setShowLayoutModal']),
         ...mapActions(['checkChanges', 'fetchProviders'])
     },
     components: {

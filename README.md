@@ -55,7 +55,7 @@ On Craft pro you can specify the setting 'HTML Email Template', this template wo
 
 The building of a page is based on the notion of layouts, regions, blocks, view modes and displays (or groups of displays).
 
-**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 7 types of layouts :
+**Layouts** are automatically created by the system as you create/delete entry types and anything that can have fields or urls, there are 8 types of layouts :
 
 | Layout type | Associated with | Can have blocks | Can have displays and view modes |
 |-------------|-----------------|-----------------|----------------------------------|
@@ -66,6 +66,9 @@ The building of a page is based on the notion of layouts, regions, blocks, view 
 | Tag         | Tag group       | No              | Yes                              |
 | User        | User            | No              | Yes                              |
 | Volume      | Volume          | No              | Yes                              |
+| Custom      |                 | Yes             | No                               |
+
+Custom layouts will have to be rendered manually in your templates.
 
 **Regions** they are defined by the theme itself, blocks can be assigned to them.
 

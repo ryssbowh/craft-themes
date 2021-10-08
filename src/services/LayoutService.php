@@ -9,8 +9,10 @@ use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\models\ViewMode;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
+use Ryssbowh\CraftThemes\models\layouts\CustomLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\GlobalLayout;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
@@ -18,6 +20,7 @@ use Ryssbowh\CraftThemes\models\layouts\TagLayout;
 use Ryssbowh\CraftThemes\models\layouts\UserLayout;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
+use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\elements\Category;
 use craft\elements\Entry;
@@ -42,6 +45,7 @@ class LayoutService extends Service
     const VOLUME_HANDLE = 'volume';
     const GLOBAL_HANDLE = 'global';
     const TAG_HANDLE = 'tag';
+    const CUSTOM_HANDLE = 'custom';
 
     /**
      * @var Collection
@@ -271,6 +275,18 @@ class LayoutService extends Service
     }
 
     /**
+     * Get a custom layout by handle
+     * 
+     * @param  string|ThemeInterface $theme
+     * @param  string                $handle
+     * @return ?CustomLayout
+     */
+    public function getCustom($theme, string $handle): ?CustomLayout
+    {
+        return $this->get($theme, self::CUSTOM_HANDLE, $handle);
+    }
+
+    /**
      * Save a layout
      * 
      * @param  LayoutInterface $layout
@@ -289,6 +305,13 @@ class LayoutService extends Service
         $existing = $this->get($layout->theme, $layout->type, $layout->elementUid ?? '');
         if ($existing and $existing->id != $layout->id) {
             throw LayoutException::alreadyExists($layout->theme, $layout->type, $layout->elementUid ?? '');
+        }
+
+        if (!$layout->hasViewMode(ViewModeService::DEFAULT_HANDLE)) {
+            $layout->addViewMode(new ViewMode([
+                'name' => \Craft::t('themes', 'Default'),
+                'handle' => ViewModeService::DEFAULT_HANDLE
+            ]));
         }
 
         $this->triggerEvent(self::EVENT_BEFORE_SAVE, new LayoutEvent([
@@ -359,6 +382,7 @@ class LayoutService extends Service
             $layout->elementUid = $data['elementUid'];
             $layout->themeHandle = $data['themeHandle'];
             $layout->hasBlocks = $data['hasBlocks'];
+            $layout->name = $data['name'];
             $res = $layout->save(false);
             
             $transaction->commit();
@@ -458,10 +482,10 @@ class LayoutService extends Service
      * Resolve current layout.
      * 
      * @param  string|ThemeInterface $theme
-     * @param  ?Element              $element
-     * @return LayoutInterface
+     * @param  Element              $element
+     * @return ?LayoutInterface
      */
-    public function resolveForRequest($theme, ?Element $element): LayoutInterface
+    public function resolveForRequest($theme, Element $element): ?LayoutInterface
     {
         $theme = $this->getThemeHandle($theme);
         $layout = null;
@@ -469,9 +493,6 @@ class LayoutService extends Service
             $layout = $this->get($theme, self::CATEGORY_HANDLE, $element->getGroup()->uid);
         } elseif ($element instanceof Entry) {
             $layout = $this->get($theme, self::ENTRY_HANDLE, $element->getType()->uid);
-        }
-        if (!$layout) {
-            $layout = $this->getDefault($theme);
         }
         return $layout;
     }
@@ -520,6 +541,9 @@ class LayoutService extends Service
             case self::DEFAULT_HANDLE:
                 $layout = new Layout;
                 break;
+            case self::CUSTOM_HANDLE:
+                $layout = new CustomLayout;
+                break;
             case self::CATEGORY_HANDLE:
                 $layout = new CategoryLayout;
                 break;
@@ -545,6 +569,29 @@ class LayoutService extends Service
         $config = array_intersect_key($config, array_flip($layout->safeAttributes()));
         $layout->setAttributes($config);
         return $layout;
+    }
+
+    /**
+     * Create a custom layout
+     * 
+     * @param  array  $data
+     * @return CustomLayout
+     */
+    public function createCustom(array $data): CustomLayout
+    {
+        $data['type'] = self::CUSTOM_HANDLE;
+        return $this->create($data);
+    }
+
+    /**
+     * Delete a custom layout
+     * 
+     * @param  CustomLayout $layout
+     * @return bool
+     */
+    public function deleteCustom(CustomLayout $layout): bool
+    {
+        return $this->delete($layout);
     }
 
     /**
@@ -618,7 +665,8 @@ class LayoutService extends Service
             ...$this->createEntryLayouts($themeHandle),
             ...$this->createVolumesLayouts($themeHandle),
             ...$this->createGlobalsLayouts($themeHandle),
-            ...$this->createTagsLayouts($themeHandle)
+            ...$this->createTagsLayouts($themeHandle),
+            ...$this->getCustomLayouts($themeHandle)
         ];
     }
 
@@ -630,21 +678,26 @@ class LayoutService extends Service
      */
     protected function installLayoutData(LayoutInterface $layout): bool
     {
-        //Creating default view mode, except for default layout :
-        if ($layout->type == self::DEFAULT_HANDLE) {
-            $layout->viewModes = [];
-        } else if (!$layout->viewModes) {
+        //Creating default view mode
+        if (!$layout->hasViewMode(ViewModeService::DEFAULT_HANDLE)) {
             $viewMode = $this->viewModesService()->create([
                 'handle' => ViewModeService::DEFAULT_HANDLE,
-                'name' => \Craft::t('themes', 'Default'),
-                'layout' => $layout
+                'name' => \Craft::t('themes', 'Default')
             ]);
-            $layout->viewModes = [$viewMode];
+            $layout->addViewMode($viewMode);
         }
         foreach ($layout->viewModes as $viewMode) {
             $viewMode->displays = $this->displayService()->createViewModeDisplays($viewMode);
         }
         return $this->save($layout);
+    }
+
+    protected function getCustomLayouts(string $themeHandle): array
+    {
+        return $this->all()
+            ->where('type', self::CUSTOM_HANDLE)
+            ->where('themeHandle', $themeHandle)
+            ->all();
     }
 
     /**

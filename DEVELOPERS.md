@@ -16,7 +16,7 @@ The following twig variables are deprecated and will be removed in a future vers
 ### Inheritance
 
 Themes can extend each other with the method `getExtends(): string` of their main class.  
-Parent themes will be installed automatically when installing a theme in the backend.
+Parent themes will be installed automatically when installing a theme in the backend, just make sure they are required in the composer.json of the child theme.
 
 ### Assets (images, fonts etc)
 
@@ -90,6 +90,32 @@ Templates are created by the system automatically, their types as mentionned in 
 - Tag groups : `tag` or `LayoutService::TAG_HANDLE`
 - Users : `user` or `LayoutService::USER_HANDLE`
 - Volumes : `volume` or `LayoutService::VOLUME_HANDLE`
+- Custom : `custom` or `LayoutService::CUSTOM_HANDLE`
+
+### Custom layouts
+
+You can add a custom programmaticaly layout by doing :
+
+```
+$layout = Themes::$plugin->layouts->createCustom([
+    'name' => 'My Layout',
+    'elementUid' => 'handle',
+    'themeHandle' => 'theme-handle'
+]);
+Themes::$plugin->layouts->save($layout);
+```
+Render it :
+```
+{% set layout = craft.themes.layouts.getCustom(craft.themes.current, 'handle') %}
+{{ layout.renderRegions()|raw }}
+
+```
+And delete it :
+```
+Themes::$plugin->layouts->deleteCustom($layout);
+
+```
+To render the content block for a custom template, follow the block template precedence described below.
 
 ## Blocks
 
@@ -285,6 +311,15 @@ Templates are inherited, so if you call a template that isn't defined in your th
 
 Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
+### Layouts
+
+There are two ways to render layouts, regions or displays. The method `Layout::render(Element $element, string $viewMode)` will render the displays, the other `$layout->renderRegions()` the regions.
+
+Rendering the regions will call a special template defined by the theme in `ThemePlugin::getRegionsTemplate()`, by default this equals `regions`.
+
+You can set any templates to your category groups and sections, if a layout matches for that request, the layout associated will be added to the variables. In your template you simply need to call `{{ layout.renderRegions()|raw }}`
+
+
 If you have a layout of type `entry` for an entry type `blog` and a view mode `default`, the layout templates will take this precedence :
 
 ```
@@ -293,6 +328,8 @@ layouts/entry/blog.twig
 layouts/entry.twig
 layouts/layout.twig
 ```
+### Regions
+
 If you have a region `header` for a layout of type `entry` for an entry type `blog`, the region templates will take this precedence :
 ```
 regions/entry/blog/region-header.twig
@@ -302,6 +339,17 @@ regions/entry/region.twig
 regions/region-header.twig
 regions/region.twig
 ```
+If you have a region `header` for a custom layout of handle `my-layout`, the region templates will take this precedence :
+```
+regions/custom/my-layout/region-header.twig
+regions/custom/my-layout/region.twig
+regions/custom/region-header.twig
+regions/custom/region.twig
+regions/region-header.twig
+regions/region.twig
+```
+### Blocks
+
 If you have a block `latestBlogs` of a provider `system` for a layout of type `entry` for an entry type `blog` situated in a region `header`, the block templates will take this precedence :
 ```
 blocks/entry/blog/header/system_latestBlogs.twig
@@ -309,7 +357,9 @@ blocks/entry/blog/system_latestBlogs.twig
 blocks/entry/system_latestBlogs.twig
 blocks/system_latestBlogs.twig
 ```
-If you have a field displayer `reactor` for a field `content` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the field templates will take this precedence :
+### Fields
+
+If you have a field displayer `redactor` for a field `content` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the field templates will take this precedence :
 ```
 fields/entry/blog/small/redactor-content.twig
 fields/entry/blog/small/redactor.twig
@@ -320,6 +370,8 @@ fields/entry/redactor.twig
 fields/redactor-content.twig
 fields/redactor.twig
 ```
+### Groups
+
 If you have a group `left` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the group templates will take this precedence :
 ```
 groups/entry/blog/small/group-left.twig
@@ -331,6 +383,8 @@ groups/entry/group.twig
 groups/group-left.twig
 groups/group.twig
 ```
+### Assets
+
 If you have a file displayer `image` for a field `topImage` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the asset templates will take this precedence :
 ```
 files/entry/blog/small/image-topImage.twig

@@ -48,6 +48,12 @@ class Layout extends Model implements LayoutInterface
     public $uid;
 
     /**
+     * Only used for custom layouts
+     * @var string
+     */
+    public $name;
+
+    /**
      * @var string
      */
     protected $_type = LayoutService::DEFAULT_HANDLE;
@@ -80,19 +86,50 @@ class Layout extends Model implements LayoutInterface
     {
         return [
             [['themeHandle'], 'required'],
-            [['themeHandle', 'elementUid'], 'string'],
+            [['themeHandle', 'elementUid', 'name'], 'string'],
             ['hasBlocks', 'boolean', 'trueValue' => true, 'falseValue' => false],
             [['uid', 'id', 'element'], 'safe'],
-            ['themeHandle', function () {
-                if (!Themes::$plugin->registry->hasTheme($this->themeHandle)) {
-                    $this->addError('themeHandle', \Craft::t('themes', 'Theme ' . $this->themeHandle . ' doesn\'t exist'));
-                } else {
-                    if ($this->theme->isPartial()) {
-                        $this->addError('themeHandle', \Craft::t('themes', 'Layouts can\'t be added to partial themes'));
-                    }
-                }
-            }]
+            ['themeHandle', 'validateThemeHandle'],
+            ['elementUid', 'validateElementUid']
         ];
+    }
+
+    /**
+     * Validates themeHandle attribute
+     */
+    public function validateThemeHandle()
+    {
+        if (!Themes::$plugin->registry->hasTheme($this->themeHandle)) {
+            $this->addError('themeHandle', \Craft::t('themes', 'Theme ' . $this->themeHandle . ' doesn\'t exist'));
+        } else {
+            if ($this->theme->isPartial()) {
+                $this->addError('themeHandle', \Craft::t('themes', 'Layouts can\'t be added to partial themes'));
+            }
+        }
+    }
+
+    /**
+     * Validates elementUid attribute
+     */
+    public function validateElementUid()
+    {
+        if ($this->type == LayoutService::CUSTOM_HANDLE) {
+            foreach (Themes::$plugin->layouts->all() as $layout) {
+                if ($layout->id != $this->id and $layout->elementUid == $this->elementUid and $layout->themeHandle == $this->themeHandle) {
+                    $this->addError('elementUid', \Craft::t('themes', 'Handle "' . $this->elementUid . '" already exists'));
+                }
+            }
+        }
+    }
+
+    /**
+     * Is custom getter
+     * 
+     * @return bool
+     */
+    public function getIsCustom(): bool
+    {
+        return false;
     }
 
     /**
@@ -106,10 +143,9 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function eagerLoadFields(Element $element, string $viewMode)
+    public function eagerLoadFields(Element $element, ViewModeInterface $viewMode)
     {
         $with = [];
-        $viewMode = $this->getViewMode($viewMode);
         foreach ($viewMode->getVisibleDisplays() as $display) {
             $with = array_merge($with, $display->item->eagerLoad());
         }
@@ -165,6 +201,7 @@ class Layout extends Model implements LayoutInterface
     {
         return [
             'themeHandle' => $this->themeHandle,
+            'name' => $this->name,
             'type' => $this->type,
             'elementUid' => $this->elementUid,
             'hasBlocks' => (bool)$this->hasBlocks
@@ -377,6 +414,14 @@ class Layout extends Model implements LayoutInterface
     public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string
     {
         return Themes::$plugin->view->renderLayout($this, $viewMode, $element);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renderRegions(): string
+    {
+        return Themes::$plugin->view->renderLayout($this, ViewModeService::DEFAULT_HANDLE, null, LayoutInterface::RENDER_MODE_REGIONS);
     }
 
     /**

@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep, isEqual, merge, filter } from 'lodash';
 
 function handleError(err) {
     if (err.response) {
@@ -42,14 +42,21 @@ const store = createStore({
             originalBlocks: [],
             layouts: [],
             layout: {},
+            originalLayout: {},
             allLayouts: {},
             regions: {},
             hasChanged: false,
             blockOptionId: null,
-            cacheStrategies: {}
+            cacheStrategies: {},
+            showLayoutModal: false,
+            editedLayoutUid: null
         }
     },
     mutations: {
+        setShowLayoutModal(state, {show, editUid = null}) {
+            state.showLayoutModal = show;
+            state.editedLayoutUid = editUid;  
+        },
         setProviders(state, value) {
             state.providers = value;
         },
@@ -95,24 +102,41 @@ const store = createStore({
                 state.blocks[i].index = i;
             }
         },
+        addLayout(state, layout) {
+            state.layouts.push(layout);
+        },
+        deleteLayout(state, uid) {
+            state.layouts = filter(state.layouts, (layout) => layout.uid != uid);
+        },
         updateLayout(state, layout) {
             for (let i in state.layouts) {
-                if (state.layouts[i].id == layout.id) {
+                if (state.layouts[i].uid == layout.uid) {
                     state.layouts[i] = layout;
+                    break;
                 }
             }
+        },
+        updateCustomLayout(state, data) {
+            state.layout = merge(state.layout, data);
+            state.originalLayout = {...state.layouts};
         },
         setLayouts(state, value) {
             state.layouts = value;
         },
         setLayout(state, id) {
+            state.isCopying = false;
+            if (typeof id == 'object') {
+                state.layout = id;
+                state.originalLayout = {...id};
+                return;
+            }
             for (let i in state.layouts) {
                 if (state.layouts[i].id == id) {
                     state.layout = state.layouts[i];
+                    state.originalLayout = {...state.layouts[i]};
+                    return;
                 }
             }
-            setWindowUrl(state.theme, id);
-            state.isCopying = false;
         },
         setAllLayouts(state, value) {
             state.allLayouts = value;
@@ -133,20 +157,32 @@ const store = createStore({
     actions: {
         save({commit, state}) {
             commit('setIsSaving', true);
+            let data = {blocks: sanitizeBlocks(state.blocks), layout: state.layout.id, theme: state.theme};
+            let isNew = false;
+            if (state.layout.type == 'custom') {
+                data.custom = state.layout;
+                isNew = state.layout.id == null;
+            }
             axios({
                 method: 'post',
                 url: Craft.getCpUrl('themes/ajax/blocks/save'),
-                data: {blocks: sanitizeBlocks(state.blocks), layout: state.layout.id, theme: state.theme},
+                data: data,
                 headers: {'X-CSRF-Token': Craft.csrfTokenValue}
             })
             .then(res => {
-                commit('setOriginals', res.data.blocks);
-                commit('setBlocks', cloneDeep(res.data.blocks));
-                commit('setHasChanged', false);
                 if (state.isCopying) {
-                    commit('updateLayout', res.data.layout);
                     commit('setIsCopying', false);
                 }
+                if (isNew) {
+                    commit('addLayout', res.data.layout);
+                    setWindowUrl(state.theme, res.data.layout.id);
+                } else {
+                    commit('updateLayout', res.data.layout);
+                }
+                commit('setOriginals', res.data.blocks);
+                commit('setBlocks', cloneDeep(res.data.blocks));
+                commit('setLayout', res.data.layout);
+                commit('setHasChanged', false);
                 Craft.cp.displayNotice(res.data.message);
             })
             .catch(err => {
@@ -167,6 +203,7 @@ const store = createStore({
                 blocks[i].dateUpdated = null;
             }
             commit('setBlocks', blocks);
+            commit('setOriginals', []);
         },
         fetchBlocks({state, commit}) {
             let data = {};
@@ -186,7 +223,7 @@ const store = createStore({
         },
         checkChanges({state, commit}) {
             let res = false;
-            if (!isEqual(state.originalOptions, state.options) || state.originalBlocks.length !== state.blocks.length) {
+            if (!isEqual(state.originalLayout, state.layout) || state.originalBlocks.length !== state.blocks.length) {
                 res = true;
             } else {
                 outer:
@@ -221,8 +258,9 @@ const store = createStore({
                 commit('setIsFetching', {key: 'providers', value: false});
             });
         },
-        setLayoutAndFetch({dispatch, commit}, id) {
+        setLayoutAndFetch({dispatch, commit, state}, id) {
             commit('setLayout', id);
+            setWindowUrl(state.theme, id);
             dispatch('fetchBlocks');
         },
         setThemeAndFetch({state, commit, dispatch}, theme) {
@@ -232,6 +270,7 @@ const store = createStore({
                 layout = state.layouts[id];
                 if (layout.type == 'default') {
                     commit('setLayout', layout.id);
+                    setWindowUrl(state.theme, layout.id);
                     dispatch('fetchBlocks');
                     return;
                 }
@@ -239,25 +278,36 @@ const store = createStore({
         },
         copyLayout({state, commit, dispatch}, id) {
             commit('setLayout', id);
+            setWindowUrl(state.theme, id);
             commit('setIsCopying', true);
             commit('setHasChanged', true);
             dispatch('resetBlocks', state.blocks);
+        },
+        createLayout({state, commit, dispatch}, layout) {
+            commit('setLayout', layout);
+            commit('setIsCopying', true);
+            dispatch('resetBlocks', state.blocks);
+            dispatch('checkChanges');
+        },
+        updateCustomLayout({commit, dispatch}, data) {
+            commit('updateCustomLayout', data);
+            dispatch('checkChanges');
         },
         deleteLayout({state, commit, dispatch}) {
             let data = {};
             data[Craft.csrfTokenName] = Craft.csrfTokenValue;
             commit('setIsFetching', {key: 'blocks', value: true});
+            let isCustom = state.layout.type == 'custom';
             return axios.post(Craft.getCpUrl('themes/ajax/layouts/delete/'+state.layout.id), data)
             .then((response) => {
                 Craft.cp.displayNotice(response.data.message);
-                commit('updateLayout', response.data.layout);
-                let layout;
-                for (let id in state.layouts) {
-                    layout = state.layouts[id];
-                    if (layout.type == 'default') {
-                        return dispatch('setLayoutAndFetch', layout.id);
-                    }
+                if (isCustom) {
+                    commit('deleteLayout', state.layout.uid);
+                } else {
+                    commit('updateLayout', response.data.layout);
                 }
+                let layout = filter(state.layouts, (layout) => {return layout.type == 'default'})[0];
+                return dispatch('setLayoutAndFetch', layout.id);
             })
             .catch((err) => {
                 handleError(err);

@@ -24,7 +24,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import { filter, sortBy, forEach } from 'lodash';
+import { filter, sortBy } from 'lodash';
 import Block from './Block.vue';
 import Draggable from 'vuedraggable';
 
@@ -43,7 +43,6 @@ export default {
   methods: {
     changed: function (evt) {
       let newIndex;
-      let element;
       let block;
       let blocks;
       if (evt.added) {

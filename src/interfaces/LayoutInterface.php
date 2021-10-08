@@ -8,6 +8,9 @@ use craft\models\FieldLayout;
 
 interface LayoutInterface
 {
+    const RENDER_MODE_DISPLAYS = 'displays';
+    const RENDER_MODE_REGIONS = 'regions';
+
     /**
      * Type getter
      * 
@@ -18,10 +21,10 @@ interface LayoutInterface
     /**
      * Eager load layout fields
      * 
-     * @param Element $element
-     * @param string  $viewMode
+     * @param Element            $element
+     * @param ViewModeInterface  $viewMode
      */
-    public function eagerLoadFields(Element $element, string $viewMode);
+    public function eagerLoadFields(Element $element, ViewModeInterface $viewMode);
 
     /**
      * Can this layout be assigned blocks

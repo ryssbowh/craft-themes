@@ -9,12 +9,6 @@
         </head>
     {% endblock %}
     {% block body %}
-        <body class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
-            {% block regions %}
-                {% for region in layout.regions %}
-                    {{ region.render()|raw }}
-                {% endfor %}
-            {% endblock %}
-        </body>
+        {{ layout.renderRegions()|raw }}
     {% endblock %}
 </html>

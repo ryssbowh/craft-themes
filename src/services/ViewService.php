@@ -76,9 +76,14 @@ class ViewService extends Service
     protected $_renderingElement;
 
     /**
+     * Rendering layout mode
+     * @var ?Element
+     */
+    protected $_renderingMode;
+
+    /**
      * Handle current page rendering.
-     * If a theme is set and the section of the element being rendered is set to 'themed_page'
-     * then we'll look for the theme layout for that section and add it to the template variables.
+     * If a theme is set then we'll look for the theme layout for that request and add it to the template variables.
      * 
      * @param TemplateEvent $event
      */
@@ -89,21 +94,21 @@ class ViewService extends Service
             return;
         }
         $element = \Craft::$app->urlManager->getMatchedElement();
-        $layout = Themes::$plugin->layouts->resolveForRequest($theme, $element);
-        $viewMode = $layout->getViewMode('default');
-        if ($this->eagerLoad and $element) {
-            $layout->eagerLoadFields($element, $viewMode->handle);
+        if (!$element) {
+            //No matched element for that request
+            return;
         }
-        $this->_renderingLayout = $layout;
-        $this->_renderingViewMode = $viewMode;
+        $layout = Themes::$plugin->layouts->resolveForRequest($theme, $element);
+        if (!$layout) {
+            //No layouts have been found for that request
+            return;
+        }
         $this->_renderingElement = $element;
-        $variables = $this->getTemplateVariables([
-            'classes' => new ClassBag($theme->preferences->getLayoutClasses($layout)),
-            'attributes' => new AttributeBag($theme->preferences->getLayoutAttributes($layout)),
-            'visibleDisplays' => $viewMode->visibleDisplays
+        $layout->eagerLoadFields($element, $layout->getViewMode(ViewModeService::DEFAULT_HANDLE));
+        $event->variables = array_merge($event->variables, [
+            'layout' => $layout,
+            'element' => $element
         ]);
-        $event2 = $this->triggerRenderingEvent(self::BEFORE_RENDERING_LAYOUT, [], $variables);
-        $event->variables = array_merge($event->variables, $event2->variables);
     }
 
     /**
@@ -301,37 +306,49 @@ class ViewService extends Service
      * @param  Element         $element
      * @return string
      */
-    public function renderLayout(LayoutInterface $layout, string $viewMode, Element $element): string
+    public function renderLayout(LayoutInterface $layout, string $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): string
     {
-        if ($this->eagerLoad) {
+        $viewMode = $layout->getViewMode($viewMode);
+        if ($this->eagerLoad and $element) {
             $layout->eagerLoadFields($element, $viewMode);
         }
         $theme = $this->themesRegistry()->current;
-        $viewMode = $layout->getViewMode($viewMode);
         $oldLayout = $this->renderingLayout;
         $oldViewMode = $this->renderingViewMode;
         $oldElement = $this->renderingElement;
+        $oldMode = $this->renderingMode;
         $this->_renderingLayout = $layout;
         $this->_renderingViewMode = $viewMode;
-        $this->_renderingElement = $element;
+        $this->_renderingMode = $mode;
+        if ($element) {
+            $this->_renderingElement = $element;
+        }
         $machineName = $layout->getElementMachineName();
         $type = $layout->type;
-        $templates = [
-            'layouts/' . $type . '/' . $machineName . '/' . $viewMode->handle,
-            'layouts/' . $type . '/' . $machineName,
-            'layouts/' . $type . '/layout',
-            'layouts/' . $type,
-            'layouts/layout'
-        ];
         $variables = $this->getTemplateVariables([
             'classes' => new ClassBag($theme->preferences->getLayoutClasses($layout, true)),
             'attributes' => new AttributeBag($theme->preferences->getLayoutAttributes($layout, true)),
-            'visibleDisplays' => $viewMode->visibleDisplays
+            'visibleDisplays' => $viewMode->visibleDisplays,
+            'regions' => $layout->regions
         ]);
+        if ($mode == LayoutInterface::RENDER_MODE_DISPLAYS) {
+            $templates = [
+                'layouts/' . $type . '/' . $machineName . '/' . $viewMode->handle,
+                'layouts/' . $type . '/' . $machineName,
+                'layouts/' . $type . '/layout',
+                'layouts/' . $type,
+                'layouts/layout'
+            ];
+        } else {
+            $templates = [
+                $theme->getRegionsTemplate()
+            ];
+        }
         $html = $this->render(self::BEFORE_RENDERING_LAYOUT, $templates, $variables);
         $this->_renderingLayout = $oldLayout;
         $this->_renderingViewMode = $oldViewMode;
         $this->_renderingElement = $oldElement;
+        $this->_renderingMode = $oldMode;
         return $html;
     }
 
@@ -373,6 +390,16 @@ class ViewService extends Service
     public function getRenderingElement(): ?Element
     {
         return $this->_renderingElement;
+    }
+
+    /**
+     * Get the current rendering layout mode
+     * 
+     * @return ?string
+     */
+    public function getRenderingMode(): ?string
+    {
+        return $this->_renderingMode;
     }
 
     /**

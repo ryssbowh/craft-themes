@@ -49,12 +49,16 @@ class CpBlocksAjaxController extends Controller
     public function actionDeleteLayout(int $id): array
     {
         $layout = $this->layouts->getById($id);
-        $layout->hasBlocks = false;
-        $layout->blocks = [];
-        $this->layouts->save($layout);
+        if ($layout->isCustom) {
+            $this->layouts->deleteCustom($layout);
+        } else {
+            $layout->hasBlocks = false;
+            $layout->blocks = [];
+            $this->layouts->save($layout);
+        }
 
         return [
-            'message' => \Craft::t('themes', 'Layout\'s blocks deleted successfully.'),
+            'message' => \Craft::t('themes', 'Layout deleted successfully.'),
             'layout' => $layout
         ];
     }
@@ -82,9 +86,19 @@ class CpBlocksAjaxController extends Controller
     {
         $_this = $this;
         $blocksData = $this->request->getRequiredParam('blocks');
-        $layoutId = $this->request->getRequiredParam('layout');
+        $layoutId = $this->request->getParam('layout');
+        $customData = $this->request->getParam('custom');
+        if (!$layoutId) {
+            $layout = $this->layouts->createCustom($customData);
+        } else {
+            $layout = $this->layouts->getById($layoutId);
+        }
 
-        $layout = $this->layouts->getById($layoutId);
+        if ($customData and $layout->type == LayoutService::CUSTOM_HANDLE) {
+            $layout->name = $customData['name'];
+            $layout->elementUid = $customData['elementUid'];
+        }
+
         $blocks = array_map(function ($blockData) use ($_this, $layout) {
             $blockData['layout'] = $layout;
             return $_this->blocks->create($blockData);

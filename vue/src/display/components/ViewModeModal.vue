@@ -42,8 +42,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import Modal from '../modal';
-import HandleGenerator from '../HandleGenerator'
+import HandleGenerator from '../../HandleGenerator'
 
 export default {
     computed: {
@@ -96,7 +95,7 @@ export default {
     },
     methods: {
         createModal: function () {
-            this.popup = new Modal(this.$refs.modal, {
+            this.popup = new Garnish.Modal(this.$refs.modal, {
                 hideOnEsc: false,
                 hideOnShadeClick: false,
                 autoShow: false
@@ -163,5 +162,15 @@ export default {
 <style lang="scss" scoped>
 input[disabled] {
     background: rgba(230, 230, 230, 0.7);
+}
+.modal {
+    padding-bottom: 62px;
+    min-width: 300px;
+    min-height: 300px;
+    height: 307px;
+    width: 300px;
+    .body {
+        height: calc(100% - 65px);
+    }
 }
 </style>

@@ -17,7 +17,7 @@ export default {
     },
     methods: {
         confirmAndChangeLayout: function (id) {
-            if (this.hasChanges && !confirm(this.t('You have unchanged changes, continue anyway ?'))) {
+            if (this.hasChanges && !confirm(this.t('You have unsaved changes, continue anyway ?'))) {
                 return;
             }
             this.setLayout(id);

@@ -21,7 +21,6 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex';
-import Modal from '../modal';
 import { merge } from 'lodash';
 
 export default {
@@ -36,26 +35,24 @@ export default {
     },
     data() {
         return {
-            popup: null
+            modal: null
         }
     },
     watch: {
         showOptionsModal: function () {
             if (this.showOptionsModal) {
-                this.popup.show();
+                this.modal.show();
             } else {
-                this.popup.hide();
+                this.modal.hide();
                 this.resetDisplayerOptions();
             }
         },
     },
     beforeUnmount () {
-        if (this.popup) {
-            this.popup.destroy();
-        }
+        this.modal.destroy();
     },
     mounted: function () {
-        this.popup = new Modal(this.$refs.modal, {
+        this.modal = new Garnish.Modal(this.$refs.modal, {
             hideOnEsc: false,
             hideOnShadeClick: false,
             autoShow: false
@@ -93,8 +90,18 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.options-modal .body {
-    overflow-y: auto;
-    max-height: calc(100vh - 65px);
+.options-modal {
+    padding-bottom: 62px;
+    min-width: 300px;
+    min-height: 300px;
+    height: 40%;
+    width: 30%;
+    &.displayer-asset_render_file {
+        height: 66%;
+        width: 50%;
+    }
+    .body {
+        height: calc(100% - 65px);
+    }
 }
 </style>

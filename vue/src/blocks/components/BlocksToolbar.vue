@@ -1,16 +1,20 @@
 <template>
   <div id="action-buttons" class="flex">
     <div class="btngroup submit">
-      <button href="#" class="btn submit menubtn" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
+      <button href="#" class="btn submit menubtn" ref="menu" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
       <div class="menu" data-align="right">
         <ul>
           <li v-for="elem, index in layoutsWithoutBlocks" v-bind:key="index">
               <a href="#" @click.prevent="checkAndCopy(elem)">{{ elem.description }}</a>
           </li>
+          <li>
+              <a href="#" @click.prevent="setShowLayoutModal({show: true})">{{ t('Create custom') }}</a>
+          </li>
         </ul>
       </div>
     </div>
-    <button href="#" class="btn submit" v-if="!isCopying && layout.type!='default'" @click.prevent="checkAndDelete">{{ t('Delete', {}, 'app') }}</button>
+    <button href="#" class="btn submit" v-if="!isCopying && layout.type != 'default'" @click.prevent="checkAndDelete">{{ t('Delete', {}, 'app') }}</button>
+    <button href="#" class="btn submit" v-if="layout.type == 'custom' && layout.id" @click.prevent="setShowLayoutModal({show: true, editUid: layout.uid})">{{ t('Edit', {}, 'app') }}</button>
     <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
   </div>
 </template>
@@ -27,7 +31,7 @@ export default {
             }, false);
         },
         canCopy: function () {
-            return (!this.isSaving && !this.isLoading);
+            return (!this.isSaving && !this.isLoading && this.layout.id);
         },
         layoutsWithoutBlocks: function () {
             return this.layouts.filter(layout => !layout.hasBlocks);
@@ -38,28 +42,25 @@ export default {
         ...mapState(['isSaving', 'hasChanged', 'isFetching', 'availableLayouts', 'layouts', 'isCopying', 'layout'])
     },
     methods: {
-        confirmAndSave: function (extra) {
-            if (confirm(this.t('This will replace the blocks defined in those pages, continue anyway ?'))) {
-                this.save(extra);
-            }
-        },
         checkAndCopy: function(layout) {
             if (this.hasChanged) {
                 if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                    this.copyLayout(layout.id);
-                    Craft.cp.displayNotice(this.t('Blocks are copied, you only need to save'));
+                    this.copy(layout.id);
                 }
             } else {
-                this.copyLayout(layout.id);
-                Craft.cp.displayNotice(this.t('Blocks are copied, you only need to save'));
+                this.copy(layout.id);
             }
         },
+        copy(id) {
+            this.copyLayout(id);
+            Craft.cp.displayNotice(this.t('Blocks are copied, make your changes and save'));
+        },
         checkAndDelete() {
-            if (confirm(this.t('Are you sure you want to delete all blocks in this layout ?'))) {
+            if (confirm(this.t('Are you sure you want to delete this layout ?'))) {
                 this.deleteLayout();
             }
         },
-        ...mapMutations([]),
+        ...mapMutations(['setShowLayoutModal']),
         ...mapActions(['save', 'copyLayout', 'deleteLayout'])
     }
 };
