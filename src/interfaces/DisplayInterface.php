@@ -4,6 +4,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Element;
 
+/**
+ * A display is assigned to a view mode, it has an `item` which can be a field or a group
+ */
 interface DisplayInterface 
 {
     /**

@@ -114,7 +114,7 @@ class LayoutService extends Service
     /**
      * Get all layouts for a theme
      * 
-     * @param  string|ThemeInterface $theme
+     * @param  string|ThemeInterface $theme theme instance or theme handle
      * @param  bool|null $withHasDisplays
      * @param  bool|null $withHasBlocks
      * @return array
@@ -194,7 +194,7 @@ class LayoutService extends Service
      */
     public function installThemeData(ThemeInterface $theme): bool
     {
-        if ($theme->isPartial()) {
+        if (!Themes::$plugin->is(Themes::EDITION_PRO) or $theme->isPartial()) {
             return false;
         }
         $ids = [];
@@ -231,7 +231,7 @@ class LayoutService extends Service
     /**
      * Get default layout for a theme
      * 
-     * @param  string|ThemeInterface  $theme
+     * @param  string|ThemeInterface  $theme theme instance or theme handle
      * @return ?LayoutInterface
      */
     public function getDefault($theme): ?LayoutInterface
@@ -242,7 +242,7 @@ class LayoutService extends Service
     /**
      * Get a layout
      * 
-     * @param  string|ThemeInterface $theme
+     * @param  string|ThemeInterface $theme theme instance or theme handle
      * @param  string                $elementUid
      * @param  string                $type
      * @param  boolean               $loadBlocks
@@ -260,7 +260,7 @@ class LayoutService extends Service
     /**
      * Returns all layouts for a type
      * 
-     * @param  string|ThemeInterface $theme
+     * @param  string|ThemeInterface $theme theme instance or theme handle
      * @param  string                $type
      * @return array
      */
@@ -277,7 +277,7 @@ class LayoutService extends Service
     /**
      * Get a custom layout by handle
      * 
-     * @param  string|ThemeInterface $theme
+     * @param  string|ThemeInterface $theme theme instance or theme handle
      * @param  string                $handle
      * @return ?CustomLayout
      */
@@ -481,7 +481,7 @@ class LayoutService extends Service
     /**
      * Resolve current layout.
      * 
-     * @param  string|ThemeInterface $theme
+     * @param  string|ThemeInterface $theme theme instance or theme handle
      * @param  Element              $element
      * @return ?LayoutInterface
      */
@@ -500,7 +500,7 @@ class LayoutService extends Service
     /**
      * Get theme handle from a theme parameter
      * 
-     * @param  string|ThemeInterface $theme
+     * @param  string|ThemeInterface $theme theme instance or theme handle
      * @throws ThemeException
      * @return string
      */

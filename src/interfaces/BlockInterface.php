@@ -3,10 +3,11 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use craft\base\Model;
-use craft\base\Element;
 
+/**
+ * Defines a block. Blocks are defined by providers, they can have various options
+ * and can be assigned to theme's regions.
+ */
 interface BlockInterface
 {
     /**
@@ -39,9 +40,9 @@ interface BlockInterface
     /**
      * Get options model
      * 
-     * @return BlockOptions
+     * @return BlockOptionsInterface
      */
-    public function getOptions(): BlockOptions;
+    public function getOptions(): BlockOptionsInterface;
 
     /**
      * Options setter
@@ -60,9 +61,9 @@ interface BlockInterface
     /**
      * Model that defines this block's options 
      * 
-     * @return BlockOptions
+     * @return BlockOptionsInterface
      */
-    public function getOptionsModel(): BlockOptions;
+    public function getOptionsModel(): BlockOptionsInterface;
 
     /**
      * Get layout object

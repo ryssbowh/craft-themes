@@ -24,7 +24,7 @@ class RegisterBlockCacheStrategies extends Event
     }
 
     /**
-     * Add a strategy
+     * Add a strategy, will replace strategies with same handle
      * 
      * @param BlockCacheStrategyInterface $strategy
      */

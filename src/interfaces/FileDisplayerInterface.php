@@ -4,15 +4,18 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Model;
 
+/**
+ * A file displayer renders an asset. It can handle several file kinds
+ */
 interface FileDisplayerInterface
 {
     /**
-     * File kind targets.
+     * Which file kind this displayer can handle.
      * 
      * array[string] or
      * '*' for all asset kinds
      * 
-     * @return array[string]|string
+     * @return array|string
      */
     public static function getKindTargets();
 
@@ -52,6 +55,8 @@ interface FileDisplayerInterface
     public function setDisplayer(FieldDisplayerInterface $displayer);
 
     /**
+     * Displayer getter
+     * 
      * @return FieldDisplayerInterface
      */
     public function getDisplayer(): FieldDisplayerInterface;

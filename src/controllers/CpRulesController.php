@@ -5,7 +5,11 @@ namespace Ryssbowh\CraftThemes\controllers;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\RulesAssets;
 use Ryssbowh\CraftThemes\services\RulesService;
+use craft\web\Response;
 
+/**
+ * Controller for actions related to rules
+ */
 class CpRulesController extends Controller
 {
     /**

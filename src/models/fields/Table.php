@@ -10,6 +10,9 @@ use craft\base\Field as BaseField;
 use craft\fields\Table as CraftTable;
 use craft\helpers\StringHelper;
 
+/**
+ * Handles a Craft table field
+ */
 class Table extends CraftField
 {
     private $_fields;

@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
 
+/**
+ * The field TagTitle is added to all tag group layouts automatically
+ */
 class TagTitle extends Field
 {
     /**

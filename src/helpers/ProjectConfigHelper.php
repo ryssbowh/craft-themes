@@ -5,6 +5,9 @@ use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 
+/**
+ * Helper to ensure some project config changes are applied before others
+ */
 class ProjectConfigHelper
 {
     private static $_processedDisplays = false;

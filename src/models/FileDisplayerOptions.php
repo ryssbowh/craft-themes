@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use craft\base\Model;
 
+/**
+ * Base class for all file displayers options
+ */
 class FileDisplayerOptions extends Model
 {
     /**

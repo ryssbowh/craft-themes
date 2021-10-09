@@ -20,6 +20,9 @@ use craft\base\Element;
 use craft\base\Model;
 use craft\models\FieldLayout;
 
+/**
+ * The default layout
+ */
 class Layout extends Model implements LayoutInterface
 {
     /**

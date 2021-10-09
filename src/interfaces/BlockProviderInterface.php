@@ -2,6 +2,9 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
+/**
+ * A block provider, can define several blocks. Their blocks can be modified through events.
+ */
 interface BlockProviderInterface 
 {
     const REGISTER_BLOCKS = 'register_blocks';

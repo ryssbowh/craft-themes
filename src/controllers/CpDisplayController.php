@@ -4,6 +4,9 @@ namespace Ryssbowh\CraftThemes\controllers;
 use Ryssbowh\CraftThemes\assets\DisplayAssets;
 use Ryssbowh\CraftThemes\events\RegisterBundles;
 
+/**
+ * Controller for actions related to displays
+ */
 class CpDisplayController extends Controller
 {
     const REGISTER_ASSET_BUNDLES = 'register_asset_bundles';
@@ -13,6 +16,7 @@ class CpDisplayController extends Controller
      * 
      * @param  string|null $themeName
      * @param  int|null    $layout
+     * @param  string      $viewModeHandle
      * @return Response
      */
     public function actionIndex(?string $themeName = null, int $layout = null, string $viewModeHandle = '')

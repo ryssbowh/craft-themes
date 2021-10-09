@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use craft\base\Model;
 
@@ -90,12 +91,15 @@ class Settings extends Model
      */
     public function getRedirectToOptions(): array
     {
-        return [
-            ['value' => 'list', 'label' => \Craft::t('themes', 'Themes')],
-            ['value' => 'blocks', 'label' => \Craft::t('themes', 'Blocks')],
+        $values = [
             ['value' => 'display', 'label' => \Craft::t('themes', 'Display')],
             ['value' =>'rules', 'label' => \Craft::t('themes', 'Rules')],
         ];
+        if (Themes::$plugin->is(Themes::EDITION_PRO)) {
+            $values[] = ['value' => 'list', 'label' => \Craft::t('themes', 'Themes')];
+            $values[] = ['value' => 'blocks', 'label' => \Craft::t('themes', 'Blocks')];
+        }
+        return $values;
     }
 
     /**

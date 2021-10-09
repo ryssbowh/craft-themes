@@ -29,9 +29,4 @@ class FieldRecord extends ActiveRecord
         }
         return $values;
     }
-
-    public function getDisplay()
-    {
-        return $this->hasOne(DisplayRecord::className(), ['id' => 'display_id']);
-    }
 }

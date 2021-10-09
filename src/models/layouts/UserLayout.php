@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\User;
 use craft\models\FieldLayout;
 
+/**
+ * A layout associated to the user layout and a theme
+ */
 class UserLayout extends Layout
 {
     use ElementLayoutTrait;

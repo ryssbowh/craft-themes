@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -18,6 +17,9 @@ class BlockUserOptions extends BlockOptions
      */
     public $viewMode;
 
+    /**
+     * @inheritDoc
+     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

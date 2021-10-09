@@ -1,11 +1,10 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockGlobalOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\GlobalSet;
@@ -49,7 +48,7 @@ class GlobalBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptions
+    public function getOptionsModel(): BlockOptionsInterface
     {
         return new BlockGlobalOptions;
     }
@@ -78,9 +77,9 @@ class GlobalBlock extends Block
     /**
      * Get global set as defined in options
      * 
-     * @return GlobalSet
+     * @return ?GlobalSet
      */
-    public function getGlobalSet(): GlobalSet
+    public function getGlobalSet(): ?GlobalSet
     {
         if ($this->_global === false) {
             $this->_global = GlobalSet::find()->uid($this->options->set)->one();

@@ -4,6 +4,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Element;
 
+/**
+ * Regions are defined by themes, and are assigned to layouts. They can have blocks.
+ */
 interface RegionInterface
 {
     /**

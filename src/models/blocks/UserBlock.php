@@ -1,11 +1,10 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockUserOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\User;
@@ -49,7 +48,7 @@ class UserBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptions
+    public function getOptionsModel(): BlockOptionsInterface
     {
         return new BlockUserOptions;
     }
@@ -57,9 +56,9 @@ class UserBlock extends Block
     /**
      * Get layout associated to user defined in options
      * 
-     * @return LayoutInterface
+     * @return ?LayoutInterface
      */
-    public function getUserLayout(): LayoutInterface
+    public function getUserLayout(): ?LayoutInterface
     {
         return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::USER_HANDLE);
     }

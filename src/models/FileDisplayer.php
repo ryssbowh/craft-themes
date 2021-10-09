@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use Ryssbowh\CraftThemes\models\fileDisplayerOptions\NoOptions;
 use craft\base\Model;
 
+/**
+ * Base class for all file displayers
+ */
 abstract class FileDisplayer extends Model implements FileDisplayerInterface
 {
     /**

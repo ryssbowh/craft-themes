@@ -10,19 +10,4 @@ class DisplayRecord extends ActiveRecord
     {
         return '{{%themes_displays}}';
     }
-
-    public function getViewMode()
-    {
-        return $this->hasOne(ViewModeRecord::className(), ['id' => 'viewMode_id']);
-    }
-
-    public function getField()
-    {
-        return $this->hasOne(FieldRecord::className(), ['display_id' => 'id']);
-    }
-
-    public function getGroup()
-    {
-        return $this->hasOne(GroupRecord::className(), ['display_id' => 'id']);
-    }
 }

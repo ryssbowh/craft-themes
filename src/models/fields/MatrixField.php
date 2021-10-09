@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 
+/**
+ * Handles a field inside a matrix block
+ */
 class MatrixField extends CraftField
 {
     /**

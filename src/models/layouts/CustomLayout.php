@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
+/**
+ * Custom layout, defined by the user
+ */
 class CustomLayout extends Layout
 {
     /**

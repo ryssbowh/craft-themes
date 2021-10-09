@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -13,6 +12,9 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 use craft\base\Element;
 use craft\base\Model;
 
+/**
+ * Base class for all blocks
+ */
 abstract class Block extends Model implements BlockInterface
 {
     /**
@@ -230,7 +232,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function getOptions(): BlockOptions
+    public function getOptions(): BlockOptionsInterface
     {
         if ($this->_optionsModel === null) {
             $this->_optionsModel = $this->getOptionsModel();
@@ -267,7 +269,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptions
+    public function getOptionsModel(): BlockOptionsInterface
     {
         return new BlockOptions;
     }

@@ -103,6 +103,7 @@ class ViewService extends Service
             //No layouts have been found for that request
             return;
         }
+        \Craft::info('Found layout "' . $layout->description . '" (id: ' . $layout->id . ')', __METHOD__);
         $this->_renderingElement = $element;
         $layout->eagerLoadFields($element, $layout->getViewMode(ViewModeService::DEFAULT_HANDLE));
         $event->variables = array_merge($event->variables, [

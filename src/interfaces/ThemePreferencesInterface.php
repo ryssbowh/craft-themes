@@ -4,6 +4,11 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\elements\Asset;
 
+/**
+ * Each theme define some preferences which control the classes and attributes
+ * of the page elements when they are rendered.
+ * Those elements are : Layout, Block, Region, File, Field and Groups
+ */
 interface ThemePreferencesInterface 
 {
     /**

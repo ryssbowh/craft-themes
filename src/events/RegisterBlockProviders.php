@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use Ryssbowh\CraftThemes\models\SystemBlockProvider;
+use Ryssbowh\CraftThemes\blockProviders\SystemBlockProvider;
 use yii\base\Event;
 
 class RegisterBlockProviders extends Event

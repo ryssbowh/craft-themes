@@ -10,6 +10,9 @@ use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 
+/**
+ * The field Title is added to all entry types, category groups and volume layouts automatically
+ */
 class Title extends Field
 {
     /**

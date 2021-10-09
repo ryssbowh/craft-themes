@@ -1,11 +1,10 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockEntryOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Entry;
@@ -49,7 +48,7 @@ class EntryBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptions
+    public function getOptionsModel(): BlockOptionsInterface
     {
         return new BlockEntryOptions;
     }
@@ -91,9 +90,9 @@ class EntryBlock extends Block
     /**
      * Get layout associated to entry defined in options
      * 
-     * @return LayoutInterface
+     * @return ?LayoutInterface
      */
-    public function getEntryLayout(): LayoutInterface
+    public function getEntryLayout(): ?LayoutInterface
     {
         return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::ENTRY_HANDLE, $this->options->type);
     }

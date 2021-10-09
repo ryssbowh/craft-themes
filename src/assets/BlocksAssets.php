@@ -1,13 +1,18 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\assets;
 
 use craft\web\assets\cp\CpAsset;
 
 class BlocksAssets extends ThemesBaseAssets
 {
+    /**
+     * @inheritDoc
+     */
     public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
+    /**
+     * @inheritDoc
+     */
     public $js = [
         'blockOptions.js',
         'blockStrategies.js',
@@ -15,6 +20,9 @@ class BlocksAssets extends ThemesBaseAssets
         'blocks.js',
     ];
 
+    /**
+     * @inheritDoc
+     */
     public $depends = [
         CpAsset::class,
         JquerySerializeJSON::class

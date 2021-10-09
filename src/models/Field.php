@@ -14,6 +14,9 @@ use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
 use craft\base\Field as BaseField;
 
+/**
+ * Base class for all fields
+ */
 abstract class Field extends DisplayItem implements FieldInterface
 {
     /**

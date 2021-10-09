@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\assets;
 
 use craft\web\assets\cp\CpAsset;

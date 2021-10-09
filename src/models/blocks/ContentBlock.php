@@ -1,9 +1,12 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
 
+/**
+ * Special block to handle the content of the page. 
+ * It's content will be the current page layout's displays
+ */
 class ContentBlock extends Block
 {
     /**

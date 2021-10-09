@@ -7,15 +7,18 @@
 - Pro version
 - Theme list
 - Theme plugins can define a preview image
+- View port rule
 - Layouts (pro)
 - View modes (pro)
 - Regions (pro)
 - Blocks (pro)
 - Field displayers (pro)
 - File displayers (pro)
-- View port rule
 - Asset bundle can be registered as regex
 - Themes can be set for CP requests
+
+### Changed
+- Rules have their own section in CP
 
 ### Deprecated
 - Twig variable `themesRegistry`

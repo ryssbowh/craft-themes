@@ -2,7 +2,7 @@
 
 ## Update from 2.0 breaking changes :
 
-- Main plugin class must inherit `Ryssbowh\CraftThemes\models\ThemePlugin`
+- Main plugin class must inherit `Ryssbowh\CraftThemes\base\ThemePlugin`
 
 ### Deprecated
 
@@ -149,7 +149,7 @@ An exception will be thrown if you register 2 blocks with the same handle within
 
 ### Defining new blocks
 
-New block classes must extends the `Block` class. You can override the `getOptionsModel` method to define more options, this method must return an instance that extends the `BlockOptions` class.
+New block classes must extends the `Block` class. You can override the `getOptionsModel` method to define more options, this method must return an instance that implements `BlockOptionsInterface`.
 
 To hook in the backend Vue system, register a js file with a bundle :
 ```

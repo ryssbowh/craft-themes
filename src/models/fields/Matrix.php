@@ -15,6 +15,9 @@ use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 use craft\fields\Matrix as CraftMatrix;
 
+/**
+ * Handles a Craft matrix field
+ */
 class Matrix extends CraftField implements MatrixInterface
 {
     private $_types;

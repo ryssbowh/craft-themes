@@ -1,6 +1,5 @@
-<?php 
-
-namespace Ryssbowh\CraftThemes\blockCache;
+<?php
+namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
@@ -8,8 +7,14 @@ use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use craft\base\Component;
 use yii\caching\TagDependency;
 
+/**
+ * Base class for all block cache strategies
+ */
 abstract class BlockCacheStrategy extends Component implements BlockCacheStrategyInterface
 {
+    /**
+     * @var BlockCacheStrategyOptions
+     */
     protected $_options;
 
     /**
@@ -51,6 +56,7 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
      */
     public function flush()
     {
+        \Craft::$app->cache->delete($this->getTag());
         TagDependency::invalidate(\Craft::$app->cache, $this->getTag());
     }
 

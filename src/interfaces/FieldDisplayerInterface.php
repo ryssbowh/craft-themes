@@ -4,6 +4,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Model;
 
+/**
+ * A displayer renders one and one only type of field, it can have options.
+ */
 interface FieldDisplayerInterface
 {
     /**

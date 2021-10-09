@@ -1,9 +1,11 @@
-<?php 
-
-namespace Ryssbowh\CraftThemes\models;
+<?php
+namespace Ryssbowh\CraftThemes\models\blockCacheOptions;
 
 use craft\base\Model;
 
+/**
+ * Base class for all block cache strategies options
+ */
 class BlockCacheStrategyOptions extends Model
 {
     /**

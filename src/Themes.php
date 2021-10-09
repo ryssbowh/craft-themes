@@ -28,8 +28,14 @@ use craft\web\twig\variables\CraftVariable;
 use yii\base\Application;
 use yii\base\Event;
 
+/**
+ * Main plugin class
+ */
 class Themes extends \craft\base\Plugin
 {   
+    const EDITION_LITE = 'lite';
+    const EDITION_PRO = 'pro';
+
     /**
      * @var Themes
      */
@@ -63,14 +69,25 @@ class Themes extends \craft\base\Plugin
         \Craft::setAlias('@themesWeb', '@web/themes');
 
         $this->registerServices();
-        $this->registerBehaviors();
+        
         $this->registerPermissions();
         $this->registerClearCacheEvent();
-        $this->registerProjectConfig();
         $this->registerPluginsEvents();
-        $this->registerCraftEvents();
         $this->registerTwigVariables();
-        $this->registerShortcuts();
+        $this->registerSwitchEdition();
+
+        if ($this->is($this::EDITION_PRO)) {
+            $this->registerBehaviors();
+            $this->registerShortcuts();
+            $this->registerProjectConfig();
+            $this->registerCraftEvents();
+
+            Event::on(
+                View::class, 
+                View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+                [$this->view, 'beforeRenderPage']
+            );
+        }
 
         Event::on(
             Application::class, 
@@ -82,17 +99,23 @@ class Themes extends \craft\base\Plugin
             View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
             [$this->registry, 'registerCurrentThemeTemplates']
         );
-        Event::on(
-            View::class, 
-            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            [$this->view, 'beforeRenderPage']
-        );
 
         if (Craft::$app->request->getIsCpRequest()) {
             $this->registerCpRoutes();
         }
 
         \Craft::info('Loaded themes plugin', __METHOD__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function editions(): array
+    {
+        return [
+            self::EDITION_LITE,
+            self::EDITION_PRO,
+        ];
     }
 
     /**
@@ -112,13 +135,14 @@ class Themes extends \craft\base\Plugin
         ];
         if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
             $user = \Craft::$app->user;
-            if ($user->checkPermission('manageThemesBlocks')) {
+            $isPro = $this->is($this::EDITION_PRO);
+            if ($isPro and $user->checkPermission('manageThemesBlocks')) {
                 $item['subnav']['themes-blocks'] = [
                     'url' => 'themes/blocks',
                     'label' => \Craft::t('themes', 'Blocks'),
                 ];
             }
-            if ($user->checkPermission('manageThemesDisplay')) {
+            if ($isPro and $user->checkPermission('manageThemesDisplay')) {
                 $item['subnav']['themes-display'] = [
                     'url' => 'themes/display',
                     'label' => \Craft::t('themes', 'Display'),
@@ -134,6 +158,9 @@ class Themes extends \craft\base\Plugin
         return $item;
     }
 
+    /**
+     * Register front end shortcuts
+     */
     protected function registerShortcuts()
     {
         if ($this->getSettings()->showShortcuts and
@@ -171,7 +198,8 @@ class Themes extends \craft\base\Plugin
         return Craft::$app->view->renderTemplate(
             'themes/cp/settings',
             [
-                'settings' => $this->getSettings()
+                'settings' => $this->getSettings(),
+                'isPro' => $this->is($this::EDITION_PRO)
             ]
         );
     }
@@ -201,7 +229,7 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Registers plugins related events
+     * Registers to plugins related events
      */
     protected function registerPluginsEvents()
     {
@@ -287,30 +315,34 @@ class Themes extends \craft\base\Plugin
                 $event->rules = array_merge($event->rules, [
                     'themes/rules' => 'themes/cp-rules',
                     'themes/save-rules' => 'themes/cp-rules/save',
-                    'themes/blocks' => 'themes/cp-blocks',
-                    'themes/blocks/<themeName:[\w-]+>' => 'themes/cp-blocks',
-                    'themes/blocks/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-blocks',
-                    'themes/display' => 'themes/cp-display',
-                    'themes/display/<themeName:[\w-]+>' => 'themes/cp-display',
-                    'themes/display/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-display',
-                    'themes/display/<themeName:[\w-]+>/<layout:\d+>/<viewModeHandle:[\w-]+>' => 'themes/cp-display',
-
-                    'themes/ajax/blocks/save' => 'themes/cp-blocks-ajax/save-blocks',
-                    'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-blocks-ajax/delete-layout',
-                    'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-blocks-ajax/blocks',
-                    'themes/ajax/block-providers' => 'themes/cp-blocks-ajax/block-providers',
-
-                    'themes/ajax/validate-field-options' => 'themes/cp-display-ajax/validate-field-options',
-                    'themes/ajax/install' => 'themes/cp-ajax/install',
-                    'themes/ajax/entries/<uid:[\w-]+>' => 'themes/cp-ajax/entries',
-                    'themes/ajax/categories/<uid:[\w-]+>' => 'themes/cp-ajax/categories',
-                    'themes/ajax/users' => 'themes/cp-ajax/users',
-
-                    'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
-                    'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
-                    'themes/ajax/view-modes/save' => 'themes/cp-view-modes-ajax/save',
-                    'themes/ajax/view-modes' => 'themes/cp-view-modes-ajax/get'
                 ]);
+                if ($this->is($this::EDITION_PRO)) {
+                    $event->rules = array_merge($event->rules, [
+                        'themes/blocks' => 'themes/cp-blocks',
+                        'themes/blocks/<themeName:[\w-]+>' => 'themes/cp-blocks',
+                        'themes/blocks/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-blocks',
+                        'themes/display' => 'themes/cp-display',
+                        'themes/display/<themeName:[\w-]+>' => 'themes/cp-display',
+                        'themes/display/<themeName:[\w-]+>/<layout:\d+>' => 'themes/cp-display',
+                        'themes/display/<themeName:[\w-]+>/<layout:\d+>/<viewModeHandle:[\w-]+>' => 'themes/cp-display',
+
+                        'themes/ajax/blocks/save' => 'themes/cp-blocks-ajax/save-blocks',
+                        'themes/ajax/layouts/delete/<id:\d+>' => 'themes/cp-blocks-ajax/delete-layout',
+                        'themes/ajax/blocks/<layout:\d+>' => 'themes/cp-blocks-ajax/blocks',
+                        'themes/ajax/block-providers' => 'themes/cp-blocks-ajax/block-providers',
+
+                        'themes/ajax/validate-field-options' => 'themes/cp-display-ajax/validate-field-options',
+                        'themes/ajax/install' => 'themes/cp-ajax/install',
+                        'themes/ajax/entries/<uid:[\w-]+>' => 'themes/cp-ajax/entries',
+                        'themes/ajax/categories/<uid:[\w-]+>' => 'themes/cp-ajax/categories',
+                        'themes/ajax/users' => 'themes/cp-ajax/users',
+
+                        'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
+                        'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
+                        'themes/ajax/view-modes/save' => 'themes/cp-view-modes-ajax/save',
+                        'themes/ajax/view-modes' => 'themes/cp-view-modes-ajax/get'
+                    ]);
+                }
             }
         });
     }
@@ -332,7 +364,7 @@ class Themes extends \craft\base\Plugin
                 'setConsole' => $this->getSettings()->setConsole,
                 'cp' => $this->getSettings()->cp,
                 'setCp' => $this->getSettings()->setCp,
-                'mobileDetect' => new MobileDetect()
+                'mobileDetect' => new MobileDetect(),
             ],
             'shortcuts' => ShortcutsService::class,
             'layouts' => LayoutService::class,
@@ -362,18 +394,11 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Clear cache event subscription
+     * Registers Clear cache options
      */
     protected function registerClearCacheEvent()
     {
         Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS, function (RegisterCacheOptionsEvent $event) {
-            $event->options[] = [
-                'key' => 'themes-template-cache',
-                'label' => Craft::t('themes', 'Themes templates'),
-                'action' => function() {
-                    Themes::$plugin->view->flushTemplateCache();
-                }
-            ];
             $event->options[] = [
                 'key' => 'themes-rules-cache',
                 'label' => Craft::t('themes', 'Themes rules'),
@@ -381,18 +406,39 @@ class Themes extends \craft\base\Plugin
                     Themes::$plugin->rules->flushCache();
                 }
             ];
-            $event->options[] = [
-                'key' => 'themes-block-cache',
-                'label' => Craft::t('themes', 'Themes blocks'),
-                'action' => function() {
-                    Themes::$plugin->blockCache->flush();
-                }
-            ];
+            if ($this->is($this::EDITION_PRO)) {
+                $event->options[] = [
+                    'key' => 'themes-template-cache',
+                    'label' => Craft::t('themes', 'Themes templates'),
+                    'action' => function() {
+                        Themes::$plugin->view->flushTemplateCache();
+                    }
+                ];
+                $event->options[] = [
+                    'key' => 'themes-block-cache',
+                    'label' => Craft::t('themes', 'Themes blocks'),
+                    'action' => function() {
+                        Themes::$plugin->blockCache->flush();
+                    }
+                ];
+            }
         });
     }
 
     /**
-     * Listens to Entries/Categories/Volumes/Tags/Globals/Fields deletions and additions
+     * Registers to edition change event. Installs all layouts if edition is pro
+     */
+    protected function registerSwitchEdition()
+    {
+        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) {
+            if ($e->newValue == Themes::EDITION_PRO) {
+                Themes::$plugin->layouts->install();
+            }
+        });
+    }
+
+    /**
+     * Registers to Entry types, Category groups, Volumes, Tag sets, Global sets, User layouts and Fields deletions/additions events
      */
     protected function registerCraftEvents()
     {
@@ -453,9 +499,6 @@ class Themes extends \craft\base\Plugin
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
             Themes::$plugin->displays->onCraftFieldSaved($e);
         });
-        // Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD, function (FieldEvent $e) {
-        //     Themes::$plugin->displays->onCraftFieldDeleted($e);
-        // });
     }
 
     /**
@@ -493,6 +536,9 @@ class Themes extends \craft\base\Plugin
         });
     }
 
+    /**
+     * Registers permissions
+     */
     protected function registerPermissions()
     {
         if (\Craft::$app->getEdition() !== \Craft::Solo) {
@@ -500,20 +546,25 @@ class Themes extends \craft\base\Plugin
                 UserPermissions::class,
                 UserPermissions::EVENT_REGISTER_PERMISSIONS,
                 function (RegisterUserPermissionsEvent $event) {
-                    $event->permissions[\Craft::t('themes', 'Themes')] = [
-                        'manageThemesBlocks' => [
-                            'label' => \Craft::t('themes', 'Manage blocks')
-                        ],
-                        'manageThemesDisplay' => [
-                            'label' => \Craft::t('themes', 'Manage display')
-                        ],
+                    $perms = [
                         'manageThemesRules' => [
                             'label' => \Craft::t('themes', 'Manage rules')
-                        ],
-                        'viewThemesShortcuts' => [
-                            'label' => \Craft::t('themes', 'View frontend shortcuts')
                         ]
                     ];
+                    if ($this->is($this::EDITION_PRO)) {
+                        $perms = array_merge($perms, [
+                            'manageThemesBlocks' => [
+                                'label' => \Craft::t('themes', 'Manage blocks')
+                            ],
+                            'manageThemesDisplay' => [
+                                'label' => \Craft::t('themes', 'Manage display')
+                            ],
+                            'viewThemesShortcuts' => [
+                                'label' => \Craft::t('themes', 'View frontend shortcuts')
+                            ]
+                        ]);
+                    }
+                    $event->permissions[\Craft::t('themes', 'Themes')] = $perms;
                 }
             );
         }

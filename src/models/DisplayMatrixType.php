@@ -7,6 +7,9 @@ use craft\base\Model;
 use craft\helpers\StringHelper;
 use craft\models\MatrixBlockType;
 
+/**
+ * Class that handles a block type inside a matrix
+ */
 class DisplayMatrixType extends Model
 {
     /**

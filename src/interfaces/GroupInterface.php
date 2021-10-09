@@ -1,6 +1,9 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+/**
+ * A group is a type of item, it can contains several displays
+ */
 interface GroupInterface
 {
     /**

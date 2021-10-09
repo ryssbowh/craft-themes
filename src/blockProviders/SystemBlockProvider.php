@@ -1,7 +1,7 @@
-<?php 
+<?php
+namespace Ryssbowh\CraftThemes\blockProviders;
 
-namespace Ryssbowh\CraftThemes\models;
-
+use Ryssbowh\CraftThemes\base\BlockProvider;
 use Ryssbowh\CraftThemes\models\blocks\CategoryBlock;
 use Ryssbowh\CraftThemes\models\blocks\ContentBlock;
 use Ryssbowh\CraftThemes\models\blocks\CurrentUserBlock;
@@ -13,6 +13,9 @@ use Ryssbowh\CraftThemes\models\blocks\TemplateBlock;
 use Ryssbowh\CraftThemes\models\blocks\TwigBlock;
 use Ryssbowh\CraftThemes\models\blocks\UserBlock;
 
+/**
+ * Provides default system blocks
+ */
 class SystemBlockProvider extends BlockProvider
 {
     /**

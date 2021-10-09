@@ -9,6 +9,9 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use craft\base\Model;
 
+/**
+ * Base class for all items
+ */
 abstract class DisplayItem extends Model implements DisplayItemInterface
 {
     /**

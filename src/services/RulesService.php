@@ -4,7 +4,6 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\i18n\Locale;

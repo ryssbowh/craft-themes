@@ -9,6 +9,9 @@ use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\User;
 
+/**
+ * Controller for various ajax actions
+ */
 class CpAjaxController extends Controller
 {
     /**

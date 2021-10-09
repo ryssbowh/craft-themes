@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\DisplayException;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 
+/**
+ * Controller for ajax actions related to displays
+ */
 class CpDisplayAjaxController extends Controller
 {
     /**

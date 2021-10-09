@@ -39,7 +39,7 @@ class MatrixService extends Service
      * 
      * @param  MatrixBlockType $type
      * @param  Matrix          $matrix
-     * @return array[FieldInterface]
+     * @return array
      */
     public function getForMatrixType(MatrixBlockType $type, Matrix $matrix): array
     {

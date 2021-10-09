@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -37,7 +36,7 @@ class BlockEntryOptions extends BlockOptions
     /**
      * Saving the entry option field after save as it's not included in project config
      * 
-     * @param  BlockInterface $block
+     * @param BlockInterface $block
      */
     public function afterSave(BlockInterface $block)
     {

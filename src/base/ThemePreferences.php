@@ -1,5 +1,5 @@
 <?php
-namespace Ryssbowh\CraftThemes\models;
+namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
@@ -15,6 +15,9 @@ use Ryssbowh\CraftThemes\services\ViewService;
 use craft\base\Component;
 use craft\elements\Asset;
 
+/**
+ * Default class for all theme preferences
+ */
 class ThemePreferences extends Component implements ThemePreferencesInterface
 {
     /**

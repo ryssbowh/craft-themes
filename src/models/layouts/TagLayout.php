@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
+/**
+ * A layout associated to a tag group and a theme
+ */
 class TagLayout extends Layout
 {
     use ElementLayoutTrait;

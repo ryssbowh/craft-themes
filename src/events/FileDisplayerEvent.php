@@ -111,7 +111,7 @@ class FileDisplayerEvent extends Event
     /**
      * Register many displayer classes
      * 
-     * @param  array[string] $displayers
+     * @param  array  $displayers
      * @param  bool   $replaceIfExisting
      * @throws FileDisplayerException
      */

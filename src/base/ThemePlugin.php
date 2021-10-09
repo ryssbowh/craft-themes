@@ -1,17 +1,17 @@
-<?php 
-
-namespace Ryssbowh\CraftThemes\models;
+<?php
+namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemePreferencesInterface;
-use Ryssbowh\CraftThemes\models\PageLayout;
-use Ryssbowh\CraftThemes\models\ThemePreferences;
 use craft\base\Plugin;
 use yii\base\ArrayableTrait;
 
+/**
+ * Base class for all themes
+ */
 abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
     use ArrayableTrait;
@@ -94,14 +94,6 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      * @inheritDoc
      */
     public function getExtends(): ?string
-    {
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function contentBlockRegion(): ?string
     {
         return null;
     }
@@ -257,7 +249,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     {
         $file = glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null;
         if (!$file) {
-            $file = \Yii::getAlias('@Ryssbowh/CraftThemes/assets/no-preview.png');
+            $file = \Yii::getAlias('@Ryssbowh/CraftThemes/assets/images/no-preview.png');
         }
         return \Craft::$app->view->assetManager->getPublishedUrl($file, true);
     }

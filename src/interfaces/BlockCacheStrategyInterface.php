@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use yii\caching\TagDependency;
 
+/**
+ * A cache strategy will cache a block differently according to various options
+ */
 interface BlockCacheStrategyInterface
 {
     /**
@@ -33,7 +36,7 @@ interface BlockCacheStrategyInterface
      * Returns null if cache is not set.
      * 
      * @param  BlockInterface $block
-     * @return null
+     * @return string|null
      */
     public function getCache(BlockInterface $block): ?string;
 
@@ -41,8 +44,8 @@ interface BlockCacheStrategyInterface
      * Set a block cache
      * 
      * @param BlockInterface $block
-     * @param TagDependency  $dep
      * @param string         $data
+     * @param TagDependency  $dep
      */
     public function setCache(BlockInterface $block, string $data, TagDependency $dep);
 

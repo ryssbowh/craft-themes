@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use craft\base\Field as BaseField;
 
+/**
+ * Class that handles most Craft fields (all of them apart from Matrix and Table)
+ */
 interface CraftFieldInterface extends FieldInterface
 {
     /**

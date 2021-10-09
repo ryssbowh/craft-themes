@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 
+/**
+ * A matrix is a type of field, it handles the Craft matrix fields
+ */
 interface MatrixInterface extends FieldInterface
 {   
     /**

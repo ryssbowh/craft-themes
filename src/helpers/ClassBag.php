@@ -2,6 +2,9 @@
 
 namespace Ryssbowh\CraftThemes\helpers;
 
+/**
+ * Defines a list of classes for a html element.
+ */
 class ClassBag
 {
     /**

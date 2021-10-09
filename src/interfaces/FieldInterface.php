@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\interfaces;
 use craft\base\Element;
 use craft\base\Field as BaseField;
 
+/**
+ * A field is a type of item, it can handle a Craft field or a theme field (title, author etc)
+ */
 interface FieldInterface
 {
     /**

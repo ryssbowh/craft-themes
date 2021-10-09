@@ -198,11 +198,13 @@ class ThemesRegistry extends Service
     public function installTheme(ThemeInterface $theme)
     {
         $this->resetThemes();
-        Themes::$plugin->layouts->installThemeData($theme);
-        $theme->afterThemeInstall();
-        $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new InstallThemeEvent([
-            'theme' => $theme
-        ]));
+        if (Themes::$plugin->is(Themes::EDITION_PRO)) {
+            Themes::$plugin->layouts->installThemeData($theme);
+            $theme->afterThemeInstall();
+            $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new InstallThemeEvent([
+                'theme' => $theme
+            ]));
+        }
     }
 
     /**
@@ -214,6 +216,9 @@ class ThemesRegistry extends Service
     {
         Themes::$plugin->layouts->uninstallThemeData($theme);
         Themes::$plugin->rules->flushCache();
+        if (Themes::$plugin->is(Themes::EDITION_PRO)) {
+            $theme->afterThemeUninstall();
+        }
         $this->resetThemes();
     }
 

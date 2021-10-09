@@ -1,11 +1,10 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockCategoryOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Category;
@@ -49,7 +48,7 @@ class CategoryBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptions
+    public function getOptionsModel(): BlockOptionsInterface
     {
         return new BlockCategoryOptions;
     }
@@ -78,7 +77,7 @@ class CategoryBlock extends Block
     /**
      * Get category as defined in options
      * 
-     * @return Category
+     * @return ?Category
      */
     public function getCategory(): ?Category
     {
@@ -91,7 +90,7 @@ class CategoryBlock extends Block
     /**
      * Get layout associated to category defined in options
      * 
-     * @return LayoutInterface
+     * @return ?LayoutInterface
      */
     public function getCategoryLayout(): ?LayoutInterface
     {

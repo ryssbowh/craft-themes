@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models\layouts;
 use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
+/**
+ * A layout associated to a global set and a theme
+ */
 class GlobalLayout extends Layout
 {
     use ElementLayoutTrait;

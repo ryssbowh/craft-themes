@@ -40,7 +40,7 @@ class RegisterFieldsEvent extends Event
     }
 
     /**
-     * Register a new field
+     * Register a new field, will replace fields with same type
      * 
      * @param string $fieldClass
      */

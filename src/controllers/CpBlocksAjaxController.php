@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\exceptions\DisplayException;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Entry;
 
+/**
+ * Controller for ajax actions related to blocks
+ */
 class CpBlocksAjaxController extends Controller
 {
     /**

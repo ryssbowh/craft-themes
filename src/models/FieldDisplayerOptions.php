@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use craft\base\Model;
 
+/**
+ * Base class for all field displayer options
+ */
 class FieldDisplayerOptions extends Model
 {
     /**

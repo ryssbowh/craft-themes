@@ -11,14 +11,4 @@ class MatrixPivotRecord extends ActiveRecord
     {
         return '{{%themes_pivot_matrix}}';
     }
-
-    public function getField()
-    {
-        return $this->hasOne(FieldRecord::className(), ['id' => 'field_id']);
-    }
-
-    public function getParent()
-    {
-        return $this->hasOne(FieldRecord::className(), ['id' => 'parent_id']);
-    }
 }

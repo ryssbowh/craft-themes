@@ -2,6 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\events;
 
+use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use yii\base\Event;
 
 class RegisterBlockProviderBlocks extends Event

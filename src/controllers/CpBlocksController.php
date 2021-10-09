@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\assets\BlocksAssets;
 use Ryssbowh\CraftThemes\events\RegisterBundles;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
 
+/**
+ * Controller for actions related to blocks
+ */
 class CpBlocksController extends Controller
 {
     const REGISTER_ASSET_BUNDLES = 'register_asset_bundles';

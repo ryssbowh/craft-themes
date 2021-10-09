@@ -21,6 +21,7 @@ modules:
         themes:
           class: '\Ryssbowh\CraftThemes\Themes'
           handle: themes
+          edition: 'pro'
       migrations: []
       cleanup: true
       transaction: true

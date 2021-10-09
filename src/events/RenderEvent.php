@@ -17,7 +17,7 @@ class RenderEvent extends Event
     public $variables;
 
     /**
-     * Prepend a template to the list
+     * Prepend a template to the list of templates
      * 
      * @param  string $template
      * @return RenderEvent
@@ -29,7 +29,7 @@ class RenderEvent extends Event
     }
 
     /**
-     * Append a template to the list
+     * Append a template to the list of templates
      * 
      * @param  string $template
      * @return RenderEvent
@@ -41,7 +41,7 @@ class RenderEvent extends Event
     }
 
     /**
-     * Add a variable to the list
+     * Add a variable to the list of variables
      * 
      * @param  string $name
      * @param  mixed  $value
@@ -54,7 +54,7 @@ class RenderEvent extends Event
     }
 
     /**
-     * Add an attribute(s) to the list
+     * Add an attribute(s) to the attributes bag
      * 
      * @param  string|array $name
      * @param  mixed|null   $value
@@ -67,7 +67,7 @@ class RenderEvent extends Event
     }
 
     /**
-     * Add a class(es) to the list
+     * Add a class(es) to the classes bag
      * 
      * @param  string|array $name
      * @return RenderEvent

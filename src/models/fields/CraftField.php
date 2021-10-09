@@ -11,6 +11,9 @@ use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 use craft\fieldlayoutelements\CustomField;
 
+/**
+ * Handles all Craft fields apart from Matrix and Table
+ */
 class CraftField extends Field implements CraftFieldInterface
 {
     /**

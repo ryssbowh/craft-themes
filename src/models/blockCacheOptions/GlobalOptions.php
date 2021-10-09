@@ -1,8 +1,5 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\blockCacheOptions;
-
-use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 
 class GlobalOptions extends BlockCacheStrategyOptions
 {

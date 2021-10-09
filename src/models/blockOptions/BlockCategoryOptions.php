@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\Themes;

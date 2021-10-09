@@ -4,6 +4,10 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Element;
 
+/**
+ * Generic interface for display items.
+ * An item belongs to a display, it can be a group or a field.
+ */
 interface DisplayItemInterface
 {
     /**

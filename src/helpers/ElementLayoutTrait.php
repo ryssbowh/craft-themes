@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\helpers;
 
 use craft\models\FieldLayout;
 
+/**
+ * Common methods for layouts that are attached to elements (not customs or defaults layouts)
+ */
 trait ElementLayoutTrait
 {
     /**

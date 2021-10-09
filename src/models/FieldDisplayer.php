@@ -9,6 +9,9 @@ use Ryssbowh\CraftThemes\models\fields\CraftField;
 use craft\base\Model;
 use craft\fields\BaseRelationField;
 
+/**
+ * Base class for all field displayers
+ */
 abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 {
     /**

@@ -2,6 +2,10 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
+/**
+ * A view mode has displays associated to it, it's associated to a layout.
+ * One layout can have several view modes.
+ */
 interface ViewModeInterface
 {
     /**

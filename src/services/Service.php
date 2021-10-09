@@ -10,6 +10,8 @@ use yii\base\Event;
 abstract class Service extends Component
 {
     /**
+     * Get the blocks service
+     * 
      * @return BlockService
      */
     protected function blocksService(): BlockService
@@ -18,7 +20,9 @@ abstract class Service extends Component
     }
 
     /**
-     * @return BlockService
+     * Get the field displayers service
+     * 
+     * @return FieldDisplayerService
      */
     protected function fieldDisplayersService(): FieldDisplayerService
     {
@@ -26,6 +30,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the themes registry
+     * 
      * @return ThemesRegistry
      */
     protected function themesRegistry(): ThemesRegistry
@@ -34,6 +40,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the view mode service
+     * 
      * @return ViewModeService
      */
     protected function viewModesService(): ViewModeService
@@ -42,6 +50,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the layout service
+     * 
      * @return LayoutService
      */
     protected function layoutService(): LayoutService
@@ -50,6 +60,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the block providers service
+     * 
      * @return BlockProvidersService
      */
     protected function blockProviderService(): BlockProvidersService
@@ -58,6 +70,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the block cache service
+     * 
      * @return BlockCacheService
      */
     protected function blockCacheService(): BlockCacheService
@@ -66,6 +80,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the display service
+     * 
      * @return DisplayService
      */
     protected function displayService(): DisplayService
@@ -74,7 +90,9 @@ abstract class Service extends Component
     }
 
     /**
-     * @return DisplayService
+     * Get the groups service
+     * 
+     * @return GroupsService
      */
     protected function groupsService(): GroupsService
     {
@@ -82,6 +100,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the fields service
+     * 
      * @return FieldsService
      */
     protected function fieldsService(): FieldsService
@@ -90,6 +110,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the matrix service
+     * 
      * @return MatrixService
      */
     protected function matrixService(): MatrixService
@@ -98,6 +120,8 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the file displayers service
+     * 
      * @return FileDisplayerService
      */
     protected function fileDisplayerService(): FileDisplayerService
@@ -106,7 +130,7 @@ abstract class Service extends Component
     }
 
     /**
-     * Trigger an event
+     * Triggers an event
      * 
      * @param string $type
      * @param Event  $event

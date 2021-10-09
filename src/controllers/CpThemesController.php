@@ -3,7 +3,11 @@ namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\ListAssets;
+use craft\web\Response;
 
+/**
+ * Controller for actions related to theme list
+ */
 class CpThemesController extends Controller
 {
     /**
@@ -22,6 +26,11 @@ class CpThemesController extends Controller
         return $this->redirect('themes/' . $redirectTo);
     }
 
+    /**
+     * Themes list
+     * 
+     * @return Response
+     */
     public function actionList()
     {
         $this->requirePermission('accessPlugin-themes');
@@ -30,7 +39,8 @@ class CpThemesController extends Controller
 
         return $this->renderTemplate('themes/cp/themes', [
             'title' => \Craft::t('themes', 'Themes'),
-            'themes' => Themes::$plugin->registry->all()
+            'themes' => Themes::$plugin->registry->all(),
+            'isPro' => Themes::$plugin->is(Themes::EDITION_PRO)
         ]);
     }
 }

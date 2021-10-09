@@ -6,6 +6,11 @@ use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\models\FieldLayout;
 
+/**
+ * A layout is associated to a theme and unless it's a custom layout, to a Craft element.
+ * Those elements can be : entry type, category group, global set, volume, tag group or user layout.
+ * Layouts have regions, as defined by their theme.
+ */
 interface LayoutInterface
 {
     const RENDER_MODE_DISPLAYS = 'displays';

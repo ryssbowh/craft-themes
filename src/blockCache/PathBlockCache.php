@@ -1,12 +1,17 @@
 <?php 
 
-namespace Ryssbowh\CraftThemes\blockCache;
+namespace Ryssbowh\CraftThemes\models\blockCache;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\base\BlockCacheStrategy;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use Ryssbowh\CraftThemes\models\blockCacheOptions\GlobalOptions;
 
+/**
+ * This strategy will cache blocks differently for each url path.
+ * It has options to cache differently for each user, for guests/non guests or for each view port (mobile, tablet, desktop)
+ */
 class PathBlockCache extends BlockCacheStrategy
 {
     const CACHE_TAG = 'themes.blockCache.path';

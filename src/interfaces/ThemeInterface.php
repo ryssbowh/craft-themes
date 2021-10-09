@@ -2,6 +2,11 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
+/**
+ * A theme is a regular plugin, it defines regions and can extend another theme.
+ * They can be partials.
+ * They define preferences for rendering page elements.
+ */
 interface ThemeInterface 
 {
     /**
@@ -39,13 +44,6 @@ interface ThemeInterface
      * @return ?ThemeInterface
      */
     public function getParent(): ?ThemeInterface;
-
-    /**
-     * Which region the content block should be installed in
-     * 
-     * @return ?string
-     */
-    public function contentBlockRegion(): ?string;
 
     /**
      * Is this theme partial.

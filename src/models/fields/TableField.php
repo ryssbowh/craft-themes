@@ -17,6 +17,9 @@ use craft\fields\PlainText;
 use craft\fields\Time;
 use craft\fields\Url;
 
+/**
+ * Handles a field inside a table field
+ */
 class TableField extends Field
 {
     /**

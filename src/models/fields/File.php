@@ -8,6 +8,9 @@ use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 use craft\base\Element;
 
+/**
+ * The field File is added to all assets automatically
+ */
 class File extends Field
 {
     /**

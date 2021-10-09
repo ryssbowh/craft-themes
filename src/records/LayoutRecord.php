@@ -10,14 +10,4 @@ class LayoutRecord extends ActiveRecord
     {
         return '{{%themes_layouts}}';
     }
-
-    public function getViewModes()
-    {
-        return $this->hasMany(ViewModeRecord::className(), ['layout_id' => 'id']);
-    }
-
-    public function getBlocks()
-    {
-        return $this->hasMany(BlockRecord::className(), ['layout_id' => 'id']);
-    }
 }

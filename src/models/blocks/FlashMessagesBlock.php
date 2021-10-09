@@ -1,10 +1,7 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockUserOptions;
-use craft\base\Model;
 
 class FlashMessagesBlock extends Block
 {

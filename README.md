@@ -200,16 +200,20 @@ Uninstalling this plugin will uninstall all themes.
 
 Installing a theme that extends another will automatically install that other theme.
 
+Uninstalling a theme will delete all its blocks/displays/layouts (Pro version only).
+
 ## Requirements
 
 Craft 3.5 or over
 
-## Previous documentations
+## Documentation
 
+- Class reference [there](https://ryssbowh.github.io/craft-themes/namespaces/ryssbowh-craftthemes.html)
 - 1.x documentation [there](README1.md)
 - 2.x documentation [there](README2.md)
 
 ## Roadmap
 
 - more tests
-- custom layouts
+- volume title field ?
+- field displayer inside displayer ?

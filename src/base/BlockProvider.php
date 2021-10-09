@@ -1,14 +1,16 @@
-<?php 
-
-namespace Ryssbowh\CraftThemes\models;
+<?php
+namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\events\RegisterBlockProviderBlocks;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use craft\base\Model;
+use craft\base\Component;
 
-abstract class BlockProvider extends Model implements BlockProviderInterface
+/**
+ * Base class for all block providers
+ */
+abstract class BlockProvider extends Component implements BlockProviderInterface
 {
     /**
      * block classes defined by this provider

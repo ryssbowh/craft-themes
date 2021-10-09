@@ -1,8 +1,8 @@
 {% extends "_layouts/cp" %}
 
 {% set allowChanges = craft.app.config.general.allowAdminChanges %}
-{% set canManageDisplay = currentUser.can('manageThemesDisplay') %}
-{% set canManageBlocks = currentUser.can('manageThemesBlocks') %}
+{% set canManageDisplay = isPro and currentUser.can('manageThemesDisplay') %}
+{% set canManageBlocks = isPro and currentUser.can('manageThemesBlocks') %}
 
 {% block content %}
     <div class="themes">
@@ -41,6 +41,11 @@
                                 </span>
                             {% endif %}
                         </div>
+                        {% if theme.name != theme.description %}
+                            <div class="description">
+                                {{ theme.description }}
+                            </div>
+                        {% endif %}
                         <div class="partial">
                             {{ theme.isPartial ? 'Partial theme'|t('themes') : 'Full theme'|t('themes') }}
                         </div>

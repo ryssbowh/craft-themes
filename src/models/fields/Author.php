@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 
+/**
+ * The field Author is added to all entry types automatically
+ */
 class Author extends Field
 {
     /**
