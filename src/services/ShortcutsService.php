@@ -42,7 +42,7 @@ class ShortcutsService extends Service
         $viewMode = $e->variables['viewMode'];
         $theme = $this->themesRegistry()->current->handle;
         $id = StringHelper::UUID();
-        $e->addAttribute([
+        $e->variables['attributes']->add([
             'data-layout-shortcut' => $id
         ]);
         $js = "shortcutData['$id'] = [";

@@ -52,29 +52,4 @@ class RenderEvent extends Event
         $this->variables[$name] = $value;
         return $this;
     }
-
-    /**
-     * Add an attribute(s) to the attributes bag
-     * 
-     * @param  string|array $name
-     * @param  mixed|null   $value
-     * @return RenderEvent
-     */
-    public function addAttribute($name, $value = null): RenderEvent
-    {
-        $this->variables['attributes']->add($name, $value);
-        return $this;
-    }
-
-    /**
-     * Add a class(es) to the classes bag
-     * 
-     * @param  string|array $name
-     * @return RenderEvent
-     */
-    public function addClass($name): RenderEvent
-    {
-        $this->variables['classes']->add($name);
-        return $this;
-    }
 }
