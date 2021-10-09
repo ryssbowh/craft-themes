@@ -1,24 +1,28 @@
 # Craft themes
 
 ### This is the 3.x documentation
-### Find the developers readme [there](DEVELOPERS.md)
 
-Define the look and feel of your frontend with themes. You can use themes contributed by others or create your own.  
-Themes can inherit one another and as any plugin, have settings, migrations etc. 
-The Pro version will give you total control on how your sections/categories/tags/users/globals/assets and their fields are displayed.
+Version 3 has brought the pro version which is a big change from the v2 version. You can always use the v3 lite version which is very similar to v2 (make sure you check the breaking changes in the [developers readme](DEVELOPERS.md)) with a few other small changes.
 
-The basic version will allow you to :
+The pro version aims at taking control over how pages are displayed using an interface in the backend and a theme engine that is reusable, adaptable and easy to use.  
+Themes are regular Craft plugins, as such they can be shared on the store, installed from packagist or created by yourself. They can have settings and migrations and most importantly extend each other.  
+Craft backend is amazing but if you're not a developer making a frontend can be a bit daunting, the pro version should alleviate this by doing a lot of the work for you.
+
+The lite version will allow you to :
 - Install themes from the store or any git repository (composer, github etc)
 - Define your own themes that can extend each other
 - Choose which theme will be used for which site, language, viewport or url path according to a set of rules.
 
 The Pro version will allow you to :
-- Assign blocks to your theme regions
+- Define regions in your themes
+- Assign blocks to the themes regions
 - Define your own blocks
 - Cache your blocks
 - Define your own view modes for each entry types/category groups/global sets/tag groups/volumes/users layouts
-- Choose how your fields and assets are displayed on the front end depending on their view modes
+- Choose how your fields and assets are displayed on the front end depending on their view modes and options
 - Define your own fields and assets displayers
+- Use a templating cascading system that allows bespoke rendering
+- eager load fields automatically
 
 What it doesn't allow you to do :
 - Change the backend look and feel
@@ -217,3 +221,4 @@ Craft 3.5 or over
 - more tests
 - volume title field ?
 - field displayer inside displayer ?
+- check cloning table fields

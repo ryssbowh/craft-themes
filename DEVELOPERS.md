@@ -35,7 +35,7 @@ Define a partial theme with the method `isPartial(): bool` of the plugin class.
 
 Create a new plugin, it's main class must extend `Ryssbowh\CraftThemes\models\ThemePlugin`.
 
-You could for example create a `themes` folder at the root, and add it as a composer repository by addong to the root `composer.json` :
+You could for example create a `themes` folder at the root, and add it as a composer repository by adding to the root `composer.json` :
 
 ```
 "repositories": [
@@ -62,7 +62,7 @@ Asset bundles can be defined in your theme class, in the `$assetBundles` propert
     'blog' => [
         BlogAssets::class
     ],
-    '/$blog*$/' => [
+    '/^blog*$/' => [
         BlogAssets::class
     ],
     '/' => [
@@ -79,7 +79,7 @@ By default, parent theme bundles will also be registered. This can be disabled w
 
 You can set a theme manually on the theme registry : `Themes::$plugin->registry->setCurrent('theme-handle')`. Because Template roots can only be registered once on Craft, you **must** do this before the View template roots are registered for the mode site (`View::TEMPLATE_MODE_SITE`) or an exception will be thrown.
 
-## Layouts
+## Layouts (Pro)
 
 Templates are created by the system automatically, their types as mentionned in this readme are as follows :
 
@@ -117,9 +117,9 @@ Themes::$plugin->layouts->deleteCustom($layout);
 ```
 To render the content block for a custom template, follow the block template precedence described below.
 
-## Blocks
+## Blocks (Pro)
 
-Blocks are provided by a block provider, each provider can define several blocks. This plugin comes with a default 'System' provider.
+Blocks are provided by a block provider, each provider can define several blocks. This plugin comes with two providers : `System` and `Forms`.
 
 ### Registering a new provider
 
@@ -131,7 +131,7 @@ Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PR
 });
 ```
 
-Your block provider class must extends the `BlockProvider` class. Blocks defined by the providers are defined in their `$_definedBlocks` attribute.
+Your block provider class must implements `BlockProviderInterface`. Blocks defined by the providers are defined in their `$_definedBlocks` attribute.
 
 An exception will be thrown if you register a provider which handle is already registered.
 
@@ -149,7 +149,7 @@ An exception will be thrown if you register 2 blocks with the same handle within
 
 ### Defining new blocks
 
-New block classes must extends the `Block` class. You can override the `getOptionsModel` method to define more options, this method must return an instance that implements `BlockOptionsInterface`.
+New block classes must implements `BlockInterface`. You can override the `getOptionsModel` method to define more options, this method must return an instance that implements `BlockOptionsInterface`.
 
 To hook in the backend Vue system, register a js file with a bundle :
 ```
@@ -159,7 +159,7 @@ Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES,
 ```  
 respond to the js event `register-block-option-components` and add your component to the `event.detail` variable. 
 
-Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockOptions/main.js)
+Examples [here](vue/src/blockOptions/main.js)
 
 The key is built like so : {provider handle}-{block handle}.
 
@@ -206,7 +206,7 @@ Themes::$plugin->blocks->save($block);
 
 ```
 
-## Fields
+## Fields (Pro)
 
 There are 10 types of fields defined by this plugin.
 
@@ -234,7 +234,7 @@ Register your php field class (implementing `FieldInterface`) by responding to t
 
 ```
 Event::on(FieldsService::class, FieldsService::REGISTER_FIELDS, function (RegisterFieldsEvent $event) {
-    $event->->add(MyField::class);
+    $event->add(MyField::class);
 });
 ```
 
@@ -246,7 +246,7 @@ Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLE
 ```  
 respond to the js event `register-fields-components` and add your component and clone function to the `event.detail` variable.
 
-Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fields/main.js)
+Examples [here](vue/src/fields/main.js)
 
 "new" fields (any field that doesn't extend from `CraftField`) can be created automatically on layouts if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. By default this method returns false.  
 This method won't have any effect for fields that extends `CraftField`, as they will be created automatically (assuming a Craft field exists on the category group/entry type).
@@ -261,7 +261,7 @@ Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYE
 });
 ```
 
-Your field displayer class must extend the `FieldDisplayer` class and define the field it can handle in its `getFieldTarget` method. 
+Your field displayer class must implements `FieldDisplayerInterface` class and define the field it can handle in its `getFieldTarget` method. 
 Registering a field displayer with a handle already existing will **replace** the current displayer.
 
 To hook in the backend Vue system, register a js file with a bundle :
@@ -274,9 +274,9 @@ respond to the js event `register-field-displayers-components` and add your comp
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
-Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fieldDisplayers/main.js)
+Examples [here](vue/src/fieldDisplayers/main.js)
 
-## File displayers
+## File displayers (Pro)
 
 A file displayer defines how an asset file is rendered on the front end. Each displayer can handle one or several asset kinds.
 
@@ -290,7 +290,7 @@ Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS
 });
 ```
 
-Your file displayer class must extend the `FileDisplayer` class and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
+Your file displayer class must extend the `FileDisplayerInterface` class and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
 Registering a file displayer with a handle already existing will **replace** the current displayer.
 
 To hook in the backend Vue system, register a js file with a bundle :
@@ -303,7 +303,7 @@ respond to the js event `register-file-displayers-components` and add your compo
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
-Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/fileDisplayers/main.js)
+Examples [here](vue/src/fileDisplayers/main.js)
 
 ## Templating
 
@@ -311,14 +311,13 @@ Templates are inherited, so if you call a template that isn't defined in your th
 
 Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
-### Layouts
+### Layouts (Pro)
 
 There are two ways to render layouts, regions or displays. The method `Layout::render(Element $element, string $viewMode)` will render the displays, the other `$layout->renderRegions()` the regions.
 
-Rendering the regions will call a special template defined by the theme in `ThemePlugin::getRegionsTemplate()`, by default this equals `regions`.
+Rendering the regions will call a special template defined by the theme in `ThemePlugin::getRegionsTemplate()`, by default this equals to `regions`.
 
-You can set any templates to your category groups and sections, if a layout matches for that request, the layout associated will be added to the variables. In your template you simply need to call `{{ layout.renderRegions()|raw }}`
-
+You can set any templates to your category groups and sections, if a layout matches for that request, the layout associated will be added to the variables. In your template you simply need to call `{{ layout.renderRegions()|raw }}`. The view mode for such a request is always the default one.
 
 If you have a layout of type `entry` for an entry type `blog` and a view mode `default`, the layout templates will take this precedence :
 
@@ -328,7 +327,7 @@ layouts/entry/blog.twig
 layouts/entry.twig
 layouts/layout.twig
 ```
-### Regions
+### Regions (Pro)
 
 If you have a region `header` for a layout of type `entry` for an entry type `blog`, the region templates will take this precedence :
 ```
@@ -348,7 +347,7 @@ regions/custom/region.twig
 regions/region-header.twig
 regions/region.twig
 ```
-### Blocks
+### Blocks (Pro)
 
 If you have a block `latestBlogs` of a provider `system` for a layout of type `entry` for an entry type `blog` situated in a region `header`, the block templates will take this precedence :
 ```
@@ -357,7 +356,7 @@ blocks/entry/blog/system_latestBlogs.twig
 blocks/entry/system_latestBlogs.twig
 blocks/system_latestBlogs.twig
 ```
-### Fields
+### Fields (Pro)
 
 If you have a field displayer `redactor` for a field `content` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the field templates will take this precedence :
 ```
@@ -370,7 +369,7 @@ fields/entry/redactor.twig
 fields/redactor-content.twig
 fields/redactor.twig
 ```
-### Groups
+### Groups (Pro)
 
 If you have a group `left` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the group templates will take this precedence :
 ```
@@ -383,7 +382,7 @@ groups/entry/group.twig
 groups/group-left.twig
 groups/group.twig
 ```
-### Assets
+### Assets (Pro)
 
 If you have a file displayer `image` for a field `topImage` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the asset templates will take this precedence :
 ```
@@ -415,21 +414,25 @@ Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (Ren
 });
 ```
 
-Those events can also be used to override elements's classes and attributes :
+Those events can also be used to modify elements's classes and attributes :
 
 ```
 Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (RenderEvent $event) {
-    $e->variables['classes']->add('my-class');
+    $e->variables['classes']->add(['my-class', 'my-other-class']);
     $e->variables['attributes']->add('id', 'my-id');
+    $e->variables['containerClasses']->add('container-class');
+    $e->variables['containerAttributes']->add('id', 'container-id');
+    $e->variables['labelClasses']->remove('label-class');
+    $e->variables['labelAttributes']->remove('label-id');
 });
 ```
 
-### Theme preferences
+### Theme preferences (Pro)
 
-Each Theme can gain control on the classes and attributes defined for each layout/block/field/file/group/region by defining a [preference class](src/models/ThemePreferences.php).  
+Each Theme can gain control on the classes and attributes defined for each layout/block/field/file/group/region by defining a [preference class](src/base/ThemePreferences.php).  
 To override the preferences for your theme, override the method `getPreferencesModel(): ThemePreferencesInterface` of its main class.
 
-### Debug
+### Debug (Pro)
 
 The available templates and variables can be printed as html comments by enabling the option in the settings.
 
@@ -441,7 +444,7 @@ It is recommended to not use the root `templates` folder when using themes, if s
 
 A theme **can't** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
 
-## Eager loading
+## Eager loading (Pro)
 
 By default, when a layout is rendered it will eager load every field it contains, this can be disabled in the settings.  
 All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
@@ -466,13 +469,13 @@ And three that are not used by the system, but could be useful if you're using a
 `@themeWebPath` : Web directory for current theme. This is not set if no theme is set.  
 `@themeWeb` : Base web url for the current theme. This is not set if no theme is set.
 
-## Reinstall data
+## Reinstall data (Pro)
 
 If something looks off in the displays, you can always reinstall the themes data in the plugin settings. This will create missing fields/displayers for all themes and elements (entry types, category groups etc), and delete the orphans.
 
-## Caching
+## Caching (Pro)
 
-### Rules cache
+### Rules cache  (Pro)
 
 Theme resolution rules will be cached by default on environments where devMode is disabled. If you change rules on a production environment, clear the cache : `./craft clear-caches/themes-rules-cache`
 
@@ -532,4 +535,4 @@ respond to the js event `register-block-strategy-components` and add your compon
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your strategy options class.
 
-Examples [here](https://github.com/ryssbowh/craft-themes/blob/v3/vue/src/blockStrategies/main.js)
+Examples [here](vue/src/blockStrategies/main.js)
