@@ -1,6 +1,5 @@
-<?php 
-
-namespace Ryssbowh\CraftThemes\models\blockCache;
+<?php
+namespace Ryssbowh\CraftThemes\blockCache;
 
 use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;

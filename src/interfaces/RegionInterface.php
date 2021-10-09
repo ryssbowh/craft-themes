@@ -17,6 +17,13 @@ interface RegionInterface
     public function getBlocks(): array;
 
     /**
+     * Get visible blocks
+     * 
+     * @return array
+     */
+    public function getVisibleBlocks(): array;
+
+    /**
      * Blocks setter
      * 
      * @param array $blocks

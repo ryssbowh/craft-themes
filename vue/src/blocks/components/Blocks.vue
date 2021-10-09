@@ -1,58 +1,54 @@
 <template>
-  <div class="blocks">
-    <div class="spinner-wrapper" v-if="isLoading">
-      <div class="spinner"></div>
+    <div class="blocks">
+        <div class="spinner-wrapper" v-if="isLoading">
+            <div class="spinner"></div>
+        </div>
+        <div class="blocks-sidebar">
+            <div class="heading">
+                <h3>Blocks</h3>
+            </div>
+            <div v-for="provider in providers" v-bind:key="provider.handle">
+                <h5 class="sub-heading slide" :class="{closed: !slideStates[provider.handle]}" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>
+                <transition name="slide">
+                    <div>
+                        <draggable v-if="slideStates[provider.handle]"
+                          item-key="vueid"
+                          class="list-group"
+                          :list="provider.blocks"
+                          :group="{ name: 'blocks', pull: 'clone', put: false }"
+                          :sort="false"
+                          handle=".move"
+                        >
+                            <template #item="{element}">
+                                <block :block="element" :original="true"/>
+                            </template>
+                        </draggable>
+                    </div>
+                </transition>
+            </div>
+        </div>
+        <div class="regions">
+            <div class="heading">
+                <h3>{{ t('Regions') }}</h3>
+            </div>
+            <div class="region-list" v-if="layouts.length">
+                <region v-for="region in regions" v-bind:key="region.handle" :region="region"/>
+                <p v-if="!regions.length">{{ t('No regions are defined for this theme') }}</p>
+            </div>
+            <div class="region-list" v-if="!layouts.length">
+                <p>{{ t('No layouts available, you should reinstall the themes data in the settings') }}</p>
+            </div>
+        </div>
+        <div class="options">
+            <div class="heading">
+                <h3>{{ t('Options') }}</h3>
+            </div>
+            <div class="options-form" v-for="block in blocks" v-bind:key="block.index">
+                <block-options v-show="blockOptionId == block.index" :block="block"/>
+            </div>
+        </div>
+        <layout-modal @closeModal="setShowLayoutModal({show: false})"/>
     </div>
-    <div class="blocks-sidebar">
-      <div class="heading">
-        <h3>Blocks</h3>
-      </div>
-      <div v-for="provider in providers" v-bind:key="provider.handle">
-        <h5 class="sub-heading slide" :class="{closed: !slideStates[provider.handle]}" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>
-        <transition name="slide">
-          <div>
-            <draggable v-if="slideStates[provider.handle]"
-              item-key="vueid"
-              class="list-group"
-              :list="provider.blocks"
-              :group="{ name: 'blocks', pull: 'clone', put: false }"
-              :sort="false"
-              handle=".move"
-            >
-              <template #item="{element}">
-                <block
-                  :block="element"
-                  :original="true"
-                />
-              </template>
-            </draggable>
-          </div>
-        </transition>
-      </div>
-    </div>
-    <div class="regions">
-      <div class="heading">
-         <h3>{{ t('Regions') }}</h3>
-      </div>
-      <div class="region-list">
-        <region v-for="region in regions" v-bind:key="region.handle"
-          :region="region"
-        />
-        <p v-if="!regions.length">{{ t('No regions are defined for this theme') }}</p>
-      </div>
-    </div>
-    <div class="options">
-      <div class="heading">
-          <h3>{{ t('Options') }}</h3>
-      </div>
-      <div class="options-form" v-for="block in blocks" v-bind:key="block.index">
-        <block-options v-show="blockOptionId == block.index"
-          :block="block"
-        />
-      </div>
-    </div>
-    <layout-modal @closeModal="setShowLayoutModal({show: false})"/>
-  </div>
 </template>
 
 <script>
@@ -70,7 +66,7 @@ export default {
                 return (res || elem);
             }, this.isSaving);
         },
-        ...mapState(['blocks', 'regions', 'isFetching', 'isSaving', 'blockOptionId', 'providers'])
+        ...mapState(['blocks', 'regions', 'isFetching', 'isSaving', 'blockOptionId', 'providers', 'layouts'])
     },
     props: {
     },

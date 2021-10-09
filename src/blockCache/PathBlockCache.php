@@ -1,6 +1,5 @@
-<?php 
-
-namespace Ryssbowh\CraftThemes\models\blockCache;
+<?php
+namespace Ryssbowh\CraftThemes\blockCache;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\base\BlockCacheStrategy;

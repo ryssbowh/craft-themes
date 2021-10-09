@@ -7,10 +7,11 @@
                 <div class="small" v-if="!original">{{ block.provider }}</div>
             </div>
             <span class="info" v-if="original && block.longDescription">{{ block.longDescription }}</span>
-            <button v-if="!original" type="button" id="live" :class="'lightswitch has-labels' + (block.active ? ' on' : '')" role="checkbox" aria-checked="true" aria-labelledby="live-label" aria-describedby="live-instructions live-desc">
+            <button v-if="!original" type="button" id="live" :class="'lightswitch has-labels' + (block.active ? ' on' : '')" role="checkbox">
                 <div class="lightswitch-container">
                     <div class="handle"></div>
                 </div>
+                <input type="hidden" name="onlyIfNotAuthenticated" :value="block.active">
             </button>
             <div class="actions">
                 <div class="move icon"></div>

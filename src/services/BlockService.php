@@ -162,6 +162,7 @@ class BlockService extends Service
             $block->region = $data['region'];
             $block->handle = $data['handle'];
             $block->order = $data['order'];
+            $block->active = $data['active'];
             $block->options = $data['options'] ?? null;
             $block->layout_id = Themes::$plugin->layouts->getRecordByUid($data['layout_id'])->id;
             $block->save(false);

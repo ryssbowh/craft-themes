@@ -1,5 +1,5 @@
 <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
-	{% for _block in region.blocks %}
+	{% for _block in region.visibleBlocks %}
         {{ _block.render()|raw }}
 	{% endfor %}
 </div>

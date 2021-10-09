@@ -2,9 +2,10 @@
 
 namespace Ryssbowh\CraftThemes\events;
 
+use Ryssbowh\CraftThemes\blockProviders\FormsBlockProvider;
+use Ryssbowh\CraftThemes\blockProviders\SystemBlockProvider;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
-use Ryssbowh\CraftThemes\blockProviders\SystemBlockProvider;
 use yii\base\Event;
 
 class RegisterBlockProviders extends Event
@@ -18,6 +19,7 @@ class RegisterBlockProviders extends Event
     {
         parent::init();
         $this->add(new SystemBlockProvider);
+        $this->add(new FormsBlockProvider);
     }
 
     /**

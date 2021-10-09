@@ -5,6 +5,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\BlockException;
 use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
@@ -100,6 +101,14 @@ abstract class Block extends Model implements BlockInterface
             'active' => (bool)$this->active,
             'options' => $options
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isVisible(): bool
+    {
+        return $this->active;
     }
 
     /**

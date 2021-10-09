@@ -3,17 +3,12 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
-class BlockGlobalOptions extends BlockOptions
+class BlockLoginFormOptions extends BlockOptions
 {
     /**
      * @var string
      */
-    public $set;
-
-    /**
-     * @var string
-     */
-    public $viewMode;
+    public $onlyIfNotAuthenticated = true;
 
     /**
      * @inheritDoc
@@ -21,8 +16,7 @@ class BlockGlobalOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['set', 'viewMode'], 'required'],
-            [['set', 'viewMode'], 'string']
+            ['onlyIfNotAuthenticated', 'boolean', 'trueValue' => true, 'falseValue' => false],
         ]);
     }
 }

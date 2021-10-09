@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\records;
 
 use craft\db\ActiveRecord;

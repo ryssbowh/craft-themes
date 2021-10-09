@@ -72,6 +72,16 @@ class Region extends Model implements RegionInterface
     /**
      * @inheritDoc
      */
+    public function getVisibleBlocks(): array
+    {
+        return array_filter($this->blocks, function ($block) {
+            return $block->isVisible();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getTheme(): ThemeInterface
     {
         return $this->layout->theme;

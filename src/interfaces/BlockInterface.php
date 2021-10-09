@@ -16,6 +16,11 @@ interface BlockInterface
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * Is this block visible
+     */
+    public function isVisible(): bool;
     
     /**
      * Small description getter

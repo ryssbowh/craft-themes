@@ -1,9 +1,7 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\records;
 
 use craft\db\ActiveRecord;
-use paulzi\jsonBehavior\JsonBehavior;
 
 class FieldRecord extends ActiveRecord
 {

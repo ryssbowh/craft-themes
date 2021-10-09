@@ -82,6 +82,12 @@ class ViewService extends Service
     protected $_renderingMode;
 
     /**
+     * Variables originally passed to the page
+     * @var array
+     */
+    protected $pageVariables = [];
+
+    /**
      * Handle current page rendering.
      * If a theme is set then we'll look for the theme layout for that request and add it to the template variables.
      * 
@@ -106,6 +112,7 @@ class ViewService extends Service
         \Craft::info('Found layout "' . $layout->description . '" (id: ' . $layout->id . ')', __METHOD__);
         $this->_renderingElement = $element;
         $layout->eagerLoadFields($element, $layout->getViewMode(ViewModeService::DEFAULT_HANDLE));
+        $this->pageVariables = $event->variables;
         $event->variables = array_merge($event->variables, [
             'layout' => $layout,
             'element' => $element
@@ -133,7 +140,7 @@ class ViewService extends Service
             'regions/region-' . $region->handle, 
             'regions/region'
         ];
-        $variables = $this->getTemplateVariables([
+        $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getRegionClasses($region)),
             'attributes' => new AttributeBag($theme->preferences->getRegionAttributes($region)),
             'region' => $region,
@@ -169,7 +176,7 @@ class ViewService extends Service
             'blocks/' . $machineName, 
             'blocks/block'
         ];
-        $variables = $this->getTemplateVariables([
+        $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getBlockClasses($block)),
             'attributes' => new ClassBag($theme->preferences->getBlockAttributes($block)),
             'attributes' => new AttributeBag,
@@ -208,7 +215,7 @@ class ViewService extends Service
             'fields/' . $withField,
             'fields/' . $handle
         ];
-        $variables = $this->getTemplateVariables([
+        $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getFieldClasses($field)),
             'attributes' => new AttributeBag($theme->preferences->getFieldAttributes($field)),
             'containerClasses' => new ClassBag($theme->preferences->getFieldContainerClasses($field)),
@@ -248,7 +255,7 @@ class ViewService extends Service
             'groups/group-' . $handle,
             'groups/group'
         ];
-        $variables = $this->getTemplateVariables([
+        $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getGroupClasses($group)),
             'attributes' => new AttributeBag($theme->preferences->getGroupAttributes($group)),
             'containerClasses' => new ClassBag($theme->preferences->getGroupContainerClasses($group)),
@@ -289,7 +296,7 @@ class ViewService extends Service
             'files/' . $withField,
             'files/' . $handle
         ];
-        $variables = $this->getTemplateVariables([
+        $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getFileClasses($asset, $field, $displayer)),
             'attributes' => new AttributeBag($theme->preferences->getFileAttributes($asset, $field, $displayer)),
             'asset' => $asset,
@@ -318,15 +325,17 @@ class ViewService extends Service
         $oldViewMode = $this->renderingViewMode;
         $oldElement = $this->renderingElement;
         $oldMode = $this->renderingMode;
+
         $this->_renderingLayout = $layout;
         $this->_renderingViewMode = $viewMode;
         $this->_renderingMode = $mode;
         if ($element) {
             $this->_renderingElement = $element;
         }
+        
         $machineName = $layout->getElementMachineName();
         $type = $layout->type;
-        $variables = $this->getTemplateVariables([
+        $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getLayoutClasses($layout, true)),
             'attributes' => new AttributeBag($theme->preferences->getLayoutAttributes($layout, true)),
             'visibleDisplays' => $viewMode->visibleDisplays,
@@ -495,11 +504,11 @@ class ViewService extends Service
         if (!$this->devMode) {
             return '';
         }
-        $html = "<!-- *** available templates : *** -->";
+        $html = "<!-- ***** available templates : ***** -->";
         foreach ($templates as $template) {
             $html .= "<!-- " . $template . ($template == $current ? " (current)" : "") . "-->";
         }
-        $html .= "<!-- *** available variables : *** -->";
+        $html .= "<!-- ***** available variables : ***** -->";
         foreach ($variables as $name => $variable) {
             $html .= "<!-- " . $name . ' (' . (gettype($variable) == 'object' ? get_class($variable) : gettype($variable)) . ")-->";
         }
@@ -507,13 +516,14 @@ class ViewService extends Service
     }
 
     /**
-     * Add default variables to an array
+     * Add the page variables and the themes variables to an array
      * 
      * @param  array  $variables
      * @return array
      */
-    protected function getTemplateVariables(array $variables = []): array
+    protected function getPageVariables(array $variables = []): array
     {
+        $variables = array_merge($this->pageVariables, $variables);
         $variables['element'] = $this->renderingElement;
         $variables['layout'] = $this->renderingLayout;
         $variables['region'] = $this->renderingRegion;

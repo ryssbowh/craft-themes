@@ -58,7 +58,7 @@ class CpBlocksController extends Controller
             'title' => \Craft::t('themes', 'Blocks'),
             'themes' => $themes,
             'theme' => $themeName,
-            'layout' => $layout ? $layout->id : null,
+            'layout' => $layout ? $layout->id : 0,
             'allLayouts' => $this->layouts->getBlockLayouts(),
             'cacheStrategies' => array_map(function ($strategy) {
                 return $strategy->toArray();
