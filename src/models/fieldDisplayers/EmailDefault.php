@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EmailDefaultOptions;
 use craft\base\Model;
 use craft\fields\Email;
 
+/**
+ * Renders an email field
+ */
 class EmailDefault extends FieldDisplayer
 {
     /**

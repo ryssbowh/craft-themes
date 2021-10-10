@@ -40,7 +40,7 @@
             <span v-if="!hasDisplayers">{{ t('None available') }}</span>
         </div>
         <div class="options col">
-            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="openDisplayerOptions({displayer: displayer, item: this.item})">{{ t('Options') }}</a>
+            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="openDisplayerOptions({displayer: displayer, item: this.item})"><div class="icon settings"></div></a>
         </div>
     </div>
 </template>

@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\base\Model;
 use craft\fields\Dropdown;
 
+/**
+ * Renders a dropdown field
+ */
 class DropdownDefault extends FieldDisplayer
 {
     /**

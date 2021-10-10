@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FileDisplayer;
 use Ryssbowh\CraftThemes\models\fileDisplayerOptions\HtmlAudioOptions;
 use craft\base\Model;
 
+/**
+ * Renders an audio file
+ */
 class HtmlAudio extends FileDisplayer
 {
     /**

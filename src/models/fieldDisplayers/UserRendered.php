@@ -10,6 +10,9 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Model;
 use craft\fields\Users;
 
+/**
+ * Renders a user field as rendered using a view mode
+ */
 class UserRendered extends FieldDisplayer
 {
     /**

@@ -11,6 +11,9 @@ use craft\base\Model;
 use craft\elements\Asset;
 use craft\fields\Assets;
 
+/**
+ * Renders an asset field as rendered using a view mode
+ */
 class AssetRendered extends FieldDisplayer
 {
     /**

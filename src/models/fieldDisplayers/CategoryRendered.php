@@ -12,6 +12,9 @@ use craft\elements\Category;
 use craft\fields\Categories;
 use craft\models\CategoryGroup;
 
+/**
+ * Renders a category field as rendered using a view mode
+ */
 class CategoryRendered extends FieldDisplayer
 {
     /**

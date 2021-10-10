@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserDefaultOptions;
 use craft\base\Model;
 use craft\fields\Users;
 
+/**
+ * Renders a user field
+ */
 class UserDefault extends FieldDisplayer
 {
     /**

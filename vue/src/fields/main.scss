@@ -1,31 +1,49 @@
-.matrix-type {
-    position: relative;
-    &:after {
-        content: '';
-        width: 1px;
-        height: calc(100% - 34px);
-        background: rgba(96, 125, 159, 0.25);
-        display: inline-block;
-        left: 15px;
-        top: 27px;
-        position: absolute;
-    }
-    .matrix-type-name {
-        padding-left: 15px;
-    }
-    .col.move {
-        padding-left: 25px;
-    }
-}
-
 .themes-displays {
     .line, .matrix-type, .table-type {
         transition: opacity 0.3s;
+    }
+    .line.matrix, .line.table {
+        background: #f3f7fc;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        padding: 7px 0;
+        margin-bottom: 0;
+    }
+    .table-type, .matrix-type {
+        background: #f3f7fc;
+        &:last-child {
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            padding-bottom: 7px;
+            margin-bottom: 7px;
+        }
+        .line:first-child {
+            margin-top: 0;
+        }
+        .line:last-child {
+            margin-bottom: 0;
+        }
+    }
+    .matrix-type {
+        position: relative;
+        .matrix-type-name {
+            padding-left: 1.5%;
+        }
+        .col.move {
+            justify-content: center;
+        }
     }
     .opaque {
         opacity: 0.5;
         &.matrix ~ .matrix-type, &.table ~ .table-type {
             opacity: 0.5;
+        }
+    }
+    .line.group {
+        .matrix-type {
+            .col.move {
+                justify-content: end !important;
+            }
         }
     }
 }

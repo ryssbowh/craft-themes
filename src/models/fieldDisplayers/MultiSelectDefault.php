@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\base\Model;
 use craft\fields\MultiSelect;
 
+/**
+ * Renders a multiselect field
+ */
 class MultiSelectDefault extends FieldDisplayer
 {
     /**

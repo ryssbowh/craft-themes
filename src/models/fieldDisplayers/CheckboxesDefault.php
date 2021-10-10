@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\base\Model;
 use craft\fields\Checkboxes;
 
+/**
+ * Renders a checkboxes field
+ */
 class CheckboxesDefault extends FieldDisplayer
 {
     /**

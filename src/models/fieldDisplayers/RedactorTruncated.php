@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\RedactorTruncatedOptions;
 use craft\base\Model;
 use craft\redactor\Field;
 
+/**
+ * Renders a redactor field as truncated
+ */
 class RedactorTruncated extends FieldDisplayer
 {
     /**

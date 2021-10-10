@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\DateDefaultOptions;
 use craft\base\Model;
 use craft\fields\Date;
 
+/**
+ * Renders a date field
+ */
 class DateDefault extends FieldDisplayer
 {
     /**

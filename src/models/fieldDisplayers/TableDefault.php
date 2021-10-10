@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\fields\Table;
 
+/**
+ * Renders a table field
+ */
 class TableDefault extends FieldDisplayer
 {
     /**

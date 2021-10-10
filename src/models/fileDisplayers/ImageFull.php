@@ -4,6 +4,9 @@ namespace Ryssbowh\CraftThemes\models\fileDisplayers;
 
 use Ryssbowh\CraftThemes\models\FileDisplayer;
 
+/**
+ * Renders an image full size
+ */
 class ImageFull extends FileDisplayer
 {
     /**

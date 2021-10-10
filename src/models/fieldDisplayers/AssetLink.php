@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetLinkOptions;
 use craft\base\Model;
 use craft\fields\Assets;
 
+/**
+ * Renders an asset field as link
+ */
 class AssetLink extends FieldDisplayer
 {
     /**

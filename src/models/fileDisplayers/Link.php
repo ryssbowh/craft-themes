@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FileDisplayer;
 use Ryssbowh\CraftThemes\models\fileDisplayerOptions\LinkOptions;
 use craft\base\Model;
 
+/**
+ * Renders a file as link
+ */
 class Link extends FileDisplayer
 {
     /**

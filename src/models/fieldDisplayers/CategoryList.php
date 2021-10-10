@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\CategoryListOptions;
 use craft\base\Model;
 use craft\fields\Categories;
 
+/**
+ * Renders a category field as a list
+ */
 class CategoryList extends FieldDisplayer
 {
     /**

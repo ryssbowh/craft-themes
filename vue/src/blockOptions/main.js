@@ -32,6 +32,45 @@ document.addEventListener("register-block-option-components", function(e) {
         </div>`
     };
 
+    e.detail['forms-search'] = {
+        props: {
+            block: Object
+        },
+        methods: {
+            errors: function (field) {
+                for (let i in this.block.errors.options ?? []) {
+                    if (this.block.errors.options[i][field] ?? null) {
+                        return this.block.errors.options[i][field];
+                    }
+                }
+                return [];
+            }
+        },
+        template: `
+        <div class="field">
+            <div class="heading">
+                <label class="required">{{ t('Form action') }}</label>
+            </div>
+            <div class="input ltr">
+                <input type="text" class="text fullwidth" :value="block.options.action" @input="$emit('updateOptions', {action: $event.target.value})">
+            </div>
+            <ul class="errors" v-if="errors('action')">
+                <li v-for="error in errors('action')">{{ error }}</li>
+            </ul>
+        </div>
+        <div class="field">
+            <div class="heading">
+                <label class="required">{{ t('Search term name') }}</label>
+            </div>
+            <div class="input ltr">
+                <input type="text" class="text fullwidth" :value="block.options.inputName" @input="$emit('updateOptions', {inputName: $event.target.value})">
+            </div>
+            <ul class="errors" v-if="errors('inputName')">
+                <li v-for="error in errors('inputName')">{{ error }}</li>
+            </ul>
+        </div>`
+    };
+
     e.detail['system-twig'] = {
         props: {
             block: Object

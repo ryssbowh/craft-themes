@@ -4,6 +4,9 @@ namespace Ryssbowh\CraftThemes\models\fileDisplayers;
 
 use Ryssbowh\CraftThemes\models\FileDisplayer;
 
+/**
+ * Renders a file as code
+ */
 class Code extends FileDisplayer
 {
     /**

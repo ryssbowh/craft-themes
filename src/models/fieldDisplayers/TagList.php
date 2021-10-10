@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\base\Model;
 use craft\fields\Tags;
 
+/**
+ * Renders a tag field as a list
+ */
 class TagList extends FieldDisplayer
 {
     /**

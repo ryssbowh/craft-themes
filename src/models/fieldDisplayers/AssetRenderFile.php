@@ -9,6 +9,9 @@ use craft\base\Model;
 use craft\fields\Assets;
 use craft\helpers\Assets as AssetsHelper;
 
+/**
+ * Renders the file of an asset field
+ */
 class AssetRenderFile extends FieldDisplayer
 {
     /**

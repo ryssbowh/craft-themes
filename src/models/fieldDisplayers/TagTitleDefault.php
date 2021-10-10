@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fields\TagTitle;
 use craft\base\Model;
 
+/**
+ * Renders a tag title field
+ */
 class TagTitleDefault extends FieldDisplayer
 {
     /**

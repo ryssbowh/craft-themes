@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\fields\BaseRelationField;
 use craft\fields\Matrix;
 
+/**
+ * Renders a matrix field
+ */
 class MatrixDefault extends FieldDisplayer
 {
     /**

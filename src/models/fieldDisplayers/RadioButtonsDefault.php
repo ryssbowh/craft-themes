@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\base\Model;
 use craft\fields\RadioButtons;
 
+/**
+ * Renders a radio butons field
+ */
 class RadioButtonsDefault extends FieldDisplayer
 {
     /**

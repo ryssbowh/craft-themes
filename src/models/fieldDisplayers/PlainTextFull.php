@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\PlainTextFullOptions;
 use craft\base\Model;
 use craft\fields\PlainText;
 
+/**
+ * Renders a plain text field
+ */
 class PlainTextFull extends FieldDisplayer
 {
     /**

@@ -44,7 +44,7 @@ class BlockService extends Service
     {
         if (is_null($this->_blocks)) {
             $this->_blocks = collect();
-            foreach (BlockRecord::find()->all() as $record) {
+            foreach (BlockRecord::find()->orderBy(['order' => SORT_ASC])->all() as $record) {
                 //Catching a provider exception, in case the block can't be created.
                 //Reason is whether the block provider or the block handle isn't defined
                 try {

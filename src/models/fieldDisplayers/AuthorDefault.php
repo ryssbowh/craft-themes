@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserDefaultOptions;
 use Ryssbowh\CraftThemes\models\fields\Author;
 use craft\base\Model;
 
+/**
+ * Renders the author of an entry
+ */
 class AuthorDefault extends FieldDisplayer
 {
     /**

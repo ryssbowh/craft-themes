@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\models\blocks\LoginFormBlock;
 use Ryssbowh\CraftThemes\models\blocks\ProfileFormBlock;
 use Ryssbowh\CraftThemes\models\blocks\RegisterFormBlock;
 use Ryssbowh\CraftThemes\models\blocks\ResetPasswordFormBlock;
+use Ryssbowh\CraftThemes\models\blocks\SearchFormBlock;
 use Ryssbowh\CraftThemes\models\blocks\SetPasswordFormBlock;
 
 /**
@@ -21,7 +22,8 @@ class FormsBlockProvider extends BlockProvider
         RegisterFormBlock::class,
         ProfileFormBlock::class,
         ResetPasswordFormBlock::class,
-        SetPasswordFormBlock::class
+        SetPasswordFormBlock::class,
+        SearchFormBlock::class
     ];
 
     /**

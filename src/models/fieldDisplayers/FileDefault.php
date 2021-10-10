@@ -10,6 +10,9 @@ use Ryssbowh\CraftThemes\models\fields\File;
 use craft\base\Model;
 use craft\helpers\Assets;
 
+/**
+ * Renders an asset file
+ */
 class FileDefault extends FieldDisplayer
 {
     /**

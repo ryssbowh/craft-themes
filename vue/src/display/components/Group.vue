@@ -34,12 +34,12 @@
             <div class="displayer col">
             </div>
             <div class="options col">
-                <a href="#" @click.prevent="editGroup">{{ t('Edit') }}</a>
-                <a href="#" @click.prevent="deleteGroup" v-if="!groupDisplays.length" class="delete">{{ t('Delete') }}</a>
+                <a href="#" @click.prevent="editGroup"><span class="icon settings"></span></a>
+                <a href="#" @click.prevent="deleteGroup" v-if="!groupDisplays.length" class="delete"><span class="icon delete"></span></a>
             </div>
         </div>
         <div class="displays">
-            <i v-if="!groupDisplays.length">{{ t('No displays in that group') }}</i>
+            <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('No displays in that group') }}</i></span>
             <draggable
                 item-key="uid"
                 :list="groupDisplays"
@@ -48,7 +48,7 @@
                 @change="onDragChange"
                 >
                 <template #item="{element}">
-                    <display-item :display="element"/>
+                    <display-item :display="element" @updateItem="updateItem($event, element.uid)"/>
                 </template>
             </draggable>
         </div>
@@ -57,7 +57,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import { sortBy } from 'lodash';
+import { sortBy, merge } from 'lodash';
 
 export default {
     computed: {
@@ -134,6 +134,17 @@ export default {
             }
             this.rebuildOrders(e);
         },
+        updateItem: function (data, uid) {
+            let display;
+            for (let i in this.display.item.displays) {
+                display = this.display.item.displays[i];
+                if (display.uid != uid) {
+                    continue;
+                }
+                display = merge(display, {item: data});
+                break;
+            }
+        },
         rebuildOrders: function (e) {
             let newIndex, movedElem;
             if (e.added) {
@@ -169,15 +180,21 @@ export default {
     .delete {
         margin-left: 5px;
     }
-    .displays {
-        border: 1px solid #f3f7fc;
+    .group {
+        background: #f3f7fc;
         border-radius: 5px;
-        padding: 5px;
+        padding: 7px 0;
+        .line:first-child {
+            margin-top: 0;
+        }
+    }
+    .displays {
         position: relative;
-        i {
+        .no-displays {
             position: absolute;
-            left: 5px;
+            left: 15px;
             top: 19px;
+            opacity: 0.7;
         }
         & > div {
             min-height: 50px;
@@ -185,5 +202,10 @@ export default {
     }
     .line.opaque ~ .displays {
         opacity: 0.5;
+    }
+</style>
+<style lang="scss">
+    .display-table .group .displays .col.move {
+        justify-content: center;
     }
 </style>

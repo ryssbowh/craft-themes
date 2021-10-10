@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FileDisplayer;
 use Ryssbowh\CraftThemes\models\fileDisplayerOptions\ImageTransformOptions;
 use craft\base\Model;
 
+/**
+ * Renders an image as a transform
+ */
 class ImageTransform extends FileDisplayer
 {
     /**

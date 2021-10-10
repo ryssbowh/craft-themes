@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FileDisplayer;
 use Ryssbowh\CraftThemes\models\fileDisplayerOptions\IframeOptions;
 use craft\base\Model;
 
+/**
+ * Renders a file as iframe
+ */
 class Iframe extends FileDisplayer
 {
     /**

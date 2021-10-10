@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\models\FileDisplayer;
 use Ryssbowh\CraftThemes\models\fileDisplayerOptions\HtmlVideoOptions;
 use craft\base\Model;
 
+/**
+ * Renders a video file
+ */
 class HtmlVideo extends FileDisplayer
 {
     /**

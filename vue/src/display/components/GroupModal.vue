@@ -67,7 +67,7 @@ export default {
         maxOrder: function () {
             return this.displays[this.displays.length - 1].order ?? 0;
         },
-        ...mapState(['layout', 'showGroupModal', 'editedGroupUid'])
+        ...mapState(['layout', 'showGroupModal', 'editedGroupUid', 'viewMode'])
     },
     data() {
         return {
@@ -125,6 +125,9 @@ export default {
         },
         closeModal () {
             this.$emit('closeModal');
+            this.name = '';
+            this.handle = '';
+            this.removeErrors();
         },
         validateModal: function () {
             this.removeErrors();

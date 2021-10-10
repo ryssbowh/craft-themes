@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\RedactorFullOptions;
 use craft\base\Model;
 use craft\redactor\Field;
 
+/**
+ * Renders a redactor field
+ */
 class RedactorFull extends FieldDisplayer
 {
     /**

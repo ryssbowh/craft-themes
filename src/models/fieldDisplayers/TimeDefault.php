@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TimeDefaultOptions;
 use craft\base\Model;
 use craft\fields\Time;
 
+/**
+ * Renders a time field
+ */
 class TimeDefault extends FieldDisplayer
 {
     /**

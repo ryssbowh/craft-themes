@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models\fileDisplayers;
 use Ryssbowh\CraftThemes\models\FileDisplayer;
 use craft\base\Model;
 
+/**
+ * Renders a file as raw content
+ */
 class Raw extends FileDisplayer
 {
     /**

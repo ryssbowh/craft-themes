@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\PlainTextTruncatedOptions;
 use craft\base\Model;
 use craft\fields\PlainText;
 
+/**
+ * Renders a plain text field as truncated
+ */
 class PlainTextTruncated extends FieldDisplayer
 {
     /**

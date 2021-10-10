@@ -11,6 +11,9 @@ use craft\base\Model;
 use craft\elements\Entry;
 use craft\fields\Entries;
 
+/**
+ * Renders an entry field as rendered using a view mode
+ */
 class EntryRendered extends FieldDisplayer
 {
     /**

@@ -11,6 +11,9 @@ use craft\base\Model;
 use craft\fields\Tags;
 use craft\models\TagGroup;
 
+/**
+ * Renders a tag field as rendered using a view mode
+ */
 class TagRendered extends FieldDisplayer
 {
     /**

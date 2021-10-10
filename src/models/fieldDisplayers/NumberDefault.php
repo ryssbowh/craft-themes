@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\NumberDefaultOptions;
 use craft\base\Model;
 use craft\fields\Number;
 
+/**
+ * Renders a number field
+ */
 class NumberDefault extends FieldDisplayer
 {
     /**

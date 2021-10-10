@@ -124,8 +124,22 @@ export default {
         align-items: center;
         margin: 0;
     }
-    .col:not(.move) {
-        padding: 7px 10px;
+    .line {
+        margin: 7px 0;
+    }
+    .head .col {
+        padding: 7px 0;
+    }
+    .body .col:not(.move) {
+        padding: 0px 10px;
+    }
+    .col.move, .col.options {
+        display: flex;
+        justify-content: start;
+        padding-bottom: 4px;
+    }
+    .col.move {
+        padding-left: 5px;
     }
 }
 .themes-displays {

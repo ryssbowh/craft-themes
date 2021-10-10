@@ -5,6 +5,9 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use craft\fields\Color;
 
+/**
+ * Renders a colour field
+ */
 class ColourDefault extends FieldDisplayer
 {
     /**

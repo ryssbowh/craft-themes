@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TitleDefaultOptions;
 use Ryssbowh\CraftThemes\models\fields\Title;
 use craft\base\Model;
 
+/**
+ * Renders a title field
+ */
 class TitleDefault extends FieldDisplayer
 {
     /**

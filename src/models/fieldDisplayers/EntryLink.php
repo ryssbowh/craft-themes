@@ -7,6 +7,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EntryLinkOptions;
 use craft\base\Model;
 use craft\fields\Entries;
 
+/**
+ * Renders an entry field as links
+ */
 class EntryLink extends FieldDisplayer
 {
     /**

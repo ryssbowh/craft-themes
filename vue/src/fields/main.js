@@ -6,7 +6,8 @@ document.addEventListener("register-fields-components", function(e) {
     e.detail['matrix'] = {
         component : {
             props: {
-                item: Object
+                item: Object,
+                display: Object
             },
             methods: {
                 updateMatrixItem: function (fieldId, typeId, data) {
@@ -57,7 +58,8 @@ document.addEventListener("register-fields-components", function(e) {
     e.detail['table'] = {
         component: {
             props: {
-                item: Object
+                item: Object,
+                display: Object
             },
             methods: {
                 updateTableItem: function (key, data) {
