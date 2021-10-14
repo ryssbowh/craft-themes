@@ -34,8 +34,10 @@ export default {
         if (layoutExists) {
             this.setLayout({layoutId: this.currentLayout, viewModeHandle: this.currentViewModeHandle});
         } else {
-            Craft.cp.displayError(this.t('Requested layout doesn\'t exist, defaulting to {layout}', {layout: this.layouts[0].description}));
             this.setLayout({layoutId: this.layouts[0].id});
+        }
+        if (layoutExists && this.currentLayout) {
+            Craft.cp.displayError(this.t('Requested layout doesn\'t exist, defaulting to {layout}', {layout: this.layouts[0].description}));
         }
         window.addEventListener('popstate', () => {
             const url = document.location.pathname.split('/');
