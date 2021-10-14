@@ -36,7 +36,7 @@ export default {
         } else {
             this.setLayout({layoutId: this.layouts[0].id});
         }
-        if (layoutExists && this.currentLayout) {
+        if (!layoutExists && this.currentLayout) {
             Craft.cp.displayError(this.t('Requested layout doesn\'t exist, defaulting to {layout}', {layout: this.layouts[0].description}));
         }
         window.addEventListener('popstate', () => {

@@ -914,6 +914,19 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     </button>
                 </div>
             </div>
+            <div class="field">
+                <div class="heading">
+                    <label>{{ t('Open in new tab') }}</label>
+                </div>
+                <div class="input ltr">                    
+                    <button type="button" :class="{lightswitch: true, on: options.newTab}">
+                        <div class="lightswitch-container">
+                            <div class="handle"></div>
+                        </div>
+                        <input type="hidden" name="newTab" :value="options.newTab ? 1 : ''">
+                    </button>
+                </div>
+            </div>
         </div>`
     };
 

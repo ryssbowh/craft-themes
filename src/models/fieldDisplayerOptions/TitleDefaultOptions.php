@@ -17,6 +17,11 @@ class TitleDefaultOptions extends FieldDisplayerOptions
     public $linked = false;
 
     /**
+     * @var boolean
+     */
+    public $newTab = false;
+
+    /**
      * @inheritDoc
      */
     public function defineRules(): array
@@ -24,7 +29,7 @@ class TitleDefaultOptions extends FieldDisplayerOptions
         return [
             ['tag', 'string'],
             ['tag', 'in', 'range' => ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']],
-            ['linked', 'boolean', 'trueValue' => true, 'falseValue' => false]
+            [['linked', 'newTab'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 }

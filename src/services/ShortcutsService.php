@@ -1,7 +1,10 @@
 <?php
 namespace Ryssbowh\CraftThemes\services;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\ShortcutsAssets;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use craft\elements\Asset;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\GlobalSet;
@@ -42,6 +45,7 @@ class ShortcutsService extends Service
         $viewMode = $e->variables['viewMode'];
         $theme = $this->themesRegistry()->current->handle;
         $id = StringHelper::UUID();
+        $renderingRegions = (Themes::$plugin->view->renderingMode == LayoutInterface::RENDER_MODE_REGIONS);
         $e->variables['attributes']->add([
             'data-layout-shortcut' => $id
         ]);
@@ -51,7 +55,7 @@ class ShortcutsService extends Service
                 $perm = 'editEntries:' . $layout->elementUid;
                 if (\Craft::$app->user->checkPermission($perm)) {
                     $js .= "{
-                        url: '" . UrlHelper::cpUrl('entries/' . $element->section->handle . '/' . $element->id) . "',
+                        url: '" . $element->getCpEditUrl() . "',
                         label: '" . \Craft::t('themes', 'Edit Entry') . "',
                     },";
                 }
@@ -60,7 +64,7 @@ class ShortcutsService extends Service
                 $perm = 'editCategories:' . $layout->elementUid;
                 if (\Craft::$app->user->checkPermission($perm)) {
                     $js .= "{
-                        url: '" . UrlHelper::cpUrl('categories/' . $element->group->handle . '/' . $element->id) . "',
+                        url: '" . $element->getCpEditUrl() . "',
                         label: '" . \Craft::t('themes', 'Edit Category') . "',
                     },";
                 }
@@ -68,7 +72,7 @@ class ShortcutsService extends Service
             if ($element instanceof User) {
                 if (\Craft::$app->user->checkPermission('editUsers')) {
                     $js .= "{
-                        url: '" . UrlHelper::cpUrl('users/' . $element->id) . "',
+                        url: '" . $element->getCpEditUrl() . "',
                         label: '" . \Craft::t('themes', 'Edit User') . "',
                     },";
                 }
@@ -77,12 +81,21 @@ class ShortcutsService extends Service
                 $perm = 'editGlobalSet:' . $layout->elementUid;
                 if (\Craft::$app->user->checkPermission($perm)) {
                     $js .= "{
-                        url: '" . UrlHelper::cpUrl('globals/' . $element->handle) . "',
+                        url: '" . $element->getCpEditUrl() . "',
                         label: '" . \Craft::t('themes', 'Edit Global') . "',
                     },";
                 }
             }
-            if (\Craft::$app->user->checkPermission('manageThemesBlocks')) {
+            if ($element instanceof Asset) {
+                $perm = 'editImagesInVolume:' . $layout->elementUid;
+                if (\Craft::$app->user->checkPermission($perm)) {
+                    $js .= "{
+                        url: '" . $element->getCpEditUrl() . "',
+                        label: '" . \Craft::t('themes', 'Edit Asset') . "',
+                    },";
+                }
+            }
+            if ($renderingRegions and \Craft::$app->user->checkPermission('manageThemesBlocks')) {
                 if ($layout->hasBlocks) {
                     $url = UrlHelper::cpUrl('themes/blocks/' . $theme . '/' . $layout->id);
                 } else {
