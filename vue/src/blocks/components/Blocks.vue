@@ -13,11 +13,10 @@
                     <div>
                         <draggable v-if="slideStates[provider.handle]"
                           item-key="vueid"
-                          class="list-group"
                           :list="provider.blocks"
                           :group="{ name: 'blocks', pull: 'clone', put: false }"
                           :sort="false"
-                          handle=".move"
+                          handle=".block"
                         >
                             <template #item="{element}">
                                 <block :block="element" :original="true"/>
@@ -39,22 +38,15 @@
                 <p>{{ t('No layouts available, you should reinstall the themes data in the settings') }}</p>
             </div>
         </div>
-        <div class="options">
-            <div class="heading">
-                <h3>{{ t('Options') }}</h3>
-            </div>
-            <div class="options-form" v-for="block in blocks" v-bind:key="block.index">
-                <block-options v-show="blockOptionId == block.index" :block="block"/>
-            </div>
-        </div>
-        <layout-modal @closeModal="setShowLayoutModal({show: false})"/>
+        <layout-modal/>
+        <options-modal/>
     </div>
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Block from './Block.vue';
-import BlockOptions from './BlockOptions.vue';
+import OptionsModal from './OptionsModal.vue';
 import Region from './Region.vue';
 import Draggable from 'vuedraggable';
 import { reduce } from 'lodash';
@@ -79,7 +71,7 @@ export default {
         },
         providers: { 
             deep: true,
-            handler(providers) {
+            handler (providers) {
                 let first = true;
                 for (let i in providers) {
                     this.slideStates[i] = first;
@@ -97,13 +89,12 @@ export default {
         this.fetchProviders();
     },
     methods: {
-        ...mapMutations(['setShowLayoutModal']),
         ...mapActions(['checkChanges', 'fetchProviders'])
     },
     components: {
         Region,
         Block,
-        BlockOptions,
+        OptionsModal,
         Draggable
     }
 };
@@ -191,7 +182,7 @@ export default {
         overflow-y: auto;
     }
     .blocks-sidebar {
-        width: 20%;
+        width: 30%;
         max-width: 300px;
     }
     h5.sub-heading {
@@ -200,11 +191,6 @@ export default {
         position: relative;
         cursor: pointer;
         border-bottom: 1px solid rgba(96, 125, 159, 0.25);
-    }
-    .options {
-        width: 20%;
-        max-width: 300px;
-        transition: width 0.3s;
     }
     .heading {
         padding: 7px 14px 6px;

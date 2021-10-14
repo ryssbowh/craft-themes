@@ -26,6 +26,7 @@ class CpBlocksController extends Controller
         $this->requirePermission('manageThemesBlocks');
         $themes = $this->registry->getNonPartials(false, true);
         $theme = null;
+        $currentUser = \Craft::$app->getUser()->getIdentity();
 
         if ($themeName == null) {
             if (sizeof($themes)) {
@@ -62,7 +63,8 @@ class CpBlocksController extends Controller
             'allLayouts' => $this->layouts->getBlockLayouts(),
             'cacheStrategies' => array_map(function ($strategy) {
                 return $strategy->toArray();
-            }, $this->blockCache->strategies)
+            }, $this->blockCache->strategies),
+            'showFieldHandles' => ($currentUser->admin && $currentUser->getPreference('showFieldHandles'))
         ]);
     }
 }

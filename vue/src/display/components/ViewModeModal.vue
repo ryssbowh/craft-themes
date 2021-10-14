@@ -71,16 +71,14 @@ export default {
     watch: {
         showModal: function () {
             if (this.showModal) {
+                this.updateGenerator();
+                if (this.mode == 'edit') {
+                    this.name = this.editedViewMode.name;
+                    this.handle = this.editedViewMode.handle;
+                }
                 this.popup.show();
             } else {
                 this.popup.hide();
-            }
-        },
-        editedViewMode: function () {
-            this.updateGenerator();
-            if (this.mode == 'edit') {
-                this.name = this.editedViewMode.name;
-                this.handle = this.editedViewMode.handle;
             }
         }
     },

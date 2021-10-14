@@ -32,6 +32,7 @@ document.addEventListener("register-block-strategy-components", function(e) {
         emits: ['updateOptions'],
         template: `
         <div>
+            <span></span>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Cache depends on user authentication') }}</label>

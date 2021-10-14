@@ -9,6 +9,7 @@
             :initial-layout="{{ layout }}"
             :all-layouts="{{ allLayouts|json_encode }}"
             :all-strategies="{{ cacheStrategies|json_encode }}"
+            :show-field-handles="{{ showFieldHandles ? 1 : 0 }}"
     	/>
     {% endif %}
 {% endblock %}
@@ -16,6 +17,12 @@
 {% block toolbar %}
     {% if themes|length %}
 	   <blocks-toolbar />
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    {% if themes|length %}
+        <blocks-menu></blocks-menu>
     {% endif %}
 {% endblock %}
 

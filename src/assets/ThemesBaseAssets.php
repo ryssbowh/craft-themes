@@ -48,7 +48,8 @@ class ThemesBaseAssets extends AssetBundle
             'Width',
             'Height',
             'Entry Type',
-            'Global Set'
+            'Global Set',
+            'Copied to clipboard.'
         ]);
     }
 }

@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import BlocksToolbar from './components/BlocksToolbar.vue';
 import BlocksContext from './components/BlocksContext.vue';
+import BlocksMenu from './components/BlocksMenu.vue';
 import LayoutModal from './components/LayoutModal'
 import Blocks from './components/Blocks.vue';
 import { store } from './stores/store.js';
@@ -9,7 +10,8 @@ const app = createApp({
     components: {
         Blocks,
         BlocksContext,
-        BlocksToolbar
+        BlocksToolbar,
+        BlocksMenu
     }
 });
 app.use(store);

@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapMutations } from 'vuex';
 import { filter } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import HandleGenerator from '../../HandleGenerator'
@@ -119,7 +119,7 @@ export default {
             this.handleError = false;
         },
         closeModal () {
-            this.$emit('closeModal');
+            this.setShowLayoutModal({show: false})
             this.name = '';
             this.handle = '';
             this.removeErrors();
@@ -156,12 +156,13 @@ export default {
                     hasBlocks: true,
                     description: this.t('Custom : {name}', {name: this.name})
                 });
+                Craft.cp.displayNotice(this.t('Custom layout is created, make your changes and save'));
             }
             this.closeModal();
         },
+        ...mapMutations(['setShowLayoutModal']),
         ...mapActions(['createLayout', 'updateCustomLayout'])
-    },
-    emits: ['closeModal'],
+    }
 };
 </script>
 <style lang="scss" scoped>

@@ -3,20 +3,15 @@
         <div class="spinner-wrapper" v-if="isLoading || isSaving">
           <div class="spinner"></div>
         </div>
-        <div class="flex title">
-            <h2>{{ t('Displays') }}</h2>
-            <a href="#" @click.prevent="setShowGroupModal({show: true})">{{ t('New group') }}</a>
-        </div>
         <div class="fullwidth display-table" v-if="rootDisplays.length">
             <div class="line head">
                 <div class="handle col"></div>
                 <div class="title col">{{ t('Title', {}, 'app') }}</div>
-                <div class="handle col">{{ t('Handle', {}, 'app') }}</div>
                 <div class="type col">{{ t('Type') }}</div>
                 <div class="label col">{{ t('Label', {}, 'app') }}</div>
                 <div class="visibility col">{{ t('Visibility') }}</div>
                 <div class="displayer col">{{ t('Displayer') }}</div>
-                <div class="options col">{{ t('Options') }}</div>
+                <div class="options col"></div>
             </div>
             <div class="body">
                 <draggable
@@ -120,7 +115,7 @@ export default {
     }
     .line {
         display: grid;
-        grid-template-columns: 4% 12% 12% 12% 17% 17% 17% 9%;
+        grid-template-columns: 5% 24% 12% 17% 17% 19% 6%;
         align-items: center;
         margin: 0;
     }
@@ -128,18 +123,23 @@ export default {
         margin: 7px 0;
     }
     .head .col {
-        padding: 7px 0;
+        padding: 7px 8px;
     }
-    .body .col:not(.move) {
-        padding: 0px 10px;
-    }
-    .col.move, .col.options {
-        display: flex;
-        justify-content: start;
-        padding-bottom: 4px;
+    .body {
+        .col:not(.move) {
+            padding: 0px 10px;
+        }
+        .col.move, .col.options {
+            padding-bottom: 4px;
+        }
     }
     .col.move {
         padding-left: 5px;
+        display:flex;
+    }
+    .col.title {
+        display: flex;
+        flex-wrap: wrap;
     }
 }
 .themes-displays {

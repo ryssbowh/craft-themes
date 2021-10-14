@@ -8,7 +8,6 @@
       class="region-blocks"
       :list="regionBlocks"
       group="blocks"
-      handle=".move"
       @change="changed"
     >
       <template #item="{element}">
@@ -97,7 +96,7 @@ export default {
     font-size: 16px;
   }
   .region-blocks {
-    min-height: 56px;
+    min-height: 50px;
     margin-top: 5px;
     box-shadow: 0 0 0 1px rgba(31, 41, 51, 0.1), 0 2px 5px -2px rgba(31, 41, 51, 0.2);
     border-radius: 3px;

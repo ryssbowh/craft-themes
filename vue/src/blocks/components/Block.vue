@@ -4,52 +4,49 @@
             <div class="description">
                 <div class="name">{{ block.name }} <span class="red-star" v-if="hasErrors">*</span></div>
                 <div class="small" v-if="original">{{ block.smallDescription }}</div>
-                <div class="small" v-if="!original">{{ block.provider }}</div>
+                <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="!original && showFieldHandles" @click="copyValue">
+                    <input type="text" :value="fullName" readonly="" :size="fullName.length">
+                    <span data-icon="clipboard" aria-hidden="true"></span>
+                </div>
             </div>
             <span class="info" v-if="original && block.longDescription">{{ block.longDescription }}</span>
-            <button v-if="!original" type="button" id="live" :class="'lightswitch has-labels' + (block.active ? ' on' : '')" role="checkbox">
-                <div class="lightswitch-container">
-                    <div class="handle"></div>
-                </div>
-                <input type="hidden" name="onlyIfNotAuthenticated" :value="block.active">
-            </button>
             <div class="actions">
-                <div class="move icon"></div>
-                <div v-if="!original" :class="'settings icon' + (blockOptionId == block.index ? ' active' : '')" @click="setBlockOptions(block)"></div>
-                <div v-if="!original" class="delete icon" @click="$emit('remove', block)"></div>
+                <a v-if="!original" :class="'settings icon' + (blockOptionId == block.index ? ' active' : '')" @click.prevent="setShowOptionsModal({show:true, block: block})"></a>
+                <a v-if="!original" class="delete icon" @click.prevent="$emit('remove', block)"></a>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
     computed: {
-        hasErrors: function () {
-        return Object.keys(this.block.errors).length > 0;
+        fullName: function () {
+            return this.block.provider + '_' + this.block.handle
         },
-        ...mapState(['blocks', 'blockOptionId'])
+        hasErrors: function () {
+            return Object.keys(this.block.errors).length > 0;
+        },
+        ...mapState(['blocks', 'blockOptionId', 'showFieldHandles'])
     },
     props: {
         block: Object,
         original: Boolean
     },
     mounted () {
-        let _this = this;
         Craft.initUiElements(this.$el);
-        this.$nextTick(() => {
-            $(this.$el).find('.lightswitch').on('change', function(){
-                let block = {..._this.block};
-                block.active = $(this).hasClass('on');
-                _this.updateBlock(block);
-            });
-        });
     },
     methods: {
-        ...mapMutations(['updateBlock', 'setBlockOptions']),
-        ...mapActions([])
+        copyValue: function(e) {
+            let input = e.target;
+            input.select();
+            document.execCommand('copy');
+            Craft.cp.displayNotice(this.t('Copied to clipboard.', 'app'));
+            input.setSelectionRange(0, 0);
+        },
+        ...mapMutations(['updateBlock', 'setShowOptionsModal']),
     },
     emits: ['remove']
 };
@@ -63,23 +60,48 @@ export default {
     transition: all 0.3s;
     background-color: #cdd8e4;
     opacity: 0.5;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    cursor: grab;
     .red-star {
         color: red;
     }
+    .copytextbtn:hover {
+        margin-left: 0;
+        margin-right: -16px;
+    }
+    .copytextbtn {
+        margin: 3px 0;
+    }
+    .name {
+        margin: 3px 0;
+        margin-right: 5px;
+    }
     .actions {
         display: flex;
+        margin-left: auto;
+        & > div {
+            margin-bottom: 2px;
+        }
     }
     .inner {
+        width: 100%;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-    }
-    &:not(.original) {
-        cursor: pointer;
+        overflow: hidden;
     }
     &.original {
         opacity: 1;
         background-color: #e4edf6;
+        .description {
+            flex-direction: column;
+            margin-right: 5px;
+        }
+        .name {
+            margin: 0;
+        }
     }
     &.active {
         opacity: 1
@@ -92,17 +114,18 @@ export default {
     }
     .description {
         flex: 1;
-        padding-right: 10px;
+        display: flex;
+        flex-wrap: wrap;
     }
-    .delete, .move, .settings {
-        margin-left: 5px;
+    .delete, .settings {
+        padding: 0 2px;
         cursor: pointer;
         font-size: 16px;
     }
     .settings {
-        color: rgba(123, 135, 147, 0.5);
-        &.active, &:hover {
-            color: #3f4d5a;
+        opacity: 0.5;
+        &:hover {
+            opacity: 1;
         }
     }
 }

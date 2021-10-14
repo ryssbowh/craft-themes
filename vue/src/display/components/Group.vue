@@ -3,12 +3,13 @@
         <div :class="classes">
             <div class="move col"><div class="move icon"></div></div>
             <div class="title col">
-                {{ item.name }}
+                <span class="name">{{ item.name }}</span>
+                <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="showFieldHandles" @click="copyValue">
+                    <input type="text" :value="'group-' + item.handle" readonly="" :size="('group-' + item.handle).length">
+                    <span data-icon="clipboard" aria-hidden="true"></span>
+                </div>
             </div>
-            <div class="handle col">
-                {{ item.handle }}
-            </div>
-            <div class="type col">
+            <div class="type col code">
                 {{ t('Group') }}
             </div>
             <div class="label col">
@@ -76,7 +77,7 @@ export default {
         groupDisplays: function () {
             return sortBy(this.item.displays, 'order');
         },
-        ...mapState([])
+        ...mapState(['showFieldHandles'])
     },
     props: {
         item: Object,
@@ -88,6 +89,13 @@ export default {
         }
     },
     methods: {
+        copyValue: function(e) {
+            let input = e.target;
+            input.select();
+            document.execCommand('copy');
+            Craft.cp.displayNotice(this.t('Copied to clipboard.', 'app'));
+            input.setSelectionRange(0, 0);
+        },
         updateLabelVisibility: function (e) {
             let val = e.originalTarget.value;
             let data = {

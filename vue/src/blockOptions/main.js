@@ -29,7 +29,8 @@ document.addEventListener("register-block-option-components", function(e) {
             <ul class="errors" v-if="errors('template')">
                 <li v-for="error in errors('template')">{{ error }}</li>
             </ul>
-        </div>`
+        </div>`,
+        emits: ['updateOptions']
     };
 
     e.detail['forms-search'] = {
@@ -68,7 +69,8 @@ document.addEventListener("register-block-option-components", function(e) {
             <ul class="errors" v-if="errors('inputName')">
                 <li v-for="error in errors('inputName')">{{ error }}</li>
             </ul>
-        </div>`
+        </div>`,
+        emits: ['updateOptions']
     };
 
     e.detail['system-twig'] = {
@@ -84,7 +86,8 @@ document.addEventListener("register-block-option-components", function(e) {
                 <textarea class="text fullwidth" rows="10" :value="block.options.twig" @input="$emit('updateOptions', {twig: $event.target.value})">
                 </textarea>
             </div>
-        </div>`
+        </div>`,
+        emits: ['updateOptions']
     };
 
     e.detail['forms-login'] = {
@@ -115,7 +118,8 @@ document.addEventListener("register-block-option-components", function(e) {
                     <input type="hidden" name="onlyIfNotAuthenticated" :value="block.options.onlyIfNotAuthenticated ? 1 : ''">
                 </button>
             </div>
-        </div>`
+        </div>`,
+        emits: ['updateOptions']
     };
 
     e.detail['forms-register'] = {...e.detail['forms-login']};
@@ -129,24 +133,32 @@ document.addEventListener("register-block-option-components", function(e) {
         },
         data: function () {
             return {
+                type: null,
+                entry: null,
+                viewMode: null,
                 entries: [],
                 viewModes: []
             };
         },
         watch: {
-            'block.options.type': {
-                handler () {
-                    this.$emit('updateOptions', {entry: '', viewMode: ''});
-                    this.fetchEntries();
-                    this.fetchViewModes();
-                }
+            type: function () {
+                this.entry = null;
+                this.viewMode = null;
+                this.$emit('updateOptions', {type: this.type});
+                this.fetchEntries();
+                this.fetchViewModes();
+            },
+            entry: function () {
+                this.$emit('updateOptions', {entry: this.entry});
+            },
+            viewMode: function () {
+                this.$emit('updateOptions', {viewMode: this.viewMode});
             }
         },
         created() {
-            if (this.block.options.type) {
-                this.fetchEntries();
-                this.fetchViewModes();
-            }
+            this.type = this.block.options.type;
+            this.entry = this.block.options.entry;
+            this.viewMode = this.block.options.viewMode;
         },
         methods: {
             errors: function (field) {
@@ -161,7 +173,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 return [];
             },
             fetchEntries: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/entries/'+this.block.options.type))
+                axios.post(Craft.getCpUrl('themes/ajax/entries/'+this.type))
                 .then((response) => {
                     this.entries = response.data.entries;
                 })
@@ -170,7 +182,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 });
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/entry/'+this.block.options.type))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/entry/'+this.type))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -186,7 +198,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {type: $event.target.value})" :value="block.options.type">
+                    <select v-model="type">
                         <option v-for="type in block.entryTypes" :value="type.uid">{{ type.name }}</option>
                     </select>
                 </div>
@@ -201,7 +213,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {entry: $event.target.value})" :value="block.options.entry">
+                    <select v-model="entry">
                         <option v-for="entry in entries" :value="entry.uid">{{ entry.title }}</option>
                     </select>
                 </div>
@@ -216,7 +228,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {viewMode: $event.target.value})" :value="block.options.viewMode">
+                    <select v-model="viewMode">
                         <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
                     </select>
                 </div>
@@ -238,23 +250,29 @@ document.addEventListener("register-block-option-components", function(e) {
         data: function () {
             return {
                 categories: [],
-                viewModes: []
+                viewModes: [],
+                group: null,
+                viewMode: null,
+                category: null
             };
         },
         watch: {
-            'block.options.group': {
-                handler () {
-                    this.$emit('updateOptions', {category: '', viewMode: ''});
-                    this.fetchCategories();
-                    this.fetchViewModes();
-                }
+            group: function () {
+                this.$emit('updateOptions', {group: this.group});
+                this.fetchCategories();
+                this.fetchViewModes();
+            },
+            viewMode: function () {
+                this.$emit('updateOptions', {viewMode: this.viewMode});
+            },
+            category: function () {
+                this.$emit('updateOptions', {category: this.category});
             }
         },
         created() {
-            if (this.block.options.group) {
-                this.fetchCategories();
-                this.fetchViewModes();
-            }
+            this.group = this.block.options.group;
+            this.viewMode = this.block.options.viewMode;
+            this.category = this.block.options.category;
         },
         methods: {
             errors: function (field) {
@@ -269,7 +287,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 return [];
             },
             fetchCategories: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/categories/'+this.block.options.group))
+                axios.post(Craft.getCpUrl('themes/ajax/categories/'+this.group))
                 .then((response) => {
                     this.categories = response.data.categories;
                 })
@@ -278,7 +296,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 });
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/category/'+this.block.options.group))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/category/'+this.group))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -294,7 +312,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {group: $event.target.value})" :value="block.options.group">
+                    <select v-model="group">
                         <option v-for="group in block.groups" :value="group.uid">{{ group.name }}</option>
                     </select>
                 </div>
@@ -309,7 +327,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {category: $event.target.value})" :value="block.options.category">
+                    <select v-model="category">
                         <option v-for="category in categories" :value="category.uid">{{ category.title }}</option>
                     </select>
                 </div>
@@ -324,7 +342,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {viewMode: $event.target.value})" :value="block.options.viewMode">
+                    <select v-model="viewMode">
                         <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
                     </select>
                 </div>
@@ -346,7 +364,7 @@ document.addEventListener("register-block-option-components", function(e) {
         data: function () {
             return {
                 users: [],
-                viewModes: []
+                viewModes: [],
             };
         },
         created() {
@@ -462,7 +480,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {viewMode: $event.target.value})" :value="block.options.viewMode">
+                    <select $emit('updateOptions', {viewMode: $event.target.value}) :value="viewMode">
                         <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
                     </select>
                 </div>
@@ -483,20 +501,24 @@ document.addEventListener("register-block-option-components", function(e) {
         },
         data: function () {
             return {
-                viewModes: []
+                viewModes: [],
+                set: null,
+                viewMode: null
             };
         },
         watch: {
-            'block.options.set': {
-                handler () {
-                    this.fetchViewModes();
-                }
-            }
+            set: function () {
+                this.viewMode = null;
+                this.$emit('updateOptions', {set: this.set});
+                this.fetchViewModes();
+            },
+            viewMode: function () {
+                this.$emit('updateOptions', {viewMode: this.viewMode});
+            },
         },
         created() {
-            if (this.block.options.set) {
-                this.fetchViewModes();
-            }
+            this.set = this.block.options.set;
+            this.viewMode = this.block.options.viewMode;
         },
         methods: {
             errors: function (field) {
@@ -511,7 +533,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 return [];
             },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/global/'+this.block.options.set))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/global/'+this.set))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -527,7 +549,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {set: $event.target.value})" :value="block.options.set">
+                    <select v-model="set">
                         <option v-for="set in block.sets" :value="set.uid">{{ set.name }}</option>
                     </select>
                 </div>
@@ -542,7 +564,7 @@ document.addEventListener("register-block-option-components", function(e) {
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select @input="$emit('updateOptions', {viewMode: $event.target.value})" :value="block.options.viewMode">
+                    <select v-model="viewMode">
                         <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
                     </select>
                 </div>

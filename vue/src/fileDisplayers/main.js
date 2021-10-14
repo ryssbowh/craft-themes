@@ -262,10 +262,10 @@ document.addEventListener("register-file-displayers-components", function(e) {
                 <div class="heading">
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
+                <div class="instructions">{{ t('Enter a json list of options to transform the image, example: { "width": 300, "height": 300 }') }}</div>
                 <div class="input ltr">
                     <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][custom]'" v-model="custom">
                 </div>
-                <div class="instructions">{{ t('Enter a json list of options to transform the image, example: { "width": 300, "height": 300 }') }}</div>
                 <ul class="errors" v-if="errorList('custom')">
                     <li v-for="error in errorList('custom')">{{ error }}</li>
                 </ul>

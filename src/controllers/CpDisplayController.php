@@ -24,6 +24,7 @@ class CpDisplayController extends Controller
         $this->requirePermission('manageThemesDisplay');
         $themes = $this->registry->getNonPartials(false, true);
         $theme = null;
+        $currentUser = \Craft::$app->getUser()->getIdentity();
 
         if ($themeName == null) {
             if (sizeof($themes)) {
@@ -51,6 +52,7 @@ class CpDisplayController extends Controller
             'allLayouts' => $this->layouts->getWithDisplays(),
             'layout' => $layout ? $layout : 0,
             'viewModeHandle' => $viewModeHandle,
+            'showFieldHandles' => ($currentUser->admin && $currentUser->getPreference('showFieldHandles'))
         ]);
     }
 }

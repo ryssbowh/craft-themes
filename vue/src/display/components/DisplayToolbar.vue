@@ -1,11 +1,12 @@
 <template>
     <div id="action-buttons" class="flex">
+        <button href="#" class="btn" :disabled="!canSave" @click.prevent="setShowGroupModal({show: true})">{{ t('New group') }}</button>
         <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
     </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapMutations } from 'vuex';
 
 export default {
     computed: {
@@ -15,6 +16,7 @@ export default {
         ...mapState(['isSaving', 'isFetching'])
     },
     methods: {
+        ...mapMutations(['setShowGroupModal']),
         ...mapActions(['save']),
     }
 };

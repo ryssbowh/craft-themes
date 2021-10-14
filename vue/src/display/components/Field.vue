@@ -2,12 +2,13 @@
     <div :class="classes">
         <div class="move col"><div class="move icon" v-if="moveable"></div></div>
         <div class="title col">
-            {{ item.name }}
+            <span class="name">{{ item.name }}</span>
+            <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="showFieldHandles && fullHandle" @click="copyValue">
+                <input type="text" :value="fullHandle" readonly="" :size="fullHandle.length">
+                <span data-icon="clipboard" aria-hidden="true"></span>
+            </div>
         </div>
-        <div class="handle col">
-            {{ item.handle }}
-        </div>
-        <div class="type col">
+        <div class="type col code">
             {{ item.displayName }}
         </div>
         <div class="label col">
@@ -89,7 +90,13 @@ export default {
         isOpaque: function () {
             return (this.item.hidden || this.item.visuallyHidden || !this.displayerDefined || !this.hasDisplayers || !this.item.displayerHandle);
         },
-        ...mapState([])
+        fullHandle: function () {
+            if (!this.displayer) {
+                return '';
+            }
+            return this.displayer.handle
+        },
+        ...mapState(['showFieldHandles'])
     },
     props: {
         item: Object,
@@ -112,6 +119,13 @@ export default {
         }
     },
     methods: {
+        copyValue: function(e) {
+            let input = e.target;
+            input.select();
+            document.execCommand('copy');
+            Craft.cp.displayNotice(this.t('Copied to clipboard.', 'app'));
+            input.setSelectionRange(0, 0);
+        },
         onSaveModal: function (data) {
             this.$emit("updateItem", {options: data});
             this.showModal = false;

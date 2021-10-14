@@ -10,6 +10,7 @@
             :all-layouts="{{ allLayouts|json_encode }}"
             :current-layout="{{ layout }}"
             :current-view-mode-handle="'{{ viewModeHandle }}'"
+            :show-field-handles="{{ showFieldHandles ? 1 : 0 }}"
         />
     {% endif %}
 {% endblock %}

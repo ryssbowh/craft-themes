@@ -23,16 +23,18 @@ export default {
         themes: Object,
         allLayouts: Object,
         currentLayout: Number,
-        currentViewModeHandle: String
+        currentViewModeHandle: String,
+        showFieldHandles: Number
     },
     created () {
+        this.setShowFieldHandles(this.showFieldHandles);
         this.setAllLayouts(this.allLayouts);
-        if (this.initialTheme) {
-            this.setTheme(this.initialTheme);
-        }
-        if (this.currentLayout) {
+        this.setTheme(this.initialTheme);
+        let layoutExists = (this.currentLayout && this.allLayouts[this.initialTheme].filter((l) => l.id == this.currentLayout).length);
+        if (layoutExists) {
             this.setLayout({layoutId: this.currentLayout, viewModeHandle: this.currentViewModeHandle});
         } else {
+            Craft.cp.displayError(this.t('Requested layout doesn\'t exist, defaulting to {layout}', {layout: this.layouts[0].description}));
             this.setLayout({layoutId: this.layouts[0].id});
         }
         window.addEventListener('popstate', () => {
@@ -71,7 +73,7 @@ export default {
             }
             this.setLayout({layoutId: this.layouts[0].id});
         },
-        ...mapMutations(['setTheme', 'setAllLayouts']),
+        ...mapMutations(['setTheme', 'setAllLayouts', 'setShowFieldHandles']),
         ...mapActions(['setLayout', 'setViewModeByHandle']),
     }
 };

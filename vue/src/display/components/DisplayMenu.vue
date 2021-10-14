@@ -1,6 +1,7 @@
 <template>
     <nav id="notification-nav">
         <ul>
+            <li class="heading"><span>{{ t('Layouts') }}</span></li>
             <li v-for="layout2 in layouts" v-bind:key="layout2.id">
                 <a href="#" :class="{'sel': layout.id === layout2.id}" @click.prevent="confirmAndChangeLayout(layout2.id)">{{ layout2.description }}</a>
             </li>
@@ -26,3 +27,8 @@ export default {
     }
 };
 </script>
+<style lang="scss" scoped>
+    .heading {
+    margin: 11px 24px 14px 24px;
+    }
+</style>

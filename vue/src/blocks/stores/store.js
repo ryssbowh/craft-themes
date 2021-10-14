@@ -49,16 +49,25 @@ const store = createStore({
             allLayouts: {},
             regions: {},
             hasChanged: false,
-            blockOptionId: null,
             cacheStrategies: {},
             showLayoutModal: false,
-            editedLayoutUid: null
+            showOptionsModal: false,
+            editedLayoutUid: null,
+            editedBlock: null,
+            showFieldHandles: false,
         }
     },
     mutations: {
+        setShowFieldHandles(state, value) {
+            state.showFieldHandles = value;
+        },
         setShowLayoutModal(state, {show, editUid = null}) {
             state.showLayoutModal = show;
             state.editedLayoutUid = editUid;  
+        },
+        setShowOptionsModal(state, {show, block = null}) {
+            state.showOptionsModal = show;
+            state.editedBlock = block;  
         },
         setProviders(state, value) {
             state.providers = value;
@@ -121,7 +130,7 @@ const store = createStore({
         },
         updateCustomLayout(state, data) {
             state.layout = merge(state.layout, data);
-            state.originalLayout = {...state.layouts};
+            state.originalLayout = {...state.layout};
         },
         setLayouts(state, value) {
             state.layouts = value;
@@ -147,9 +156,6 @@ const store = createStore({
         setHasChanged(state, value) {
             state.hasChanged = value;
         },
-        setBlockOptions(state, block) {
-            state.blockOptionId = block.index;
-        },
         setIsFetching(state, {key, value}) {
             state.isFetching[key] = value;
         },
@@ -173,9 +179,6 @@ const store = createStore({
                 headers: {'X-CSRF-Token': Craft.csrfTokenValue}
             })
             .then(res => {
-                if (state.isCopying) {
-                    commit('setIsCopying', false);
-                }
                 if (isNew) {
                     commit('addLayout', res.data.layout);
                 } else {
@@ -279,9 +282,9 @@ const store = createStore({
                 }
             }
         },
-        copyLayout({state, commit, dispatch}, id) {
-            commit('setLayout', id);
-            setWindowUrl(state.theme, id);
+        copyLayout({state, commit, dispatch}, layout) {
+            commit('setLayout', layout);
+            setWindowUrl(state.theme, layout.id);
             commit('setIsCopying', true);
             commit('setHasChanged', true);
             dispatch('resetBlocks', state.blocks);

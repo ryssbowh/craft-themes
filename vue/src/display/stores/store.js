@@ -63,10 +63,14 @@ const store = createStore({
             editedGroupUid: null,
             displayer: {},
             itemOptionsEdited: {},
-            displayerOptionsErrors: {}
+            displayerOptionsErrors: {},
+            showFieldHandles: false
         }
     },
     mutations: {
+        setShowFieldHandles(state, value) {
+            state.showFieldHandles = value;
+        },
         setTheme (state, value) {
             state.theme = value;
             state.layouts = state.allLayouts[value];
@@ -202,7 +206,8 @@ const store = createStore({
             return axios.post(Craft.getCpUrl('themes/ajax/view-modes'), {layoutId: state.layout.id})
             .then((response) => {
                 commit('setViewModes', response.data.viewModes);
-                if (viewModeHandle) {
+                let viewModeExists = (viewModeHandle && state.viewModes.filter((v) => v.handle == viewModeHandle).length);
+                if (viewModeExists) {
                     dispatch('setViewModeByHandle', viewModeHandle);
                 } else {
                     dispatch('setViewMode', state.viewModes[0]);
@@ -254,9 +259,9 @@ const store = createStore({
             commit('addViewMode', viewMode);
             dispatch('setViewMode', viewMode);
         },
-        deleteViewMode({commit, state}, viewMode) {
+        deleteViewMode({commit, state, dispatch}, viewMode) {
             commit('deleteViewMode', viewMode);
-            commit('setViewMode', state.viewModes[0]);
+            dispatch('setViewMode', state.viewModes[0]);
         },
         checkChanges({state, commit}) {
             commit('setHasChanges', !isEqual(state.originalViewModes, state.viewModes));

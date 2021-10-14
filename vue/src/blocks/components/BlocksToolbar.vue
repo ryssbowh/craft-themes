@@ -1,7 +1,7 @@
 <template>
   <div id="action-buttons" class="flex">
     <div class="btngroup submit">
-      <button href="#" class="btn submit menubtn" ref="menu" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
+      <button href="#" class="btn submit menubtn" ref="menu" v-if="!isCopying" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
       <div class="menu" data-align="right">
         <ul>
           <li v-for="elem, index in layoutsWithoutBlocks" v-bind:key="index">
@@ -45,14 +45,14 @@ export default {
         checkAndCopy: function(layout) {
             if (this.hasChanged) {
                 if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                    this.copy(layout.id);
+                    this.copy(layout);
                 }
             } else {
-                this.copy(layout.id);
+                this.copy(layout);
             }
         },
-        copy(id) {
-            this.copyLayout(id);
+        copy(layout) {
+            this.copyLayout(layout);
             Craft.cp.displayNotice(this.t('Blocks are copied, make your changes and save'));
         },
         checkAndDelete() {

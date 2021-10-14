@@ -104,6 +104,12 @@ This plugins comes with the following type of blocks :
 - Template : Renders a custom template
 - Twig : Renders some custom twig code
 - User : Choose a user and a view mode to render
+- Login form
+- Profile form
+- Register form
+- Reset password form
+- Search form
+- Set password form
 
 ### Project config
 
@@ -223,3 +229,4 @@ Craft 3.5 or over
 - field displayer inside displayer ?
 - check cloning table fields
 - table, matrix update item events
+- asset block

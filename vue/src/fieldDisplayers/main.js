@@ -112,7 +112,6 @@ document.addEventListener("register-field-displayers-components", function(e) {
         },
         created: function () {
             this.viewModes = this.options.viewModes;
-            console.log(this.viewModes);
         },
         template: `
         <div>
