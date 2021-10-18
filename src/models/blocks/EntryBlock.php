@@ -17,9 +17,9 @@ class EntryBlock extends Block
     public static $handle = 'entry';
 
     /**
-     * @var Entry
+     * @var array
      */
-    protected $_entry = false;
+    protected $_entries;
 
     /**
      * @inheritDoc
@@ -34,7 +34,7 @@ class EntryBlock extends Block
      */
     public function getSmallDescription(): string
     {
-        return \Craft::t('themes', 'Displays an entry');
+        return \Craft::t('themes', 'Displays some entries');
     }
 
     /**
@@ -42,7 +42,7 @@ class EntryBlock extends Block
      */
     public function getLongDescription(): string
     {
-        return \Craft::t('themes', 'Choose an entry and a view mode to display');
+        return \Craft::t('themes', 'Choose one or several entries and a view mode to display');
     }
 
     /**
@@ -54,54 +54,20 @@ class EntryBlock extends Block
     }
 
     /**
-     * Get all entry types as array
+     * Get entries/view modes as defined in options
      * 
      * @return array
      */
-    public function getEntryTypes(): array
+    public function getEntries(): array
     {
-        $entryTypes = [];
-        $types = \Craft::$app->sections->getAllEntryTypes();
-        foreach ($types as $type) {
-            $entryTypes[] = [
-                'uid' => $type->uid,
-                'name' => $type->name
-            ];
+        if ($this->_entries === null) {
+            $this->_entries = array_map(function ($row) {
+                return [
+                    'entry' => Entry::find()->id($row['id'])->one(),
+                    'viewMode' => Themes::$plugin->viewModes->getByUid($row['viewMode'])
+                ];
+            }, $this->options->entries);
         }
-        usort($entryTypes, function ($a, $b) {
-            return ($a['name'] < $b['name']) ? -1 : 1;
-        });
-        return $entryTypes;
-    }
-
-    /**
-     * Get entry as defined in options
-     * 
-     * @return Entry
-     */
-    public function getEntry(): Entry
-    {
-        if ($this->_entry === false) {
-            $this->_entry = Entry::find()->uid($this->options->entry)->one();
-        }
-        return $this->_entry;
-    }
-
-    /**
-     * Get layout associated to entry defined in options
-     * 
-     * @return ?LayoutInterface
-     */
-    public function getEntryLayout(): ?LayoutInterface
-    {
-        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::ENTRY_HANDLE, $this->options->type);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['entryTypes']);
+        return $this->_entries;
     }
 }

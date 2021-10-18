@@ -5,12 +5,12 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
-class BlockUserOptions extends BlockOptions
+class BlockAssetOptions extends BlockOptions
 {
     /**
      * @var array
      */
-    public $users = [];
+    public $assets = [];
 
     /**
      * @inheritDoc
@@ -18,17 +18,17 @@ class BlockUserOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['users'], 'required'],
-            ['users', function () {
-                if (!is_array($this->users)) {
-                    $this->addError('users', \Craft::t('themes', 'Invalid users'));
+            [['assets'], 'required'],
+            ['assets', function () {
+                if (!is_array($this->assets)) {
+                    $this->addError('assets', \Craft::t('themes', 'Invalid assets'));
                 }
             }]
         ]);
     }
 
     /**
-     * Saving the user option field after save as it's not included in project config
+     * Saving the asset option field after save as it's not included in project config
      * 
      * @param BlockInterface $block
      */
@@ -36,7 +36,7 @@ class BlockUserOptions extends BlockOptions
     {
         $record = Themes::$plugin->blocks->getRecordByUid($block->uid);
         $options = json_decode($record->options, true);
-        $options['users'] = $this->users;
+        $options['assets'] = $this->assets;
         $record->options = $options;
         $record->save(false);
     }

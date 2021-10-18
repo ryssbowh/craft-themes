@@ -3,7 +3,7 @@ namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
+use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
 use craft\base\Component;
 use yii\caching\TagDependency;
 
@@ -30,7 +30,7 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
      */
     public function fields()
     {
-        return ['handle', 'name', 'description'];
+        return ['handle', 'name', 'description', 'options'];
     }
 
     /**

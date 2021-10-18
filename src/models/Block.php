@@ -8,8 +8,8 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
-use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
 use Ryssbowh\CraftThemes\models\BlockOptions;
+use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
 use craft\base\Element;
 use craft\base\Model;
 
@@ -90,7 +90,7 @@ abstract class Block extends Model implements BlockInterface
         $options = $this->options->getConfig();
         $strategyOptions = $this->getCacheStrategyOptions();
         if ($strategyOptions) {
-            $options = array_merge($options, $strategyOptions->getConfig());
+            $options = array_merge($options, ['cacheStrategyOptions' => $strategyOptions->getConfig()]);
         }
         return [
             'layout_id' => $this->layout->uid,
@@ -157,20 +157,57 @@ abstract class Block extends Model implements BlockInterface
                 }
             }],
             ['options', function () {
-                $options = $this->options;
-                $strategyOptions = $this->cacheStrategyOptions;
-                $errors = [];
-                if (!$options->validate()) {
-                    $errors = array_merge($errors, $options->getErrors());
-                }
-                if ($strategyOptions and !$strategyOptions->validate()) {
-                    $errors = array_merge($errors, $strategyOptions->getErrors());
-                }
-                if ($errors) {
-                    $this->addError('options', $errors);
+                $this->options->validate();
+            }],
+            ['cacheStrategy', function () {
+                if ($cacheStrategyOptions = $this->cacheStrategyOptions) {
+                    $cacheStrategyOptions->validate();    
                 }
             }]
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);    
+        }
+        if ($this->options->hasErrors()) {
+            return true;
+        }
+        $strategyOptions = $this->cacheStrategyOptions;
+        if ($strategyOptions and $strategyOptions->hasErrors()) {
+            return true;
+        }
+        return parent::hasErrors($attribute);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrors($attribute = null)
+    {
+        if ($attribute == 'options') {
+            return $this->options->errors;
+        }
+        $strategyOptions = $this->cacheStrategyOptions;
+        if ($attribute == 'cacheStrategy') {
+            return $strategyOptions ? $strategyOptions->errors : [];
+        }
+        if ($attribute !== null) {
+            return parent::getErrors($attribute);
+        }
+        $errors = parent::getErrors();
+        if ($errors2 = $this->options->errors) {
+            $errors['options'] = $errors2;
+        }
+        if ($strategyOptions and $errors2 = $strategyOptions->errors) {
+            $errors['cacheStrategy'] = $errors2;
+        }
+        return $errors;
     }
 
     /**
@@ -210,18 +247,7 @@ abstract class Block extends Model implements BlockInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['name', 'handle', 'options', 'errors', 'cacheStrategyOptions', 'smallDescription', 'longDescription']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function toArray(array $fields = [], array $expand = [], $recursive = true)
-    {
-        $array = parent::toArray($fields, $expand, $recursive);
-        $array['options'] = array_merge($array['options'], $array['cacheStrategyOptions'] ?? []);
-        unset($array['cacheStrategyOptions']);
-        return $array;
+        return array_merge(parent::fields(), ['name', 'handle', 'options', 'errors', 'smallDescription', 'longDescription']);
     }
 
     /**
@@ -257,10 +283,12 @@ abstract class Block extends Model implements BlockInterface
         if (is_string($options)) {
             $options = json_decode($options, true);
         }
+        $cacheStrategyOptions = $options['cacheStrategyOptions'] ?? [];
+        unset($options['cacheStrategyOptions']);
         $this->options->setAttributes($options);
         $strategy = $this->cacheStrategy;
         if ($strategy) {
-            $strategy->options->setAttributes($options);
+            $strategy->options->setAttributes($cacheStrategyOptions);
         }
     }
     

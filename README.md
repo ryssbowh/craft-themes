@@ -140,6 +140,8 @@ Displays can be grouped together, you can define as many groups as you want. Gro
 
 Some display will contain items that are not Craft fields, they are automatically added by the system, example : "Author" on channels.
 
+Some fields types (Entries, Assets, Users, Categories and Tags) support the display "Rendered as view mode", when this is selected the display of that element's fields will be controlled by the layout associated to that element and the view mode chosen.
+
 Here is a list of available displayers for each type of field :
 
 | Field type    | displayer                  | Options                                          |
@@ -225,8 +227,6 @@ Craft 3.5 or over
 ## Roadmap
 
 - more tests
-- volume title field ?
 - field displayer inside displayer ?
 - check cloning table fields
 - table, matrix update item events
-- asset block

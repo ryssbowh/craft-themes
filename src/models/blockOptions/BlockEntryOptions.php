@@ -8,19 +8,9 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockEntryOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @var array
      */
-    public $type;
-
-    /**
-     * @var string
-     */
-    public $entry;
-
-    /**
-     * @var string
-     */
-    public $viewMode;
+    public $entries = [];
 
     /**
      * @inheritDoc
@@ -28,8 +18,12 @@ class BlockEntryOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['type', 'entry', 'viewMode'], 'required'],
-            [['type', 'entry', 'viewMode'], 'string']
+            [['entries'], 'required'],
+            ['entries', function () {
+                if (!is_array($this->entries)) {
+                    $this->addError('entries', \Craft::t('themes', 'Invalid entries'));
+                }
+            }]
         ]);
     }
 
@@ -42,19 +36,8 @@ class BlockEntryOptions extends BlockOptions
     {
         $record = Themes::$plugin->blocks->getRecordByUid($block->uid);
         $options = json_decode($record->options, true);
-        $options['entry'] = $this->entry;
+        $options['entries'] = $this->entries;
         $record->options = $options;
         $record->save(false);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getConfig(): array
-    {
-        return array_merge(parent::getConfig(), [
-            'type' => $this->type, 
-            'viewMode' => $this->viewMode
-        ]);
     }
 }

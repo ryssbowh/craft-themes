@@ -14,6 +14,7 @@ use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
 use craft\base\Volume;
 use craft\elements\GlobalSet;
+use craft\elements\User;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
 use craft\models\CategoryGroup;
@@ -123,39 +124,41 @@ class Themes extends \craft\base\Plugin
      */
     public function getCpNavItem()
     {
-        $item = [
-            'url' => 'themes',
-            'label' => \Craft::t('themes', 'Theming'),
-            'subnav' => [
-                'themes' => [
-                    'url' => 'themes/list',
-                    'label' => \Craft::t('themes', 'Themes'),
+        $user = \Craft::$app->user;
+        if ($user->checkPermission('accessPlugin-themes')) {
+            $item = [
+                'url' => 'themes',
+                'label' => \Craft::t('themes', 'Theming'),
+                'subnav' => [
+                    'themes' => [
+                        'url' => 'themes/list',
+                        'label' => \Craft::t('themes', 'Themes'),
+                    ]
                 ]
-            ]
-        ];
-        if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
-            $user = \Craft::$app->user;
-            $isPro = $this->is($this::EDITION_PRO);
-            if ($isPro and $user->checkPermission('manageThemesBlocks')) {
-                $item['subnav']['themes-blocks'] = [
-                    'url' => 'themes/blocks',
-                    'label' => \Craft::t('themes', 'Blocks'),
-                ];
-            }
-            if ($isPro and $user->checkPermission('manageThemesDisplay')) {
-                $item['subnav']['themes-display'] = [
-                    'url' => 'themes/display',
-                    'label' => \Craft::t('themes', 'Display'),
-                ];
-            }
-            if ($user->checkPermission('manageThemesRules')) {
-                $item['subnav']['themes-rules'] = [
-                    'url' => 'themes/rules',
-                    'label' => \Craft::t('themes', 'Rules'),
-                ];
+            ];
+            if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
+                $isPro = $this->is($this::EDITION_PRO);
+                if ($isPro and $user->checkPermission('manageThemesBlocks')) {
+                    $item['subnav']['themes-blocks'] = [
+                        'url' => 'themes/blocks',
+                        'label' => \Craft::t('themes', 'Blocks'),
+                    ];
+                }
+                if ($isPro and $user->checkPermission('manageThemesDisplay')) {
+                    $item['subnav']['themes-display'] = [
+                        'url' => 'themes/display',
+                        'label' => \Craft::t('themes', 'Display'),
+                    ];
+                }
+                if ($user->checkPermission('manageThemesRules')) {
+                    $item['subnav']['themes-rules'] = [
+                        'url' => 'themes/rules',
+                        'label' => \Craft::t('themes', 'Rules'),
+                    ];
+                }
             }
         }
-        return $item;
+        return $item ?? null;
     }
 
     /**
@@ -215,6 +218,7 @@ class Themes extends \craft\base\Plugin
             Volume::class => LayoutService::VOLUME_HANDLE,
             TagGroup::class => LayoutService::TAG_HANDLE,
             GlobalSet::class => LayoutService::GLOBAL_HANDLE,
+            User::class => LayoutService::USER_HANDLE
         ];
         foreach ($types as $class => $type) {
             Event::on($class::className(), $class::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) use ($type) {
@@ -333,9 +337,6 @@ class Themes extends \craft\base\Plugin
 
                         'themes/ajax/validate-field-options' => 'themes/cp-display-ajax/validate-field-options',
                         'themes/ajax/install' => 'themes/cp-ajax/install',
-                        'themes/ajax/entries/<uid:[\w-]+>' => 'themes/cp-ajax/entries',
-                        'themes/ajax/categories/<uid:[\w-]+>' => 'themes/cp-ajax/categories',
-                        'themes/ajax/users' => 'themes/cp-ajax/users',
 
                         'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
                         'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',

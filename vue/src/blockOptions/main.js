@@ -1,22 +1,12 @@
 import { mapState } from 'vuex';
+import SelectInput from './SelectInput';
 
 document.addEventListener("register-block-option-components", function(e) {
     e.detail['system-template'] = {
         props: {
-            block: Object
-        },
-        methods: {
-            errors: function (field) {
-                if (!this.block.errors.options ?? null) {
-                    return [];
-                }
-                for (let i in this.block.errors.options) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            }
+            block: Object,
+            errors: Object,
+            options: Object
         },
         template: `
         <div class="field">
@@ -24,10 +14,10 @@ document.addEventListener("register-block-option-components", function(e) {
                 <label class="required">{{ t('Template Path') }}</label>
             </div>
             <div class="input ltr">
-                <input type="text" class="text fullwidth" :value="block.options.template" @input="$emit('updateOptions', {template: $event.target.value})">
+                <input type="text" class="text fullwidth" :value="options.template" @input="$emit('updateOptions', {template: $event.target.value})">
             </div>
-            <ul class="errors" v-if="errors('template')">
-                <li v-for="error in errors('template')">{{ error }}</li>
+            <ul class="errors" v-if="errors.template">
+                <li v-for="error in errors.template">{{ error }}</li>
             </ul>
         </div>`,
         emits: ['updateOptions']
@@ -35,17 +25,9 @@ document.addEventListener("register-block-option-components", function(e) {
 
     e.detail['forms-search'] = {
         props: {
-            block: Object
-        },
-        methods: {
-            errors: function (field) {
-                for (let i in this.block.errors.options ?? []) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            }
+            block: Object,
+            errors: Object,
+            options: Object
         },
         template: `
         <div class="field">
@@ -53,10 +35,10 @@ document.addEventListener("register-block-option-components", function(e) {
                 <label class="required">{{ t('Form action') }}</label>
             </div>
             <div class="input ltr">
-                <input type="text" class="text fullwidth" :value="block.options.action" @input="$emit('updateOptions', {action: $event.target.value})">
+                <input type="text" class="text fullwidth" :value="options.action" @input="$emit('updateOptions', {action: $event.target.value})">
             </div>
-            <ul class="errors" v-if="errors('action')">
-                <li v-for="error in errors('action')">{{ error }}</li>
+            <ul class="errors" v-if="errors.action">
+                <li v-for="error in errors.action">{{ error }}</li>
             </ul>
         </div>
         <div class="field">
@@ -64,10 +46,10 @@ document.addEventListener("register-block-option-components", function(e) {
                 <label class="required">{{ t('Search term name') }}</label>
             </div>
             <div class="input ltr">
-                <input type="text" class="text fullwidth" :value="block.options.inputName" @input="$emit('updateOptions', {inputName: $event.target.value})">
+                <input type="text" class="text fullwidth" :value="options.inputName" @input="$emit('updateOptions', {inputName: $event.target.value})">
             </div>
-            <ul class="errors" v-if="errors('inputName')">
-                <li v-for="error in errors('inputName')">{{ error }}</li>
+            <ul class="errors" v-if="errors.inputName">
+                <li v-for="error in errors.inputName">{{ error }}</li>
             </ul>
         </div>`,
         emits: ['updateOptions']
@@ -75,7 +57,9 @@ document.addEventListener("register-block-option-components", function(e) {
 
     e.detail['system-twig'] = {
         props: {
-            block: Object
+            block: Object,
+            errors: Object,
+            options: Object
         },
         template: `
         <div class="field">
@@ -83,7 +67,7 @@ document.addEventListener("register-block-option-components", function(e) {
                 <label>{{ t('Twig Code') }}</label>
             </div>
             <div class="input ltr">
-                <textarea class="text fullwidth" rows="10" :value="block.options.twig" @input="$emit('updateOptions', {twig: $event.target.value})">
+                <textarea class="text fullwidth" rows="10" :value="options.twig" @input="$emit('updateOptions', {twig: $event.target.value})">
                 </textarea>
             </div>
         </div>`,
@@ -92,7 +76,9 @@ document.addEventListener("register-block-option-components", function(e) {
 
     e.detail['forms-login'] = {
         props: {
-            block: Object
+            block: Object,
+            errors: Object,
+            options: Object
         },
         mounted: function () {
             this.$nextTick(() => {
@@ -111,11 +97,11 @@ document.addEventListener("register-block-option-components", function(e) {
                 <label>{{ t('Show only if the user is not authenticated') }}</label>
             </div>
             <div class="input ltr">                    
-                <button type="button" :class="{lightswitch: true, on: block.options.onlyIfNotAuthenticated}">
+                <button type="button" :class="{lightswitch: true, on: options.onlyIfNotAuthenticated}">
                     <div class="lightswitch-container">
                         <div class="handle"></div>
                     </div>
-                    <input type="hidden" name="onlyIfNotAuthenticated" :value="block.options.onlyIfNotAuthenticated ? 1 : ''">
+                    <input type="hidden" name="onlyIfNotAuthenticated" :value="options.onlyIfNotAuthenticated ? 1 : ''">
                 </button>
             </div>
         </div>`,
@@ -129,112 +115,88 @@ document.addEventListener("register-block-option-components", function(e) {
             ...mapState(['theme'])
         },
         props: {
-            block: Object
+            block: Object,
+            errors: Object,
+            options: Object
         },
         data: function () {
             return {
-                type: null,
-                entry: null,
-                viewMode: null,
-                entries: [],
-                viewModes: []
+                selector: null,
             };
         },
         watch: {
-            type: function () {
-                this.entry = null;
-                this.viewMode = null;
-                this.$emit('updateOptions', {type: this.type});
-                this.fetchEntries();
-                this.fetchViewModes();
-            },
-            entry: function () {
-                this.$emit('updateOptions', {entry: this.entry});
-            },
-            viewMode: function () {
-                this.$emit('updateOptions', {viewMode: this.viewMode});
+            'options.entries': function () {
+                this.$emit('updateOptions', this.options);
             }
         },
-        created() {
-            this.type = this.block.options.type;
-            this.entry = this.block.options.entry;
-            this.viewMode = this.block.options.viewMode;
+        mounted() {
+            this.createSelector();
         },
         methods: {
-            errors: function (field) {
-                if (!this.block.errors.options ?? null) {
-                    return [];
-                }
-                for (let i in this.block.errors.options) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            },
-            fetchEntries: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/entries/'+this.type))
-                .then((response) => {
-                    this.entries = response.data.entries;
-                })
-                .catch((err) => {
-                    this.handleError(err);
+            createSelector: function () {
+                this.selector = new SelectInput({
+                    actionUrl: 'themes/cp-ajax/entries-data',
+                    id: 'field-entries',
+                    elementType: 'craft\\elements\\Entry',
+                    sources: '*',
+                    viewMode: 'small',
+                    theme: this.theme,
+                    selectable: 0,
+                    createElementCallback: this.createElement,
+                    initialIds: Object.keys(this.options.entries).map((i) => {
+                        return this.options.entries[i].id;
+                    })
+                });
+                this.selector.on('selectElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.ADD_FX_DURATION);
+                });
+                this.selector.on('removeElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.REMOVE_FX_DURATION);
                 });
             },
-            fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/entry/'+this.type))
-                .then((response) => {
-                    this.viewModes = response.data.viewModes;
-                })
-                .catch((err) => {
-                    this.handleError(err);
-                });
-            }
+            updateElements: function (waitTime) {
+                //Need to wait on Garnish transition to finish or data will be wrong
+                setTimeout(() => {
+                    this.options.entries = this.selector.getSelectedElementData();
+                }, waitTime + 50);
+            },
+            createElement: function (entry) {
+                return {
+                    $element: $(`
+                    <div class="element small hasstatus"
+                        data-type="craft\\elements\\Entry"
+                        data-id="`+entry.id+`"
+                        data-label="`+entry.title+`"
+                        title="`+entry.title+`"
+                    >
+                        <span class="status ` + entry.status + `"></span>
+                        <div class="label">
+                            <span class="title">`+entry.title+`</span>
+                        </div>
+                    </div>`),
+                    id: entry.id,
+                    viewModes: entry.viewModes,
+                    viewMode: this.options.entries.filter((e) => e.id == entry.id)[0].viewMode ?? null
+                };
+            },
         },
         template: `
         <div class="field">
-            <div class="heading">
-                <label>{{ t('Entry Type', {}, 'app') }}</label>
+            <div class="heading" style="display:flex;justify-content:space-between">
+                <label class="required">{{ t('Assets', {}, 'app') }}</label>
+                <label class="required">{{ t('View Mode') }}</label>
             </div>
             <div class="input ltr">
-                <div class="select">
-                    <select v-model="type">
-                        <option v-for="type in block.entryTypes" :value="type.uid">{{ type.name }}</option>
-                    </select>
+                <div id="field-entries" class="elementselect">
+                    <div class="elements">
+                    </div>
+                    <div class="flex">
+                        <button type="button" class="btn add icon dashed">{{ t('Add an entry', {}, 'app') }}</button>
+                    </div>
                 </div>
             </div>
-            <ul class="errors" v-if="errors('type')">
-                <li v-for="error in errors('type')">{{ error }}</li>
-            </ul>
-        </div>
-        <div class="field">
-            <div class="heading">
-                <label>{{ t('Entry', {}, 'app') }}</label>
-            </div>
-            <div class="input ltr">
-                <div class="select">
-                    <select v-model="entry">
-                        <option v-for="entry in entries" :value="entry.uid">{{ entry.title }}</option>
-                    </select>
-                </div>
-            </div>
-            <ul class="errors" v-if="errors('entry')">
-                <li v-for="error in errors('entry')">{{ error }}</li>
-            </ul>
-        </div>
-        <div class="field">
-            <div class="heading">
-                <label>{{ t('View mode') }}</label>
-            </div>
-            <div class="input ltr">
-                <div class="select">
-                    <select v-model="viewMode">
-                        <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
-                    </select>
-                </div>
-            </div>
-            <ul class="errors" v-if="errors('viewMode')">
-                <li v-for="error in errors('viewMode')">{{ error }}</li>
+            <ul class="errors" v-if="errors.entries">
+                <li v-for="error in errors.entries">{{ error }}</li>
             </ul>
         </div>`,
         emits: ['updateOptions']
@@ -245,110 +207,184 @@ document.addEventListener("register-block-option-components", function(e) {
             ...mapState(['theme'])
         },
         props: {
-            block: Object
+            block: Object,
+            errors: Object,
+            options: Object
         },
         data: function () {
             return {
-                categories: [],
-                viewModes: [],
-                group: null,
-                viewMode: null,
-                category: null
+                selector: null
             };
         },
         watch: {
-            group: function () {
-                this.$emit('updateOptions', {group: this.group});
-                this.fetchCategories();
-                this.fetchViewModes();
-            },
-            viewMode: function () {
-                this.$emit('updateOptions', {viewMode: this.viewMode});
-            },
-            category: function () {
-                this.$emit('updateOptions', {category: this.category});
+            'options.categories': function () {
+                this.$emit('updateOptions', this.options);
             }
         },
-        created() {
-            this.group = this.block.options.group;
-            this.viewMode = this.block.options.viewMode;
-            this.category = this.block.options.category;
+        mounted() {
+            this.createSelector();
         },
         methods: {
-            errors: function (field) {
-                if (!this.block.errors.options ?? null) {
-                    return [];
-                }
-                for (let i in this.block.errors.options) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            },
-            fetchCategories: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/categories/'+this.group))
-                .then((response) => {
-                    this.categories = response.data.categories;
-                })
-                .catch((err) => {
-                    this.handleError(err);
+            createSelector: function () {
+                this.selector = new SelectInput({
+                    actionUrl: 'themes/cp-ajax/categories-data',
+                    id: 'field-categories',
+                    elementType: 'craft\\elements\\Category',
+                    sources: '*',
+                    viewMode: 'small',
+                    branchLimit: 1,
+                    theme: this.theme,
+                    selectable: 0,
+                    createElementCallback: this.createElement,
+                    initialIds: Object.keys(this.options.categories).map((i) => {
+                        return this.options.categories[i].id;
+                    })
+                });
+                this.selector.on('selectElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.ADD_FX_DURATION);
+                });
+                this.selector.on('removeElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.REMOVE_FX_DURATION);
                 });
             },
-            fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/category/'+this.group))
-                .then((response) => {
-                    this.viewModes = response.data.viewModes;
-                })
-                .catch((err) => {
-                    this.handleError(err);
-                });
-            }
+            createElement: function (category) {
+                return {
+                    $element: $(`
+                    <div class="element small hasstatus"
+                        data-type="craft\\elements\\Category"
+                        data-id="`+category.id+`"
+                        data-label="`+category.title+`"
+                        title="`+category.title+`"
+                    >
+                        <span class="status ` + category.status + `"></span>
+                        <div class="label">
+                            <span class="title">`+category.title+`</span>
+                        </div>
+                    </div>`),
+                    id: category.id,
+                    viewModes: category.viewModes,
+                    viewMode: this.options.categories.filter((e) => e.id == category.id)[0].viewMode ?? null
+                };
+            },
+            updateElements: function (waitTime) {
+                //Need to wait on Garnish transition to finish or data will be wrong
+                setTimeout(() => {
+                    this.options.categories = this.selector.getSelectedElementData();
+                }, waitTime + 50);
+            },
         },
         template: `
         <div class="field">
-            <div class="heading">
-                <label>{{ t('Group') }}</label>
+            <div class="heading" style="display:flex;justify-content:space-between">
+                <label class="required">{{ t('Category', {}, 'app') }}</label>
+                <label class="required">{{ t('View mode') }}</label>
             </div>
             <div class="input ltr">
-                <div class="select">
-                    <select v-model="group">
-                        <option v-for="group in block.groups" :value="group.uid">{{ group.name }}</option>
-                    </select>
+                <div id="field-categories" class="categoriesfield">
+                    <div class="elements">
+                    </div>
+                    <div class="flex">
+                        <button type="button" class="btn add icon dashed">{{ t('Add a category') }}</button>
+                    </div>
                 </div>
             </div>
-            <ul class="errors" v-if="errors('group')">
-                <li v-for="error in errors('group')">{{ error }}</li>
+            <ul class="errors" v-if="errors.categories">
+                <li v-for="error in errors.categories">{{ error }}</li>
             </ul>
-        </div>
+        </div>`,
+        emits: ['updateOptions']
+    };
+
+    e.detail['system-asset'] = {
+        computed: {
+            ...mapState(['theme'])
+        },
+        props: {
+            block: Object,
+            errors: Object,
+            options: Object
+        },
+        data: function () {
+            return {
+                selector: null
+            };
+        },
+        watch: {
+            'options.assets': function () {
+                this.$emit('updateOptions', this.options);
+            }
+        },
+        mounted() {
+            this.createSelector();
+        },
+        methods: {
+            createSelector: function () {
+                this.selector = new SelectInput({
+                    actionUrl: 'themes/cp-ajax/assets-data',
+                    id: 'field-assets',
+                    elementType: 'craft\\elements\\Asset',
+                    sources: '*',
+                    viewMode: 'small',
+                    theme: this.theme,
+                    selectable: 0,
+                    createElementCallback: this.createElement,
+                    initialIds: Object.keys(this.options.assets).map((i) => {
+                        return this.options.assets[i].id;
+                    })
+                });
+                this.selector.on('selectElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.ADD_FX_DURATION);
+                });
+                this.selector.on('removeElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.REMOVE_FX_DURATION);
+                });
+            },
+            updateElements: function (waitTime) {
+                //Need to wait on Garnish transition to finish or data will be wrong
+                setTimeout(() => {
+                    this.options.assets = this.selector.getSelectedElementData();
+                }, waitTime + 50);
+            },
+            createElement: function (asset) {
+                return {
+                    $element: $(`
+                    <div class="element small hasthumb"
+                        data-type="craft\\elements\\Asset"
+                        data-id="`+asset.id+`"
+                        data-label="`+asset.title+`"
+                        title="`+asset.title+`"
+                    >
+                        <div class="elementthumb">
+                            <img sizes="34px" srcset="`+asset.srcset+`" alt="">
+                        </div>
+                        <div class="label">
+                            <span class="title">`+asset.title+`</span>
+                        </div>
+                    </div>`),
+                    id: asset.id,
+                    viewModes: asset.viewModes,
+                    viewMode: this.options.assets.filter((e) => e.id == asset.id)[0].viewMode ?? null
+                };
+            }
+            
+        },
+        template: `
         <div class="field">
-            <div class="heading">
-                <label>{{ t('Category', {}, 'app') }}</label>
+            <div class="heading" style="display:flex;justify-content:space-between">
+                <label class="required">{{ t('Assets', {}, 'app') }}</label>
+                <label class="required">{{ t('View mode') }}</label>
             </div>
             <div class="input ltr">
-                <div class="select">
-                    <select v-model="category">
-                        <option v-for="category in categories" :value="category.uid">{{ category.title }}</option>
-                    </select>
+                <div id="field-assets" class="elementselect">
+                    <div class="elements">
+                    </div>
+                    <div class="flex">
+                        <button type="button" class="btn add icon dashed">{{ t('Add an asset', {}, 'app') }}</button>
+                    </div>
                 </div>
             </div>
-            <ul class="errors" v-if="errors('category')">
-                <li v-for="error in errors('category')">{{ error }}</li>
-            </ul>
-        </div>
-        <div class="field">
-            <div class="heading">
-                <label>{{ t('View mode') }}</label>
-            </div>
-            <div class="input ltr">
-                <div class="select">
-                    <select v-model="viewMode">
-                        <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
-                    </select>
-                </div>
-            </div>
-            <ul class="errors" v-if="errors('viewMode')">
-                <li v-for="error in errors('viewMode')">{{ error }}</li>
+            <ul class="errors" v-if="errors.assets">
+                <li v-for="error in errors.assets">{{ error }}</li>
             </ul>
         </div>`,
         emits: ['updateOptions']
@@ -359,80 +395,95 @@ document.addEventListener("register-block-option-components", function(e) {
             ...mapState(['theme'])
         },
         props: {
-            block: Object
+            block: Object,
+            errors: Object,
+            options: Object
         },
         data: function () {
             return {
-                users: [],
-                viewModes: [],
+                selector: null
             };
         },
-        created() {
-            this.fetchUsers();
-            this.fetchViewModes();
+        watch: {
+            'options.users': function () {
+                this.$emit('updateOptions', this.options);
+            }
+        },
+        mounted() {
+            this.createSelector();
         },
         methods: {
-            errors: function (field) {
-                if (!this.block.errors.options ?? null) {
-                    return [];
-                }
-                for (let i in this.block.errors.options) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            },
-            fetchUsers: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/users'))
-                .then((response) => {
-                    this.users = response.data.users;
-                })
-                .catch((err) => {
-                    this.handleError(err);
+            createSelector: function () {
+                this.selector = new SelectInput({
+                    actionUrl: 'themes/cp-ajax/users-data',
+                    id: 'field-users',
+                    elementType: 'craft\\elements\\User',
+                    sources: '*',
+                    viewMode: 'small',
+                    theme: this.theme,
+                    selectable: 0,
+                    createElementCallback: this.createElement,
+                    initialIds: Object.keys(this.options.users).map((i) => {
+                        return this.options.users[i].id;
+                    })
+                });
+                this.selector.on('selectElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.ADD_FX_DURATION);
+                });
+                this.selector.on('removeElements', () => {
+                    this.updateElements(Craft.BaseElementSelectInput.REMOVE_FX_DURATION);
                 });
             },
-            fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/user'))
-                .then((response) => {
-                    this.viewModes = response.data.viewModes;
-                })
-                .catch((err) => {
-                    this.handleError(err);
-                });
+            updateElements: function (waitTime) {
+                //Need to wait on Garnish transition to finish or data will be wrong
+                setTimeout(() => {
+                    this.options.users = this.selector.getSelectedElementData();
+                }, waitTime + 50);
+            },
+            createElement: function (user) {
+                return {
+                    $element: $(`
+                    <div class="element small hasstatus hasthumb"
+                        data-type="craft\\elements\\User"
+                        data-id="`+user.id+`"
+                        data-status="`+user.status+`"
+                        data-label="`+user.name+`"
+                        title="`+user.name+`"
+                    >
+                        <span class="status `+user.status+`"></span>
+                        <div class="elementthumb rounded">
+                            <img sizes="34px" srcset="`+user.srcset+`" alt="">
+                        </div>
+                        <div class="label">
+                            <span class="title">`+user.name+`</span>
+                        </div>
+                    </div>`),
+                    id: user.id,
+                    viewModes: user.viewModes,
+                    viewMode: this.options.users.filter((e) => e.id == user.id)[0].viewMode ?? null
+                };
             }
         },
         template: `
         <div class="field">
-            <div class="heading">
-                <label>{{ t('User', {}, 'app') }}</label>
+            <div class="heading" style="display:flex;justify-content:space-between">
+                <label class="required">{{ t('Users', {}, 'app') }}</label>
+                <label class="required">{{ t('View mode') }}</label>
             </div>
             <div class="input ltr">
-                <div class="select">
-                    <select @input="$emit('updateOptions', {user: $event.target.value})" :value="block.options.user">
-                        <option v-for="user in users" :value="user.uid">{{ user.title }}</option>
-                    </select>
+                <div id="field-users" class="elementselect">
+                    <div class="elements">
+                    </div>
+                    <div class="flex">
+                        <button type="button" class="btn add icon dashed">{{ t('Add a user', {}, 'app') }}</button>
+                    </div>
                 </div>
             </div>
-            <ul class="errors" v-if="errors('user')">
-                <li v-for="error in errors('user')">{{ error }}</li>
+            <ul class="errors" v-if="errors.users">
+                <li v-for="error in errors.users">{{ error }}</li>
             </ul>
         </div>
-        <div class="field">
-            <div class="heading">
-                <label>{{ t('View mode') }}</label>
-            </div>
-            <div class="input ltr">
-                <div class="select">
-                    <select @input="$emit('updateOptions', {viewMode: $event.target.value})" :value="block.options.viewMode">
-                        <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
-                    </select>
-                </div>
-            </div>
-            <ul class="errors" v-if="errors('viewMode')">
-                <li v-for="error in errors('viewMode')">{{ error }}</li>
-            </ul>
-        </div>`,
+        `,
         emits: ['updateOptions']
     };
 
@@ -441,7 +492,9 @@ document.addEventListener("register-block-option-components", function(e) {
             ...mapState(['theme'])
         },
         props: {
-            block: Object
+            block: Object,
+            errors: Object,
+            options: Object
         },
         data: function () {
             return {
@@ -452,17 +505,6 @@ document.addEventListener("register-block-option-components", function(e) {
             this.fetchViewModes();
         },
         methods: {
-            errors: function (field) {
-                if (!this.block.errors.options ?? null) {
-                    return [];
-                }
-                for (let i in this.block.errors.options) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            },
             fetchViewModes: function () {
                 axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/user'))
                 .then((response) => {
@@ -476,17 +518,17 @@ document.addEventListener("register-block-option-components", function(e) {
         template: `
         <div class="field">
             <div class="heading">
-                <label>{{ t('View mode') }}</label>
+                <label class="required">{{ t('View mode') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select $emit('updateOptions', {viewMode: $event.target.value}) :value="viewMode">
+                    <select @input="$emit('updateOptions', {viewMode: $event.target.value})" :value="options.viewMode">
                         <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
                     </select>
                 </div>
             </div>
-            <ul class="errors" v-if="errors('viewMode')">
-                <li v-for="error in errors('viewMode')">{{ error }}</li>
+            <ul class="errors" v-if="errors.viewMode">
+                <li v-for="error in errors.viewMode">{{ error }}</li>
             </ul>
         </div>`,
         emits: ['updateOptions']
@@ -497,43 +539,26 @@ document.addEventListener("register-block-option-components", function(e) {
             ...mapState(['theme'])
         },
         props: {
-            block: Object
+            block: Object,
+            errors: Object,
+            options: Object
         },
         data: function () {
             return {
                 viewModes: [],
-                set: null,
-                viewMode: null
             };
         },
         watch: {
-            set: function () {
-                this.viewMode = null;
-                this.$emit('updateOptions', {set: this.set});
+            'options.set': function () {
                 this.fetchViewModes();
-            },
-            viewMode: function () {
-                this.$emit('updateOptions', {viewMode: this.viewMode});
             },
         },
         created() {
-            this.set = this.block.options.set;
-            this.viewMode = this.block.options.viewMode;
+            this.fetchViewModes();
         },
         methods: {
-            errors: function (field) {
-                if (!this.block.errors.options ?? null) {
-                    return [];
-                }
-                for (let i in this.block.errors.options) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            },
             fetchViewModes: function () {
-                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/global/'+this.set))
+                axios.post(Craft.getCpUrl('themes/ajax/view-modes/'+this.theme+'/global/'+this.options.set))
                 .then((response) => {
                     this.viewModes = response.data.viewModes;
                 })
@@ -545,32 +570,32 @@ document.addEventListener("register-block-option-components", function(e) {
         template: `
         <div class="field">
             <div class="heading">
-                <label>{{ t('Global Set', {}, 'app') }}</label>
+                <label class="required">{{ t('Global Set', {}, 'app') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select v-model="set">
+                    <select @input="$emit('updateOptions', {set: $event.target.value, viewMode: null})" :value="options.set">
                         <option v-for="set in block.sets" :value="set.uid">{{ set.name }}</option>
                     </select>
                 </div>
             </div>
-            <ul class="errors" v-if="errors('set')">
-                <li v-for="error in errors('set')">{{ error }}</li>
+            <ul class="errors" v-if="errors.set">
+                <li v-for="error in errors.set">{{ error }}</li>
             </ul>
         </div>
         <div class="field">
             <div class="heading">
-                <label>{{ t('View mode') }}</label>
+                <label class="required">{{ t('View mode') }}</label>
             </div>
             <div class="input ltr">
                 <div class="select">
-                    <select v-model="viewMode">
+                    <select @input="$emit('updateOptions', {viewMode: $event.target.value})" :value="options.viewMode">
                         <option v-for="viewMode in viewModes" :value="viewMode.uid">{{ viewMode.name }}</option>
                     </select>
                 </div>
             </div>
-            <ul class="errors" v-if="errors('viewMode')">
-                <li v-for="error in errors('viewMode')">{{ error }}</li>
+            <ul class="errors" v-if="errors.viewMode">
+                <li v-for="error in errors.viewMode">{{ error }}</li>
             </ul>
         </div>`,
         emits: ['updateOptions']

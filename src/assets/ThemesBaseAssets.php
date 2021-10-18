@@ -41,15 +41,23 @@ class ThemesBaseAssets extends AssetBundle
             'Global',
             'Entry',
             'User',
+            'Users',
             'Template',
+            'Asset',
+            'Assets',
             'Category',
+            'Categories',
             'Site',
             'System',
             'Width',
             'Height',
             'Entry Type',
             'Global Set',
-            'Copied to clipboard.'
+            'Copied to clipboard.',
+            'Add an entry',
+            'Add an asset',
+            'Add a category',
+            'Add a user'
         ]);
     }
 }

@@ -1,6 +1,11 @@
 .themes-shortcuts {
     position: absolute;
     right: 0;
+    box-sizing: border-box;
+}
+
+.themes-shortcuts * {
+    box-sizing: border-box;
 }
 
 .themes-shortcuts .cog {

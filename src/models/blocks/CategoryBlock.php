@@ -17,9 +17,9 @@ class CategoryBlock extends Block
     public static $handle = 'category';
 
     /**
-     * @var Category
+     * @var array
      */
-    protected $_category = false;
+    protected $_categories;
 
     /**
      * @inheritDoc
@@ -34,7 +34,7 @@ class CategoryBlock extends Block
      */
     public function getSmallDescription(): string
     {
-        return \Craft::t('themes', 'Displays a category');
+        return \Craft::t('themes', 'Displays some categories');
     }
 
     /**
@@ -42,7 +42,7 @@ class CategoryBlock extends Block
      */
     public function getLongDescription(): string
     {
-        return \Craft::t('themes', 'Choose a category and a view mode to display');
+        return \Craft::t('themes', 'Choose one or several categories and a view mode to display');
     }
 
     /**
@@ -54,54 +54,20 @@ class CategoryBlock extends Block
     }
 
     /**
-     * Get all category groups as array
-     * 
-     * @return array
-     */
-    public function getGroups(): array
-    {
-        $groups = [];
-        $cats = \Craft::$app->categories->getAllGroups();
-        foreach ($cats as $cat) {
-            $groups[] = [
-                'uid' => $cat->uid,
-                'name' => $cat->name
-            ];
-        }
-        usort($groups, function ($a, $b) {
-            return ($a['name'] < $b['name']) ? -1 : 1;
-        });
-        return $groups;
-    }
-
-    /**
      * Get category as defined in options
      * 
      * @return ?Category
      */
-    public function getCategory(): ?Category
+    public function getCategories(): array
     {
-        if ($this->_category === false) {
-            $this->_category = Category::find()->uid($this->options->category)->one();
+        if ($this->_categories === null) {
+            $this->_categories = array_map(function ($row) {
+                return [
+                    'category' => Category::find()->id($row['id'])->one(),
+                    'viewMode' => Themes::$plugin->viewModes->getByUid($row['viewMode'])
+                ];
+            }, $this->options->categories);
         }
-        return $this->_category;
-    }
-
-    /**
-     * Get layout associated to category defined in options
-     * 
-     * @return ?LayoutInterface
-     */
-    public function getCategoryLayout(): ?LayoutInterface
-    {
-        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::CATEGORY_HANDLE, $this->options->group);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['groups']);
+        return $this->_categories;
     }
 }

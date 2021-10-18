@@ -340,11 +340,13 @@ class LayoutService extends Service
         Themes::$plugin->viewModes->cleanUp($viewModes, $layout);
 
         //Saving blocks
-        $blocks = $layout->blocks;
-        foreach ($blocks as $block) {
-            Themes::$plugin->blocks->save($block);
+        if ($layout->hasBlocks) {
+            $blocks = $layout->blocks;
+            foreach ($blocks as $block) {
+                Themes::$plugin->blocks->save($block);
+            }
+            Themes::$plugin->blocks->cleanUp($blocks, $layout);
         }
-        Themes::$plugin->blocks->cleanUp($blocks, $layout);
 
         return true;
     }

@@ -1,8 +1,10 @@
-{% if currentUser %}
-    {% extends "blocks/block" %}
-    
-    {% block content %}
-        {% set viewMode = craft.themes.viewModes.getByUid(block.options.viewMode) %}
-        {{ craft.themes.view.renderLayout(block.userLayout, viewMode.handle, block.user)|raw }}
-    {% endblock %}
-{% endif %}
+{% extends "blocks/block" %}
+
+{% block content %}
+    {% for item in block.users %}
+        {% if item.viewMode and item.user %}
+            {% set layout = item.user.currentThemeLayout %}
+            {{ craft.themes.view.renderLayout(layout, item.viewMode.handle, item.user)|raw }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}

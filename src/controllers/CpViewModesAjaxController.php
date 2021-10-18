@@ -5,8 +5,6 @@ namespace Ryssbowh\CraftThemes\controllers;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\DisplayException;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\elements\Entry;
-
 /**
  * Controller for ajax actions related to view modes
  */
@@ -56,8 +54,13 @@ class CpViewModesAjaxController extends Controller
     public function actionViewModes(string $theme, string $type, string $uid = ''): array
     {
         $layout = Themes::$plugin->layouts->get($theme, $type, $uid);
+        $viewModes = array_map(function ($viewMode) {
+            $array = $viewMode->toArray();
+            unset($array['displays']);
+            return $array;
+        }, $layout ? $layout->viewModes : []);
         return [
-            'viewModes' => $layout ? $layout->viewModes : []
+            'viewModes' => $viewModes
         ];
     }
 

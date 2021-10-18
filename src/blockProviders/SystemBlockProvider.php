@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\blockProviders;
 
 use Ryssbowh\CraftThemes\base\BlockProvider;
+use Ryssbowh\CraftThemes\models\blocks\AssetBlock;
 use Ryssbowh\CraftThemes\models\blocks\CategoryBlock;
 use Ryssbowh\CraftThemes\models\blocks\ContentBlock;
 use Ryssbowh\CraftThemes\models\blocks\CurrentUserBlock;
@@ -27,6 +28,7 @@ class SystemBlockProvider extends BlockProvider
         TwigBlock::class,
         EntryBlock::class,
         CategoryBlock::class,
+        AssetBlock::class,
         UserBlock::class,
         CurrentUserBlock::class,
         GlobalBlock::class,

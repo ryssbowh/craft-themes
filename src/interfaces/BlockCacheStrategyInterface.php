@@ -2,7 +2,7 @@
 
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
+use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
 use yii\caching\TagDependency;
 
 /**

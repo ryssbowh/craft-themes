@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\behaviors;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Volume;
 use craft\elements\GlobalSet;
 use craft\models\CategoryGroup;
@@ -39,7 +40,8 @@ class LayoutBehavior extends Behavior
      */
     public function getLayout($theme): ?LayoutInterface
     {
-        return Themes::$plugin->layouts->get($theme, $this->type, $this->owner->uid);
+        $uid = $this->type == LayoutService::USER_HANDLE ? '' : $this->owner->uid;
+        return Themes::$plugin->layouts->get($theme, $this->type, $uid);
     }
 
     /**

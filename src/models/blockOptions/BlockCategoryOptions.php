@@ -8,19 +8,9 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockCategoryOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @var array
      */
-    public $group;
-
-    /**
-     * @var string
-     */
-    public $category;
-
-    /**
-     * @var string
-     */
-    public $viewMode;
+    public $categories = [];
 
     /**
      * @inheritDoc
@@ -28,13 +18,17 @@ class BlockCategoryOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['group', 'category', 'viewMode'], 'required'],
-            [['group', 'category', 'viewMode'], 'string']
+            [['categories'], 'required'],
+            ['categories', function () {
+                if (!is_array($this->categories)) {
+                    $this->addError('categories', \Craft::t('themes', 'Invalid categories'));
+                }
+            }]
         ]);
     }
 
     /**
-     * Saving the category option field after save as it's not included in project config
+     * Saving the categories option field after save as it's not included in project config
      * 
      * @param BlockInterface $block
      */
@@ -42,19 +36,8 @@ class BlockCategoryOptions extends BlockOptions
     {
         $record = Themes::$plugin->blocks->getRecordByUid($block->uid);
         $options = json_decode($record->options, true);
-        $options['category'] = $this->category;
+        $options['categories'] = $this->categories;
         $record->options = $options;
         $record->save(false);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getConfig(): array
-    {
-        return array_merge(parent::getConfig(), [
-            'group' => $this->group, 
-            'viewMode' => $this->viewMode
-        ]);
     }
 }

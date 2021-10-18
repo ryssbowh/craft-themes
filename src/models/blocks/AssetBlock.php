@@ -5,28 +5,28 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockUserOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\BlockAssetOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\elements\User;
+use craft\elements\Asset;
 
-class UserBlock extends Block
+class AssetBlock extends Block
 {
     /**
      * @var string
      */
-    public static $handle = 'user';
+    public static $handle = 'asset';
 
     /**
      * @var array
      */
-    protected $_users;
+    protected $_assets;
 
     /**
      * @inheritDoc
      */
     public function getName(): string
     {
-        return \Craft::t('app', 'User');
+        return \Craft::t('app', 'Asset');
     }
 
     /**
@@ -34,7 +34,7 @@ class UserBlock extends Block
      */
     public function getSmallDescription(): string
     {
-        return \Craft::t('themes', 'Displays some users');
+        return \Craft::t('themes', 'Displays some assets');
     }
 
     /**
@@ -42,7 +42,7 @@ class UserBlock extends Block
      */
     public function getLongDescription(): string
     {
-        return \Craft::t('themes', 'Choose one or several users and a view mode to display');
+        return \Craft::t('themes', 'Choose one or several assets and a view mode to display');
     }
 
     /**
@@ -50,24 +50,24 @@ class UserBlock extends Block
      */
     public function getOptionsModel(): BlockOptionsInterface
     {
-        return new BlockUserOptions;
+        return new BlockAssetOptions;
     }
 
     /**
-     * Get users/view modes as defined in options
+     * Get asset as defined in options
      * 
      * @return array
      */
-    public function getUsers(): array
+    public function getAssets(): array
     {
-        if ($this->_users === null) {
-            $this->_users = array_map(function ($row) {
+        if ($this->_assets === null) {
+            $this->_assets = array_map(function ($row) {
                 return [
-                    'user' => User::find()->id($row['id'])->one(),
+                    'asset' => Asset::find()->id($row['id'])->one(),
                     'viewMode' => Themes::$plugin->viewModes->getByUid($row['viewMode'])
                 ];
-            }, $this->options->users);
+            }, $this->options->assets);
         }
-        return $this->_users;
+        return $this->_assets;
     }
 }

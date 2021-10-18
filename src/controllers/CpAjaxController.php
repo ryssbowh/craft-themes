@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\controllers;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\DisplayException;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use craft\elements\Asset;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\User;
@@ -47,71 +48,138 @@ class CpAjaxController extends Controller
     }
 
     /**
-     * Return entries for an entry type uid
+     * Return categories data for an array of ids
      * 
-     * @param  string $uid
      * @return array
      */
-    public function actionEntries(string $uid): array
+    public function actionCategoriesData(): array
     {
-        $entryTypes = array_values(array_filter(\Craft::$app->sections->getAllEntryTypes(), function ($entryType) use ($uid) {
-            return $uid == $entryType->uid;
-        }));
-        $entries = array_map(function ($entry) {
-            return [
-                'uid' => $entry->uid,
-                'title' => $entry->title
+        $id = $this->request->getRequiredParam('id');
+        $theme = $this->request->getRequiredParam('theme');
+        $id = is_array($id) ? $id : [$id];
+        $data = [];
+        foreach ($id as $id) {
+            $category = Category::find()->id($id)->one();
+            if (!$category) {
+                continue;
+            }
+            $layout = Themes::$plugin->layouts->get($theme, LayoutService::CATEGORY_HANDLE, $category->group->uid);
+            $data[] = [
+                'id' => $category->id,
+                'status' => $category->status,
+                'title' => $category->title,
+                'level' => $category->level,
+                'viewModes' => array_map(function ($viewMode) {
+                    return [
+                        'uid' => $viewMode->uid,
+                        'name' => $viewMode->name
+                    ];
+                }, $layout->viewModes)
             ];
-        }, Entry::find()->type($entryTypes[0])->all());
-        usort($entries, function ($a, $b) {
-            return ($a['title'] < $b['title']) ? -1 : 1;
-        });
-        return [
-            'entries' => $entries
-        ];
+        }
+        return $data;
     }
 
     /**
-     * Return categories for a category group uid
+     * Return assets data for an array of ids
      * 
-     * @param  string $uid
      * @return array
      */
-    public function actionCategories(string $uid): array
+    public function actionAssetsData(): array
     {
-        $group = \Craft::$app->categories->getGroupByUid($uid);
-        $categories = array_map(function ($category) {
-            return [
-                'uid' => $category->uid,
-                'title' => $category->title
+        $id = $this->request->getRequiredParam('id');
+        $theme = $this->request->getRequiredParam('theme');
+        $id = is_array($id) ? $id : [$id];
+        $data = [];
+        foreach ($id as $id) {
+            $asset = Asset::find()->id($id)->one();
+            if (!$asset) {
+                continue;
+            }
+            $layout = Themes::$plugin->layouts->get($theme, LayoutService::VOLUME_HANDLE, $asset->volume->uid);
+            $asset->setTransform(['width' => 34, 'height' => 18]);
+            $data[] = [
+                'id' => $asset->id,
+                'title' => $asset->title,
+                'srcset' => $asset->getSrcset(['34w', '68w']),
+                'viewModes' => array_map(function ($viewMode) {
+                    return [
+                        'uid' => $viewMode->uid,
+                        'name' => $viewMode->name
+                    ];
+                }, $layout->viewModes)
             ];
-        }, Category::find()->group($group)->all());
-        usort($categories, function ($a, $b) {
-            return ($a['title'] < $b['title']) ? -1 : 1;
-        });
-        return [
-            'categories' => $categories
-        ];
+        }
+        return $data;
     }
 
     /**
-     * Return users
+     * Return entries data for an array of ids
      * 
      * @return array
      */
-    public function actionUsers(): array
+    public function actionEntriesData(): array
     {
-        $users = array_map(function ($user) {
-            return [
-                'uid' => $user->uid,
-                'title' => $user->friendlyName
+        $id = $this->request->getRequiredParam('id');
+        $theme = $this->request->getRequiredParam('theme');
+        $id = is_array($id) ? $id : [$id];
+        $data = [];
+        foreach ($id as $id) {
+            $entry = Entry::find()->id($id)->one();
+            if (!$entry) {
+                continue;
+            }
+            $layout = Themes::$plugin->layouts->get($theme, LayoutService::ENTRY_HANDLE, $entry->type->uid);
+            $data[] = [
+                'id' => $entry->id,
+                'status' => $entry->status,
+                'title' => $entry->title,
+                'viewModes' => array_map(function ($viewMode) {
+                    return [
+                        'uid' => $viewMode->uid,
+                        'name' => $viewMode->name
+                    ];
+                }, $layout->viewModes)
             ];
-        }, User::find()->all());
-        usort($users, function ($a, $b) {
-            return ($a['title'] < $b['title']) ? -1 : 1;
-        });
-        return [
-            'users' => $users
-        ];
+        }
+        return $data;
+    }
+
+    /**
+     * Return users data for an array of ids
+     * 
+     * @return array
+     */
+    public function actionUsersData(): array
+    {
+        $id = $this->request->getRequiredParam('id');
+        $theme = $this->request->getRequiredParam('theme');
+        $id = is_array($id) ? $id : [$id];
+        $data = [];
+        $layout = Themes::$plugin->layouts->get($theme, LayoutService::USER_HANDLE);
+        $viewModes = array_map(function ($viewMode) {
+            return [
+                'uid' => $viewMode->uid,
+                'name' => $viewMode->name
+            ];
+        }, $layout->viewModes);
+        foreach ($id as $id) {
+            $user = User::find()->id($id)->one();
+            if (!$user) {
+                continue;
+            }
+            $name = $user->username;
+            if ($user->firstName or $user->lastName) {
+                $name = $user->firstName . ' ' . $user->lastName;
+            }
+            $data[] = [
+                'id' => $user->id,
+                'status' => $user->status,
+                'name' => $name,
+                'srcset' => $user->getThumbUrl(34) . ' 34w, ' . $user->getThumbUrl(68) . ' 68w',
+                'viewModes' => $viewModes
+            ];
+        }
+        return $data;
     }
 }

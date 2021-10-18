@@ -1,10 +1,11 @@
 <?php
 namespace Ryssbowh\CraftThemes\blockCache;
 
+use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\base\BlockCacheStrategy;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-use Ryssbowh\CraftThemes\models\BlockCacheStrategyOptions;
+use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
 use Ryssbowh\CraftThemes\models\blockCacheOptions\GlobalOptions;
 
 /**
@@ -14,6 +15,17 @@ use Ryssbowh\CraftThemes\models\blockCacheOptions\GlobalOptions;
 class QueryBlockCache extends BlockCacheStrategy
 {
     const CACHE_TAG = 'themes.blockCache.query';
+
+    /**
+     * @var MobileDetect
+     */
+    protected $mobileDetect;
+
+    public function init()
+    {
+        parent::init();
+        $this->mobileDetect = new MobileDetect;
+    }
 
     /**
      * @inheritDoc
@@ -56,6 +68,9 @@ class QueryBlockCache extends BlockCacheStrategy
         if ($this->options->cachePerAuthenticated) {
             $key[] = \Craft::$app->user ? 'auth' : 'noauth';
         }
+        if ($this->options->cachePerViewport) {
+            $key[] = $this->getViewPort();
+        }
         if ($this->options->cachePerUser and $user = \Craft::$app->user) {
             $key[] = $user->getIdentity()->id;
         }
@@ -76,5 +91,21 @@ class QueryBlockCache extends BlockCacheStrategy
     protected function getTag(): string
     {
         return self::CACHE_TAG;
+    }
+
+    /**
+     * Get user's view port
+     * 
+     * @return string
+     */
+    protected function getViewPort(): string
+    {
+        if ($this->mobileDetect->isMobile()) {
+            return 'phone';
+        }
+        if ($this->mobileDetect->isTablet()) {
+            return 'tablet';
+        }
+        return 'desktop';
     }
 }

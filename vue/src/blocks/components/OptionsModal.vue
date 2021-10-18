@@ -31,8 +31,8 @@
                     </div>
                 </div>
             </div>
-            <component class="strategy" :is="cacheStrategyOptionsComponent" :block="editedBlock" @updateOptions="updateOptions"></component>
-            <component :is="optionsComponent" :block="editedBlock" @updateOptions="updateOptions"></component>
+            <component class="strategy" :is="cacheStrategyOptionsComponent" :block="editedBlock" :options="options.cacheStrategyOptions ?? {}" :errors="errors.cacheStrategy ?? {}" @updateOptions="updateStrategyOptions"></component>
+            <component :is="optionsComponent" :block="editedBlock" :errors="errors.options ?? {}" :options="options" @updateOptions="updateOptions"></component>
         </div>
         <div class="footer">
             <div class="buttons right">
@@ -69,14 +69,16 @@ export default {
         return {
             modal: null,
             options: {},
+            errors: {},
             active: null
         }
     },
     watch: {
         showOptionsModal: function () {
             if (this.showOptionsModal) {
-                this.options = {...this.editedBlock.options};
+                this.options = merge({}, this.editedBlock.options);
                 this.active = this.editedBlock.active;
+                this.errors = this.editedBlock.errors;
                 this.modal.show();
             } else {
                 this.modal.hide();
@@ -106,16 +108,39 @@ export default {
         },
         closeModal () {
             this.options = {};
+            this.errors = {};
             this.active = null;
             this.setShowOptionsModal({show:false})
         },
         updateOptions (options) {
-            this.changes = merge(this.options, options);
+            this.options = {...this.options, ...options};
         },
-        save() {
-            let changes = {active: this.active, options: this.options};
-            this.updateBlock(merge(this.editedBlock, changes));
-            this.closeModal();
+        updateStrategyOptions (options) {
+            this.options.cacheStrategyOptions = {...this.options.cacheStrategyOptions, ...options};
+        },
+        save () {
+            let data = {
+                blockHandle: this.editedBlock.handle,
+                provider: this.editedBlock.provider,
+                options: this.options
+            };
+            axios({
+                method: 'post',
+                url: Craft.getActionUrl('themes/cp-blocks-ajax/validate-block-options'),
+                data: data,
+                headers: {'X-CSRF-Token': Craft.csrfTokenValue}
+            }).then((response) => {
+                if (Object.keys(response.data.errors).length > 0) {
+                    this.errors = response.data.errors;
+                } else {
+                    this.editedBlock.active = this.active;
+                    this.editedBlock.options = this.options;
+                    this.updateBlock(this.editedBlock);
+                    this.closeModal();
+                }
+            }).catch((err) => {
+                this.handleError(err);
+            });
         },
         ...mapMutations(['updateBlock', 'setShowOptionsModal']),
         ...mapActions([])
@@ -128,6 +153,7 @@ export default {
     padding-bottom: 62px;
     height: auto;
     width: auto;
+    min-height: calc(100vh / 2);
     .body {
         height: calc(100% - 65px);
         overflow-y: auto;

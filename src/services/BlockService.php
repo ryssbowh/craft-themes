@@ -77,7 +77,9 @@ class BlockService extends Service
         }
         $handle = $config['handle'];
         unset($config['handle']);
-        $block = $this->blockProviderService()->getByHandle($config['provider'])->createBlock($handle); 
+        $block = $this->blockProviderService()->getByHandle($config['provider'])->createBlock($handle);
+        $attributes = $block->safeAttributes();
+        $config = array_intersect_key($config, array_flip($attributes));
         $block->setAttributes($config);
         return $block;
     }

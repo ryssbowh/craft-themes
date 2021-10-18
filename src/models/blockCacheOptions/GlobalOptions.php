@@ -24,7 +24,7 @@ class GlobalOptions extends BlockCacheStrategyOptions
     public function defineRules(): array
     {
         return [
-            [['cachePerAuthenticated', 'cachePerUser', 'cachePerViewport'], 'boolean', 'trueValue' => true, 'falseValue' => false],
+            [['cachePerAuthenticated', 'cachePerUser', 'cachePerViewport'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 }

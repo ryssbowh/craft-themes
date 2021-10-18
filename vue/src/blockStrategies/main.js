@@ -3,19 +3,7 @@ document.addEventListener("register-block-strategy-components", function(e) {
         props: {
             block: Object,
             options: Object,
-        },
-        methods: {
-            errors: function (field) {
-                if (!this.block.errors.options ?? null) {
-                    return [];
-                }
-                for (let i in this.block.errors.options) {
-                    if (this.block.errors.options[i][field] ?? null) {
-                        return this.block.errors.options[i][field];
-                    }
-                }
-                return [];
-            }
+            errors: Object
         },
         mounted: function () {
             this.$nextTick(() => {
@@ -38,15 +26,15 @@ document.addEventListener("register-block-strategy-components", function(e) {
                     <label>{{ t('Cache depends on user authentication') }}</label>
                 </div>
                 <div class="input ltr">                 
-                    <button type="button" :class="{lightswitch: true, on: block.options.cachePerAuthenticated}" data-field="cachePerAuthenticated">
+                    <button type="button" :class="{lightswitch: true, on: options.cachePerAuthenticated}" data-field="cachePerAuthenticated">
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
                         <input type="hidden">
                     </button>
                 </div>
-                <ul class="errors" v-if="errors('cachePerAuthenticated')">
-                    <li v-for="error in errors('cachePerAuthenticated')">{{ error }}</li>
+                <ul class="errors" v-if="errors.cachePerAuthenticated">
+                    <li v-for="error in errors.cachePerAuthenticated">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
@@ -54,15 +42,15 @@ document.addEventListener("register-block-strategy-components", function(e) {
                     <label>{{ t('Cache depends on user') }}</label>
                 </div>
                 <div class="input ltr">                 
-                    <button type="button" :class="{lightswitch: true, on: block.options.cachePerUser}" data-field="cachePerUser">
+                    <button type="button" :class="{lightswitch: true, on: options.cachePerUser}" data-field="cachePerUser">
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
                         <input type="hidden">
                     </button>
                 </div>
-                <ul class="errors" v-if="errors('cachePerUser')">
-                    <li v-for="error in errors('cachePerUser')">{{ error }}</li>
+                <ul class="errors" v-if="errors.cachePerUser">
+                    <li v-for="error in errors.cachePerUser">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
@@ -70,15 +58,15 @@ document.addEventListener("register-block-strategy-components", function(e) {
                     <label>{{ t('Cache depends on view port (mobile, tablet or desktop)') }}</label>
                 </div>
                 <div class="input ltr">                 
-                    <button type="button" :class="{lightswitch: true, on: block.options.cachePerViewport}" data-field="cachePerViewport">
+                    <button type="button" :class="{lightswitch: true, on: options.cachePerViewport}" data-field="cachePerViewport">
                         <div class="lightswitch-container">
                             <div class="handle"></div>
                         </div>
                         <input type="hidden">
                     </button>
                 </div>
-                <ul class="errors" v-if="errors('cachePerViewport')">
-                    <li v-for="error in errors('cachePerViewport')">{{ error }}</li>
+                <ul class="errors" v-if="errors.cachePerViewport">
+                    <li v-for="error in errors.cachePerViewport">{{ error }}</li>
                 </ul>
             </div>
         </div>`

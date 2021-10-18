@@ -127,4 +127,26 @@ class CpBlocksAjaxController extends Controller
             'layout' => $layout
         ];
     }
+
+    /**
+     * Validate block options
+     * 
+     * @return array
+     */
+    public function actionValidateBlockOptions(): array
+    {
+        $blockHandle = $this->request->getRequiredParam('blockHandle');
+        $provider = $this->request->getRequiredParam('provider');
+        $optionsData = $this->request->getRequiredParam('options');
+
+        $provider = $this->blockProviders->getByHandle($provider);
+        $block = $provider->createBlock($blockHandle);
+
+        $block->options = $optionsData;
+        $block->validate(['options', 'cacheStrategy']);
+
+        return [
+            'errors' => $block->errors
+        ];
+    }
 }

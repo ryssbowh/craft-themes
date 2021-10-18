@@ -1,6 +1,10 @@
 {% extends "blocks/block" %}
 
 {% block content %}
-    {% set viewMode = craft.themes.viewModes.getByUid(block.options.viewMode) %}
-    {{ craft.themes.view.renderLayout(block.categoryLayout, viewMode.handle, block.category)|raw }}
+    {% for item in block.categories %}
+        {% if item.viewMode and item.category %}
+            {% set layout = item.category.group.currentThemeLayout %}
+            {{ craft.themes.view.renderLayout(layout, item.viewMode.handle, item.category)|raw }}
+        {% endif %}
+    {% endfor %}
 {% endblock %}
