@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
+/**
+ * Options for the block template
+ */
 class BlockTemplateOptions extends BlockOptions
 {
     /**

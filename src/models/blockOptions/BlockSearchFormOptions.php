@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
+/**
+ * Options for the block search form
+ */
 class BlockSearchFormOptions extends BlockOptions
 {
     /**

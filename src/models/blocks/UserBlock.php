@@ -9,6 +9,9 @@ use Ryssbowh\CraftThemes\models\blockOptions\BlockUserOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\User;
 
+/**
+ * Block displaying some users
+ */
 class UserBlock extends Block
 {
     /**

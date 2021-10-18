@@ -5,6 +5,9 @@ use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockSearchFormOptions;
 
+/**
+ * Block displaying the search block
+ */
 class SearchFormBlock extends Block
 {
     /**

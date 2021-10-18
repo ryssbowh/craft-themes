@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
 
+/**
+ * Block displaying the profile form
+ */
 class ProfileFormBlock extends Block
 {
     /**

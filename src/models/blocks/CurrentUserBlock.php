@@ -8,6 +8,9 @@ use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockCurrentUserOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
+/**
+ * Block displaying the current user
+ */
 class CurrentUserBlock extends Block
 {
     /**

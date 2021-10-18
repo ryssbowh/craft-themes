@@ -9,6 +9,9 @@ use Ryssbowh\CraftThemes\models\blockOptions\BlockAssetOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Asset;
 
+/**
+ * Block displaying some assets
+ */
 class AssetBlock extends Block
 {
     /**

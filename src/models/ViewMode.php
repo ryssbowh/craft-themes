@@ -10,6 +10,9 @@ use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Model;
 
+/**
+ * Class for view modes
+ */
 class ViewMode extends Model implements ViewModeInterface
 {
     /**

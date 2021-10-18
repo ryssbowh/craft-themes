@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
 
+/**
+ * Class for a group of items
+ */
 class Group extends DisplayItem implements GroupInterface
 {
     /**

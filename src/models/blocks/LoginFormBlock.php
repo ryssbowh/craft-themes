@@ -5,6 +5,9 @@ use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockLoginFormOptions;
 
+/**
+ * Block displaying the login form
+ */
 class LoginFormBlock extends Block
 {
     /**

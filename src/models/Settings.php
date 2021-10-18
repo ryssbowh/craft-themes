@@ -6,6 +6,9 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\records\ViewModeRecord;
 use craft\base\Model;
 
+/**
+ * Themes plugin settings
+ */
 class Settings extends Model
 {
     /**

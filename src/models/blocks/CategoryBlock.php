@@ -9,6 +9,9 @@ use Ryssbowh\CraftThemes\models\blockOptions\BlockCategoryOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Category;
 
+/**
+ * Block displaying some categories
+ */
 class CategoryBlock extends Block
 {
     /**

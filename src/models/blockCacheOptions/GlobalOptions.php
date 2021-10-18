@@ -1,6 +1,9 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\blockCacheOptions;
 
+/**
+ * Global block cache strategy options
+ */
 class GlobalOptions extends BlockCacheStrategyOptions
 {
     /**

@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
 
+/**
+ * Block displaying the reset password form
+ */
 class ResetPasswordFormBlock extends Block
 {
     /**

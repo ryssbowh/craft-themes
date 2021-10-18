@@ -5,6 +5,9 @@ use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockTemplateOptions;
 
+/**
+ * Block displaying a custom template
+ */
 class TemplateBlock extends Block
 {
     /**

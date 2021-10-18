@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
 
+/**
+ * Block displaying the set password block
+ */
 class SetPasswordFormBlock extends Block
 {
     /**

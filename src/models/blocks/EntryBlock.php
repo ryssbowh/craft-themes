@@ -9,6 +9,9 @@ use Ryssbowh\CraftThemes\models\blockOptions\BlockEntryOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\Entry;
 
+/**
+ * Block displaying some entries
+ */
 class EntryBlock extends Block
 {
     /**

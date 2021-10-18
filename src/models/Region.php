@@ -10,6 +10,9 @@ use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\base\Element;
 use craft\base\Model;
 
+/**
+ * Class for a region inside a theme
+ */
 class Region extends Model implements RegionInterface
 {   
     /**

@@ -9,6 +9,9 @@ use Ryssbowh\CraftThemes\models\blockOptions\BlockGlobalOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\GlobalSet;
 
+/**
+ * Block displaying a global set
+ */
 class GlobalBlock extends Block
 {
     /**

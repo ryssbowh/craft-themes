@@ -5,6 +5,9 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
+/**
+ * Options for the block category
+ */
 class BlockCategoryOptions extends BlockOptions
 {
     /**

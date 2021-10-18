@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
 
+/**
+ * Block displaying the site name
+ */
 class SiteNameBlock extends Block
 {
     /**
