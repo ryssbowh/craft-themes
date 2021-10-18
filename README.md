@@ -26,7 +26,7 @@ The Pro version will allow you to :
 
 What it doesn't allow you to do :
 - Change the backend look and feel
-- Override plugins templates (unless specific case, see developers readme)
+- Override plugins templates (unless specific case, see [developers readme](DEVELOPERS.md#root-templates-folder))
 
 ## Themes list
 
@@ -220,7 +220,8 @@ Craft 3.5 or over
 
 ## Documentation
 
-- Class reference [there](https://ryssbowh.github.io/craft-themes/namespaces/ryssbowh-craftthemes.html)
+- [Class reference](https://ryssbowh.github.io/craft-themes/namespaces/ryssbowh-craftthemes.html)
+- [developers readme](DEVELOPERS.md))
 - 1.x documentation [there](README1.md)
 - 2.x documentation [there](README2.md)
 

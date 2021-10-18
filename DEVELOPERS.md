@@ -2,7 +2,7 @@
 
 ## Update from 2.0 breaking changes :
 
-- Main plugin class must inherit `Ryssbowh\CraftThemes\base\ThemePlugin`
+- Main themes plugin class must inherit `Ryssbowh\CraftThemes\base\ThemePlugin`
 
 ### Deprecated
 
@@ -33,7 +33,7 @@ Define a partial theme with the method `isPartial(): bool` of the plugin class.
 
 ### Creating a new Theme
 
-Create a new plugin, it's main class must extend `Ryssbowh\CraftThemes\models\ThemePlugin`.
+Create a new plugin, it's main class must extend `Ryssbowh\CraftThemes\base\ThemePlugin`.
 
 You could for example create a `themes` folder at the root, and add it as a composer repository by adding to the root `composer.json` :
 
@@ -94,7 +94,7 @@ Templates are created by the system automatically, their types as mentionned in 
 
 ### Custom layouts
 
-You can add a custom programmaticaly layout by doing :
+You can add a custom programmatically layout by doing :
 
 ```
 $layout = Themes::$plugin->layouts->createCustom([
@@ -157,7 +157,7 @@ Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES,
     $event->bundles[] = MyBundle::class;
 });
 ```  
-respond to the js event `register-block-option-components` and add your component to the `event.detail` variable. 
+Yout javascript must respond to the event `register-block-option-components` and add your component to the `event.detail` variable. 
 
 Examples [here](vue/src/blockOptions/main.js)
 
@@ -210,7 +210,7 @@ Themes::$plugin->blocks->save($block);
 
 There are 10 types of fields defined by this plugin.
 
-5 "new" fields, which can have their own displayers :
+5 "themes" fields, created by this plugin, which can have their own displayers :
 
 - Author : handles the author of an entry
 - File : handles the file of an asset
@@ -222,7 +222,7 @@ And 5 that handle Craft fields, those can't have their own displayers. Their dis
 
 - CraftField : handles most Craft fields (except Matrix and Table)
 - Matrix : handles Craft matrix fields
-- MatrixField : handles the field within a matrix
+- MatrixField : handles the fields within a matrix
 - Table : handles Craft table fields
 - TableField : handles the fields within a table field
 
@@ -244,11 +244,11 @@ Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLE
     $event->bundles[] = MyBundle::class;
 });
 ```  
-respond to the js event `register-fields-components` and add your component and clone function to the `event.detail` variable.
+Your javascript must respond to the event `register-fields-components` and add your component and clone function to the `event.detail` variable.
 
 Examples [here](vue/src/fields/main.js)
 
-"new" fields (any field that doesn't extend from `CraftField`) can be created automatically on layouts if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. By default this method returns false.  
+"themes" fields (any field that doesn't extend from `CraftField`) can be created automatically on layouts if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. By default this method returns false.  
 This method won't have any effect for fields that extends `CraftField`, as they will be created automatically (assuming a Craft field exists on the category group/entry type).
 
 ### Define a new displayer
@@ -270,7 +270,7 @@ Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLE
     $event->bundles[] = MyBundle::class;
 });
 ```  
-respond to the js event `register-field-displayers-components` and add your component to the `event.detail` variable.  
+Your javascript must respond to the event `register-field-displayers-components` and add your component to the `event.detail` variable.  
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
@@ -299,21 +299,21 @@ Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLE
     $event->bundles[] = MyBundle::class;
 });
 ```  
-respond to the js event `register-file-displayers-components` and add your component to the `event.detail` variable.   
+Your javascript must respond to the event `register-file-displayers-components` and add your component to the `event.detail` variable.   
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
 
 Examples [here](vue/src/fileDisplayers/main.js)
 
-## Templating
+## Templating (Pro)
 
 Templates are inherited, so if you call a template that isn't defined in your theme but exist in a parent theme, the parent template will be loaded.
 
 Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
-### Layouts (Pro)
+### Layouts
 
-There are two ways to render layouts, regions or displays. The method `Layout::render(Element $element, string $viewMode)` will render the displays, the other `$layout->renderRegions()` the regions.
+There are two ways to render layouts: regions or displays. The method `Layout::render(Element $element, string $viewMode)` will render the displays, the other `$layout->renderRegions()` the regions.
 
 Rendering the regions will call a special template defined by the theme in `ThemePlugin::getRegionsTemplate()`, by default this equals to `regions`.
 
@@ -327,7 +327,7 @@ layouts/entry/blog.twig
 layouts/entry.twig
 layouts/layout.twig
 ```
-### Regions (Pro)
+### Regions
 
 If you have a region `header` for a layout of type `entry` for an entry type `blog`, the region templates will take this precedence :
 ```
@@ -347,7 +347,7 @@ regions/custom/region.twig
 regions/region-header.twig
 regions/region.twig
 ```
-### Blocks (Pro)
+### Blocks
 
 If you have a block `latestBlogs` of a provider `system` for a layout of type `entry` for an entry type `blog` situated in a region `header`, the block templates will take this precedence :
 ```
@@ -356,7 +356,7 @@ blocks/entry/blog/system_latestBlogs.twig
 blocks/entry/system_latestBlogs.twig
 blocks/system_latestBlogs.twig
 ```
-### Fields (Pro)
+### Fields
 
 If you have a field displayer `redactor` for a field `content` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the field templates will take this precedence :
 ```
@@ -369,7 +369,7 @@ fields/entry/redactor.twig
 fields/redactor-content.twig
 fields/redactor.twig
 ```
-### Groups (Pro)
+### Groups
 
 If you have a group `left` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the group templates will take this precedence :
 ```
@@ -382,7 +382,7 @@ groups/entry/group.twig
 groups/group-left.twig
 groups/group.twig
 ```
-### Assets (Pro)
+### Assets
 
 If you have a file displayer `image` for a field `topImage` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the asset templates will take this precedence :
 ```
@@ -429,7 +429,7 @@ Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (Ren
 
 ### Theme preferences (Pro)
 
-Each Theme can gain control on the classes and attributes defined for each layout/block/field/file/group/region by defining a [preference class](src/base/ThemePreferences.php).  
+Each Theme can define default classes and attributes for each layout/block/field/file/group/region by defining a [preference class](src/base/ThemePreferences.php).  
 To override the preferences for your theme, override the method `getPreferencesModel(): ThemePreferencesInterface` of its main class.
 
 ### Debug (Pro)
@@ -450,6 +450,8 @@ By default, when a layout is rendered it will eager load every field it contains
 All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
 
 ## Twig
+
+Available variables :
 
 `craft.themes.layouts` : Layouts service  
 `craft.themes.viewModes` : View mode service  
@@ -524,6 +526,7 @@ Event::on(BlockCacheService::class, BlockCacheService::REGISTER_STRATEGIES, func
     $event->add(new MyCacheStrategy);
 });
 ```
+Strategy classes must implement `BlockCacheStrategyInterface` and their options extend `BlockCacheStrategyOptions`;
 
 To hook in the backend Vue system, register a js file with a bundle :
 ```
@@ -531,7 +534,7 @@ Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES,
     $event->bundles[] = MyBundle::class;
 });
 ```  
-respond to the js event `register-block-strategy-components` and add your component to the `event.detail` variable. 
+Your javascript must respond to the event `register-block-strategy-components` and add your component to the `event.detail` variable. 
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your strategy options class.
 
