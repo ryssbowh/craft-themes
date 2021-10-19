@@ -77,7 +77,10 @@ document.addEventListener("register-fields-components", function(e) {
             </div>`
         },
         clone: function (oldDisplay, display) {
-
+            for (let field of display.item.fields) {
+                field.id = null;
+                field.uid = null;
+            }
         }
     }
 });

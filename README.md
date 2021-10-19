@@ -228,6 +228,4 @@ Craft 3.5 or over
 ## Roadmap
 
 - more tests
-- field displayer inside displayer ?
-- check cloning table fields
 - table, matrix update item events
