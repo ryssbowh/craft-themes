@@ -8,8 +8,8 @@
                 <div class="handle col"></div>
                 <div class="title col">{{ t('Title', {}, 'app') }}</div>
                 <div class="type col">{{ t('Type') }}</div>
-                <div class="label col">{{ t('Label', {}, 'app') }}</div>
-                <div class="visibility col">{{ t('Visibility') }}</div>
+                <div class="label col"><a href="#" @click.prevent="setLabelsVisibility(!this.allLabelsVisible)" :title="allLabelsVisible ? t('Make all hidden') : t('Make all visible')">{{ t('Label', {}, 'app') }}</a></div>
+                <div class="visibility col"><a href="#" @click.prevent="setItemsVisibility(!this.allItemsVisible)" :title="allItemsVisible ? t('Make all hidden') : t('Make all visible')">{{ t('Visibility') }}</a></div>
                 <div class="displayer col">{{ t('Displayer') }}</div>
                 <div class="options col"></div>
             </div>
@@ -57,7 +57,25 @@ export default {
             deep: true,
             handler() {
                 this.checkChanges();
+                this.allItemsVisible = true;
+                this.allLabelsVisible = true;
+                for (let display of this.rootDisplays) {
+                    if (display.item.hidden) {
+                        this.allItemsVisible = false;
+                    }
+                    if (display.item.labelHidden) {
+                        this.allLabelsVisible = false;
+                    }
+                }
+                this.setItemsVisibility(null);
+                this.setLabelsVisibility(null);
             }
+        }
+    },
+    data: function () {
+        return {
+            allItemsVisible: true,
+            allLabelsVisible: true
         }
     },
     methods: {
@@ -97,7 +115,7 @@ export default {
                 movedElem.order = newIndex;
             }
         },
-        ...mapMutations(['updateDisplay', 'setShowGroupModal', 'addDisplay', 'removeDisplay']),
+        ...mapMutations(['updateDisplay', 'setShowGroupModal', 'addDisplay', 'removeDisplay', 'setItemsVisibility', 'setLabelsVisibility']),
         ...mapActions(['checkChanges']),
     }
 };

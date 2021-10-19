@@ -96,7 +96,7 @@ export default {
             }
             return this.displayer.handle
         },
-        ...mapState(['showFieldHandles'])
+        ...mapState(['showFieldHandles', 'itemsVisibility', 'labelsVisibility'])
     },
     props: {
         item: Object,
@@ -116,6 +116,18 @@ export default {
     data() {
         return {
             showModal: false,
+        }
+    },
+    watch: {
+        itemsVisibility: function () {
+            if (this.itemsVisibility !== null) {
+                this.$emit("updateItem", {hidden: !this.itemsVisibility});
+            }
+        },
+        labelsVisibility: function () {
+            if (this.labelsVisibility !== null) {
+                this.$emit("updateItem", {labelHidden: !this.labelsVisibility});
+            }
         }
     },
     methods: {

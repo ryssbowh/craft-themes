@@ -64,7 +64,9 @@ const store = createStore({
             displayer: {},
             itemOptionsEdited: {},
             displayerOptionsErrors: {},
-            showFieldHandles: false
+            showFieldHandles: false,
+            itemsVisibility: null,
+            labelsVisibility: null,
         }
     },
     mutations: {
@@ -182,6 +184,12 @@ const store = createStore({
         },
         updateOptions(state, value) {
             state.itemOptionsEdited.options = value;
+        },
+        setItemsVisibility(state, value) {
+            state.itemsVisibility = value;
+        },
+        setLabelsVisibility(state, value) {
+            state.labelsVisibility = value;
         }
     },
     actions: {

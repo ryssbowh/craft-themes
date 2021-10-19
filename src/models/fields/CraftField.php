@@ -53,7 +53,7 @@ class CraftField extends Field implements CraftFieldInterface
         foreach ($this->layout->fieldLayout->tabs as $tab) {
             foreach ($tab->elements as $element) {
                 if (get_class($element) == CustomField::class and $element->field->handle == $this->handle) {
-                    return $element->label ?? $element->field->name;
+                    return $element->label ?: $element->field->name;
                 }
             }
         }

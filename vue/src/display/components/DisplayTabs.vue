@@ -98,7 +98,6 @@ export default {
                     let newLi = li.clone();
                     newLi.find('a').click(function (e) {
                         e.preventDefault();
-                        console.log('click');
                         _this.selectViewMode($(this).data('viewmode'));
                         _this.$nextTick(() => {
                             _this.initTabs();
