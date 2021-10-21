@@ -15,7 +15,7 @@
         {% set name = 'rules' %}
         {% set id = 'theme-rules' %}
         {% set initJs = false %}
-        {% set rows = settings.rules %}
+        {% set rows = settings.themesRules %}
         {% include "_includes/forms/editableTable" %}
 
         <h2>{{ 'Default theme'|t('themes') }}</h2>
@@ -67,7 +67,7 @@
     {% endnamespace %}
 
     {% js on ready %}
-        new Craft.Themes.RulesTable('settings-{{ id }}', 'settings[rules]', {{ cols|json_encode|raw }}, {});
+        new Craft.Themes.RulesTable('settings-{{ id }}', 'settings[themesRules]', {{ cols|json_encode|raw }}, {});
     {% endjs %}
 {% endblock %}
 

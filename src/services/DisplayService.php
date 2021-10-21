@@ -229,19 +229,6 @@ class DisplayService extends Service
     }
 
     /**
-     * Callback when a field is deleted
-     * Resave layout for which a deleted field was present
-     * 
-     * @param ConfigEvent $event
-     */
-    public function onCraftFieldDeleted(FieldEvent $event)
-    {
-        foreach ($this->getAllForCraftField($event->field->id) as $display) {
-            $this->delete($display);
-        }
-    }
-
-    /**
      * Handles a craft field save: If the type of field has changed
      * replaces the item in each display associated to the field.
      * Otherwise let the item handle the change.

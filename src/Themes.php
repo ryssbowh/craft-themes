@@ -237,6 +237,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerPluginsEvents()
     {
+        // Disable all theme dependencies before it's disabled
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin->handle == 'themes') {
@@ -251,6 +252,7 @@ class Themes extends \craft\base\Plugin
             }
         );
 
+        // Flush rules and registry cache after a theme if disabled
         Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
@@ -260,6 +262,7 @@ class Themes extends \craft\base\Plugin
             }
         );
 
+        // Enable the dependency of a theme before enabling it
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_ENABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
@@ -271,6 +274,7 @@ class Themes extends \craft\base\Plugin
             }
         );
 
+        // Flush rules and registry cache after enabling a theme
         Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
@@ -280,6 +284,7 @@ class Themes extends \craft\base\Plugin
             }
         );
 
+        // Uninstall all themes dependency and data before it's uninstalled
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
@@ -292,6 +297,7 @@ class Themes extends \craft\base\Plugin
             }
         );
 
+        // Install theme dependency and data after it's installed
         Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
@@ -357,7 +363,7 @@ class Themes extends \craft\base\Plugin
             'registry' => ThemesRegistry::class,
             'rules' => [
                 'class' => RulesService::class,
-                'rules' => $this->getSettings()->getRules(),
+                'rules' => $this->getSettings()->themesRules,
                 'default' => $this->getSettings()->default,
                 'cache' => \Craft::$app->cache,
                 'cacheEnabled' => $this->getSettings()->rulesCacheEnabled,
@@ -427,7 +433,7 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Registers to edition change event. Installs all layouts if edition is pro
+     * Registers to edition change event. Installs all themes data if edition is pro
      */
     protected function registerSwitchEdition()
     {

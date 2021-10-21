@@ -70,11 +70,6 @@ class Layout extends Model implements LayoutInterface
     /**
      * @var array
      */
-    protected $_displays;
-
-    /**
-     * @var array
-     */
     protected $_viewModes;
 
     /**
@@ -375,32 +370,6 @@ class Layout extends Model implements LayoutInterface
     public function hasRegion(string $handle): bool
     {
         return isset($this->regions[$handle]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDisplayByHandle(string $viewMode, string $handle): ?DisplayInterface
-    {
-        foreach ($this->getDisplays($viewMode) as $display) {
-            if ($display->item->handle == $handle) {
-                return $display;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function replaceDisplay(DisplayInterface $display): LayoutInterface
-    {
-        foreach ($this->displays as $i => $oldDisplay) {
-            if ($oldDisplay->id == $display->id) {
-                $this->_displays[$i] = $display;
-            }
-        }
-        return $this;
     }
 
     /**

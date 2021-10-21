@@ -234,6 +234,15 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
+    public function getIsThemeDataInstalled(): bool
+    {
+        $value = \Craft::$app->projectConfig->get('plugins.' . $this->handle . '.themeDataInstalled');
+        return $value ?: false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getHasPreview(): bool
     {
         if (glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null) {

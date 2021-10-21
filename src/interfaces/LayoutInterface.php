@@ -183,23 +183,6 @@ interface LayoutInterface
     public function hasRegion(string $handle): bool;
 
     /**
-     * Get a display by handle for a view mode
-     * 
-     * @param  string $viewMode
-     * @param  string $handle
-     * @return ?DisplayInterface
-     */
-    public function getDisplayByHandle(string $viewMode, string $handle): ?DisplayInterface;
-
-    /**
-     * Replaces a display in this layout, based on its id.
-     * 
-     * @param  DisplayInterface $display
-     * @return LayoutInterface
-     */
-    public function replaceDisplay(DisplayInterface $display): LayoutInterface;
-
-    /**
      * Get all craft fields defined on this layout's element
      * 
      * @return array

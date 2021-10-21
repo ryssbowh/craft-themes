@@ -14,7 +14,7 @@ class Settings extends Model
     /**
      * @var array
      */
-    public $rules = [];
+    public $themesRules = [];
 
     /**
      * @var ?string
@@ -106,15 +106,7 @@ class Settings extends Model
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getRules(): array
-    {
-        return $this->rules ? $this->rules : [];
-    }
-
-    /**
-     * dev mode enabled getter
+     * dev mode enabled getter, always returns false if environment is 'production'
      * 
      * @return bool
      */

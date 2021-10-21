@@ -178,23 +178,34 @@ class LayoutService extends Service
 
     /**
      * Create all layouts for all themes
+     *
+     * @param bool $force
      */
-    public function install()
+    public function install(bool $force = false)
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $this->installThemeData($theme);
+            $this->installThemeData($theme, $force);
         }
     }
 
     /**
-     * Install layouts for a theme, will deletes orphans
+     * Install layouts for a theme, will deletes orphans.
+     * 
+     * Saves a project config attribute 'themeDataInstalled' on the theme after installing.
+     * If force equals false and that attribute is already set, the installation will be aborted,
+     * that allows us to not install themes data when Craft is applying Yaml changes
+     * which would result in duplicates.
      * 
      * @param  ThemeInterface $theme
+     * @param  bool           $force
      * @return bool
      */
-    public function installThemeData(ThemeInterface $theme): bool
+    public function installThemeData(ThemeInterface $theme, bool $force = false): bool
     {
         if (!Themes::$plugin->is(Themes::EDITION_PRO) or $theme->isPartial()) {
+            return false;
+        }
+        if (!$force and $theme->isThemeDataInstalled) {
             return false;
         }
         $ids = [];
@@ -213,19 +224,29 @@ class LayoutService extends Service
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
         }
+        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.themeDataInstalled', true);
         return true;
     }
 
     /**
-     * Deletes all layouts for a theme
+     * Deletes all layouts for a theme.
+     * If theme is marked as not having its data installed in the config
+     * uninstallation will be aborted, unless $force is used
      * 
-     * @param ThemeInterface $theme
+     * @param  ThemeInterface $theme
+     * @param  bool           $force
+     * @return bool
      */
-    public function uninstallThemeData(ThemeInterface $theme)
+    public function uninstallThemeData(ThemeInterface $theme, bool $force = false): bool
     {
+        if (!$force and !$theme->isThemeDataInstalled) {
+            return false;
+        }
         foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
+        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.themeDataInstalled', false);
+        return true;
     }
 
     /**
@@ -402,7 +423,7 @@ class LayoutService extends Service
     /**
      * Handles a deletion in layout config
      * 
-     * @param  ConfigEvent $event
+     * @param ConfigEvent $event
      */
     public function handleDeleted(ConfigEvent $event)
     {
@@ -433,6 +454,11 @@ class LayoutService extends Service
      */
     public function onCraftElementDeleted(string $uid)
     {
+        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+            // If Craft is applying Yaml changes it means we have the fields defined
+            // in config, and don't need to respond to these events as it would create duplicates
+            return;
+        }
         $layouts = $this->all()->filter(function ($layout) use ($uid) {
             return $layout->elementUid == $uid;
         })->all();
@@ -694,6 +720,12 @@ class LayoutService extends Service
         return $this->save($layout);
     }
 
+    /**
+     * Get all custom layouts for a theme
+     * 
+     * @param  string $themeHandle
+     * @return array
+     */
     protected function getCustomLayouts(string $themeHandle): array
     {
         return $this->all()

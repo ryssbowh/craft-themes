@@ -39,20 +39,19 @@
                 <a href="#" @click.prevent="deleteGroup" v-if="!groupDisplays.length" class="delete"><span class="icon delete"></span></a>
             </div>
         </div>
-        <div class="displays">
-            <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('No displays in that group') }}</i></span>
-            <draggable
-                item-key="uid"
-                :list="groupDisplays"
-                :group="{name: 'displays', put: canPut}"
-                handle=".move"
-                @change="onDragChange"
-                >
-                <template #item="{element}">
-                    <display-item :display="element" @updateItem="updateItem($event, element.uid)"/>
-                </template>
-            </draggable>
-        </div>
+        <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('No displays in that group') }}</i></span>
+        <draggable
+            class="displays"
+            item-key="uid"
+            :list="groupDisplays"
+            :group="{name: 'displays', put: canPut}"
+            handle=".move"
+            @change="onDragChange"
+            >
+            <template #item="{element}">
+                <display-item :display="element" @updateItem="updateItem($event, element.uid)"/>
+            </template>
+        </draggable>
     </div>
 </template>
 
@@ -214,6 +213,12 @@ export default {
         }
         & > div {
             min-height: 50px;
+        }
+    }
+    .line {
+        min-height: unset !important;
+        &:last-child {
+            margin-bottom: 0;
         }
     }
     .line.opaque ~ .displays {

@@ -4,9 +4,7 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Theme;
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\events\InstallThemeEvent;
 use Ryssbowh\CraftThemes\events\ThemeEvent;
-use Ryssbowh\CraftThemes\events\UninstallThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
@@ -20,6 +18,7 @@ class ThemesRegistry extends Service
     const EVENT_THEME_SET = 'themes.set';
     const THEMES_WEBROOT = '@webroot/themes/';
     const EVENT_AFTER_INSTALL_THEME = 'after_install_theme';
+    const EVENT_AFTER_UNINSTALL_THEME = 'after_uninstall_theme';
 
     /**
      * @var ?array
@@ -199,11 +198,12 @@ class ThemesRegistry extends Service
     {
         $this->resetThemes();
         if (Themes::$plugin->is(Themes::EDITION_PRO)) {
-            Themes::$plugin->layouts->installThemeData($theme);
-            $theme->afterThemeInstall();
-            $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new InstallThemeEvent([
-                'theme' => $theme
-            ]));
+            if (Themes::$plugin->layouts->installThemeData($theme)) {
+                $theme->afterThemeInstall();
+                $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new ThemeEvent([
+                    'theme' => $theme
+                ]));
+            }
         }
     }
 
@@ -214,10 +214,14 @@ class ThemesRegistry extends Service
      */
     public function uninstallTheme(ThemeInterface $theme)
     {
-        Themes::$plugin->layouts->uninstallThemeData($theme);
         Themes::$plugin->rules->flushCache();
         if (Themes::$plugin->is(Themes::EDITION_PRO)) {
-            $theme->afterThemeUninstall();
+            if (Themes::$plugin->layouts->uninstallThemeData($theme)) {
+                $theme->afterThemeUninstall();
+                $this->triggerEvent(self::EVENT_AFTER_UNINSTALL_THEME, new ThemeEvent([
+                    'theme' => $theme
+                ]));
+            }
         }
         $this->resetThemes();
     }

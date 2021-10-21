@@ -30,7 +30,6 @@ class CpRulesController extends Controller
     {
         $settings = Themes::$plugin->getSettings();
         $settings->validate();
-
         $namespace = 'settings';
         \Craft::$app->view->registerAssetBundle(RulesAssets::class);
         $themes = $this->registry->getNonPartials(true);
