@@ -221,7 +221,8 @@ PHP 7.3 or over
 
 ## Testing
 
-This plugin is unit tested with mysql5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php from 7.3 to 8.0.
+This plugin is unit tested with mysql5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php from 7.3 to 8.0.  
+One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue](https://github.com/yiisoft/yii2/issues/18406)
 
 ## Documentation
 

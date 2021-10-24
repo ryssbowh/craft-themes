@@ -3,6 +3,7 @@
 ## Update from 2.0 breaking changes :
 
 - Main themes plugin class must inherit `Ryssbowh\CraftThemes\base\ThemePlugin`
+- Requires PHP 7.3 minimum
 
 ### Deprecated
 
