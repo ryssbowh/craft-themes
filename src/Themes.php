@@ -76,18 +76,10 @@ class Themes extends \craft\base\Plugin
         $this->registerPluginsEvents();
         $this->registerTwigVariables();
         $this->registerSwitchEdition();
+        $this->registerBehaviors();
 
         if ($this->is($this::EDITION_PRO)) {
-            $this->registerBehaviors();
-            $this->registerShortcuts();
-            $this->registerProjectConfig();
-            $this->registerCraftEvents();
-
-            Event::on(
-                View::class, 
-                View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-                [$this->view, 'beforeRenderPage']
-            );
+            $this->initPro();
         }
 
         Event::on(
@@ -106,6 +98,22 @@ class Themes extends \craft\base\Plugin
         }
 
         \Craft::info('Loaded themes plugin', __METHOD__);
+    }
+
+    /**
+     * Initialise for pro
+     */
+    protected function initPro()
+    {
+        $this->registerShortcuts();
+        $this->registerProjectConfig();
+        $this->registerCraftEvents();
+
+        Event::on(
+            View::class, 
+            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+            [$this->view, 'beforeRenderPage']
+        );
     }
 
     /**
@@ -437,8 +445,10 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerSwitchEdition()
     {
-        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) {
+        $_this = $this;
+        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) use ($_this) {
             if ($e->newValue == Themes::EDITION_PRO) {
+                $_this->initPro();
                 Themes::$plugin->layouts->install();
             }
         });

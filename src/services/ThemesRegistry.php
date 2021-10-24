@@ -200,11 +200,11 @@ class ThemesRegistry extends Service
         if (Themes::$plugin->is(Themes::EDITION_PRO)) {
             if (Themes::$plugin->layouts->installThemeData($theme)) {
                 $theme->afterThemeInstall();
-                $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new ThemeEvent([
-                    'theme' => $theme
-                ]));
             }
         }
+        $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new ThemeEvent([
+            'theme' => $theme
+        ]));
     }
 
     /**
@@ -218,11 +218,11 @@ class ThemesRegistry extends Service
         if (Themes::$plugin->is(Themes::EDITION_PRO)) {
             if (Themes::$plugin->layouts->uninstallThemeData($theme)) {
                 $theme->afterThemeUninstall();
-                $this->triggerEvent(self::EVENT_AFTER_UNINSTALL_THEME, new ThemeEvent([
-                    'theme' => $theme
-                ]));
             }
         }
+        $this->triggerEvent(self::EVENT_AFTER_UNINSTALL_THEME, new ThemeEvent([
+            'theme' => $theme
+        ]));
         $this->resetThemes();
     }
 

@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\services;
 use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\DisplayEvent;
+use Ryssbowh\CraftThemes\exceptions\DisplayException;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
@@ -74,8 +75,10 @@ class DisplayService extends Service
         if ($itemData) {
             if ($display->type == self::TYPE_FIELD) {
                 $display->item = $this->fieldsService()->create($itemData);
-            } else {
+            } elseif ($display->type == self::TYPE_GROUP) {
                 $display->item = $this->groupsService()->create($itemData);
+            } else {
+                throw DisplayException::invalidType($display->type);
             }
             $display->item->display = $display;
         }
@@ -120,8 +123,10 @@ class DisplayService extends Service
         $display->item->display = $display;
         if ($display->type == self::TYPE_FIELD) {
             $this->fieldsService()->save($display->item);
-        } else {
+        } elseif ($display->type == self::TYPE_GROUP) {
             $this->groupsService()->save($display->item);
+        } else {
+            throw DisplayException::invalidType($display->type);
         }
 
         return true;
@@ -177,7 +182,11 @@ class DisplayService extends Service
             $display->type = $data['type'];
             $display->order = $data['order'];
             $display->group_id = isset($data['group_id']) ? Themes::$plugin->groups->getRecordByUid($data['group_id'])->id : null;
-            $display->viewMode_id = Themes::$plugin->viewModes->getRecordByUid($data['viewMode_id'])->id;
+            if ($data['viewMode_id'] ?? null) {
+                $display->viewMode_id = Themes::$plugin->viewModes->getRecordByUid($data['viewMode_id'])->id;
+            } else {
+                $display->viewMode_id = null;
+            }
             $display->save(false);
             
             $transaction->commit();

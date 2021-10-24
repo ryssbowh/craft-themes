@@ -324,10 +324,11 @@ class Layout extends Model implements LayoutInterface
      */
     public function getBlocks(): array
     {
-        $blocks = array_map(function ($region) {
-            return $region->blocks;
-        }, $this->regions);
-        return array_merge(...array_values($blocks));
+        $blocks = [];
+        foreach ($this->regions as $region) {
+            $blocks = array_merge($blocks, array_values($region->blocks));
+        }
+        return $blocks;
     }
 
     /**

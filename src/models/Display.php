@@ -69,11 +69,6 @@ class Display extends Model implements DisplayInterface
             [['order', 'group_id'], 'integer'],
             ['type', 'in', 'range' => DisplayService::TYPES],
             [['uid', 'id', 'viewMode', 'viewMode_id'], 'safe'],
-            ['viewMode', function () {
-                if (!$this->viewMode) {
-                    $this->addError('viewMode', \Craft::t('View mode is required'));
-                }
-            }]
         ];
     }
 
@@ -83,7 +78,7 @@ class Display extends Model implements DisplayInterface
     public function getConfig(): array
     {
         return [
-            'viewMode_id' => $this->viewMode->uid,
+            'viewMode_id' => $this->viewMode ? $this->viewMode->uid : null,
             'group_id' => $this->group ? $this->group->uid : null,
             'order' => $this->order,
             'type' => $this->type

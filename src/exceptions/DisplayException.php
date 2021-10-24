@@ -2,8 +2,8 @@
 
 namespace Ryssbowh\CraftThemes\exceptions;
 
-use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
+use Ryssbowh\CraftThemes\services\DisplayService;
 
 class DisplayException extends \Exception
 {
@@ -12,22 +12,8 @@ class DisplayException extends \Exception
         return new static("Craft field is not defined on field ".get_class($field));
     }
 
-    public static function onSave(DisplayInterface $display)
+    public static function invalidType($type)
     {
-        $count = static::countErrors($display->getErrors()) + static::countErrors($display->item->getErrors());
-        return new static("Unable to save display, " . $count . " error(s) found : ".print_r($display->getErrors(), true) . ' ' . print_r($display->item->getErrors(), true));
-    }
-    
-    protected static function countErrors($errors)
-    {
-        $count = 0;
-        foreach ($errors as $error) {
-            if (is_array($error)) {
-                $count += static::countErrors($error);
-            } else {
-                $count ++;
-            }
-        }
-        return $count;
+        return new static("Type '$type' is an invalid display type. Valid types are: " . DisplayService::TYPE_FIELD . ',' . DisplayService::TYPE_GROUP);
     }
 }

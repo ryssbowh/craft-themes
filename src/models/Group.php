@@ -85,6 +85,7 @@ class Group extends DisplayItem implements GroupInterface
         if (is_array($displays)) {
             foreach ($displays as $display) {
                 $display->viewMode = null;
+                $display->viewMode_id = null;
                 $display->group = $this;
             }
         }

@@ -148,8 +148,10 @@ class GroupsService extends Service
      */
     public function delete(GroupInterface $group): bool
     {
+        //Assigning all display of the group to the group's view mode
         foreach ($group->displays as $display) {
             $display->group = null;
+            $display->viewMode = $group->viewMode;
             Themes::$plugin->displays->save($display);
         }
 

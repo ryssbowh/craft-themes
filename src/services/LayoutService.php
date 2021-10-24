@@ -178,34 +178,23 @@ class LayoutService extends Service
 
     /**
      * Create all layouts for all themes
-     *
-     * @param bool $force
      */
-    public function install(bool $force = false)
+    public function install()
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $this->installThemeData($theme, $force);
+            $this->installThemeData($theme);
         }
     }
 
     /**
      * Install layouts for a theme, will deletes orphans.
      * 
-     * Saves a project config attribute 'themeDataInstalled' on the theme after installing.
-     * If force equals false and that attribute is already set, the installation will be aborted,
-     * that allows us to not install themes data when Craft is applying Yaml changes
-     * which would result in duplicates.
-     * 
      * @param  ThemeInterface $theme
-     * @param  bool           $force
      * @return bool
      */
-    public function installThemeData(ThemeInterface $theme, bool $force = false): bool
+    public function installThemeData(ThemeInterface $theme): bool
     {
-        if (!Themes::$plugin->is(Themes::EDITION_PRO) or $theme->isPartial()) {
-            return false;
-        }
-        if (!$force and $theme->isThemeDataInstalled) {
+        if ($theme->isPartial()) {
             return false;
         }
         $ids = [];
@@ -224,28 +213,20 @@ class LayoutService extends Service
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
         }
-        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.themeDataInstalled', true);
         return true;
     }
 
     /**
      * Deletes all layouts for a theme.
-     * If theme is marked as not having its data installed in the config
-     * uninstallation will be aborted, unless $force is used
      * 
      * @param  ThemeInterface $theme
-     * @param  bool           $force
      * @return bool
      */
-    public function uninstallThemeData(ThemeInterface $theme, bool $force = false): bool
+    public function uninstallThemeData(ThemeInterface $theme): bool
     {
-        if (!$force and !$theme->isThemeDataInstalled) {
-            return false;
-        }
         foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
-        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.themeDataInstalled', false);
         return true;
     }
 
@@ -677,25 +658,27 @@ class LayoutService extends Service
      */
     protected function getAvailable(string $themeHandle): array
     {
-        return [
-            $this->create([
-                'type' => self::DEFAULT_HANDLE,
-                'elementUid' => '',
-                'hasBlocks' => true,
-                'themeHandle' => $themeHandle
-            ]),
-            $this->create([
-                'type' => self::USER_HANDLE,
-                'elementUid' => '',
-                'themeHandle' => $themeHandle
-            ]),
-            ...$this->createCategoryLayouts($themeHandle),
-            ...$this->createEntryLayouts($themeHandle),
-            ...$this->createVolumesLayouts($themeHandle),
-            ...$this->createGlobalsLayouts($themeHandle),
-            ...$this->createTagsLayouts($themeHandle),
-            ...$this->getCustomLayouts($themeHandle)
-        ];
+        return array_merge(
+            [
+                $this->create([
+                    'type' => self::DEFAULT_HANDLE,
+                    'elementUid' => '',
+                    'hasBlocks' => true,
+                    'themeHandle' => $themeHandle
+                ]),
+                $this->create([
+                    'type' => self::USER_HANDLE,
+                    'elementUid' => '',
+                    'themeHandle' => $themeHandle
+                ])
+            ],
+            $this->createEntryLayouts($themeHandle),
+            $this->createCategoryLayouts($themeHandle),
+            $this->createVolumesLayouts($themeHandle),
+            $this->createGlobalsLayouts($themeHandle),
+            $this->createTagsLayouts($themeHandle),
+            $this->getCustomLayouts($themeHandle)
+        );
     }
 
     /**
