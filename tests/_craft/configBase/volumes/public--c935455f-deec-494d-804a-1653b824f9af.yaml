@@ -1,0 +1,38 @@
+fieldLayouts:
+  090f683c-6b2a-439d-b701-ba6a5a38ce16:
+    tabs:
+      -
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            disabled: false
+            id: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            readonly: false
+            requirable: false
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\TitleField
+            warning: null
+            width: 100
+        name: Content
+        sortOrder: 1
+handle: public
+hasUrls: true
+name: Public
+settings:
+  path: '@webroot/files'
+sortOrder: 4
+type: craft\volumes\Local
+url: '@web/files'

@@ -8,9 +8,9 @@ use Ryssbowh\CraftThemes\events\UninstallThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\services\ThemesRegistry;
-use Ryssbowh\tests\themes\child\ChildTheme;
-use Ryssbowh\tests\themes\parent\ParentTheme;
-use Ryssbowh\tests\themes\partial\PartialTheme;
+use Ryssbowh\CraftThemesTests\themes\child\Theme as ChildTheme;
+use Ryssbowh\CraftThemesTests\themes\parent\Theme as ParentTheme;
+use Ryssbowh\CraftThemesTests\themes\partial\Theme as PartialTheme;
 use UnitTester;
 use yii\base\Event;
 
@@ -53,7 +53,7 @@ class RegistryTest extends Unit
     public function testUninstallPartialTheme()
     {
         $this->installChildTheme();
-        $this->plugins->uninstallPlugin('partial-theme');
+        $this->uninstallPartialTheme();
         $this->assertFalse($this->plugins->isPluginInstalled('child-theme'));
         $this->assertFalse($this->plugins->isPluginInstalled('parent-theme'));
         $this->assertFalse($this->plugins->isPluginInstalled('child-theme'));
@@ -83,6 +83,12 @@ class RegistryTest extends Unit
         $this->tester->expectEvent(ThemesRegistry::class, ThemesRegistry::EVENT_AFTER_INSTALL_THEME, function () {
             Craft::$app->plugins->installPlugin('child-theme');
         });
-        $this->plugins->enablePlugin('child-theme');
+    }
+
+    protected function uninstallPartialTheme()
+    {
+        $this->tester->expectEvent(ThemesRegistry::class, ThemesRegistry::EVENT_AFTER_UNINSTALL_THEME, function () {
+            Craft::$app->plugins->uninstallPlugin('partial-theme');
+        });
     }
 }

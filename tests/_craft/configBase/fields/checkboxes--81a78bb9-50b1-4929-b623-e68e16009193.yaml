@@ -1,0 +1,45 @@
+contentColumnType: string
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+handle: checkboxes
+instructions: ''
+name: Checkboxes
+searchable: false
+settings:
+  multi: true
+  options:
+    -
+      __assoc__:
+        -
+          - label
+          - Cat
+        -
+          - value
+          - cat
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - Dog
+        -
+          - value
+          - dog
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - Elephant
+        -
+          - value
+          - elephant
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Checkboxes

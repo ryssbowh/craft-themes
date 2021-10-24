@@ -217,11 +217,16 @@ Uninstalling a theme will delete all its blocks/displays/layouts (Pro version on
 ## Requirements
 
 Craft 3.5 or over
+PHP 7.3 or over
+
+## Testing
+
+This plugin is unit tested with mysql5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php from 7.3 to 8.0.
 
 ## Documentation
 
 - [Class reference](https://ryssbowh.github.io/craft-themes/namespaces/ryssbowh-craftthemes.html)
-- [developers readme](DEVELOPERS.md))
+- [Developers readme](DEVELOPERS.md)
 - 1.x documentation [there](README1.md)
 - 2.x documentation [there](README2.md)
 

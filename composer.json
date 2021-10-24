@@ -32,7 +32,8 @@
         "psr-4": {
             "Ryssbowh\\CraftThemes\\": "src/",
             "Ryssbowh\\CraftThemesTests\\fixtures\\": "tests/fixtures",
-            "Ryssbowh\\CraftThemesTests\\helpers\\": "tests/helpers"
+            "Ryssbowh\\CraftThemesTests\\helpers\\": "tests/helpers",
+            "Ryssbowh\\CraftThemesTests\\themes\\": "tests/themes"
         }
     },
     "extra": {

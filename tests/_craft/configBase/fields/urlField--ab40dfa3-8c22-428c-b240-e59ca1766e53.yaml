@@ -1,0 +1,12 @@
+contentColumnType: string(255)
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+handle: urlField
+instructions: ''
+name: Url
+searchable: false
+settings:
+  maxLength: '255'
+  placeholder: ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Url

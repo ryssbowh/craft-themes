@@ -21,6 +21,4 @@ ComposerHelper::installChildTheme();
 TestSetup::configureCraft();
 
 //This is needed during the creation of a volume
-\Craft::setAlias('@contentMigrations',  __DIR__ . DIRECTORY_SEPARATOR . '_craft' . DIRECTORY_SEPARATOR . 'contentMigrations');
-\Craft::setAlias('@translations',  __DIR__ . DIRECTORY_SEPARATOR . '_craft' . DIRECTORY_SEPARATOR . 'translations');
-\Craft::setAlias('@volumes', __DIR__ . '/../volumes');
+\Craft::setAlias('@volumes', __DIR__ . '/_output/volume');

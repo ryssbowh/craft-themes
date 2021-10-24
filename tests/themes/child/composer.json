@@ -1,0 +1,19 @@
+{
+  "name": "ryssbowh/child-theme",
+  "description": "Child Theme",
+  "type": "craft-plugin",
+  "version": "1.0",
+  "autoload": {
+    "psr-4": {
+      "Ryssbowh\\CraftThemesTests\\themes\\child\\": ""
+    }
+  },
+  "require": {
+    "ryssbowh/parent-theme": "1.0"
+  },
+  "extra": {
+    "name": "Child Theme",
+    "handle": "child-theme",
+    "class": "Ryssbowh\\CraftThemesTests\\themes\\child\\Theme"
+  }
+}

@@ -1,0 +1,45 @@
+contentColumnType: string
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+handle: dropdown
+instructions: ''
+name: Dropdown
+searchable: false
+settings:
+  optgroups: true
+  options:
+    -
+      __assoc__:
+        -
+          - label
+          - Cat
+        -
+          - value
+          - cat
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - Dog
+        -
+          - value
+          - dog
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - Elephant
+        -
+          - value
+          - elephant
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Dropdown

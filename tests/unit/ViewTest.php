@@ -10,6 +10,7 @@ use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use UnitTester;
 use craft\elements\Entry;
+use craft\elements\User;
 use yii\base\Event;
 
 class ViewTest extends Unit
@@ -19,16 +20,9 @@ class ViewTest extends Unit
      */
     protected $tester;
 
-    public function _fixtures()
-    {
-        return [
-            'themes' => InstallThemeFixture::class,
-            'sections' => SectionsFixture::class
-        ];
-    }
-
     protected function _before()
     {
+        \Craft::$app->plugins->installPlugin('child-theme');
         $this->layouts = Themes::getInstance()->layouts;
         $this->view = Themes::getInstance()->view;
         $this->rules = Themes::getInstance()->rules;
@@ -41,15 +35,14 @@ class ViewTest extends Unit
 
     public function testRendering()
     {
-        $fixture = $this->tester->grabFixture('sections');
-        $section = $fixture->getSection(0);
+        $section = \Craft::$app->sections->getSectionByHandle('channel');
         $entryTypes = $section->getEntryTypes();
         $entryType = reset($entryTypes);
         $entry = $this->createEntry($section, $entryType);
 
         $layout = $this->layouts->get('child-theme', 'entry', $entryType->uid);
         $html = $this->view->renderLayout($layout, 'default', $entry);
-        $this->assertStringContainsString('<div class="layout layout-entry view-mode-default handle-default">', $html);
+        $this->assertStringContainsString('<div class="layout layout-entry view-mode-default handle-'.$entryType->handle.'">', $html);
         $this->assertStringContainsString("<h1>
                     My Entry
             </h1>", $html);
@@ -60,11 +53,12 @@ class ViewTest extends Unit
 
     protected function createEntry($section, $entryType)
     {
+        $user = User::find()->one();
         $entry = new Entry([
             'sectionId' => $section->id,
             'typeId' => $entryType->id,
             'fieldLayoutId' => $entryType->fieldLayoutId,
-            'authorId' => 1,
+            'authorId' => $user->id,
             'title' => 'My Entry',
             'slug' => 'my-entry',
             'postDate' => new DateTime(),

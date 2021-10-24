@@ -1,0 +1,44 @@
+contentColumnType: string
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+handle: radioButtons
+instructions: ''
+name: 'Radio buttons'
+searchable: false
+settings:
+  options:
+    -
+      __assoc__:
+        -
+          - label
+          - Cat
+        -
+          - value
+          - cat
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - Dog
+        -
+          - value
+          - dog
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - Elephant
+        -
+          - value
+          - elephant
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\RadioButtons

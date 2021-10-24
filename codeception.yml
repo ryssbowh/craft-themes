@@ -15,14 +15,17 @@ modules:
       configFile: 'tests/_craft/config/test.php'
       entryUrl: 'https://your-site-url.test/index.php'
       projectConfig: {
-        "reset": false
+        folder: tests/_craft/configBase,
+        reset: true
       }
       plugins:
         themes:
           class: '\Ryssbowh\CraftThemes\Themes'
           handle: themes
-          edition: 'pro'
       migrations: []
       cleanup: true
       transaction: true
-      dbSetup: {clean: true, setupCraft: true}
+      dbSetup: {
+        clean: true, 
+        setupCraft: true
+      }

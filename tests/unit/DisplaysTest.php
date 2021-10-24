@@ -11,6 +11,7 @@ use Ryssbowh\CraftThemesTests\fixtures\TagGroupsFixture;
 use Ryssbowh\CraftThemesTests\fixtures\VolumesFixture;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AuthorDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\FileDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitleDefault;
@@ -37,32 +38,37 @@ class DisplaysTest extends Unit
     protected $fileDisplayers;
     protected $layouts;
 
-    public function _fixtures()
-    {
-        return [
-            'themes' => InstallThemeFixture::class,
-            'groups' => CategoryGroupsFixture::class,
-            'sections' => SectionsFixture::class,
-            'globals' => GlobalSetsFixture::class,
-            'volumes' => VolumesFixture::class,
-            'tags' => TagGroupsFixture::class,
-            'fields' => FieldsFixture::class
-        ];
-    }
-
     protected function _before()
     {
+        \Craft::$app->plugins->installPlugin('child-theme');
         $this->displays = Themes::getInstance()->displays;
         $this->layouts = Themes::getInstance()->layouts;
         $this->fieldDisplayers = Themes::getInstance()->fieldDisplayers;
         $this->fileDisplayers = Themes::getInstance()->fileDisplayers;
     }
 
-    public function testDisplays()
+    /**
+     * There is 19 fields per section, plus the title. 3 sections : 20 * 3 : 60
+     * User user info field : 1
+     * Channel & Structure author field : 2
+     * Category title field : 1
+     * Global asset field : 1
+     * Tag layout title field : 1
+     * Volume title and file fields : 2
+     *
+     * Total : 68
+     *
+     * 2 non-partial themes 68*2 = 136 displays in total
+     *
+     * There's 8 file displayers defined by the system
+     * There's 33 field displayers defined by the system
+     * 
+     */
+    public function testDisplaysAreInstalled()
     {
         $this->assertCount(8, $this->fileDisplayers->all());
         $this->assertCount(33, $this->fieldDisplayers->all());
-        $this->assertCount(26, $this->displays->all());
+        $this->assertCount(136, $this->displays->all());
 
         //User layouts
         $layout = $this->layouts->get('child-theme', LayoutService::USER_HANDLE);
@@ -74,12 +80,7 @@ class DisplaysTest extends Unit
         $this->assertFalse($displayer->options->email);
 
         //category groups layouts
-        $fixture = $this->tester->grabFixture('groups');
-        $group = $fixture->getGroup(0);
-        $layout = $this->layouts->get('child-theme', LayoutService::CATEGORY_HANDLE, $group->uid);
-        $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(1, $displays);
-        $group = $fixture->getGroup(1);
+        $group = \Craft::$app->categories->getGroupByHandle('category');
         $layout = $this->layouts->get('child-theme', LayoutService::CATEGORY_HANDLE, $group->uid);
         $displays = $layout->getViewMode('default')->displays;
         $this->assertCount(1, $displays);
@@ -89,37 +90,39 @@ class DisplaysTest extends Unit
         $this->assertEquals('h1', $displayer->options->tag);
 
         //sections layouts
-        $fixture = $this->tester->grabFixture('sections');
-        $section = $fixture->getSection(0);
+        $section = \Craft::$app->sections->getSectionByHandle('channel');
         $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(2, $displays);
-        $section = $fixture->getSection(1);
-        $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $section->entryTypes[0]->uid);
-        $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(2, $displays);
+        $this->assertCount(21, $displays);
         $this->assertInstanceOf(Title::class, $displays[0]->item);
         $this->assertInstanceOf(Author::class, $displays[1]->item);
         $this->assertInstanceOf(AuthorDefault::class, $displays[1]->item->displayer);
 
-        //globals layouts
-        $fixture = $this->tester->grabFixture('globals');
-        $global = $fixture->getSet(0);
-        $layout = $this->layouts->get('child-theme', LayoutService::GLOBAL_HANDLE, $global->uid);
+        $section = \Craft::$app->sections->getSectionByHandle('structure');
+        $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(0, $displays);
-        $global = $fixture->getSet(1);
-        $layout = $this->layouts->get('child-theme', LayoutService::GLOBAL_HANDLE, $global->uid);
-        $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(0, $displays);
+        $this->assertCount(21, $displays);
+        $this->assertInstanceOf(Title::class, $displays[0]->item);
+        $this->assertInstanceOf(TitleDefault::class, $displays[0]->item->displayer);
+        $this->assertInstanceOf(Author::class, $displays[1]->item);
+        $this->assertInstanceOf(AuthorDefault::class, $displays[1]->item->displayer);
 
-        //Tags layouts
-        $fixture = $this->tester->grabFixture('tags');
-        $group = $fixture->getGroup(0);
-        $layout = $this->layouts->get('child-theme', LayoutService::TAG_HANDLE, $group->uid);
+        $section = \Craft::$app->sections->getSectionByHandle('single');
+        $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $section->entryTypes[0]->uid);
+        $displays = $layout->getViewMode('default')->displays;
+        $this->assertCount(20, $displays);
+        $this->assertInstanceOf(Title::class, $displays[0]->item);
+        $this->assertInstanceOf(TitleDefault::class, $displays[0]->item->displayer);
+
+        //globals layouts
+        $global = \Craft::$app->globals->getSetByHandle('global');
+        $layout = $this->layouts->get('child-theme', LayoutService::GLOBAL_HANDLE, $global->uid);
         $displays = $layout->getViewMode('default')->displays;
         $this->assertCount(1, $displays);
-        $group = $fixture->getGroup(1);
+        $this->assertInstanceOf(AssetLink::class, $displays[0]->item->displayer);
+
+        //Tags layouts
+        $group = \Craft::$app->tags->getTagGroupByHandle('tag');
         $layout = $this->layouts->get('child-theme', LayoutService::TAG_HANDLE, $group->uid);
         $displays = $layout->getViewMode('default')->displays;
         $this->assertCount(1, $displays);
@@ -127,19 +130,13 @@ class DisplaysTest extends Unit
         $this->assertInstanceOf(TagTitleDefault::class, $displays[0]->item->displayer);
 
         //volumes layouts
-        $fixture = $this->tester->grabFixture('volumes');
-        $volume = $fixture->getVolume(0);
-        $layout = $this->layouts->get('child-theme', LayoutService::VOLUME_HANDLE, $volume->uid);
-        $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(2, $displays);
-        $volume = $fixture->getVolume(1);
+        $volume = \Craft::$app->volumes->getVolumeByHandle('public');
         $layout = $this->layouts->get('child-theme', LayoutService::VOLUME_HANDLE, $volume->uid);
         $displays = $layout->getViewMode('default')->displays;
         $this->assertCount(2, $displays);
         $this->assertInstanceOf(Title::class, $displays[0]->item);
         $this->assertInstanceOf(File::class, $displays[1]->item);
-        $displayer = $displays[1]->item->displayer;
-        $this->assertInstanceOf(FileDefault::class, $displayer);
+        $this->assertInstanceOf(FileDefault::class, $displays[1]->item->displayer);
 
     }
 

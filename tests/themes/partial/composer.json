@@ -1,0 +1,16 @@
+{
+  "name": "ryssbowh/partial-theme",
+  "description": "Partial Theme",
+  "type": "craft-plugin",
+  "version": "1.0",
+  "autoload": {
+    "psr-4": {
+      "Ryssbowh\\CraftThemesTests\\themes\\partial\\": ""
+    }
+  },
+  "extra": {
+    "name": "Partial Theme",
+    "handle": "partial-theme",
+    "class": "Ryssbowh\\CraftThemesTests\\themes\\partial\\Theme"
+  }
+}

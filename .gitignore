@@ -26,5 +26,10 @@ pnpm-debug.log*
 /vendor
 /composer.lock
 /cpresources
-/volumes
+/files
+/tests.sh
 /tests/_craft/storage/logs
+/tests/_craft/config
+/tests/.env
+/tests/.env.mysql
+/tests/.env.postgres

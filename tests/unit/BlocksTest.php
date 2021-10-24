@@ -18,15 +18,9 @@ class BlocksTest extends Unit
     protected $blocks;
     protected $layouts;
 
-    public function _fixtures()
-    {
-        return [
-            'themes' => InstallThemeFixture::class
-        ];
-    }
-
     protected function _before()
     {
+        \Craft::$app->plugins->installPlugin('child-theme');
         $this->blocks = Themes::getInstance()->blocks;
         $this->layouts = Themes::getInstance()->layouts;
     }
@@ -64,13 +58,21 @@ class BlocksTest extends Unit
         $this->assertCount(1, $this->blocks->all());
         $this->assertCount(1, $defaultLayout->getRegion('content')->blocks);
         $this->assertCount(1, $defaultLayout->getBlocks());
+        $this->blocks->delete($block);
+        $this->assertCount(0, $this->blocks->all());
+        $this->assertCount(0, $defaultLayout->getRegion('content')->blocks);
+        $this->assertCount(0, $defaultLayout->getBlocks());
 
         $block = $this->createBlock('content');
         $block->layout = $defaultLayout;
         $this->assertTrue($this->blocks->save($block));
-        $this->assertCount(2, $this->blocks->all());
-        $this->assertCount(2, $defaultLayout->getRegion('content')->blocks);
-        $this->assertCount(2, $defaultLayout->getBlocks());
+        $this->assertCount(1, $this->blocks->all());
+        $this->assertCount(1, $defaultLayout->getRegion('content')->blocks);
+        $this->assertCount(1, $defaultLayout->getBlocks());
+        $this->blocks->delete($block);
+        $this->assertCount(0, $this->blocks->all());
+        $this->assertCount(0, $defaultLayout->getRegion('content')->blocks);
+        $this->assertCount(0, $defaultLayout->getBlocks());
 
         $_this = $this;
         $this->tester->expectThrowable(BlockProviderException::class, function () use ($_this) {
@@ -91,19 +93,6 @@ class BlocksTest extends Unit
             $block = $_this->createBlock();
             $defaultLayout->addBlock($block, 'wrongRegion');
         });
-    }
-
-    public function testDeletingBlocks()
-    {
-        $defaultLayout = $this->layouts->getDefault('child-theme');
-        $block = $this->createBlock();
-        $defaultLayout->addBlock($block, 'content');
-        $this->layouts->save($defaultLayout);
-
-        $this->assertTrue($this->blocks->delete($block));
-        $this->assertCount(0, $this->blocks->all());
-        $this->assertCount(0, $defaultLayout->getRegion('content')->blocks);
-        $this->assertCount(0, $defaultLayout->getBlocks());
     }
 
     protected function createBlock($region = null)
