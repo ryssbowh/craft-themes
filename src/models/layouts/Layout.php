@@ -18,6 +18,7 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
 use craft\base\Model;
+use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 
 /**
@@ -403,6 +404,33 @@ class Layout extends Model implements LayoutInterface
     public function getFieldLayout(): ?FieldLayout
     {
         return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEditDisplaysUrl($viewMode = null): ?string
+    {
+        if (!$this->hasDisplays()) {
+            return null;
+        }
+        if (is_null($viewMode)) {
+            $viewMode = $this->getDefaultViewMode();
+        } elseif (is_string($viewMode)) {
+            $viewMode = $this->getViewMode($viewMode);
+        }
+        return UrlHelper::cpUrl('themes/display/' . $this->theme->handle . '/' . $this->id) . '/' . $viewMode->handle;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEditBlocksUrl(): string
+    {
+        if (!$this->hasBlocks) {
+            return Themes::$plugin->layouts->getDefault($this->theme)->getEditBlocksUrl();
+        }
+        return UrlHelper::cpUrl('themes/blocks/' . $this->theme->handle . '/' . $this->id);
     }
 
     /**

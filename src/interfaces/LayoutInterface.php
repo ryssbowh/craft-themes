@@ -197,6 +197,25 @@ interface LayoutInterface
     public function getFieldLayout(): ?FieldLayout;
 
     /**
+     * Get the url to edit displays for a view mode.
+     * Returns null if the layout doesn't have displays.
+     * Takes the default view mode if $viewMode is null
+     * 
+     * @param  ViewModeInterface|string|null $viewMode
+     * @return ?string
+     */
+    public function getEditDisplaysUrl($viewMode = null): ?string;
+
+    /**
+     * Get the url to edit blocks.
+     * Returns the blocks url for the default layout if this layout doesn't have blocks
+     * 
+     * @param  ThemeInterface|string|null    $theme
+     * @return string
+     */
+    public function getEditBlocksUrl(): string;
+
+    /**
      * Render this layout for an element
      *
      * @param  Element $element

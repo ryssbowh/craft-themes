@@ -27,6 +27,11 @@ class ShortcutsService extends Service
      */
     protected $inited = false;
 
+    /**
+     * @var boolean
+     */
+    public $showShortcuts;
+
     public function initShortcuts()
     {
         if ($this->inited) {
@@ -39,6 +44,9 @@ class ShortcutsService extends Service
     }
 
     public function registerLayout($e) {
+        if (!$this->showShortcuts) {
+            return;
+        }
         $this->initShortcuts();
         $layout = $e->variables['layout'];
         $element = $e->variables['element'];
@@ -96,19 +104,14 @@ class ShortcutsService extends Service
                 }
             }
             if ($renderingRegions and \Craft::$app->user->checkPermission('manageThemesBlocks')) {
-                if ($layout->hasBlocks) {
-                    $url = UrlHelper::cpUrl('themes/blocks/' . $theme . '/' . $layout->id);
-                } else {
-                    $url = UrlHelper::cpUrl('themes/blocks/' . $theme . '/' . $this->layoutService()->getDefault($theme)->id);
-                }
                 $js .= "{
-                    url: '" . $url . "',
+                    url: '" . $layout->getEditBlocksUrl() . "',
                     label: '" . \Craft::t('themes', 'Edit Blocks') . "',
                 },";
             }
             if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplay')) {
                 $js .= "{
-                    url: '" . UrlHelper::cpUrl('themes/display/' . $theme . '/' . $layout->id) . '/' . $viewMode->handle . "',
+                    url: '" . $layout->getEditDisplaysUrl($viewMode) . "',
                     label: '" . \Craft::t('themes', 'Edit Displays') . "',
                 }";
             }

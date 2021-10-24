@@ -174,8 +174,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerShortcuts()
     {
-        if ($this->getSettings()->showShortcuts and
-            \Craft::$app->request->isSiteRequest and
+        if (\Craft::$app->request->isSiteRequest and
             \Craft::$app->user->checkPermission('viewThemesShortcuts')
         ) {
             Event::on(
@@ -381,7 +380,10 @@ class Themes extends \craft\base\Plugin
                 'setCp' => $this->getSettings()->setCp,
                 'mobileDetect' => new MobileDetect(),
             ],
-            'shortcuts' => ShortcutsService::class,
+            'shortcuts' => [
+                'class' => ShortcutsService::class,
+                'showShortcuts' => $this->getSettings()->showShortcuts
+            ],
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
             'blocks' => BlockService::class,
