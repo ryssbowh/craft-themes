@@ -8,14 +8,8 @@
                 <div class="heading">
                     <label>{{ t('Active') }}</label>
                 </div>
-                <div class="input ltr">
-                    <button type="button" :class="'lightswitch active has-labels' + (editedBlock.active ? ' on' : '')" role="checkbox">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="active" :value="active">
-                    </button>
-                </div>
+                <lightswitch :on="active ? true : false" @change="active = $event">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
@@ -96,14 +90,7 @@ export default {
             this.modal = new Garnish.Modal(this.$refs.modal, {
                 hideOnEsc: false,
                 hideOnShadeClick: false,
-                autoShow: false,
-                onFadeIn: () => {
-                    let _this = this;
-                    Craft.initUiElements(this.$el);
-                    $(this.$el).find('.lightswitch.active').on('change', function () {
-                        _this.active = $(this).hasClass('on');
-                    });
-                }
+                autoShow: false
             });
         },
         closeModal () {

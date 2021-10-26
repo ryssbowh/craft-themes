@@ -20,7 +20,7 @@
         {% if label == 'title' %}
             {{ asset.title }}
         {% elseif options.label == 'filename' %}
-            {{ filename }}
+            {{ asset.filename }}
         {% else %}
             {{ options.custom ? 'no label' }}
         {% endif %}

@@ -9,6 +9,7 @@ import DisplayItem from './components/DisplayItem.vue';
 import OptionsModal from './components/OptionsModal.vue';
 import ViewModeModal from './components/ViewModeModal.vue';
 import GroupModal from './components/GroupModal.vue';
+import Lightswitch from '../forms/Lightswitch.vue';
 import Field from './components/Field.vue';
 import Group from './components/Group.vue';
 import Draggable from 'vuedraggable';
@@ -30,6 +31,7 @@ app.component('group', Group);
 app.component('options-modal', OptionsModal);
 app.component('group-modal', GroupModal);
 app.component('display-item', DisplayItem);
+app.component('lightswitch', Lightswitch);
 
 let event = new CustomEvent("register-field-displayers-components", {detail: {}});
 document.dispatchEvent(event);

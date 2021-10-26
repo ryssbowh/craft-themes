@@ -1,26 +1,25 @@
 document.addEventListener("register-file-displayers-components", function(e) {
 
+    e.detail['raw'] = {
+        props: {
+            displayer: Object,
+            kind: String,
+            errors: Object
+        },
+        template: `
+        <div class="warning with-icon">
+            {{ t("This could be used to run potentially dangerous code on your site, do you trust the data you're going to display ?") }}
+        </div>
+        `
+    };
+
     e.detail['iframe'] = {
         props: {
             displayer: Object,
             kind: String,
             errors: Object
         },
-        data: function () {
-            return {
-                width: 500,
-                height: 500,
-            };
-        },
-        created: function () {
-            this.width = this.displayer.options.width;
-            this.height = this.displayer.options.height;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -28,10 +27,10 @@ document.addEventListener("register-file-displayers-components", function(e) {
                     <label>{{ t('Width') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][width]'" v-model="width">
+                    <input type="text" class="fullwidth text" :value="displayer.options.width" @input="$emit('updateOptions', {width: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('width')">
-                    <li v-for="error in errorList('width')">{{ error }}</li>
+                <ul class="errors" v-if="errors.width">
+                    <li v-for="error in errors.width">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
@@ -39,10 +38,10 @@ document.addEventListener("register-file-displayers-components", function(e) {
                     <label>{{ t('Height') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][height]'" v-model="height">
+                    <input type="text" class="fullwidth text" :value="displayer.options.height" @input="$emit('updateOptions', {height: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('height')">
-                    <li v-for="error in errorList('height')">{{ error }}</li>
+                <ul class="errors" v-if="errors.height">
+                    <li v-for="error in errors.height">{{ error }}</li>
                 </ul>
             </div>
         </div>
@@ -55,32 +54,7 @@ document.addEventListener("register-file-displayers-components", function(e) {
             kind: String,
             errors: Object
         },
-        data: function () {
-            return {
-                controls: false,
-                muted: false,
-                autoplay: false,
-                width: 500,
-                height: 500,
-            };
-        },
-        created: function () {
-            this.controls = this.displayer.options.controls;
-            this.muted = this.displayer.options.muted;
-            this.autoplay = this.displayer.options.autoplay;
-            this.width = this.displayer.options.width;
-            this.height = this.displayer.options.height;
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -88,10 +62,10 @@ document.addEventListener("register-file-displayers-components", function(e) {
                     <label>{{ t('Width') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][width]'" v-model="width">
+                    <input type="text" class="fullwidth text" :value="displayer.options.width" @input="$emit('updateOptions', {width: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('width')">
-                    <li v-for="error in errorList('width')">{{ error }}</li>
+                <ul class="errors" v-if="errors.width">
+                    <li v-for="error in errors.width">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
@@ -99,50 +73,32 @@ document.addEventListener("register-file-displayers-components", function(e) {
                     <label>{{ t('Height') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][height]'" v-model="height">
+                    <input type="text" class="fullwidth text" :value="displayer.options.height" @input="$emit('updateOptions', {height: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('height')">
-                    <li v-for="error in errorList('height')">{{ error }}</li>
+                <ul class="errors" v-if="errors.height">
+                    <li v-for="error in errors.height">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Show controls') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: controls}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][controls]'">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.controls" @change="$emit('updateOptions', {controls: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Muted') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: muted}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][muted]'">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.muted" @change="$emit('updateOptions', {muted: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Autoplay') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: autoplay}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][autoplay]'">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.autoplay" @change="$emit('updateOptions', {autoplay: $event})">
+                </lightswitch>
             </div>
         </div>
         `
@@ -154,63 +110,29 @@ document.addEventListener("register-file-displayers-components", function(e) {
             kind: String,
             errors: Object
         },
-        data: function () {
-            return {
-                controls: false,
-                muted: false,
-                autoplay: false
-            };
-        },
-        created: function () {
-            this.controls = this.displayer.options.controls;
-            this.muted = this.displayer.options.muted;
-            this.autoplay = this.displayer.options.autoplay;
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Show controls') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: controls}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][controls]'">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.controls" @change="$emit('updateOptions', {controls: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Muted') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: muted}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][muted]'">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.muted" @change="$emit('updateOptions', {muted: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Autoplay') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: autoplay}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][autoplay]'">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.autoplay" @change="$emit('updateOptions', {autoplay: $event})">
+                </lightswitch>
             </div>
         </div>
         `
@@ -222,24 +144,7 @@ document.addEventListener("register-file-displayers-components", function(e) {
             kind: String,
             errors: Object
         },
-        data: function () {
-            return {
-                transform: '',
-                custom: '',
-            };
-        },
-        created: function () {
-            this.transform = this.displayer.options.transform;
-            this.custom = this.displayer.options.custom;
-            if (!this.transform) {
-                // this.transform = Object.keys(this.displayer.imageTransforms)[0];
-            }
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -248,26 +153,38 @@ document.addEventListener("register-file-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select :name="'displayers['+kind+'][options][transform]'" v-model="transform">
+                        <select v-model="displayer.options.transform" @input="$emit('updateOptions', {transform: $event.target.value})">
                             <option :value="handle" v-for="name, handle in displayer.imageTransforms">{{ name }}</option>
                             <option value="_custom">{{ t('Custom') }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('transform')">
-                    <li v-for="error in errorList('transform')">{{ error }}</li>
+                <ul class="errors" v-if="errors.transform">
+                    <li v-for="error in errors.transform">{{ error }}</li>
                 </ul>
             </div>
-            <div class="field" v-if="transform == '_custom'">
+            <div class="field" v-if="displayer.options.transform == '_custom'">
                 <div class="heading">
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
                 <div class="instructions">{{ t('Enter a json list of options to transform the image, example: { "width": 300, "height": 300 }') }}</div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][custom]'" v-model="custom">
+                    <input type="text" class="fullwidth text" :value="displayer.options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('custom')">
-                    <li v-for="error in errorList('custom')">{{ error }}</li>
+                <ul class="errors" v-if="errors.custom">
+                    <li v-for="error in errors.custom">{{ error }}</li>
+                </ul>
+            </div>
+            <div class="field" v-if="displayer.options.transform == '_custom'">
+                <div class="heading">
+                    <label>{{ t('Sizes') }}</label>
+                </div>
+                <div class="instructions">{{ t('Enter a json list of options to generate different sizes (srcset), example: ["1.5x", "2x", "3x"]') }}</div>
+                <div class="input ltr">
+                    <input type="text" class="fullwidth text" :value="displayer.options.sizes" @input="$emit('updateOptions', {sizes: $event.target.value})">
+                </div>
+                <ul class="errors" v-if="errors.sizes">
+                    <li v-for="error in errors.sizes">{{ error }}</li>
                 </ul>
             </div>
         </div>
@@ -280,30 +197,7 @@ document.addEventListener("register-file-displayers-components", function(e) {
             kind: String,
             errors: Object
         },
-        data: function () {
-            return {
-                label: 'title',
-                custom: '',
-                newTab: false,
-                download: false
-            };
-        },
-        created: function () {
-            this.label = this.displayer.options.label;
-            this.custom = this.displayer.options.custom;
-            this.newTab = this.displayer.options.newTab;
-            this.download = this.displayer.options.download;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -312,53 +206,41 @@ document.addEventListener("register-file-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select :name="'displayers['+kind+'][options][label]'" v-model="label">
+                        <select v-model="displayer.options.label" @input="$emit('updateOptions', {label: $event.target.value})">
                             <option value="title">{{ t('Asset title') }}</option>
                             <option value="filename">{{ t('File name') }}</option>
                             <option value="custom">{{ t('Custom') }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('label')">
-                    <li v-for="error in errorList('label')">{{ error }}</li>
+                <ul class="errors" v-if="errors.label">
+                    <li v-for="error in errors.label">{{ error }}</li>
                 </ul>
             </div>
-            <div class="field" v-if="label == 'custom'">
+            <div class="field" v-if="displayer.options.label == 'custom'">
                 <div class="heading">
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" :name="'displayers['+kind+'][options][custom]'" v-model="custom">
+                    <input type="text" class="fullwidth text" :value="displayer.options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('custom')">
-                    <li v-for="error in errorList('custom')">{{ error }}</li>
+                <ul class="errors" v-if="errors.custom">
+                    <li v-for="error in errors.custom">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Open in new tab') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: newTab}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][newTab]'" :value="newTab ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.newTab" @change="$emit('updateOptions', {newTab: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Download link') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: download}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" :name="'displayers['+kind+'][options][download]'" :value="download ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="displayer.options.download" @change="$emit('updateOptions', {download: $event})">
+                </lightswitch>
             </div>
         </div>`
     };

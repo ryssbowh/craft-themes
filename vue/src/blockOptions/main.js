@@ -80,30 +80,13 @@ document.addEventListener("register-block-option-components", function(e) {
             errors: Object,
             options: Object
         },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-                $(this.$el).find('.lightswitch').on('change', (e) => {
-                    let options = {
-                        onlyIfNotAuthenticated: $(e.target).hasClass('on')
-                    };
-                    this.$emit('updateOptions', options);
-                });
-            });
-        },
         template: `
         <div class="field">
             <div class="heading">
                 <label>{{ t('Show only if the user is not authenticated') }}</label>
             </div>
-            <div class="input ltr">                    
-                <button type="button" :class="{lightswitch: true, on: options.onlyIfNotAuthenticated}">
-                    <div class="lightswitch-container">
-                        <div class="handle"></div>
-                    </div>
-                    <input type="hidden" name="onlyIfNotAuthenticated" :value="options.onlyIfNotAuthenticated ? 1 : ''">
-                </button>
-            </div>
+            <lightswitch :on="options.onlyIfNotAuthenticated" @change="$emit('updateOptions', {onlyIfNotAuthenticated: $event})">
+            </lightswitch>
         </div>`,
         emits: ['updateOptions']
     };

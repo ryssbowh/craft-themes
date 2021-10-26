@@ -4,6 +4,7 @@ import BlocksContext from './components/BlocksContext.vue';
 import BlocksMenu from './components/BlocksMenu.vue';
 import LayoutModal from './components/LayoutModal'
 import Blocks from './components/Blocks.vue';
+import Lightswitch from '../forms/Lightswitch.vue';
 import { store } from './stores/store.js';
 
 const app = createApp({
@@ -17,6 +18,7 @@ const app = createApp({
 app.use(store);
 
 app.component('layout-modal', LayoutModal);
+app.component('lightswitch', Lightswitch);
 
 let event = new CustomEvent("register-block-option-components", {detail: {}});
 document.dispatchEvent(event);

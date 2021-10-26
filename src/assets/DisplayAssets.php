@@ -14,7 +14,6 @@ class DisplayAssets extends ThemesBaseAssets
 
     public $depends = [
         CpAsset::class,
-        JquerySerializeJSON::class,
         FieldsAsset::class,
         FieldDisplayerAsset::class,
         FileDisplayerAsset::class

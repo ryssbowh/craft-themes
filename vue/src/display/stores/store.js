@@ -62,11 +62,11 @@ const store = createStore({
             showGroupModal: false,
             editedGroupUid: null,
             displayer: {},
-            itemOptionsEdited: {},
-            displayerOptionsErrors: {},
+            editedItem: {},
             showFieldHandles: false,
             itemsVisibility: null,
             labelsVisibility: null,
+            resetItemOptions: false,
         }
     },
     mutations: {
@@ -131,6 +131,17 @@ const store = createStore({
                 break;
             }
         },
+        updateItem(state, item) {
+            for (let v in state.viewModes) {
+                for (let d in state.viewModes[v].displays) {
+                    if (state.viewModes[v].displays[d].item.uid != item.uid) {
+                        continue;
+                    }
+                    state.viewModes[v].displays[d].item = item;
+                    return;
+                }
+            }
+        },
         removeDisplay(state, display) {
             let displays = state.viewMode.displays.filter(display2 => display2.uid != display.uid);
             state.viewMode.displays = displays;
@@ -163,27 +174,15 @@ const store = createStore({
         setIsSaving(state, value) {
             state.isSaving = value;
         },
-        openDisplayerOptions(state, {displayer, item}) {
+        openDisplayerOptions(state, {show, displayer = {}, item = {}, resetOptions = false}) {
+            state.showOptionsModal = show;
             state.displayer = displayer;
-            state.itemOptionsEdited = item;
-            state.showOptionsModal = true;
-        },
-        resetDisplayerOptions(state) {
-            state.displayer = {};
-            state.itemOptionsEdited = {};
-        },
-        setShowOptionsModal(state, value) {
-            state.showOptionsModal = value;  
+            state.editedItem = item;
+            state.resetItemOptions = resetOptions;
         },
         setShowGroupModal(state, {show, editUid = null}) {
             state.showGroupModal = show;
             state.editedGroupUid = editUid;  
-        },
-        setDisplayerOptionsError(state, value) {
-            state.displayerOptionsErrors = value;
-        },
-        updateOptions(state, value) {
-            state.itemOptionsEdited.options = value;
         },
         setItemsVisibility(state, value) {
             state.itemsVisibility = value;

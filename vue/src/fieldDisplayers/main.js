@@ -10,13 +10,10 @@ document.addEventListener("register-field-displayers-components", function(e) {
             errors: Object
         },
         methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            },
             getDisplayer: function (kind) {
                 for (let i in this.displayer.displayersMapping[kind].displayers) {
-                    let displayer = this.displayer.displayersMapping[kind].displayers[i];
-                    if (this.displayers[kind] == displayer.handle) {
+                    let displayer = merge({}, this.displayer.displayersMapping[kind].displayers[i]);
+                    if (this.options.displayers[kind].displayer == displayer.handle) {
                         displayer.options = merge(displayer.options, this.options.displayers[kind].options);
                         return displayer;
                     }
@@ -33,25 +30,28 @@ document.addEventListener("register-field-displayers-components", function(e) {
             },
             getErrors: function (kind) {
                 return this.errors[kind] ? this.errors[kind][0] ?? {} : {};
+            },
+            updateOptions: function (kind, options) {
+                this.options.displayers[kind].options = merge(this.options.displayers[kind].options, options);
+                this.$emit('updateOptions', this.options);
+            },
+            updateDisplayer: function (kind, displayer) {
+                this.options.displayers[kind] = {
+                    displayer: displayer,
+                    options: this.getDisplayer(kind).options
+                };
+                this.$emit('updateOptions', this.options);
             }
         },
         data: function () {
             return {
-                displayers: {},
                 currentKind: null,
             };
         },
         created: function () {
-            for (let i in this.options.displayers) {
-                this.displayers[i] = this.options.displayers[i].displayer;
-            }
             this.currentKind = Object.keys(this.displayer.displayersMapping)[0];
-            for (let i in this.displayer.displayersMapping) {
-                if (typeof this.displayers[i] == 'undefined') {
-                    this.displayers[i] = '';
-                }
-            }
         },
+        emits: ['updateOptions'],
         template: `
         <div class="displayers-config">
             <div class="displayers-sidebar">
@@ -61,7 +61,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 <div :class="{'kind-item': true, sel: currentKind == handle}" v-for="elem, handle in displayer.displayersMapping" v-bind:key="handle" @click.prevent="currentKind = handle">
                     <div class="name">
                         <h4>{{ elem.label }}</h4>
-                        <div class="smalltext light code" v-if="displayers[handle]">
+                        <div class="smalltext light code" v-if="options.displayers[handle].displayer ?? null">
                             {{ getDisplayerName(handle) }}
                         </div>
                     </div>
@@ -77,13 +77,13 @@ document.addEventListener("register-field-displayers-components", function(e) {
                                 </div>
                                 <div class="input ltr">
                                     <div class="select">
-                                        <select :name="'displayers['+handle+'][displayer]'" v-model="displayers[handle]">
+                                        <select v-model="options.displayers[handle].displayer" @change="updateDisplayer(handle, $event.target.value)">
                                             <option v-for="displayer,key in elem.displayers" :value="displayer.handle" v-bind:key="key">{{ displayer.name }}</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <component v-if="getDisplayer(handle).hasOptions" :is="fileDisplayerComponent(handle)" :displayer="getDisplayer(handle)" :kind="handle" :errors="getErrors(handle)"></component>
+                            <component :is="fileDisplayerComponent(handle)" :displayer="getDisplayer(handle)" :kind="handle" :errors="getErrors(handle)" @updateOptions="updateOptions(handle, $event)"></component>
                         </div>
                     </div>
                 </div>
@@ -100,19 +100,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        data: function () {
-            return {
-                viewModes: {}
-            }
-        },
-        created: function () {
-            this.viewModes = this.options.viewModes;
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field" v-for="elem, typeUid in displayer.viewModes">
@@ -121,13 +109,13 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select :name="'viewModes['+typeUid+']'" v-model="viewModes[typeUid]">
+                        <select v-model="options.viewModes[typeUid]" @change="$emit('updateOptions', {viewModes: options.viewModes})">
                             <option v-for="label, uid in elem.viewModes" :value="uid">{{ label }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('viewMode-'+typeUid)">
-                    <li v-for="error in errorList('viewMode-'+typeUid)">{{ error }}</li>
+                <ul class="errors" v-if="errors['viewMode-'+typeUid]">
+                    <li v-for="error in errors['viewMode-'+typeUid]">{{ error }}</li>
                 </ul>
             </div>
             <div class="field" v-if="displayer.viewModes.length == 0">
@@ -144,19 +132,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        data: function () {
-            return {
-                viewModeUid: null
-            }
-        },
-        created: function () {
-            this.viewModeUid = this.options.viewModeUid;
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -165,15 +141,15 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="viewModeUid" v-model="viewModeUid">
+                        <select v-model="options.viewModeUid" @input="$emit('updateOptions', {viewModeUid: $event.target.value})">
                             <option v-for="label, uid in displayer.viewModes" :value="uid">{{ label }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('viewModeUid')">
-                    <li v-for="error in errorList('viewModeUid')">{{ error }}</li>
+                <ul class="errors" v-if="errors.viewModeUid">
+                    <li v-for="error in errors.viewModeUid">{{ error }}</li>
                 </ul>
-                <div class="warning with-icon" v-if="!viewModeUid">
+                <div class="warning with-icon" v-if="displayer.viewModes.length == 0">
                     {{ t("It seems this field doesn't have any valid source") }}
                 </div>
             </div>
@@ -190,19 +166,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        data: function () {
-            return {
-                viewModes: {}
-            }
-        },
-        created: function () {
-            this.viewModes = this.options.viewModes;
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field" v-for="elem, volumeUid in displayer.viewModes">
@@ -211,13 +175,13 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select :name="'viewModes['+volumeUid+']'" v-model="viewModes[volumeUid]">
+                        <select v-model="options.viewModes[volumeUid]" @change="$emit('updateOptions', {viewModes: options.viewModes})">
                             <option v-for="label, uid in elem.viewModes" :value="uid">{{ label }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('viewMode-'+volumeUid)">
-                    <li v-for="error in errorList('viewMode-'+volumeUid)">{{ error }}</li>
+                <ul class="errors" v-if="errors['viewMode-'+volumeUid]">
+                    <li v-for="error in errors['viewMode-'+volumeUid]">{{ error }}</li>
                 </ul>
             </div>
             <div class="field" v-if="displayer.viewModes.length == 0">
@@ -234,24 +198,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        data: function () {
-            return {
-                label: ''
-            }
-        },
-        created() {
-            this.label = this.options.label;
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -262,24 +209,18 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     <p>{{ t('Leave blank to use the url itself') }}</p>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" name="label" v-model="label">
+                    <input type="text" class="fullwidth text" :value="options.label" @input="$emit('updateOptions', {label: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('label')">
-                    <li v-for="error in errorList('label')">{{ error }}</li>
+                <ul class="errors" v-if="errors.label">
+                    <li v-for="error in errors.label">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Open in new tab') }}</label>
-                </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.newTab}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="newTab" :value="options.newTab ? 1 : ''">
-                    </button>
-                </div>
+                </div>                    
+                <lightswitch :on="options.newTab" @change="$emit('updateOptions', {newTab: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -290,21 +231,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        data: function () {
-            return {
-                format: 'd/m/Y H:i:s',
-                custom: ''
-            };
-        },
-        created: function () {
-            this.format = this.options.format;
-            this.custom = this.options.custom;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -313,18 +240,18 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="format" v-model="format">
+                        <select v-model="options.format" @input="$emit('updateOptions', {format: $event.target.value})">
                             <option value="H:i:s">{{ t('Full : {timeFormat}', {timeFormat: '13:25:36'}) }}</option>
                             <option value="H:iY">{{ t('Without seconds : {timeFormat}', {timeFormat: '13:25'}) }}</option>
                             <option value="custom">{{ t('Custom') }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('format')">
-                    <li v-for="error in errorList('format')">{{ error }}</li>
+                <ul class="errors" v-if="errors.format">
+                    <li v-for="error in errors.format">{{ error }}</li>
                 </ul>
             </div>
-            <div class="field" v-if="format == 'custom'">
+            <div class="field" v-if="options.format == 'custom'">
                 <div class="heading">
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
@@ -332,10 +259,10 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     <p><span v-html="t('View available formats')"></span> <a href="https://www.php.net/manual/fr/datetime.format.php" target="_blank">{{ t('here') }}</a></p>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" name="custom" v-model="custom">
+                    <input type="text" class="fullwidth text" :value="options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('custom')">
-                    <li v-for="error in errorList('custom')">{{ error }}</li>
+                <ul class="errors" v-if="errors.custom">
+                    <li v-for="error in errors.custom">{{ error }}</li>
                 </ul>
             </div>
         </div>`
@@ -347,37 +274,21 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        data: function () {
-            return {
-                truncated: null,
-                ellipsis: null,
-            };
-        },
-        created: function () {
-            this.truncated = this.options.truncated;
-            this.ellipsis = this.options.ellipsis;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
+            <div class="warning with-icon">
+                {{ t("Truncated text will always have html stripped out") }}
+            </div>
             <div class="field">
                 <div class="heading">
                     <label class="required">{{ t('Character limit') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="number" class="fullwidth text" name="truncated" v-model="truncated" min="1" :placeholder="t('Character limit')">
+                    <input type="number" class="fullwidth text" :value="options.truncated" min="1" :placeholder="t('Character limit')" @input="$emit('updateOptions', {truncated: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('truncated')">
-                    <li v-for="error in errorList('truncated')">{{ error }}</li>
+                <ul class="errors" v-if="errors.truncated">
+                    <li v-for="error in errors.truncated">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
@@ -385,24 +296,18 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     <label>{{ t('Ellipsis') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" name="ellipsis" v-model="ellipsis">
+                    <input type="text" class="fullwidth text" :value="options.ellipsis" @input="$emit('updateOptions', {ellipsis: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('ellipsis')">
-                    <li v-for="error in errorList('ellipsis')">{{ error }}</li>
+                <ul class="errors" v-if="errors.ellipsis">
+                    <li v-for="error in errors.ellipsis">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Link ellipsis to entry') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.linked}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.linked" @change="$emit('updateOptions', {linked: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -415,25 +320,15 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Strip HTML tags') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.stripped}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="stripped" :value="options.stripped ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.stripped" @change="$emit('updateOptions', {stripped: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -444,24 +339,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        data: function () {
-            return {
-                decimals: 0,
-            };
-        },
-        created: function () {
-            this.decimals = this.options.decimals;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -469,37 +347,25 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     <label>{{ t('Decimals') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" name="decimals" v-model="decimals">
+                    <input type="text" class="fullwidth text" :value="options.decimals" @input="$emit('updateOptions', {decimals: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('decimals')">
-                    <li v-for="error in errorList('decimals')">{{ error }}</li>
+                <ul class="errors" v-if="errors.decimals">
+                    <li v-for="error in errors.decimals">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Show prefix') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.showPrefix}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="showPrefix" :value="options.showPrefix ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.showPrefix" @change="$emit('updateOptions', {showPrefix: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Show suffix') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.showSuffix}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="showSuffix" :value="options.showSuffix ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.showSuffix" @change="$emit('updateOptions', {showSuffix: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -510,28 +376,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        data: function () {
-            return {
-                label: 'title',
-                custom: '',
-                newTab: false,
-            };
-        },
-        created: function () {
-            this.label = this.options.label;
-            this.custom = this.options.custom;
-            this.newTab = this.options.newTab;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -540,39 +385,33 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="label" v-model="label">
+                        <select v-model="options.label" @input="$emit('updateOptions', {label: $event.target.value})">
                             <option value="title">{{ t('Entry title') }}</option>
                             <option value="custom">{{ t('Custom') }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('label')">
-                    <li v-for="error in errorList('label')">{{ error }}</li>
+                <ul class="errors" v-if="errors.label">
+                    <li v-for="error in errors.label">{{ error }}</li>
                 </ul>
             </div>
-            <div class="field" v-if="label == 'custom'">
+            <div class="field" v-if="options.label == 'custom'">
                 <div class="heading">
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" name="custom" v-model="custom">
+                    <input type="text" class="fullwidth text" :value="options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('custom')">
-                    <li v-for="error in errorList('custom')">{{ error }}</li>
+                <ul class="errors" v-if="errors.custom">
+                    <li v-for="error in errors.custom">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Open in new tab') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: newTab}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="newTab" :value="newTab ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.newTab" @change="$emit('updateOptions', {newTab: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -583,21 +422,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        data: function () {
-            return {
-                format: 'd/m/Y H:i:s',
-                custom: ''
-            };
-        },
-        created: function () {
-            this.format = this.options.format;
-            this.custom = this.options.custom;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -606,7 +431,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="format" v-model="format">
+                        <select name="format" v-model="options.format" @input="$emit('updateOptions', {format: $event.target.value})">
                             <option value="d/m/Y H:i:s">{{ t('Full : {dateFormat}', {dateFormat: '31/10/2005 13:25:13'}) }}</option>
                             <option value="d/m/Y">{{ t('Date : {dateFormat}', {dateFormat: '31/10/2005'}) }}</option>
                             <option value="H:i">{{ t('Time : {timeFormat}', {timeFormat: '13:25'}) }}</option>
@@ -614,11 +439,11 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('format')">
-                    <li v-for="error in errorList('format')">{{ error }}</li>
+                <ul class="errors" v-if="errors.format">
+                    <li v-for="error in errors.format">{{ error }}</li>
                 </ul>
             </div>
-            <div class="field" v-if="format == 'custom'">
+            <div class="field" v-if="options.format == 'custom'">
                 <div class="heading">
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
@@ -626,10 +451,10 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     <p><span v-html="t('View available formats')"></span> <a href="https://www.php.net/manual/fr/datetime.format.php" target="_blank">{{ t('here') }}</a></p>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" name="custom" v-model="custom">
+                    <input type="text" class="fullwidth text" :value="options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('custom')">
-                    <li v-for="error in errorList('custom')">{{ error }}</li>
+                <ul class="errors" v-if="errors.custom">
+                    <li v-for="error in errors.custom">{{ error }}</li>
                 </ul>
             </div>
         </div>`
@@ -641,25 +466,15 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Output as link') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.linked}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.linked" @change="$emit('updateOptions', {linked: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -670,25 +485,15 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Output as links') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.linked}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.linked" @change="$emit('updateOptions', {linked: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -699,64 +504,36 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Display first name') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.firstName}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="firstName" :value="options.firstName ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.firstName" @change="$emit('updateOptions', {firstName: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Display last name') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.lastName}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="lastName" :value="options.lastName ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.lastName" @change="$emit('updateOptions', {lastName: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Display email') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.email}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="email" :value="options.email ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.email" @change="$emit('updateOptions', {email: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Link email') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.linkEmail}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="linkEmail" :value="options.linkEmail ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.linkEmail" @change="$emit('updateOptions', {linkEmail: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -771,30 +548,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        data: function () {
-            return {
-                label: 'title',
-                custom: '',
-                newTab: false,
-                download: false
-            };
-        },
-        created: function () {
-            this.label = this.options.label;
-            this.custom = this.options.custom;
-            this.newTab = this.options.newTab;
-            this.download = this.options.download;
-        },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -803,53 +557,41 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="label" v-model="label">
+                        <select v-model="options.label" @input="$emit('updateOptions', {label: $event.target.value})">
                             <option value="title">{{ t('Asset title') }}</option>
                             <option value="filename">{{ t('File name') }}</option>
                             <option value="custom">{{ t('Custom') }}</option>
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('label')">
-                    <li v-for="error in errorList('label')">{{ error }}</li>
+                <ul class="errors" v-if="errors.label">
+                    <li v-for="error in errors.label">{{ error }}</li>
                 </ul>
             </div>
-            <div class="field" v-if="label == 'custom'">
+            <div class="field" v-if="options.label == 'custom'">
                 <div class="heading">
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
                 <div class="input ltr">
-                    <input type="text" class="fullwidth text" name="custom" v-model="custom">
+                    <input type="text" class="fullwidth text" :value="options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
                 </div>
-                <ul class="errors" v-if="errorList('custom')">
-                    <li v-for="error in errorList('custom')">{{ error }}</li>
+                <ul class="errors" v-if="errors.custom">
+                    <li v-for="error in errors.custom">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Open in new tab') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: newTab}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="newTab" :value="newTab ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.newTab" @change="$emit('updateOptions', {newTab: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Download link') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: download}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="download" :value="download ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.download" @change="$emit('updateOptions', {download: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -860,24 +602,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        data: function () {
-            return {
-                tag: 'h1',
-            };
-        },
-        created: function () {
-            this.tag = this.options.tag;
-        },
-        mounted: function () {
-            this.$nextTick(() => {
-                Craft.initUiElements(this.$el);
-            });
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -886,7 +611,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="tag" v-model="tag">
+                        <select v-model="options.tag" @input="$emit('updateOptions', {tag: $event.target.value})">
                             <option value="h1">H1</option>
                             <option value="h2">H2</option>
                             <option value="h3">H3</option>
@@ -897,35 +622,23 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('tag')">
-                    <li v-for="error in errorList('tag')">{{ error }}</li>
+                <ul class="errors" v-if="errors.tag">
+                    <li v-for="error in errors.tag">{{ error }}</li>
                 </ul>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Link to Element') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.linked}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="linked" :value="options.linked ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.linked" @change="$emit('updateOptions', {linked: $event})">
+                </lightswitch>
             </div>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Open in new tab') }}</label>
                 </div>
-                <div class="input ltr">                    
-                    <button type="button" :class="{lightswitch: true, on: options.newTab}">
-                        <div class="lightswitch-container">
-                            <div class="handle"></div>
-                        </div>
-                        <input type="hidden" name="newTab" :value="options.newTab ? 1 : ''">
-                    </button>
-                </div>
+                <lightswitch :on="options.newTab" @change="$emit('updateOptions', {newTab: $event})">
+                </lightswitch>
             </div>
         </div>`
     };
@@ -937,19 +650,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
             options: Object,
             errors: Object
         },
-        methods: {
-            errorList: function (field) {
-                return this.errors[field] ?? [];
-            }
-        },
-        data: function () {
-            return {
-                tag: 'h1',
-            };
-        },
-        created: function () {
-            this.tag = this.options.tag;
-        },
+        emits: ['updateOptions'],
         template: `
         <div>
             <div class="field">
@@ -958,7 +659,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="tag" v:model="tag">
+                        <select v-model="options.tag" @input="$emit('updateOptions', {tag: $event.target.value})">
                             <option value="h1">H1</option>
                             <option value="h2">H2</option>
                             <option value="h3">H3</option>
@@ -969,8 +670,8 @@ document.addEventListener("register-field-displayers-components", function(e) {
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errorList('tag')">
-                    <li v-for="error in errorList('tag')">{{ error }}</li>
+                <ul class="errors" v-if="errors.tag">
+                    <li v-for="error in errors.tag">{{ error }}</li>
                 </ul>
             </div>
         </div>`

@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -59,7 +58,7 @@ class AssetRendered extends FieldDisplayer
             $volumes = [];
             foreach ($source as $source) {
                 $elems = explode(':', $source);
-                $volumes[] = \Craft::$app->volumes->getVolumeByUid($elems[1]);        
+                $volumes[] = \Craft::$app->volumes->getVolumeByUid($elems[1]);
             }
             return $volumes;
         }

@@ -6,13 +6,13 @@
         <div class="body">
             <div class="content">
                 <form class="main" ref="form">
-                    <component :is="optionsComponent" :displayer="displayer" :options="options" :errors="displayerOptionsErrors" @updateOptions="updateOptions" :key="itemOptionsEdited.id"></component>
+                    <component :is="optionsComponent" :displayer="displayer" :options="options" :errors="errors ?? {}" @updateOptions="updateOptions" :key="editedItem.id"></component>
                 </form>
             </div>
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="setShowOptionsModal(false)">{{ t('Close', {}, 'app') }}</button>
+                <button type="button" class="btn" @click="closeModal">{{ t('Close', {}, 'app') }}</button>
                 <button type="button" class="btn submit" @click="save">{{ t('Save', {}, 'app') }}</button>
             </div>
         </div>
@@ -28,23 +28,27 @@ export default {
         optionsComponent: function () {
             return 'fieldDisplayer-' + this.displayer.handle;
         },
-        options: function () {
-            return merge(this.displayer.options, this.itemOptionsEdited.options);
-        },
-        ...mapState(['showOptionsModal', 'displayer', 'itemOptionsEdited', 'displayerOptionsErrors'])
+        ...mapState(['showOptionsModal', 'displayer', 'editedItem', 'displayerOptionsErrors', 'resetItemOptions'])
     },
     data() {
         return {
-            modal: null
+            modal: null,
+            options: {},
+            errors: {}
         }
     },
     watch: {
         showOptionsModal: function () {
             if (this.showOptionsModal) {
+                if (this.resetItemOptions) {
+                    this.options = merge({}, this.displayer.options);
+                } else {
+                    this.options = merge(this.displayer.options, this.editedItem.options);
+                }
+                this.errors = this.editedItem.errors;
                 this.modal.show();
             } else {
                 this.modal.hide();
-                this.resetDisplayerOptions();
             }
         },
     },
@@ -59,12 +63,19 @@ export default {
         });
     },
     methods: {
+        closeModal () {
+            this.options = {};
+            this.errors = {};
+            this.openDisplayerOptions({show:false})
+        },
+        updateOptions (options) {
+            this.options = {...this.options, ...options};
+        },
         save () {
-            let options = $(this.$refs.form).serializeJSON();
             let data = {
-                fieldId: this.itemOptionsEdited.id,
+                fieldId: this.editedItem.id,
                 displayer: this.displayer.handle,
-                options: options
+                options: this.options
             };
             axios({
                 method: 'post',
@@ -73,18 +84,17 @@ export default {
                 headers: {'X-CSRF-Token': Craft.csrfTokenValue}
             }).then((response) => {
                 if (Object.keys(response.data.errors).length > 0) {
-                    this.setDisplayerOptionsError(response.data.errors);
+                    this.errors = response.data.errors;
                 } else {
-                    this.updateOptions(options);
-                    this.setShowOptionsModal(false);
-                    this.setDisplayerOptionsError({});
-                    this.resetDisplayerOptions();
+                    this.editedItem.options = this.options;
+                    this.updateItem(this.editedItem);
+                    this.closeModal();
                 }
             }).catch((err) => {
                 this.handleError(err);
             });
         },
-        ...mapMutations(['setShowOptionsModal', 'setDisplayerOptionsError', 'updateOptions', 'resetDisplayerOptions'])
+        ...mapMutations(['updateItem', 'openDisplayerOptions'])
     },
     emits: [],
 };
@@ -94,11 +104,11 @@ export default {
     padding-bottom: 62px;
     min-width: 300px;
     min-height: 300px;
-    height: 40%;
+    height: 60vh;
     width: 30%;
-    &.displayer-asset_render_file {
-        height: 66%;
-        width: 50%;
+    &.displayer-asset_render_file, &.displayer-file_default {
+        width: 60%;
+        height: 80vh;
     }
     .body {
         height: calc(100% - 65px);

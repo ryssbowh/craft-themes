@@ -41,7 +41,7 @@
             <span v-if="!hasDisplayers">{{ t('None available') }}</span>
         </div>
         <div class="options col">
-            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="openDisplayerOptions({displayer: displayer, item: this.item})"><div class="icon settings"></div></a>
+            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="openDisplayerOptions({show: true, displayer: displayer, item: this.item})"><div class="icon settings"></div></a>
         </div>
     </div>
 </template>
@@ -173,7 +173,7 @@ export default {
         updateDisplayer: function(e) {
             this.$emit("updateItem", {displayerHandle: e.originalTarget.value});
             if(this.displayer.hasOptions) {
-                this.openDisplayerOptions({displayer: this.displayer, item: this.item});
+                this.openDisplayerOptions({show: true, displayer: this.displayer, item: this.item, resetOptions: true});
             }
         },
         ...mapMutations(['openDisplayerOptions']),

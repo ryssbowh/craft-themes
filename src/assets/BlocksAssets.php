@@ -24,7 +24,6 @@ class BlocksAssets extends ThemesBaseAssets
      * @inheritDoc
      */
     public $depends = [
-        CpAsset::class,
-        JquerySerializeJSON::class
+        CpAsset::class
     ];
 }

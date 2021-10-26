@@ -184,7 +184,7 @@ Every file type will also have the displayer "Link to asset" available, with opt
 | HTML       | Raw             |                                               |
 | HTML       | Code            |                                               |
 | image      | Full image      |                                               |
-| Image      | Image transform | Transform or custom                           |
+| Image      | Image transform | Transform or custom, sizes (srcset)           |
 | Javascript | Raw             |                                               |
 | Javascript | Code            |                                               |
 | PHP        | Raw             |                                               |
@@ -233,5 +233,5 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 ## Roadmap
 
-- more tests
-- table, matrix update item events
+- link to entry options in plain text inside matrix
+- link to asset in asset inside matrix

@@ -2,5 +2,6 @@
 
 {% block content %}
     {% set transform = options.transform == '_custom' ? options.custom|json_decode : options.transform %}
-    {{ asset.getImg(transform) }}
+    {% set sizes = options.transform == '_custom' ? options.sizes|json_decode : null %}
+    {{ asset.getImg(transform, sizes) }}
 {% endblock %}
