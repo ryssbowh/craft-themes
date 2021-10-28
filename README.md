@@ -233,5 +233,3 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 ## Roadmap
 
-- link to entry options in plain text inside matrix
-- link to asset in asset inside matrix

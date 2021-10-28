@@ -17,6 +17,13 @@ interface RegionInterface
     public function getBlocks(): array;
 
     /**
+     * Does this region have blocks
+     * 
+     * @return boolean
+     */
+    public function hasBlocks(): bool;
+
+    /**
      * Get visible blocks
      * 
      * @return array

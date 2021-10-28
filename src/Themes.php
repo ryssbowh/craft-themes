@@ -152,7 +152,7 @@ class Themes extends \craft\base\Plugin
                         'label' => \Craft::t('themes', 'Blocks'),
                     ];
                 }
-                if ($isPro and $user->checkPermission('manageThemesDisplay')) {
+                if ($isPro and $user->checkPermission('manageThemesDisplays')) {
                     $item['subnav']['themes-display'] = [
                         'url' => 'themes/display',
                         'label' => \Craft::t('themes', 'Display'),
@@ -575,8 +575,8 @@ class Themes extends \craft\base\Plugin
                             'manageThemesBlocks' => [
                                 'label' => \Craft::t('themes', 'Manage blocks')
                             ],
-                            'manageThemesDisplay' => [
-                                'label' => \Craft::t('themes', 'Manage display')
+                            'manageThemesDisplays' => [
+                                'label' => \Craft::t('themes', 'Manage displays')
                             ],
                             'viewThemesShortcuts' => [
                                 'label' => \Craft::t('themes', 'View frontend shortcuts')

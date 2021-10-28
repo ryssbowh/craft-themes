@@ -75,6 +75,14 @@ class Region extends Model implements RegionInterface
     /**
      * @inheritDoc
      */
+    public function hasBlocks(): bool
+    {
+        return sizeof($this->blocks) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getVisibleBlocks(): array
     {
         return array_filter($this->blocks, function ($block) {
