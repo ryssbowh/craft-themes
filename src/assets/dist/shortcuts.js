@@ -5,6 +5,7 @@ var ThemesShortcuts = {
             var id = elem.dataset.layoutShortcut;
             var firstChild = elem.firstChild;
             if (data.hasOwnProperty(id)) {
+                elem.style.position = 'relative';
                 var layoutData = data[id];
                 var tag = document.createElement('div');
                 var cog = document.createElement('div');
