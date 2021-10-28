@@ -122,13 +122,15 @@ const store = createStore({
         },
         updateDisplay(state, {uid, data}) {
             let display;
-            for (let i in state.viewMode.displays) {
-                display = state.viewMode.displays[i];
-                if (display.uid != uid) {
-                    continue;
+            for (let v in state.viewModes) {
+                for (let d in state.viewModes[v].displays) {
+                    display = state.viewMode.displays[d];
+                    if (display.uid != uid) {
+                        continue;
+                    }
+                    state.viewModes[v].displays[d] = merge(display, data);
+                    break;
                 }
-                display = merge(display, data);
-                break;
             }
         },
         updateItem(state, item) {

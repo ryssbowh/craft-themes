@@ -154,6 +154,7 @@ export default {
                 data.labelHidden = false;
                 data.labelVisuallyHidden = true;
             }
+            console.log(data);
             this.$emit("updateItem", data);
         },
         updateVisibility: function (e) {
