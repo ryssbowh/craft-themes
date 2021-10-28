@@ -16,6 +16,7 @@
         }
     ],
     "require": {
+        "php": ">=7.3",
         "craftcms/cms": "3.5.* || 3.6.* || 3.7.*",
         "illuminate/support": "^8.3",
         "mobiledetect/mobiledetectlib": "^2.8"
