@@ -109,7 +109,7 @@ class ShortcutsService extends Service
                     label: '" . \Craft::t('themes', 'Edit Blocks') . "',
                 },";
             }
-            if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplay')) {
+            if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplays')) {
                 $js .= "{
                     url: '" . $layout->getEditDisplaysUrl($viewMode) . "',
                     label: '" . \Craft::t('themes', 'Edit Displays') . "',

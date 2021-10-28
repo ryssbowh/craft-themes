@@ -1,7 +1,7 @@
 {% extends "_layouts/cp" %}
 
 {% set allowChanges = craft.app.config.general.allowAdminChanges %}
-{% set canManageDisplay = isPro and currentUser.can('manageThemesDisplay') %}
+{% set canManageDisplay = isPro and currentUser.can('manageThemesDisplays') %}
 {% set canManageBlocks = isPro and currentUser.can('manageThemesBlocks') %}
 
 {% block content %}

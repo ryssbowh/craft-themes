@@ -16,7 +16,7 @@ class CpDisplayAjaxController extends Controller
      */
     public function beforeAction($action) 
     {
-        $this->requirePermission('manageThemesDisplay');
+        $this->requirePermission('manageThemesDisplays');
         $this->requireAcceptsJson();
         $this->requirePostRequest();
         return true;

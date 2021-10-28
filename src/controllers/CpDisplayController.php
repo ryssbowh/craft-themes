@@ -21,7 +21,7 @@ class CpDisplayController extends Controller
      */
     public function actionIndex(?string $themeName = null, int $layout = null, string $viewModeHandle = '')
     {
-        $this->requirePermission('manageThemesDisplay');
+        $this->requirePermission('manageThemesDisplays');
         $themes = $this->registry->getNonPartials(false, true);
         $theme = null;
         $currentUser = \Craft::$app->getUser()->getIdentity();
