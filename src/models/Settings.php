@@ -90,11 +90,11 @@ class Settings extends Model
     public function getRedirectToOptions(): array
     {
         $values = [
-            ['value' => 'display', 'label' => \Craft::t('themes', 'Display')],
+            ['value' => 'list', 'label' => \Craft::t('themes', 'Themes')],
             ['value' =>'rules', 'label' => \Craft::t('themes', 'Rules')],
         ];
         if (Themes::$plugin->is(Themes::EDITION_PRO)) {
-            $values[] = ['value' => 'list', 'label' => \Craft::t('themes', 'Themes')];
+            $values[] = ['value' => 'display', 'label' => \Craft::t('themes', 'Display')];
             $values[] = ['value' => 'blocks', 'label' => \Craft::t('themes', 'Blocks')];
         }
         return $values;
