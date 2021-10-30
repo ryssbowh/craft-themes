@@ -307,7 +307,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function getElementMachineName(): string
+    public function getTemplatingKey(): string
     {
         return '';
     }
@@ -396,6 +396,23 @@ class Layout extends Model implements LayoutInterface
     public function renderRegions(): string
     {
         return Themes::$plugin->view->renderLayout($this, ViewModeService::DEFAULT_HANDLE, null, LayoutInterface::RENDER_MODE_REGIONS);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplates(ViewModeInterface $viewMode): array
+    {
+        $key = $this->getTemplatingKey();
+        if (!$key) {
+            return [];
+        }
+        return [
+            'layouts/' . $this->type . '/' . $key . '-' . $viewMode->handle,
+            'layouts/' . $this->type . '/' . $key,
+            'layouts/' . $this->type,
+            'layouts/layout'
+        ];
     }
 
     /**

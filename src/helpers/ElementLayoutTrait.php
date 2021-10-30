@@ -11,7 +11,7 @@ trait ElementLayoutTrait
     /**
      * @inheritDoc
      */
-    public function getElementMachineName(): string
+    public function getTemplatingKey(): string
     {
         return $this->element->handle;
     }

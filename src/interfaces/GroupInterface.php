@@ -28,6 +28,15 @@ interface GroupInterface
     public function getVisibleDisplays(): array;
 
     /**
+     * Get available templates
+     * 
+     * @param  LayoutInterface   $layout
+     * @param  ViewModeInterface $viewMode
+     * @return array
+     */
+    public function getTemplates(LayoutInterface $layout, ViewModeInterface $viewMode): array;
+
+    /**
      * Render this group
      * 
      * @return string

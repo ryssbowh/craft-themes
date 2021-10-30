@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
 use craft\base\Element;
@@ -239,7 +240,7 @@ abstract class Block extends Model implements BlockInterface
      */
     public function getMachineName(): string
     {
-        return $this->provider . '_' . $this::$handle;
+        return $this->provider . '-' . $this::$handle;
     }
 
     /**
@@ -317,6 +318,21 @@ abstract class Block extends Model implements BlockInterface
     public function afterSave()
     {
         $this->options->afterSave($this);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplates(LayoutInterface $layout, RegionInterface $region): array
+    {
+        $type = $layout->type;
+        return [
+            'blocks/' . $type . '/' . $layout->getTemplatingKey() . '/' . $region->handle . '/' . $this->machineName,
+            'blocks/' . $type . '/' . $layout->getTemplatingKey() . '/' . $this->machineName,
+            'blocks/' . $type . '/' . $this->machineName,
+            'blocks/' . $this->machineName, 
+            'blocks/block'
+        ];
     }
 
     /**

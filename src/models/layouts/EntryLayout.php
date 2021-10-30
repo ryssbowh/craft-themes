@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
 /**
@@ -25,6 +26,14 @@ class EntryLayout extends Layout
         return array_merge(parent::defineRules(), [
             ['elementUid', 'required'],
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplatingKey(): string
+    {
+        return $this->element->section->handle . '-' . $this->element->handle;
     }
 
     /**

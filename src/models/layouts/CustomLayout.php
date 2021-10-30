@@ -36,7 +36,7 @@ class CustomLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getElementMachineName(): string
+    public function getTemplatingKey(): string
     {
         return $this->elementUid;
     }

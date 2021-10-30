@@ -1,8 +1,5 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\interfaces;
-
-use craft\base\Element;
 
 /**
  * Regions are defined by themes, and are assigned to layouts. They can have blocks.
@@ -50,6 +47,14 @@ interface RegionInterface
      * @param BlockInterface $block
      */
     public function addBlock(BlockInterface $block);
+
+    /**
+     * Get available templates
+     * 
+     * @param  LayoutInterface $layout
+     * @return array
+     */
+    public function getTemplates(LayoutInterface $layout): array;
 
     /**
      * Render this region

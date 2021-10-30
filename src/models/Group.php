@@ -3,6 +3,8 @@ namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\GroupInterface;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use craft\base\Element;
 
@@ -117,6 +119,26 @@ class Group extends DisplayItem implements GroupInterface
     public function fields()
     {
         return array_merge(parent::fields(), ['displays']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplates(LayoutInterface $layout, ViewModeInterface $viewMode): array
+    {
+        $type = $layout->type;
+        $key = $layout->getTemplatingKey();
+        $viewMode = $viewMode->handle;
+        return [
+            'groups/' . $type . '/' . $key . '/' . $viewMode . '/group-' . $this->handle,
+            'groups/' . $type . '/' . $key . '/' . $viewMode . '/group',
+            'groups/' . $type . '/' . $key . '/group-' . $this->handle,
+            'groups/' . $type . '/' . $key . '/group',
+            'groups/' . $type . '/group-' . $this->handle,
+            'groups/' . $type . '/group',
+            'groups/group-' . $this->handle,
+            'groups/group'
+        ];
     }
 
     /**

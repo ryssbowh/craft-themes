@@ -104,6 +104,15 @@ interface BlockInterface
     public function afterSave();
 
     /**
+     * Get available templates
+     * 
+     * @param  LayoutInterface $layout
+     * @param  RegionInterface $region
+     * @return array
+     */
+    public function getTemplates(LayoutInterface $layout, RegionInterface $region): array;
+
+    /**
      * Render this block
      * 
      * @return string

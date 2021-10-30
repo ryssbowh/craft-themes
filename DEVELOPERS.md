@@ -109,12 +109,10 @@ Render it :
 ```
 {% set layout = craft.themes.layouts.getCustom(craft.themes.current, 'handle') %}
 {{ layout.renderRegions()|raw }}
-
 ```
 And delete it :
 ```
 Themes::$plugin->layouts->deleteCustom($layout);
-
 ```
 To render the content block for a custom template, follow the block template precedence described below.
 
@@ -150,7 +148,8 @@ An exception will be thrown if you register 2 blocks with the same handle within
 
 ### Defining new blocks
 
-New block classes must implements `BlockInterface`. You can override the `getOptionsModel` method to define more options, this method must return an instance that implements `BlockOptionsInterface`.
+New block classes must implements `BlockInterface`, the model `Block` should be used to extend from.  
+You can override the `getOptionsModel` method to define more options, this method must return an instance that implements `BlockOptionsInterface`.
 
 To hook in the backend Vue system, register a js file with a bundle :
 ```
@@ -204,7 +203,6 @@ $block = Themes::$plugin->blocks->createBlock([
     'layout' => $defaultLayout
 ]);
 Themes::$plugin->blocks->save($block);
-
 ```
 
 ## Fields (Pro)
@@ -221,7 +219,7 @@ There are 10 types of fields defined by this plugin.
 
 And 5 that handle Craft fields, those can't have their own displayers. Their displayers will display the Craft field associated with them :
 
-- CraftField : handles most Craft fields (except Matrix and Table)
+- CraftField : handles all Craft fields except Matrix and Table
 - Matrix : handles Craft matrix fields
 - MatrixField : handles the fields within a matrix
 - Table : handles Craft table fields
@@ -262,7 +260,7 @@ Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYE
 });
 ```
 
-Your field displayer class must implements `FieldDisplayerInterface` class and define the field it can handle in its `getFieldTarget` method. 
+Your field displayer class must implements `FieldDisplayerInterface` class (`FieldDisplayer` model should be used to extend from) and define the field it can handle in its `getFieldTarget` method. 
 Registering a field displayer with a handle already existing will **replace** the current displayer.
 
 To hook in the backend Vue system, register a js file with a bundle :
@@ -291,7 +289,7 @@ Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS
 });
 ```
 
-Your file displayer class must extend the `FileDisplayerInterface` class and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
+Your file displayer class must extend the `FileDisplayerInterface` class (`FileDisplayer` model should be used to extend from) and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
 Registering a file displayer with a handle already existing will **replace** the current displayer.
 
 To hook in the backend Vue system, register a js file with a bundle :
@@ -312,6 +310,14 @@ Templates are inherited, so if you call a template that isn't defined in your th
 
 Each element of the page (layouts, regions, blocks, field and file displayers) templates can be overriden by your themes using a specific folder structure that allows much granularity.
 
+### Layout keys
+
+Each type of layout defines a key for templating, like so :
+- For an entry layout it will be the handle of the section, a hyphen, and the handle of the entry type, example `blog-article`
+- For a user : `user`
+- For a category group, volume, tag group or global set it will be their handle
+- For a custom layout, the handle of the layout
+
 ### Layouts
 
 There are two ways to render layouts: regions or displays. The method `Layout::render(Element $element, string $viewMode)` will render the displays, the other `$layout->renderRegions()` the regions.
@@ -320,82 +326,102 @@ Rendering the regions will call a special template defined by the theme in `Them
 
 You can set any templates to your category groups and sections, if a layout matches for that request, the layout associated will be added to the variables. In your template you simply need to call `{{ layout.renderRegions()|raw }}`. The view mode for such a request is always the default one.
 
-If you have a layout of type `entry` for an entry type `blog` and a view mode `default`, the layout templates will take this precedence :
+The available templates will take this order (from most to less important) :
 
 ```
-layouts/entry/blog/default.twig
-layouts/entry/blog.twig
-layouts/entry.twig
+layouts/{type}/{key}-{viewMode}.twig
+layouts/{type}/{key}.twig
+layouts/{type}.twig
 layouts/layout.twig
 ```
+Where `{type}` is the type of layout.  
+Where `{key}` is as defined above.  
+Where `{viewMode}` is the rendered view mode's handle.
+
 ### Regions
 
-If you have a region `header` for a layout of type `entry` for an entry type `blog`, the region templates will take this precedence :
+The available templates will take this order (from most to less important) :
 ```
-regions/entry/blog/region-header.twig
-regions/entry/blog/region.twig
-regions/entry/region-header.twig
-regions/entry/region.twig
-regions/region-header.twig
+regions/{type}/{key}/region-{handle}.twig
+regions/{type}/{key}/region.twig
+regions/{type}/region-{handle}.twig
+regions/{type}/region.twig
+regions/region-{handle}.twig
 regions/region.twig
 ```
-If you have a region `header` for a custom layout of handle `my-layout`, the region templates will take this precedence :
-```
-regions/custom/my-layout/region-header.twig
-regions/custom/my-layout/region.twig
-regions/custom/region-header.twig
-regions/custom/region.twig
-regions/region-header.twig
-regions/region.twig
-```
+Where `{type}` is the type of layout.  
+Where `{key}` is as defined above.  
+Where `{handle}` is the handle of the region.
+
 ### Blocks
 
-If you have a block `latestBlogs` of a provider `system` for a layout of type `entry` for an entry type `blog` situated in a region `header`, the block templates will take this precedence :
+The available templates will take this order (from most to less important) :
 ```
-blocks/entry/blog/header/system_latestBlogs.twig
-blocks/entry/blog/system_latestBlogs.twig
-blocks/entry/system_latestBlogs.twig
-blocks/system_latestBlogs.twig
+blocks/{type}/{key}/{region}/{handle}.twig
+blocks/{type}/{key}/{handle}.twig
+blocks/{type}/{handle}.twig
+blocks/{handle}.twig
 ```
+Where `{type}` is the type of layout.  
+Where `{key}` is as defined above.  
+Where `{region}` is the handle of the region the block is in.  
+Where `{handle}` is the machine name of the block. A block `latestBlogs` of a provider `system` will be `system-latestBlogs`
+
 ### Fields
 
-If you have a field displayer `redactor` for a field `content` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the field templates will take this precedence :
+The available templates will take this order (from most to less important) :
 ```
-fields/entry/blog/small/redactor-content.twig
-fields/entry/blog/small/redactor.twig
-fields/entry/blog/redactor-content.twig
-fields/entry/blog/redactor.twig
-fields/entry/redactor-content.twig
-fields/entry/redactor.twig
-fields/redactor-content.twig
-fields/redactor.twig
+fields/{type}/{key}/{viewMode}/{displayer}-{field}.twig
+fields/{type}/{key}/{viewMode}/{displayer}.twig
+fields/{type}/{key}/{displayer}-{field}.twig
+fields/{type}/{key}/{displayer}.twig
+fields/{type}/{displayer}-{field}.twig
+fields/{type}/{displayer}.twig
+fields/{displayer}-{field}.twig
+fields/{displayer}.twig
 ```
+Where `{type}` is the type of layout.  
+Where `{key}` is as defined above.  
+Where `{displayer}` is the handle of the field displayer.  
+Where `{field}` is the handle of the field.  
+Where `{viewMode}` is the rendered view mode's handle.
+
 ### Groups
 
-If you have a group `left` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the group templates will take this precedence :
+The available templates will take this order (from most to less important) :
 ```
-groups/entry/blog/small/group-left.twig
-groups/entry/blog/small/group.twig
-groups/entry/blog/group-left.twig
-groups/entry/blog/group.twig
-groups/entry/group-left.twig
-groups/entry/group.twig
-groups/group-left.twig
+groups/{type}/{key}/{viewMode}/group-{handle}.twig
+groups/{type}/{key}/{viewMode}/group.twig
+groups/{type}/{key}/group-{handle}.twig
+groups/{type}/{key}/group.twig
+groups/{type}/group-{handle}.twig
+groups/{type}/group.twig
+groups/group-{handle}.twig
 groups/group.twig
 ```
-### Assets
+Where `{type}` is the type of layout.  
+Where `{key}` is as defined above.  
+Where `{handle}` is the group's handle.  
+Where `{viewMode}` is the rendered view mode's handle.
 
-If you have a file displayer `image` for a field `topImage` on a layout of type `entry` for a entry type `blog` in a view mode `small`, the asset templates will take this precedence :
+### Files
+
+The available templates will take this order (from most to less important) :
 ```
-files/entry/blog/small/image-topImage.twig
-files/entry/blog/small/image.twig
-files/entry/blog/image-topImage.twig
-files/entry/blog/image.twig
-files/entry/image-topImage.twig
-files/entry/image.twig
-files/image-topImage.twig
-files/image.twig
+files/{type}/{key}/{viewMode}/{displayer}-{field}.twig
+files/{type}/{key}/{viewMode}/{displayer}.twig
+files/{type}/{key}/{displayer}-{field}.twig
+files/{type}/{key}/{displayer}.twig
+files/{type}/{displayer}-{field}.twig
+files/{type}/{displayer}.twig
+files/{displayer}-{field}.twig
+files/{displayer}.twig
 ```
+Where `{type}` is the type of layout.  
+Where `{key}` is as defined above.  
+Where `{displayer}` is the handle of the file displayer.  
+Where `{field}` is the handle of the field.  
+Where `{viewMode}` is the rendered view mode's handle.
 
 More templates and variables can be defined by listening to events on the `ViewService` class :
 

@@ -159,11 +159,14 @@ interface LayoutInterface
     public function addBlock(BlockInterface $block, string $region): LayoutInterface;
 
     /**
-     * Get the machine name describing the element associated to this layout
+     * Get the portion of template name associated with this element.
+     * This would be 'blog-article' for an entry type 'article' of a section 'blog'.
+     * Or 'authors' for a category group 'authors'
+     * Etc
      * 
      * @return string
      */
-    public function getElementMachineName(): string;
+    public function getTemplatingKey(): string;
 
     /**
      * Get a region by handle.
@@ -214,6 +217,14 @@ interface LayoutInterface
      * @return string
      */
     public function getEditBlocksUrl(): string;
+
+    /**
+     * Get available templates
+     * 
+     * @param  ViewModeInterface $viewMode
+     * @return array
+     */
+    public function getTemplates(ViewModeInterface $viewMode): array;
 
     /**
      * Render this layout for an element

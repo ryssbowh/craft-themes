@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\services;
 
 use Illuminate\Support\Collection;

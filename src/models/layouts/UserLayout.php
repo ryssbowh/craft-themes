@@ -46,7 +46,7 @@ class UserLayout extends Layout
     /**
      * @inheritDoc
      */
-    public function getElementMachineName(): string
+    public function getTemplatingKey(): string
     {
         return 'user';
     }

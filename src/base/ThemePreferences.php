@@ -38,11 +38,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getLayoutClasses(LayoutInterface $layout, bool $root = false): array
     {
-        $classes = ['layout', 'layout-' . $layout->type, 'view-mode-' . $this->viewMode->handle];
-        if ($class = $layout->elementMachineName) {
-            $classes[] = 'handle-' . $class;
-        }
-        return $classes;
+        return ['layout'];
     }
 
     /**
@@ -50,7 +46,11 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getLayoutAttributes(LayoutInterface $layout, bool $root = false): array
     {
-        return [];
+        return [
+            'data-viewmode' => $this->viewMode->handle,
+            'data-handle' => $layout->getTemplatingKey(),
+            'data-type' => $layout->type
+        ];
     }
 
     /**
@@ -58,7 +58,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getBlockClasses(BlockInterface $block): array
     {
-        return ['block', 'block-' . $block->getMachineName()];
+        return ['block'];
     }
 
     /**
@@ -66,7 +66,9 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getBlockAttributes(BlockInterface $block): array
     {
-        return [];
+        return [
+            'data-handle' => 'block-' . $block->getMachineName()
+        ];
     }
 
     /**
@@ -74,7 +76,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getRegionClasses(RegionInterface $region): array
     {
-        return ['region', 'region-' . $region->handle];
+        return ['region'];
     }
 
     /**
@@ -82,7 +84,10 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getRegionAttributes(RegionInterface $region): array
     {
-        return ['id' => 'region-' . $region->handle];
+        return [
+            'id' => 'region-' . $region->handle,
+            'data-handle' => $region->handle
+        ];
     }
 
     /**
@@ -106,7 +111,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getFieldContainerClasses(FieldInterface $field): array
     {
-        return ['display', 'field', 'field-' . $field->handle, $field->displayer->handle];
+        return ['display', 'field'];
     }
 
     /**
@@ -114,10 +119,14 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getFieldContainerAttributes(FieldInterface $field): array
     {
+        $attributes = [
+            'data-displayer' => $field->displayer->handle,
+            'data-field' => $field->handle
+        ];
         if ($field->visuallyHidden) {
-            return ['style' => 'display:none'];
+            $attributes['style'] = 'display:none';
         }
-        return [];
+        return $attributes;
     }
 
     /**
@@ -152,10 +161,13 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getGroupAttributes(GroupInterface $group): array
     {
+        $attributes = [
+            'data-handle' => $group->handle
+        ];
         if ($group->visuallyHidden) {
-            return ['style' => 'display:none'];
+            $attributes['style'] = 'display:none';
         }
-        return [];
+        return $attributes;
     }
 
     /**
@@ -163,7 +175,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getGroupContainerClasses(GroupInterface $group): array
     {
-        return ['display', 'group', 'group-' . $group->handle];
+        return ['display', 'group'];
     }
 
     /**
@@ -201,7 +213,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getFileClasses(Asset $asset, FieldInterface $field, FileDisplayerInterface $displayer): array
     {
-        return ['file', 'file-' . $displayer->handle];
+        return ['file'];
     }
 
     /**
@@ -209,7 +221,10 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
      */
     public function getFileAttributes(Asset $asset, FieldInterface $field, FileDisplayerInterface $displayer): array
     {
-        return [];
+        return [
+            'data-displayer' => $displayer->handle,
+            'data-field' => $field->handle
+        ];
     }
 
     /**

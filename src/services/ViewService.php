@@ -142,17 +142,8 @@ class ViewService extends Service
     {
         $oldRegion = $this->renderingRegion;
         $this->_renderingRegion = $region;
-        $layout = $this->renderingLayout->getElementMachineName();
-        $type = $this->renderingLayout->type;
         $theme = $this->themesRegistry()->current;
-        $templates = [
-            'regions/' . $type . '/' . $layout . '/region-' . $region->handle,
-            'regions/' . $type . '/' . $layout . '/region',
-            'regions/' . $type . '/region-' . $region->handle,
-            'regions/' . $type . '/region',
-            'regions/region-' . $region->handle, 
-            'regions/region'
-        ];
+        $templates = $region->getTemplates($this->renderingLayout);
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getRegionClasses($region)),
             'attributes' => new AttributeBag($theme->preferences->getRegionAttributes($region)),
@@ -177,22 +168,11 @@ class ViewService extends Service
             return $cache;
         }
         $this->blockCacheService()->startBlockCaching($block);
-        $region = $this->renderingRegion->handle;
-        $layout = $this->renderingLayout->getElementMachineName();
-        $machineName = $block->getMachineName();
-        $type = $this->renderingLayout->type;
         $theme = $this->themesRegistry()->current;
-        $templates = [
-            'blocks/' . $type . '/' . $layout . '/' . $region . '/' . $machineName,
-            'blocks/' . $type . '/' . $layout . '/' . $machineName,
-            'blocks/' . $type . '/' . $machineName,
-            'blocks/' . $machineName, 
-            'blocks/block'
-        ];
+        $templates = $block->getTemplates($this->renderingLayout, $this->renderingRegion);
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getBlockClasses($block)),
-            'attributes' => new ClassBag($theme->preferences->getBlockAttributes($block)),
-            'attributes' => new AttributeBag,
+            'attributes' => new AttributeBag($theme->preferences->getBlockAttributes($block)),
             'block' => $block,
         ]);
         $data = $this->render(self::BEFORE_RENDERING_BLOCK, $templates, $variables);
@@ -212,22 +192,8 @@ class ViewService extends Service
         if (!$displayer = $field->getDisplayer()) {
             return '';
         }
-        $layout = $this->renderingLayout->getElementMachineName();
         $theme = $this->themesRegistry()->current;
-        $type = $this->renderingLayout->type;
-        $viewMode = $this->renderingViewMode->handle;
-        $handle = $displayer->handle;
-        $withField = $handle . '-' . $field->handle;
-        $templates = [
-            'fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $withField,
-            'fields/' . $type . '/' . $layout . '/' . $viewMode . '/' . $handle,
-            'fields/' . $type . '/' . $layout . '/' . $withField,
-            'fields/' . $type . '/' . $layout . '/' . $handle,
-            'fields/' . $type . '/' . $withField,
-            'fields/' . $type . '/' . $handle,
-            'fields/' . $withField,
-            'fields/' . $handle
-        ];
+        $templates = $field->getFieldTemplates($this->renderingLayout, $this->renderingViewMode, $displayer);
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getFieldClasses($field)),
             'attributes' => new AttributeBag($theme->preferences->getFieldAttributes($field)),
@@ -253,21 +219,8 @@ class ViewService extends Service
      */
     public function renderGroup(GroupInterface $group): string
     {
-        $layout = $this->renderingLayout->getElementMachineName();
-        $type = $this->renderingLayout->type;
         $theme = $this->themesRegistry()->current;
-        $viewMode = $this->renderingViewMode;
-        $handle = $group->handle;
-        $templates = [
-            'groups/' . $type . '/' . $layout . '/' . $viewMode->handle . '/group-' . $handle,
-            'groups/' . $type . '/' . $layout . '/' . $viewMode->handle . '/group',
-            'groups/' . $type . '/' . $layout . '/group-' . $handle,
-            'groups/' . $type . '/' . $layout . '/group',
-            'groups/' . $type . '/group-' . $handle,
-            'groups/' . $type . '/group',
-            'groups/group-' . $handle,
-            'groups/group'
-        ];
+        $templates = $group->getTemplates($this->renderingLayout, $this->renderingViewMode);
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getGroupClasses($group)),
             'attributes' => new AttributeBag($theme->preferences->getGroupAttributes($group)),
@@ -294,21 +247,7 @@ class ViewService extends Service
             return '';
         }
         $theme = $this->themesRegistry()->current;
-        $layout = $this->renderingLayout->getElementMachineName();
-        $type = $this->renderingLayout->type;
-        $viewMode = $this->renderingViewMode;
-        $handle = $displayer->handle;
-        $withField = $handle . '-' . $field->handle;
-        $templates = [
-            'files/' . $type . '/' . $layout . '/' . $viewMode->handle . '/' . $withField,
-            'files/' . $type . '/' . $layout . '/' . $viewMode->handle . '/' . $handle,
-            'files/' . $type . '/' . $layout . '/' . $withField,
-            'files/' . $type . '/' . $layout . '/' . $handle,
-            'files/' . $type . '/' . $withField,
-            'files/' . $type . '/' . $handle,
-            'files/' . $withField,
-            'files/' . $handle
-        ];
+        $templates = $field->getFileTemplates($this->renderingLayout, $this->renderingViewMode, $displayer);
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getFileClasses($asset, $field, $displayer)),
             'attributes' => new AttributeBag($theme->preferences->getFileAttributes($asset, $field, $displayer)),
@@ -325,6 +264,7 @@ class ViewService extends Service
      * @param  LayoutInterface $layout
      * @param  string          $viewMode
      * @param  Element         $element
+     * @param  string          $mode
      * @return string
      */
     public function renderLayout(LayoutInterface $layout, string $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): string
@@ -346,8 +286,6 @@ class ViewService extends Service
             $this->_renderingElement = $element;
         }
         
-        $machineName = $layout->getElementMachineName();
-        $type = $layout->type;
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getLayoutClasses($layout, true)),
             'attributes' => new AttributeBag($theme->preferences->getLayoutAttributes($layout, true)),
@@ -355,13 +293,7 @@ class ViewService extends Service
             'regions' => $layout->regions
         ]);
         if ($mode == LayoutInterface::RENDER_MODE_DISPLAYS) {
-            $templates = [
-                'layouts/' . $type . '/' . $machineName . '/' . $viewMode->handle,
-                'layouts/' . $type . '/' . $machineName,
-                'layouts/' . $type . '/layout',
-                'layouts/' . $type,
-                'layouts/layout'
-            ];
+            $templates = $layout->getTemplates($viewMode);
         } else {
             $templates = [
                 $theme->getRegionsTemplate()
@@ -508,18 +440,18 @@ class ViewService extends Service
      * Get the dev mode html
      * 
      * @param  array  $templates
-     * @param  string $current
+     * @param  string $currentTemplate
      * @param  array  $variables
      * @return string
      */
-    protected function getDevModeHtml(array $templates, string $current, array $variables): string
+    protected function getDevModeHtml(array $templates, string $currentTemplate, array $variables): string
     {
         if (!$this->devMode) {
             return '';
         }
         $html = "<!-- ***** available templates : ***** -->";
         foreach ($templates as $template) {
-            $html .= "<!-- " . $template . ($template == $current ? " (current)" : "") . "-->";
+            $html .= "<!-- " . $template . ($template == $currentTemplate ? " (current)" : "") . "-->";
         }
         $html .= "<!-- ***** available variables : ***** -->";
         foreach ($variables as $name => $variable) {

@@ -113,6 +113,22 @@ class Region extends Model implements RegionInterface
     /**
      * @inheritDoc
      */
+    public function getTemplates(LayoutInterface $layout): array
+    {
+        $type = $layout->type;
+        return [
+            'regions/' . $type . '/' . $layout->getTemplatingKey() . '/region-' . $this->handle,
+            'regions/' . $type . '/' . $layout->getTemplatingKey() . '/region',
+            'regions/' . $type . '/region-' . $this->handle,
+            'regions/' . $type . '/region',
+            'regions/region-' . $this->handle, 
+            'regions/region'
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function render(): string
     {
         return Themes::$plugin->view->renderRegion($this);

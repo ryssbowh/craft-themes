@@ -228,7 +228,7 @@ Uninstalling a theme will delete all its blocks/displays/layouts (Pro version on
 
 ## Requirements
 
-Craft 3.5 or over
+Craft 3.5 or over  
 PHP 7.3 or over
 
 ## Testing
@@ -238,7 +238,7 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 ## Documentation
 
-- [Class reference](https://ryssbowh.github.io/craft-themes/namespaces/ryssbowh-craftthemes.html)
+- [Class reference](https://ryssbowh.github.io/craft-themes/namespaces/ryssbowh-craftthemes.html) (from 3.0.0 only)
 - [Developers readme](DEVELOPERS.md)
 - 1.x documentation [there](README1.md)
 - 2.x documentation [there](README2.md)

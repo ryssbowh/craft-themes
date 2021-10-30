@@ -121,6 +121,26 @@ interface FieldInterface
     public function getDisplayName(): string;
 
     /**
+     * Get available field templates
+     * 
+     * @param  LayoutInterface         $layout
+     * @param  ViewModeInterface       $viewMode
+     * @param  FieldDisplayerInterface $displayer
+     * @return array
+     */
+    public function getFieldTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FieldDisplayerInterface $displayer): array;
+
+    /**
+     * Get available file templates
+     * 
+     * @param  LayoutInterface         $layout
+     * @param  ViewModeInterface       $viewMode
+     * @param  FileDisplayerInterface $displayer
+     * @return array
+     */
+    public function getFileTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FileDisplayerInterface $displayer): array;
+
+    /**
      * Render this item.
      *
      * @param  mixed $value

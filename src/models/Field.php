@@ -5,7 +5,9 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\DisplayItem;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
@@ -252,6 +254,48 @@ abstract class Field extends DisplayItem implements FieldInterface
     public function fields()
     {
         return array_merge(parent::fields(), ['availableDisplayers', 'name', 'handle', 'displayName', 'displayerHandle', 'options']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FieldDisplayerInterface $displayer): array
+    {
+        $type = $layout->type;
+        $viewMode = $viewMode->handle;
+        $key = $layout->getTemplatingKey();
+        $displayer = $displayer->handle;
+        return [
+            'fields/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer . '-' . $this->handle,
+            'fields/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer,
+            'fields/' . $type . '/' . $key . '/' . $displayer . '-' . $this->handle,
+            'fields/' . $type . '/' . $key . '/' . $displayer,
+            'fields/' . $type . '/' . $displayer . '-' . $this->handle,
+            'fields/' . $type . '/' . $displayer,
+            'fields/' . $displayer . '-' . $this->handle,
+            'fields/' . $displayer
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFileTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FileDisplayerInterface $displayer): array
+    {
+        $type = $layout->type;
+        $viewMode = $viewMode->handle;
+        $key = $layout->getTemplatingKey();
+        $displayer = $displayer->handle;
+        return [
+            'files/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer . '-' . $this->handle,
+            'files/' . $type . '/' . $key . '/' . $viewMode . '/' . $this->handle,
+            'files/' . $type . '/' . $key . '/' . $displayer . '-' . $this->handle,
+            'files/' . $type . '/' . $key . '/' . $this->handle,
+            'files/' . $type . '/' . $displayer . '-' . $this->handle,
+            'files/' . $type . '/' . $this->handle,
+            'files/' . $displayer . '-' . $this->handle,
+            'files/' . $displayer
+        ];
     }
 
     /**
