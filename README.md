@@ -211,7 +211,7 @@ You'll find two new user preferences :
 
 If enabled in the settings (enabled by default) you will see some shortcuts (displays and blocks) on element edit pages (entries, users, assets, globals, categories) :
 
-![CP shortcuts](images/cp-shortucts.png)
+![CP shortcuts](images/cp-shortcuts.png)
 
 ## Installation
 
