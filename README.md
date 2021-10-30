@@ -204,8 +204,14 @@ A partial theme will not be available to select in the backend, but it can be in
 ## User Preferences (Pro)
 
 You'll find two new user preferences :
-- Show all templates suggestions and available variables on the front end (this will be off on production environments no matter what)
+- Show templates suggestions and available variables on the front end (this will be off on production environments no matter what)
 - Show some shortcuts on layouts for quick links to edit elements and layouts
+
+## Control Panel shortcuts (pro)
+
+If enabled in the settings (enabled by default) you will see some shortcuts (displays and blocks) on element edit pages (entries, users, assets, globals, categories) :
+
+![CP shortcuts](images/cp-shortucts.png)
 
 ## Installation
 
