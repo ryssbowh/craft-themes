@@ -90,7 +90,6 @@ class RulesService extends Service
         $currentUrl = $currentSite->getBaseUrl().$path;
         $viewPort = $this->getViewPort();
         $cached = $this->getCache($currentUrl, $viewPort);
-
         if ($cached === null) {
             $theme = null;
         } elseif (is_string($cached)) {
