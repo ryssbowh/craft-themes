@@ -201,6 +201,12 @@ Every file type will also have the displayer "Link to asset" available, with opt
 
 A partial theme will not be available to select in the backend, but it can be inherited from. You will see them in the themes list, but won't be able to define blocks/displays for them.
 
+## User Preferences (Pro)
+
+You'll find two new user preferences :
+- Show all templates suggestions and available variables on the front end (this will be off on production environments no matter what)
+- Show some shortcuts on layouts for quick links to edit elements and layouts
+
 ## Installation
 
 - run `composer require ryssbowh/craft-themes:^3.0` and install plugin
@@ -233,3 +239,6 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 ## Roadmap
 
+- Themes preferences not related to project config
+- Restricted version of blocks page for envs where admin changes are disabled
+- managed themes permission in wrong place

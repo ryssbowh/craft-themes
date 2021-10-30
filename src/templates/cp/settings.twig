@@ -2,42 +2,13 @@
 
 {% set title = 'Themes settings'|t('themes') %}
 
-{% if isPro %}
-    {{ 
-        forms.lightswitchField({
-            label: 'Devel mode'|t('themes'),
-            name: 'devMode',
-            on: settings.devMode,
-            instructions: 'Shows all the available templates and variables on the front end as Html comments. Always off on production no matter what is chosen here.'|t('themes'),
-            fieldClass: 'first'
-        }) 
-    }}
-    {{ 
-        forms.lightswitchField({
-            label: 'Frontend shortcuts'|t('themes'),
-            name: 'showShortcuts',
-            on: settings.showShortcuts,
-            instructions: 'Show edition shortcuts on the front end.'|t('themes')
-        }) 
-    }}
-    {{ 
-        forms.lightswitchField({
-            label: 'Eager loading'|t('themes'),
-            name: 'eagerLoad',
-            on: settings.eagerLoad,
-            instructions: 'Eager load all visible fields automatically.'|t('themes'),
-            warning: "The themes plugin's templates expect fields to be eager-loaded"|t('themes')
-        }) 
-    }}
-{% endif %}
-
 {{
     forms.selectField({
         label: 'Main menu goes to :'|t('themes'),
         options: settings.redirectToOptions,
         value: settings.redirectTo,
         name: 'redirectTo',
-        fieldClass: isPro ? '' : 'first'
+        fieldClass: 'first'
     })
 }}
 

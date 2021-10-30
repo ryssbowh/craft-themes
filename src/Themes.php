@@ -16,10 +16,12 @@ use craft\base\Volume;
 use craft\elements\GlobalSet;
 use craft\elements\User;
 use craft\events\DefineBehaviorsEvent;
+use craft\events\ElementEvent;
 use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
 use craft\models\TagGroup;
+use craft\services\Elements;
 use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields, Users};
 use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
@@ -70,7 +72,6 @@ class Themes extends \craft\base\Plugin
         \Craft::setAlias('@themesWeb', '@web/themes');
 
         $this->registerServices();
-        
         $this->registerPermissions();
         $this->registerClearCacheEvent();
         $this->registerPluginsEvents();
@@ -108,6 +109,7 @@ class Themes extends \craft\base\Plugin
         $this->registerShortcuts();
         $this->registerProjectConfig();
         $this->registerCraftEvents();
+        $this->registerCpHooks();
 
         Event::on(
             View::class, 
@@ -366,6 +368,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerServices()
     {
+        $user = \Craft::$app->user->getIdentity();
         $this->setComponents([
             'registry' => ThemesRegistry::class,
             'rules' => [
@@ -382,7 +385,7 @@ class Themes extends \craft\base\Plugin
             ],
             'shortcuts' => [
                 'class' => ShortcutsService::class,
-                'showShortcuts' => $this->getSettings()->showShortcuts
+                'showShortcuts' => $user ? $user->getPreference('themesShowShorcuts', false) : false
             ],
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
@@ -392,8 +395,8 @@ class Themes extends \craft\base\Plugin
             'view' => [
                 'class' => ViewService::class,
                 'cache' => \Craft::$app->cache,
-                'devMode' => $this->getSettings()->devModeEnabled,
                 'eagerLoad' => $this->getSettings()->eagerLoad,
+                'devMode' => $user ? $user->getPreference('themesDevMode', false) : false,
                 'templateCacheEnabled' => $this->getSettings()->templateCacheEnabled
             ],
             'blockCache' => [
@@ -451,8 +454,20 @@ class Themes extends \craft\base\Plugin
         Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) use ($_this) {
             if ($e->newValue == Themes::EDITION_PRO) {
                 $_this->initPro();
-                Themes::$plugin->layouts->install();
+                if (!\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+                    Themes::$plugin->layouts->install();
+                }
             }
+        });
+    }
+
+    /**
+     * Modify some cp pages through hooks
+     */
+    protected function registerCpHooks()
+    {
+        Craft::$app->view->hook('cp.users.edit.prefs', function (array &$context) {
+            return \Craft::$app->view->renderTemplate('themes/cp/edituser', ['user' => $context['currentUser']]);
         });
     }
 
@@ -517,6 +532,17 @@ class Themes extends \craft\base\Plugin
 
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
             Themes::$plugin->displays->onCraftFieldSaved($e);
+        });
+
+        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(ElementEvent $event) {
+            if ($event->element instanceof User) {
+                $user = $event->element;
+                $preferences = [
+                    'themesDevMode' => (bool)$this->request->getBodyParam('themesDevMode', $user->getPreference('themesDevMode', false)),
+                    'themesShowShorcuts' => (bool)$this->request->getBodyParam('themesShowShorcuts', $user->getPreference('themesShowShorcuts', false)),
+                ];
+                \Craft::$app->users->saveUserPreferences($user, $preferences);
+            }
         });
     }
 

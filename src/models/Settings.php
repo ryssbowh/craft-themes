@@ -44,11 +44,6 @@ class Settings extends Model
     /**
      * @var boolean
      */
-    public $devMode = false;
-
-    /**
-     * @var boolean
-     */
     public $eagerLoad = true;
 
     /**
@@ -72,18 +67,12 @@ class Settings extends Model
     public $redirectTo = 'list';
 
     /**
-     * @var boolean
-     */
-    public $showShortcuts = true;
-
-    /**
      * @inheritdoc
      */
     public function defineRules(): array
     {
         return [
-            [['default', 'redirectTo'], 'string'],
-            [['eagerLoad', 'devMode', 'showShortcuts'], 'boolean', 'trueValue' => true, 'falseValue' => false]
+            [['redirectTo'], 'string']
         ];
     }
 
@@ -103,19 +92,6 @@ class Settings extends Model
             $values[] = ['value' => 'blocks', 'label' => \Craft::t('themes', 'Blocks')];
         }
         return $values;
-    }
-
-    /**
-     * dev mode enabled getter, always returns false if environment is 'production'
-     * 
-     * @return bool
-     */
-    public function getDevModeEnabled(): bool
-    {
-        if (getenv('ENVIRONMENT') != 'production') {
-            return $this->devMode;
-        }
-        return false;
     }
 
     /**

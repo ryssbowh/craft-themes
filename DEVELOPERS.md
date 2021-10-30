@@ -433,12 +433,6 @@ Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (Ren
 Each Theme can define default classes and attributes for each layout/block/field/file/group/region by defining a [preference class](src/base/ThemePreferences.php).  
 To override the preferences for your theme, override the method `getPreferencesModel(): ThemePreferencesInterface` of its main class.
 
-### Debug (Pro)
-
-The available templates and variables can be printed as html comments by enabling the option in the settings.
-
-Shortcuts for layout management can be shown on the frontend by enabling the option in the settings.
-
 ### Root templates folder
 
 It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
@@ -447,7 +441,16 @@ A theme **can't** override templates that have a namespace (ie other plugin temp
 
 ## Eager loading (Pro)
 
-By default, when a layout is rendered it will eager load every field it contains, this can be disabled in the settings.  
+By default, when a layout is rendered it will eager load every field it contains.  
+It could be changed by creating the `config/themes.php` file :
+
+```
+<?php 
+
+return [
+    'eagerLoad' => false
+];
+```
 All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
 
 ## Twig

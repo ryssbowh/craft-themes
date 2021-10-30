@@ -77,7 +77,7 @@ class ViewService extends Service
 
     /**
      * Rendering layout mode
-     * @var ?Element
+     * @var ?string
      */
     protected $_renderingMode;
 
@@ -86,6 +86,17 @@ class ViewService extends Service
      * @var array
      */
     protected $pageVariables = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+        if (getenv('ENVIRONMENT') == 'production') {
+            $this->devMode = false;
+        }
+    }
 
     /**
      * Handle current page rendering.
@@ -111,7 +122,9 @@ class ViewService extends Service
         }
         \Craft::info('Found layout "' . $layout->description . '" (id: ' . $layout->id . ')', __METHOD__);
         $this->_renderingElement = $element;
-        $layout->eagerLoadFields($element, $layout->getViewMode(ViewModeService::DEFAULT_HANDLE));
+        if ($this->eagerLoad) {
+            $layout->eagerLoadFields($element, $layout->getViewMode(ViewModeService::DEFAULT_HANDLE));
+        }
         $this->pageVariables = $event->variables;
         $event->variables = array_merge($event->variables, [
             'layout' => $layout,
