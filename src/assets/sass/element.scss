@@ -1,0 +1,13 @@
+@import '../../../node_modules/craftcms-sass/_mixins';
+
+#theme-details {
+    padding: 24px;
+    border-radius: $largeBorderRadius;
+    background: $grey050;
+    &.top-margin {
+        margin-top: 24px;
+    }
+    .btngroup, .btn {
+        margin-bottom: 0 !important;
+    }
+}

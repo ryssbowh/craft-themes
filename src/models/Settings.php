@@ -67,11 +67,17 @@ class Settings extends Model
     public $redirectTo = 'list';
 
     /**
+     * @var boolean
+     */
+    public $showCpShortcuts = true;
+
+    /**
      * @inheritdoc
      */
     public function defineRules(): array
     {
         return [
+            ['showCpShortcuts', 'boolean'],
             [['redirectTo'], 'string']
         ];
     }

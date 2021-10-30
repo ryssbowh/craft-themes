@@ -466,9 +466,29 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerCpHooks()
     {
-        Craft::$app->view->hook('cp.users.edit.prefs', function (array &$context) {
-            return \Craft::$app->view->renderTemplate('themes/cp/edituser', ['user' => $context['currentUser']]);
-        });
+        if (\Craft::$app->config->getGeneral()->allowAdminChanges and $this->settings->showCpShortcuts) {
+            Craft::$app->view->hook('cp.users.edit.prefs', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/edituser', ['user' => $context['currentUser']]);
+            });
+            Craft::$app->view->hook('cp.entries.edit.details', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['entryType']]);
+            });
+            Craft::$app->view->hook('cp.globals.edit.content', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/editelement', [
+                    'element' => $context['globalSet'],
+                    'hasTopMargin' => true
+                ]);
+            });
+            Craft::$app->view->hook('cp.categories.edit.details', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['group']]);
+            });
+            Craft::$app->view->hook('cp.assets.edit.details', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['volume']]);
+            });
+            Craft::$app->view->hook('cp.users.edit.details', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['user']]);
+            });
+        }
     }
 
     /**

@@ -13,6 +13,14 @@
 }}
 
 {% if isPro %}
+     {{ 
+        forms.lightswitchField({
+            label: 'Control panel shortcuts'|t('themes'),
+            name: 'showCpShortcuts',
+            on: settings.showCpShortcuts,
+            instructions: 'Show layouts/blocks edition shortcuts when on elements edit pages (entries, users, assets, globals, categories)'|t('themes')
+        }) 
+    }}
     <h2>{{ 'Install'|t('themes') }}</h2>
     <p>{{ 'Re-install themes data. This can be useful to fix broken states, it will create missing layouts/fields/displays and remove orphans'|t('themes') }}</p>
     <button href="{{ url('themes/ajax/install') }}" class="btn submit install">{{ 'Re-install'|t('themes') }}</button>
