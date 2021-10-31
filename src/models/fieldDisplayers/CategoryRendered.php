@@ -54,7 +54,7 @@ class CategoryRendered extends FieldDisplayer
     public function getGroupLayout(): ?LayoutInterface
     {
         if ($group = $this->getCategoryGroup()) {
-            return $group->getCurrentThemeLayout();
+            return $group->getLayout();
         }
         return null;
     }

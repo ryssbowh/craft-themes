@@ -110,14 +110,12 @@ class ViewService extends Service
             //No theme is defined for that request
             return;
         }
-        $element = \Craft::$app->urlManager->getMatchedElement();
-        if (!$element) {
+        if (!$element = \Craft::$app->urlManager->getMatchedElement()) {
             //No matched element for that request
             return;
         }
-        $layout = Themes::$plugin->layouts->resolveForRequest($theme, $element);
-        if (!$layout) {
-            //No layouts have been found for that request
+        if (!$layout = Themes::$plugin->layouts->resolveForRequest($theme, $element)) {
+            //No layout has been found for that request
             return;
         }
         \Craft::info('Found layout "' . $layout->description . '" (id: ' . $layout->id . ')', __METHOD__);
@@ -175,9 +173,9 @@ class ViewService extends Service
             'attributes' => new AttributeBag($theme->preferences->getBlockAttributes($block)),
             'block' => $block,
         ]);
-        $data = $this->render(self::BEFORE_RENDERING_BLOCK, $templates, $variables);
-        $this->blockCacheService()->stopBlockCaching($block, $data);
-        return $data;
+        $html = $this->render(self::BEFORE_RENDERING_BLOCK, $templates, $variables);
+        $this->blockCacheService()->stopBlockCaching($block, $html);
+        return $html;
     }
 
     /**
@@ -263,7 +261,7 @@ class ViewService extends Service
      * 
      * @param  LayoutInterface $layout
      * @param  string          $viewMode
-     * @param  Element         $element
+     * @param  ?Element        $element
      * @param  string          $mode
      * @return string
      */

@@ -3,7 +3,7 @@
 {% block content %}
     {% for item in block.categories %}
         {% if item.viewMode and item.category %}
-            {% set layout = item.category.group.currentThemeLayout %}
+            {% set layout = item.category.group.layout %}
             {{ craft.themes.view.renderLayout(layout, item.viewMode.handle, item.category)|raw }}
         {% endif %}
     {% endfor %}

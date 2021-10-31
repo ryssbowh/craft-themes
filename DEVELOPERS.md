@@ -549,7 +549,7 @@ return [
 ];
 ```
 
-Each block can have a block strategy that defines how it will be cached. Add new strategies by responding to the event :
+Each block can have a cache strategy that defines how it will be cached. Add new strategies by responding to the event :
 
 ```
 Event::on(BlockCacheService::class, BlockCacheService::REGISTER_STRATEGIES, function (RegisterBlockCacheStrategies $event) {

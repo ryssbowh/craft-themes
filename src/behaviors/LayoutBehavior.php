@@ -16,10 +16,9 @@ use yii\base\Behavior;
 /**
  * This behaviour is attached to some Craft elements (CategoryGroup, EntryType, Volume, TagGroup, GlobalSet)
  * 
- * It gives a shorter way to access those element's layouts :
+ * It gives a shorter way to access those element's layouts, and edit displays/blocks urls.
  * $group = \Craft::$app->categories->getGroupById(1);
  * $layout = $group->getLayout('theme-handle');
- * $layout = $group->getCurrentThemeLayout();
  */
 class LayoutBehavior extends Behavior
 {
@@ -36,24 +35,16 @@ class LayoutBehavior extends Behavior
     /**
      * Layout getter
      * 
-     * @param  string|ThemeInterface $theme theme instance or theme handle
+     * @param  string|ThemeInterface|null $theme theme instance or theme handle, or null for the current theme
      * @return ?LayoutInterface
      */
-    public function getLayout($theme): ?LayoutInterface
+    public function getLayout($theme = null): ?LayoutInterface
     {
+        if (is_null($theme)) {
+            $theme = Themes::$plugin->registry->current;
+        }
         $uid = $this->type == LayoutService::USER_HANDLE ? '' : $this->owner->uid;
         return Themes::$plugin->layouts->get($theme, $this->type, $uid);
-    }
-
-    /**
-     * Layout getter from the current theme
-     * 
-     * @return ?LayoutInterface
-     */
-    public function getCurrentThemeLayout(): ?LayoutInterface
-    {
-        $theme = Themes::$plugin->registry->current;
-        return $theme ? $this->getLayout($theme) : null;
     }
 
     /**
@@ -66,12 +57,7 @@ class LayoutBehavior extends Behavior
      */
     public function getEditDisplaysUrl($theme = null, $viewMode = null): ?string
     {
-        if (is_null($theme)) {
-            $layout = $this->getCurrentThemeLayout();
-        } else {
-            $layout = $this->getLayout($theme);
-        }
-        return $layout->getEditDisplaysUrl($viewMode);
+        return $this->getLayout($theme)->getEditDisplaysUrl($viewMode);
     }
 
     /**
@@ -83,11 +69,6 @@ class LayoutBehavior extends Behavior
      */
     public function getEditBlocksUrl($theme = null): string
     {
-        if (is_null($theme)) {
-            $layout = $this->getCurrentThemeLayout();
-        } else {
-            $layout = $this->getLayout($theme);
-        }
-        return $layout->getEditBlocksUrl();
+        return $this->getLayout($theme)->getEditBlocksUrl();
     }
 }
