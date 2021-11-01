@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemePreferencesInterface;
@@ -198,24 +199,6 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
-    public function beforeInstall(): bool
-    {
-        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
-            return true;
-        }
-        if (!\Craft::$app->plugins->getPlugin('themes')) {
-            \Craft::error(\Craft::t('app', 'The Themes plugin must be installed before installing a theme'));
-            return false;
-        }
-        if ($parent = $this->getExtends()) {
-            \Craft::$app->plugins->installPlugin($parent);
-        }
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function afterThemeUninstall()
     {
     }
@@ -237,21 +220,9 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
-    public function getIsThemeDataInstalled(): bool
-    {
-        $value = \Craft::$app->projectConfig->get('plugins.' . $this->handle . '.themeDataInstalled');
-        return $value ?: false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getHasPreview(): bool
     {
-        if (glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null) {
-            return true;
-        }
-        return false;
+        return !is_null($this->getPreviewImagePath());
     }
 
     /**
@@ -259,7 +230,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     public function getPreviewImage(): string
     {
-        $file = glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null;
+        $file = $this->getPreviewImagePath();
         if (!$file) {
             $file = \Yii::getAlias('@Ryssbowh/CraftThemes/assets/images/no-preview.png');
         }
@@ -272,6 +243,16 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     public function getRegionsTemplate(): string
     {
         return 'regions';
+    }
+
+    /**
+     * Get the path of the image preview file
+     * 
+     * @return ?string
+     */
+    protected function getPreviewImagePath(): ?string
+    {
+        return glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null;
     }
 
     /**

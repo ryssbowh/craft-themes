@@ -275,27 +275,29 @@ class Themes extends \craft\base\Plugin
                 if ($event->plugin instanceof ThemeInterface) {
                     $deps = Themes::$plugin->registry->getDependencies($event->plugin);
                     foreach ($deps as $theme) {
-                        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
-                            ProjectConfigHelper::ensurePluginIsProcessed($theme->handle);
-                        } else {
-                            \Craft::$app->plugins->uninstallPlugin($theme->handle);
-                        }
+                        \Craft::$app->plugins->uninstallPlugin($theme->handle);
                     }
                     Themes::$plugin->registry->uninstallTheme($event->plugin);
                 }
             }
         );
 
-        // Install theme dependency and data after it's installed
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+        // Install theme's dependencies before it's installed
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
                     $extends = $event->plugin->extends;
-                    if (\Craft::$app->projectConfig->getIsApplyingYamlChanges() and $extends) {
-                        ProjectConfigHelper::ensurePluginIsProcessed($extends);
-                    } elseif ($extends) {
+                    if ($extends) {
                         \Craft::$app->plugins->installPlugin($extends);
                     }
+                }
+            }
+        );
+
+        // Install theme's data after it's installed
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
                     Themes::$plugin->registry->installTheme($event->plugin);
                 }
             }
@@ -661,12 +663,6 @@ class Themes extends \craft\base\Plugin
      */
     protected function beforeUninstall(): bool
     {
-        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
-            foreach ($this->registry->all() as $plugin) {
-                ProjectConfigHelper::ensurePluginIsProcessed($plugin->handle);
-            }
-            return true;
-        }
         foreach ($this->registry->all() as $plugin) {
             \Craft::$app->plugins->uninstallPlugin($plugin->handle);
         }

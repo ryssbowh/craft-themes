@@ -109,13 +109,6 @@ interface ThemeInterface
     public function getRegionsTemplate(): string;
 
     /**
-     * Is the theme data (layouts etc) installed
-     * 
-     * @return bool
-     */
-    public function getIsThemeDataInstalled(): bool;
-
-    /**
      * Callback after the plugin is uninstalled.
      * At this point the theme data (layouts etc) is uninstalled.
      */
