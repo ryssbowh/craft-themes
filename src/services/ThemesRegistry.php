@@ -7,9 +7,11 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\jobs\InstallThemeData;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use craft\base\PluginInterface;
 use craft\events\RegisterTemplateRootsEvent;
+use craft\helpers\Queue;
 use craft\models\Site;
 
 
@@ -198,9 +200,9 @@ class ThemesRegistry extends Service
     {
         $this->resetThemes();
         if (Themes::$plugin->is(Themes::EDITION_PRO)) {
-            if (Themes::$plugin->layouts->installThemeData($theme)) {
-                $theme->afterThemeInstall();
-            }
+            Queue::push(new InstallThemeData([
+                'theme' => $theme->handle
+            ]));
         }
         $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new ThemeEvent([
             'theme' => $theme

@@ -247,4 +247,4 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 - Themes preferences not related to project config
 - Restricted version of blocks page for envs where admin changes are disabled
-- managed themes permission in wrong place
+- SCSS compiler

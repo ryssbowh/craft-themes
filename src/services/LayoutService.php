@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\LayoutEvent;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
@@ -187,6 +188,7 @@ class LayoutService extends Service
 
     /**
      * Install layouts for a theme, will deletes orphans.
+     * Makes sure the project config changes are processed so we don't create duplicates.
      * 
      * @param  ThemeInterface $theme
      * @return bool
@@ -195,6 +197,9 @@ class LayoutService extends Service
     {
         if ($theme->isPartial()) {
             return false;
+        }
+        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
+            ProjectConfigHelper::ensureAllProcessed();
         }
         $ids = [];
         foreach ($this->getAvailable($theme->handle) as $layout) {

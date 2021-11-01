@@ -246,21 +246,13 @@ class DisplayService extends Service
      */
     public function onCraftFieldSaved(FieldEvent $event)
     {
-        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
-            // If Craft is applying Yaml changes it means we have the fields defined
-            // in config, and don't need to respond to these events as it would create duplicates
-            return;
-        }
         if ($event->isNew) {
             return;
         }
         $field = $event->field;
         $displays = $this->getAllForCraftField($field->id);
-        $toSave = [];
         foreach ($displays as $display) {
             $oldItem = $display->item;
-            $layout = $display->viewMode->layout;
-            $oldFieldClass = $oldItem->craft_field_class;
             if ($oldItem->craft_field_class != get_class($field)) {
                 // Field has changed class, deleting old field, recreating it
                 // and copying old field attributes

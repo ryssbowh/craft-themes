@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
@@ -18,6 +19,7 @@ use craft\elements\User;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\ElementEvent;
 use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
+use craft\helpers\Queue;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
 use craft\models\TagGroup;
@@ -451,12 +453,12 @@ class Themes extends \craft\base\Plugin
     protected function registerSwitchEdition()
     {
         $_this = $this;
-        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) use ($_this) {
-            if ($e->newValue == Themes::EDITION_PRO) {
+        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes', function (ConfigEvent $e) use ($_this) {
+            $oldEdition = $e->oldValue['edition'] ?? null;
+            $newEdition = $e->newValue['edition'] ?? null;
+            if ($newEdition == Themes::EDITION_PRO and $oldEdition = Themes::EDITION_LITE) {
                 $_this->initPro();
-                if (!\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
-                    Themes::$plugin->layouts->install();
-                }
+                Themes::$plugin->layouts->install();
             }
         });
     }
