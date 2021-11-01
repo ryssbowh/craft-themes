@@ -1,5 +1,5 @@
 <template>
-    <div id="action-buttons" class="flex">
+    <div id="action-buttons" class="flex" v-if="layouts.length">
         <button href="#" class="btn" :disabled="!canSave" @click.prevent="setShowGroupModal({show: true})">{{ t('New group') }}</button>
         <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
     </div>
@@ -13,7 +13,7 @@ export default {
         canSave: function () {
             return (!this.isSaving && !this.isFetching);
         },
-        ...mapState(['isSaving', 'isFetching'])
+        ...mapState(['isSaving', 'isFetching', 'layouts'])
     },
     methods: {
         ...mapMutations(['setShowGroupModal']),

@@ -33,7 +33,7 @@ export default {
         let layoutExists = (this.currentLayout && this.allLayouts[this.initialTheme].filter((l) => l.id == this.currentLayout).length);
         if (layoutExists) {
             this.setLayout({layoutId: this.currentLayout, viewModeHandle: this.currentViewModeHandle});
-        } else {
+        } else if (this.layouts[0] ?? null) {
             this.setLayout({layoutId: this.layouts[0].id});
         }
         if (!layoutExists && this.currentLayout) {

@@ -27,8 +27,11 @@
                 </draggable>
             </div>
         </div>
-        <p v-if="rootDisplays.length == 0 && !isLoading">
+        <p v-if="layouts.length > 0 && rootDisplays.length == 0 && !isLoading">
             {{ t('There are no displays for this view mode') }}
+        </p>
+        <p v-if="layouts.length == 0 && !isLoading">
+            {{ t('No layouts available, you should reinstall the themes data in the settings') }}
         </p>
         <options-modal/>
         <group-modal @closeModal="setShowGroupModal({show: false})"/>
@@ -50,7 +53,7 @@ export default {
             }
             return sortBy(this.viewMode.displays, 'order');
         },
-        ...mapState(['viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes'])
+        ...mapState(['viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes', 'layouts'])
     },
     watch: {
         viewModes: {

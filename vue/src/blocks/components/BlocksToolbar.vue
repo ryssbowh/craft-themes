@@ -1,5 +1,5 @@
 <template>
-  <div id="action-buttons" class="flex">
+  <div id="action-buttons" class="flex" v-if="layouts.length">
     <div class="btngroup submit">
       <button href="#" class="btn submit menubtn" ref="menu" v-if="!isCopying" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
       <div class="menu" data-align="right">
