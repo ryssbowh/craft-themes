@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\services\FieldsService;
 use Ryssbowh\CraftThemes\services\GroupsService;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
+use craft\services\Plugins;
 
 /**
  * Helper to ensure some project config changes are applied before others
@@ -19,6 +20,7 @@ class ProjectConfigHelper
     private static $_processedBlocks = false;
     private static $_processedFields = false;
     private static $_processedGroups = false;
+    private static $_processedPlugins = [];
 
     /**
      * Ensure all displays config changes are processed immediately.
@@ -150,6 +152,24 @@ class ProjectConfigHelper
         foreach ($allViewModes as $uid => $data) {
             $projectConfig->processConfigChanges(ViewModeService::CONFIG_KEY . '.' . $uid, false, null, $force);
         }
+    }
+
+    /**
+     * Ensures a plugin config is processed immediately
+     *
+     * @param string $handle
+     * @param bool   $force Whether to proceed even if YAML changes are not currently being applied
+     */
+    public static function ensurePluginIsProcessed(string $handle, bool $force = false)
+    {
+        $projectConfig = \Craft::$app->getProjectConfig();
+
+        if (static::$_processedPlugins[$handle] ?? false || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+            return;
+        }
+
+        static::$_processedPlugins[$handle] = true;
+        $projectConfig->processConfigChanges(Plugins::CONFIG_PLUGINS_KEY . '.' . $handle, false, null, $force);
     }
 
     /**

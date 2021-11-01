@@ -6,6 +6,7 @@ use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\models\Settings;
@@ -248,39 +249,12 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerPluginsEvents()
     {
-        // Disable all theme dependencies before it's disabled
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin->handle == 'themes') {
-                    Themes::$app->registry->disableAll();
-                }
-                if ($event->plugin instanceof ThemeInterface) {
-                    $deps = Themes::$plugin->registry->getDependencies($event->plugin);
-                    foreach ($deps as $theme) {
-                        \Craft::$app->plugins->disablePlugin($theme->handle);
-                    }
-                }
-            }
-        );
-
         // Flush rules and registry cache after a theme if disabled
         Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
                     Themes::$plugin->registry->resetThemes();
                     Themes::$plugin->rules->flushCache();
-                }
-            }
-        );
-
-        // Enable the dependency of a theme before enabling it
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_ENABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    $extends = $event->plugin->extends;
-                    if ($extends) {
-                        \Craft::$app->plugins->enablePlugin($extends);
-                    }
                 }
             }
         );
@@ -301,7 +275,11 @@ class Themes extends \craft\base\Plugin
                 if ($event->plugin instanceof ThemeInterface) {
                     $deps = Themes::$plugin->registry->getDependencies($event->plugin);
                     foreach ($deps as $theme) {
-                        \Craft::$app->plugins->uninstallPlugin($theme->handle);
+                        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
+                            ProjectConfigHelper::ensurePluginIsProcessed($theme->handle);
+                        } else {
+                            \Craft::$app->plugins->uninstallPlugin($theme->handle);
+                        }
                     }
                     Themes::$plugin->registry->uninstallTheme($event->plugin);
                 }
@@ -313,10 +291,43 @@ class Themes extends \craft\base\Plugin
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
                     $extends = $event->plugin->extends;
-                    if ($extends) {
+                    if (\Craft::$app->projectConfig->getIsApplyingYamlChanges() and $extends) {
+                        ProjectConfigHelper::ensurePluginIsProcessed($extends);
+                    } elseif ($extends) {
                         \Craft::$app->plugins->installPlugin($extends);
                     }
                     Themes::$plugin->registry->installTheme($event->plugin);
+                }
+            }
+        );
+
+        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
+            return;
+        }
+
+        // Disable all theme dependencies before it's disabled
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin->handle == 'themes') {
+                    Themes::$app->registry->disableAll();
+                }
+                if ($event->plugin instanceof ThemeInterface) {
+                    $deps = Themes::$plugin->registry->getDependencies($event->plugin);
+                    foreach ($deps as $theme) {
+                        \Craft::$app->plugins->disablePlugin($theme->handle);
+                    }
+                }
+            }
+        );
+
+        // Enable the dependency of a theme before enabling it
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_ENABLE_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    $extends = $event->plugin->extends;
+                    if ($extends) {
+                        \Craft::$app->plugins->enablePlugin($extends);
+                    }
                 }
             }
         );
@@ -650,6 +661,12 @@ class Themes extends \craft\base\Plugin
      */
     protected function beforeUninstall(): bool
     {
+        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
+            foreach ($this->registry->all() as $plugin) {
+                ProjectConfigHelper::ensurePluginIsProcessed($plugin->handle);
+            }
+            return true;
+        }
         foreach ($this->registry->all() as $plugin) {
             \Craft::$app->plugins->uninstallPlugin($plugin->handle);
         }

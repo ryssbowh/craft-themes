@@ -200,9 +200,9 @@ class ThemesRegistry extends Service
     {
         $this->resetThemes();
         if (Themes::$plugin->is(Themes::EDITION_PRO)) {
-            Queue::push(new InstallThemeData([
-                'theme' => $theme->handle
-            ]));
+            if (Themes::$plugin->layouts->installThemeData($theme)) {
+                $theme->afterThemeInstall();
+            }
         }
         $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new ThemeEvent([
             'theme' => $theme
@@ -251,13 +251,12 @@ class ThemesRegistry extends Service
      */
     protected function loadThemes()
     {
-        $themes = [];
+        $this->themes = [];
         $plugins = \Craft::$app->plugins->getAllPlugins();
         foreach ($plugins as $plugin) {
             if ($plugin instanceof ThemeInterface) {
-                $themes[$plugin->getHandle()] = $plugin;
+                $this->themes[$plugin->getHandle()] = $plugin;
             }
         }
-        $this->themes = $themes;
     }
 }
