@@ -198,9 +198,7 @@ class LayoutService extends Service
         if ($theme->isPartial()) {
             return false;
         }
-        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
-            ProjectConfigHelper::ensureAllProcessed();
-        }
+        ProjectConfigHelper::ensureAllProcessed(true);
         $ids = [];
         foreach ($this->getAvailable($theme->handle) as $layout) {
             if (!$layout2 = $this->get($theme, $layout->type, $layout->elementUid)) {
