@@ -198,7 +198,10 @@ class LayoutService extends Service
         if ($theme->isPartial()) {
             return false;
         }
-        ProjectConfigHelper::ensureAllProcessed(true);
+        $projectConfig = \Craft::$app->projectConfig;
+        if ($projectConfig->get('plugins.' . $theme->handle . '.dataInstalled', true)) {
+            return false;
+        }
         $ids = [];
         foreach ($this->getAvailable($theme->handle) as $layout) {
             if (!$layout2 = $this->get($theme, $layout->type, $layout->elementUid)) {
@@ -215,6 +218,7 @@ class LayoutService extends Service
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
         }
+        $projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', true, null, false);
         return true;
     }
 
@@ -226,9 +230,14 @@ class LayoutService extends Service
      */
     public function uninstallThemeData(ThemeInterface $theme): bool
     {
+        $projectConfig = \Craft::$app->projectConfig;
+        if (!$projectConfig->get('plugins.' . $theme->handle . '.dataInstalled', true)) {
+            return false;
+        }
         foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
+        $projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', false, null, false);
         return true;
     }
 

@@ -30,7 +30,7 @@ class Installer extends Module
         Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->registry->installTheme($event->plugin);
+                    Themes::$plugin->registry->installThemeData($event->plugin);
                 }
             }
         );
@@ -43,7 +43,7 @@ class Installer extends Module
                     foreach ($deps as $theme) {
                         \Craft::$app->plugins->uninstallPlugin($theme->handle);
                     }
-                    Themes::$plugin->registry->uninstallTheme($event->plugin);
+                    Themes::$plugin->registry->uninstallThemeData($event->plugin);
                 }
             }
         );

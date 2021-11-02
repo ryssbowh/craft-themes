@@ -196,15 +196,12 @@ class ThemesRegistry extends Service
      *
      * @return ThemeInterface $theme
      */
-    public function installTheme(ThemeInterface $theme)
+    public function installThemeData(ThemeInterface $theme)
     {
         $this->resetThemes();
         if (Themes::$plugin->layouts->installThemeData($theme)) {
             $theme->afterThemeInstall();
         }
-        $this->triggerEvent(self::EVENT_AFTER_INSTALL_THEME, new ThemeEvent([
-            'theme' => $theme
-        ]));
     }
 
     /**
@@ -212,15 +209,12 @@ class ThemesRegistry extends Service
      *
      * @return ThemeInterface $theme
      */
-    public function uninstallTheme(ThemeInterface $theme)
+    public function uninstallThemeData(ThemeInterface $theme)
     {
         Themes::$plugin->rules->flushCache();
         if (Themes::$plugin->layouts->uninstallThemeData($theme)) {
             $theme->afterThemeUninstall();
         }
-        $this->triggerEvent(self::EVENT_AFTER_UNINSTALL_THEME, new ThemeEvent([
-            'theme' => $theme
-        ]));
         $this->resetThemes();
     }
 
