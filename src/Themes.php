@@ -81,6 +81,7 @@ class Themes extends \craft\base\Plugin
         $this->registerTwigVariables();
         $this->registerSwitchEdition();
         $this->registerBehaviors();
+        $this->registerProjectConfig();
 
         if ($this->is($this::EDITION_PRO)) {
             $this->initPro();
@@ -105,12 +106,11 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Initialise for pro
+     * Initialise for pro edition
      */
     protected function initPro()
     {
         $this->registerShortcuts();
-        $this->registerProjectConfig();
         $this->registerCraftEvents();
         $this->registerCpHooks();
 
