@@ -216,14 +216,26 @@ If enabled in the settings (enabled by default) you will see some shortcuts (dis
 ## Installation
 
 - run `composer require ryssbowh/craft-themes:^3.0` and install plugin
-- Install a theme
+- Add the theme installer module to `config/app.php` :
+```
+use Ryssbowh\CraftThemes\Installer;
+
+return [
+    'modules' => [
+        'theme-installer' => Installer::class
+    ],
+    'bootstrap' => ['theme-installer'],
+];
+```
+- Install/Create a theme
 - Add a rule in the settings to load a theme or set a default theme.
 - If you're using the Pro version, your Sections/Category group templates should extend or look like [themed_page](src/templates/front/themed_page.twig) and render your theme's regions
 
-Uninstalling this plugin will uninstall all themes.
-
-Installing a theme that extends another will automatically install that other theme.
-
+Uninstalling this plugin will uninstall all themes.  
+Disabling this plugin will disable all themes.  
+Installing a theme that extends another will automatically install that other theme.  
+Installing a theme will automatically install this plugin.  
+Disabling a theme will disable all theme that extend from it.  
 Uninstalling a theme will delete all its blocks/displays/layouts (Pro version only).
 
 ## Requirements
@@ -248,3 +260,4 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 - Themes preferences not related to project config
 - Restricted version of blocks page for envs where admin changes are disabled
 - SCSS compiler
+- theme dependencies recursive

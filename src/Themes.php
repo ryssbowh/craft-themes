@@ -249,64 +249,6 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerPluginsEvents()
     {
-        // Flush rules and registry cache after a theme if disabled
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->registry->resetThemes();
-                    Themes::$plugin->rules->flushCache();
-                }
-            }
-        );
-
-        // Flush rules and registry cache after enabling a theme
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->registry->resetThemes();
-                    Themes::$plugin->rules->flushCache();
-                }
-            }
-        );
-
-        // Uninstall all themes dependency and data before it's uninstalled
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    $deps = Themes::$plugin->registry->getDependencies($event->plugin);
-                    foreach ($deps as $theme) {
-                        \Craft::$app->plugins->uninstallPlugin($theme->handle);
-                    }
-                    Themes::$plugin->registry->uninstallTheme($event->plugin);
-                }
-            }
-        );
-
-        // Install theme's dependencies before it's installed
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    $extends = $event->plugin->extends;
-                    if ($extends) {
-                        \Craft::$app->plugins->installPlugin($extends);
-                    }
-                }
-            }
-        );
-
-        // Install theme's data after it's installed
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->registry->installTheme($event->plugin);
-                }
-            }
-        );
-
-        if (\Craft::$app->projectConfig->getIsApplyingYamlChanges()) {
-            return;
-        }
-
         // Disable all theme dependencies before it's disabled
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN,
             function (PluginEvent $event) {
@@ -330,6 +272,26 @@ class Themes extends \craft\base\Plugin
                     if ($extends) {
                         \Craft::$app->plugins->enablePlugin($extends);
                     }
+                }
+            }
+        );
+
+        // Flush rules and registry cache after a theme if disabled
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->registry->resetThemes();
+                    Themes::$plugin->rules->flushCache();
+                }
+            }
+        );
+
+        // Flush rules and registry cache after enabling a theme
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin instanceof ThemeInterface) {
+                    Themes::$plugin->registry->resetThemes();
+                    Themes::$plugin->rules->flushCache();
                 }
             }
         );
