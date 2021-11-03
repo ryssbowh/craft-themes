@@ -209,6 +209,14 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     public function afterThemeInstall()
     {
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function hasDataInstalled(): bool
+    {
+        return ProjectConfigHelper::isDataInstalledForTheme($this);
+    }
 
     /**
      * @inheritDoc

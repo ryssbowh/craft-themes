@@ -98,6 +98,10 @@ class Themes extends \craft\base\Plugin
             [$this->registry, 'registerCurrentThemeTemplates']
         );
 
+        if (\Craft::$app->request->getIsConsoleRequest()) {
+            $this->controllerNamespace = 'Ryssbowh\\CraftThemes\\console';
+        }
+
         if (Craft::$app->request->getIsCpRequest()) {
             $this->registerCpRoutes();
         }

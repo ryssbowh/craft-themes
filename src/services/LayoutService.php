@@ -177,29 +177,34 @@ class LayoutService extends Service
     }
 
     /**
-     * Create all layouts for all themes
+     * Create all layouts for all themes.
+     * Will mark each theme as having its data installed in project config
+     * to avoid syncing issues when installing themes on other environments.
+     * $force is to bypass this marker.
+     *
+     * @param bool $force
      */
-    public function install()
+    public function install(bool $force = false)
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $this->installThemeData($theme);
+            $this->installThemeData($theme, $force);
         }
     }
 
     /**
      * Install layouts for a theme, will deletes orphans.
-     * Makes sure the project config changes are processed so we don't create duplicates.
+     * Will abort if force is false and theme is marked has having its data installed in project config.
      * 
      * @param  ThemeInterface $theme
+     * @param  bool           $force
      * @return bool
      */
-    public function installThemeData(ThemeInterface $theme): bool
+    public function installThemeData(ThemeInterface $theme, bool $force = false): bool
     {
         if ($theme->isPartial()) {
             return false;
         }
-        $projectConfig = \Craft::$app->projectConfig;
-        if ($projectConfig->get('plugins.' . $theme->handle . '.dataInstalled', true)) {
+        if (!$force and ProjectConfigHelper::isDataInstalledForTheme($theme)) {
             return false;
         }
         $ids = [];
@@ -218,26 +223,26 @@ class LayoutService extends Service
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
         }
-        $projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', true, null, false);
+        ProjectConfigHelper::markDataInstalledForTheme($theme);
         return true;
     }
 
     /**
-     * Deletes all layouts for a theme.
+     * Deletes all layouts for a theme. 
+     * Will abort if theme is not marked as having its data installed in project config.
      * 
      * @param  ThemeInterface $theme
      * @return bool
      */
     public function uninstallThemeData(ThemeInterface $theme): bool
     {
-        $projectConfig = \Craft::$app->projectConfig;
-        if (!$projectConfig->get('plugins.' . $theme->handle . '.dataInstalled', true)) {
+        if (!ProjectConfigHelper::isDataInstalledForTheme($theme)) {
             return false;
         }
         foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
-        $projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', false, null, false);
+        ProjectConfigHelper::markDataNotInstalledForTheme($theme);
         return true;
     }
 

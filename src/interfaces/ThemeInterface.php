@@ -115,8 +115,22 @@ interface ThemeInterface
     public function afterThemeUninstall();
 
     /**
+     * Does this theme have project config driven data (layouts etc) installed.
+     * This is known with the parameter `dataInstalled` saved on each theme's
+     * project config, set to true after the data is installed for the first time.
+     * 
+     * @return bool
+     */
+    public function hasDataInstalled(): bool;
+
+    /**
      * Callback after the plugin is installed.
      * At this point the theme data (layouts etc) is installed.
+     * This will be called even when installing themes through project config.
+     * If you add project config driven data in here, you might want to check that the
+     * theme's data is not already installed to avoid project config syncing issues.
+     * 
+     * @see $this->hasDataInstalled()
      */
     public function afterThemeInstall();
 }

@@ -199,9 +199,8 @@ class ThemesRegistry extends Service
     public function installThemeData(ThemeInterface $theme)
     {
         $this->resetThemes();
-        if (Themes::$plugin->layouts->installThemeData($theme)) {
-            $theme->afterThemeInstall();
-        }
+        Themes::$plugin->layouts->installThemeData($theme);
+        $theme->afterThemeInstall();
     }
 
     /**
@@ -212,9 +211,8 @@ class ThemesRegistry extends Service
     public function uninstallThemeData(ThemeInterface $theme)
     {
         Themes::$plugin->rules->flushCache();
-        if (Themes::$plugin->layouts->uninstallThemeData($theme)) {
-            $theme->afterThemeUninstall();
-        }
+        Themes::$plugin->layouts->uninstallThemeData($theme);
+        $theme->afterThemeUninstall();
         $this->resetThemes();
     }
 

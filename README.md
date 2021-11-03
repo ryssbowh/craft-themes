@@ -213,6 +213,13 @@ If enabled in the settings (enabled by default) you will see some shortcuts (dis
 
 ![CP shortcuts](images/cp-shortcuts.png)
 
+## Console commands
+
+`craft clear-caches/themes-block-cache` : Clears all block cache  
+`craft clear-caches/themes-rules-cache` : Clears rules cache  
+`craft clear-caches/themes-template-cache` : Clears templates resolution cache  
+`craft themes/install` : Reinstall all themes data (layouts etc)
+
 ## Installation
 
 - run `composer require ryssbowh/craft-themes:^3.0` and install plugin
@@ -245,7 +252,7 @@ PHP 7.3 or over
 
 ## Testing
 
-This plugin is unit tested with mysql5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php from 7.3 to 8.0.  
+This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php 7.3, 7.4 and 8.0.  
 One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue](https://github.com/yiisoft/yii2/issues/18406)
 
 ## Documentation

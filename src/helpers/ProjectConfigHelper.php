@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\helpers;
 
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\services\BlockService;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\FieldsService;
@@ -154,15 +155,33 @@ class ProjectConfigHelper
     }
 
     /**
-     * Ensure all themes config changes are processed immediately.
-     * Blocks/groups/fields will ensure the layouts/view modes/displays will also be processed as dependencies.
+     * Is a theme marked as having its data installed in project config
      *
-     * @param bool $force Whether to proceed even if YAML changes are not currently being applied
+     * @param  ThemeInterface $theme
+     * @return bool
      */
-    public static function ensureAllProcessed(bool $force = false)
+    public static function isDataInstalledForTheme(ThemeInterface $theme): bool
     {
-        static::ensureAllBlocksProcessed($force);
-        static::ensureAllGroupsProcessed($force);
-        static::ensureAllFieldsProcessed($force);
+        return \Craft::$app->projectConfig->get('plugins.' . $theme->handle . '.dataInstalled', true) ?? false;
+    }
+
+    /**
+     * Mark a theme as having its data installed in project config
+     * 
+     * @param ThemeInterface $theme
+     */
+    public static function markDataInstalledForTheme(ThemeInterface $theme)
+    {
+        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', true, null, false);
+    }
+
+    /**
+     * Mark a theme as having its data not installed in project config
+     * 
+     * @param ThemeInterface $theme
+     */
+    public static function markDataNotInstalledForTheme(ThemeInterface $theme)
+    {
+        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', false, null, false);
     }
 }
