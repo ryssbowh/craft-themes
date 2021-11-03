@@ -223,7 +223,6 @@ class LayoutService extends Service
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
         }
-        ProjectConfigHelper::markDataInstalledForTheme($theme);
         return true;
     }
 
@@ -242,7 +241,6 @@ class LayoutService extends Service
         foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
-        ProjectConfigHelper::markDataNotInstalledForTheme($theme);
         return true;
     }
 

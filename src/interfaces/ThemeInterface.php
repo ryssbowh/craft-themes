@@ -124,7 +124,7 @@ interface ThemeInterface
     public function hasDataInstalled(): bool;
 
     /**
-     * Callback after the plugin is installed.
+     * Callback after the plugin is installed, this is only called for pro version.
      * At this point the theme data (layouts etc) is installed.
      * This will be called even when installing themes through project config.
      * If you add project config driven data in here, you might want to check that the

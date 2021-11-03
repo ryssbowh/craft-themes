@@ -437,7 +437,7 @@ class Themes extends \craft\base\Plugin
             $newEdition = $e->newValue['edition'] ?? null;
             if ($newEdition == Themes::EDITION_PRO and $oldEdition = Themes::EDITION_LITE) {
                 $_this->initPro();
-                Themes::$plugin->layouts->install();
+                Themes::$plugin->registry->installAll(true);
             }
         });
     }

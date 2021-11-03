@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\Theme;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\ThemeEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemeData;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
@@ -192,15 +193,31 @@ class ThemesRegistry extends Service
     }
 
     /**
+     * Install all theme's data
+     *
+     * @param bool $force
+     */
+    public function installAll(bool $force = false)
+    {
+        foreach ($this->all() as $theme) {
+            $this->installThemeData($theme, $force);
+        }
+    }
+
+    /**
      * Install a theme
      *
-     * @return ThemeInterface $theme
+     * @param ThemeInterface $theme
+     * @param bool           $force
      */
-    public function installThemeData(ThemeInterface $theme)
+    public function installThemeData(ThemeInterface $theme, bool $force = false)
     {
         $this->resetThemes();
-        Themes::$plugin->layouts->installThemeData($theme);
-        $theme->afterThemeInstall();
+        if ($force or Themes::$plugin->is(Themes::EDITION_PRO)) {
+            Themes::$plugin->layouts->installThemeData($theme);
+            $theme->afterThemeInstall();
+            ProjectConfigHelper::markDataInstalledForTheme($theme);
+        }
     }
 
     /**
@@ -210,10 +227,11 @@ class ThemesRegistry extends Service
      */
     public function uninstallThemeData(ThemeInterface $theme)
     {
+        $this->resetThemes();
         Themes::$plugin->rules->flushCache();
         Themes::$plugin->layouts->uninstallThemeData($theme);
         $theme->afterThemeUninstall();
-        $this->resetThemes();
+        ProjectConfigHelper::markDataNotInstalledForTheme($theme);
     }
 
     /**
