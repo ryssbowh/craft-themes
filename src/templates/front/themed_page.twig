@@ -1,5 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ currentSite.language }}">
+{% block doctype %}
+    <!DOCTYPE html>
+{% endblock %}
+{% block html_tag %}
+    <html lang="{{ currentSite.language }}">
+{% endblock %}
     {% block head %}
         <head>
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
