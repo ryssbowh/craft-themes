@@ -121,14 +121,9 @@ class FieldsService extends Service
         
         $isNew = !is_int($field->id);
 
-        $projectConfig = \Craft::$app->getProjectConfig();
-        $configData = $field->getConfig();
-        $uid = $field->uid ?? StringHelper::UUID();
-        $configPath = self::CONFIG_KEY . '.' . $uid;
-        $projectConfig->set($configPath, $configData);
-
-        $record = $this->getRecordByUid($uid);
-        $field->setAttributes($record->getAttributes());
+        if (!$field::save($field)) {
+            return false;
+        }
         
         if ($isNew) {
             $this->add($field);
@@ -145,11 +140,11 @@ class FieldsService extends Service
      */
     public function delete(FieldInterface $field): bool
     {
-        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $field->uid);
-
-        $this->_fields = $this->all()->where('id', '!=', $field->id);
-
-        return true;
+        if ($field::delete($field)) {
+            $this->_fields = $this->all()->where('id', '!=', $field->id);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -173,7 +168,7 @@ class FieldsService extends Service
                 $data['display_id'] = Themes::$plugin->displays->getRecordByUid($data['display_id'])->id;
             }
             //Forward to each type of field :
-            $this->getFieldClassByType($data['type'])::save($uid, $data);
+            $this->getFieldClassByType($data['type'])::handleChanged($uid, $data);
             
             $transaction->commit();
         } catch (\Throwable $e) {
@@ -191,8 +186,7 @@ class FieldsService extends Service
     {
         $data = $event->oldValue;
         $uid = $event->tokenMatches[0];
-        $data['uid'] = $uid;
-        $this->getFieldClassByType($data['type'])::delete($uid, $data);
+        $this->getFieldClassByType($data['type'])::handleDeleted($uid, $data);
     }
 
     /**

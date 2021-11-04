@@ -19,7 +19,7 @@ class ProjectConfigHelper
     private static $_processedLayouts = false;
     private static $_processedViewModes = false;
     private static $_processedBlocks = false;
-    private static $_processedFields = false;
+    private static $_processedFields = [];
     private static $_processedGroups = false;
 
     /**
@@ -53,16 +53,40 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (static::$_processedFields || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+        if (!$force && !$projectConfig->getIsApplyingYamlChanges()) {
             return;
         }
-
-        static::$_processedFields = true;
 
         $allFields = $projectConfig->get(FieldsService::CONFIG_KEY, true) ?? [];
 
         foreach ($allFields as $uid => $data) {
+            if (in_array($uid, static::$_processedFields)) {
+                continue;
+            }
             $projectConfig->processConfigChanges(FieldsService::CONFIG_KEY . '.' . $uid, false, null, $force);
+            static::$_processedFields[] = $uid;
+        }
+    }
+
+    /**
+     * Ensure some fields config changes are processed immediately.
+     *
+     * @param bool $force Whether to proceed even if YAML changes are not currently being applied
+     */
+    public static function ensureFieldsProcessed(array $fieldUids, bool $force = false)
+    {
+        $projectConfig = \Craft::$app->getProjectConfig();
+
+        if (!$force && !$projectConfig->getIsApplyingYamlChanges()) {
+            return;
+        }
+
+        foreach ($fieldUids as $uid) {
+            if (in_array($uid, static::$_processedFields)) {
+                continue;
+            }
+            $projectConfig->processConfigChanges(FieldsService::CONFIG_KEY . '.' . $uid, false, null, $force);
+            static::$_processedFields[] = $uid;
         }
     }
 

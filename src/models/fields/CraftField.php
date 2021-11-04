@@ -15,18 +15,18 @@ use craft\fieldlayoutelements\CustomField;
  * Handles all Craft fields apart from Matrix and Table
  */
 class CraftField extends Field implements CraftFieldInterface
-{
+{   
     /**
      * @inheritDoc
      */
-    public static function save(string $uid, array $data): bool
+    public static function handleChanged(string $uid, array $data)
     {
         $field = Themes::$plugin->fields->getRecordByUid($uid);
         $craftField = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
         $data['craft_field_id'] = $craftField->id;
         $data['craft_field_class'] = get_class($craftField);
         $field->setAttributes($data, false);
-        return $field->save(false);
+        $field->save(false);
     }
     
     /**

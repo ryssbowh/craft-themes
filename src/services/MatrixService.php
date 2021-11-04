@@ -94,7 +94,12 @@ class MatrixService extends Service
         return $this->allMatrixPivots()
             ->where('matrix_type_id', $typeId)
             ->where('parent_id', $matrixId)
-            ->firstWhere('field_id', $fieldId) ?? new MatrixPivotRecord;
+            ->firstWhere('field_id', $fieldId) 
+            ?? new MatrixPivotRecord([
+                'matrix_type_id' => $typeId,
+                'parent_id' => $matrixId,
+                'field_id' => $fieldId
+            ]);
     }
 
     /**

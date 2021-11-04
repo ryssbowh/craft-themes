@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\DisplayMatrixException;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
@@ -14,6 +15,7 @@ use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 use craft\fields\Matrix as CraftMatrix;
+use craft\helpers\StringHelper;
 
 /**
  * Handles a Craft matrix field
@@ -55,6 +57,7 @@ class Matrix extends CraftField implements MatrixInterface
     {
         $oldTypes = $this->types;
         $newTypes = [];
+        $fieldIdsToKeep = [];
         foreach ($craftField->getBlockTypes() as $craftType) {
             if (isset($oldTypes[$craftType->handle])) {
                 $type = $oldTypes[$craftType->handle];
@@ -76,8 +79,7 @@ class Matrix extends CraftField implements MatrixInterface
                     //New field was added to the block type, creating new field
                     $field = MatrixField::createFromField($craftField);
                 } else if ($oldField->craft_field_class != get_class($craftField)) {
-                    //Field has changed class, creating a new one 
-                    //and copying old fields attributes
+                    //Field has changed class, creating a new one and copying old fields attributes
                     $field = MatrixField::createFromField($craftField);
                     $field->id = $oldField->id;
                     $field->uid = $oldField->uid;
@@ -85,9 +87,11 @@ class Matrix extends CraftField implements MatrixInterface
                     $field->labelVisuallyHidden = $oldField->labelVisuallyHidden;
                     $field->visuallyHidden = $oldField->visuallyHidden;
                     $field->hidden = $field->hidden ?: $oldField->hidden;
+                    $fieldIdsToKeep[] = $field->id;
                 } else {
                     //Field hasn't changed
                     $field = $oldField;
+                    $fieldIdsToKeep[] = $field->id;
                 }
                 $field->matrix = $this;
                 $fields[] = $field;
@@ -96,6 +100,16 @@ class Matrix extends CraftField implements MatrixInterface
             $newTypes[$craftType->handle] = $type;
         }
         $this->types = $newTypes;
+        //Deleting all fields apart from those that haven't changed to make sure project config is synced
+        //New fields will be created later when the matrix is saved
+        $oldRecords = MatrixPivotRecord::find()
+            ->where(['parent_id' => $this->id])
+            ->andWhere(['not in', 'field_id', $fieldIdsToKeep])
+            ->all();
+        foreach ($oldRecords as $record) {
+            $field = Themes::$plugin->fields->getById($record->field_id);
+            Themes::$plugin->fields->delete($field);
+        }
         return true;
     }
 
@@ -131,66 +145,48 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public static function save(string $uid, array $data): bool
+    public static function save(FieldInterface $field): bool
     {
-        $matrix = Themes::$plugin->fields->getRecordByUid($uid);
-        $types = $data['types'] ?? [];
-        unset($data['types']);
-        $field = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
-        $data['craft_field_id'] = $field->id;
-        $data['craft_field_class'] = get_class($field);
-        $matrix->setAttributes($data, false);
-        $res = $matrix->save(false);
-        $pivotIds = [];
-        foreach ($types as $typeData) {
-            $fields = $typeData['fields'] ?? [];
-            unset($typeData['fields']);
-            $type = Themes::$plugin->matrix->getMatrixBlockTypeByUid($typeData['type_uid']);
-            foreach ($fields as $order => $fieldData) {
-                $field = Themes::$plugin->fields->getRecordByUid($fieldData['fieldUid']);
-                unset($fieldData['fieldUid']);
-                $fieldData['craft_field_id'] = \Craft::$app->fields->getFieldByUid($fieldData['craft_field_id'])->id;
-                $field->setAttributes($fieldData, false);
-                $field->save(false);
-                $pivot = Themes::$plugin->matrix->getMatrixPivotRecord($type->id, $matrix->id, $field->id);
-                $pivot->field_id = $field->id;
-                $pivot->parent_id = $matrix->id;
-                $pivot->matrix_type_id = $type->id;
-                $pivot->order = $order;
-                $pivot->save(false);
-                $pivotIds[] = $pivot->id;
+        foreach ($field->types as $type) {
+            foreach ($type->fields as $matrixField) {
+                $matrixField->matrix = $field;
+                Themes::$plugin->fields->save($matrixField);
             }
         }
-        //deleting old field records
-        $oldRecords = MatrixPivotRecord::find()
-            ->where(['parent_id' => $matrix->id])
-            ->andWhere(['not in', 'id', $pivotIds])
-            ->all();
-        $fieldIds = [];
-        foreach ($oldRecords as $record) {
-            $fieldIds[] = $record->field_id;
-        }
-        \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['in', 'id', $fieldIds])
-            ->execute();
-        return $res;
+        return parent::save($field);
     }
 
     /**
      * @inheritDoc
      */
-    public static function delete(string $uid, array $data)
+    public static function handleChanged(string $uid, array $data)
     {
-        parent::delete($uid, $data);
-        $fieldUids = [];
-        foreach ($data['types'] ?? [] as $typeData) {
-            foreach ($typeData['fields'] ?? [] as $fieldData) {
-                $fieldUids[] = $fieldData['fieldUid'];
+        parent::handleChanged($uid, $data);
+        $matrix = Themes::$plugin->fields->getRecordByUid($uid);
+        foreach ($data['types'] as $typeData) {
+            $fields = $typeData['fields'] ?? [];
+            ProjectConfigHelper::ensureFieldsProcessed($fields);
+            $type = Themes::$plugin->matrix->getMatrixBlockTypeByUid($typeData['type_uid']);
+            foreach ($fields as $order => $fieldUid) {
+                $field = Themes::$plugin->fields->getRecordByUid($fieldUid);
+                $pivot = Themes::$plugin->matrix->getMatrixPivotRecord($type->id, $matrix->id, $field->id);
+                $pivot->order = $order;
+                $pivot->save(false);
             }
         }
-        \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['in', 'uid', $fieldUids])
-            ->execute();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function delete(FieldInterface $field): bool
+    {
+        foreach ($field->types as $type) {
+            foreach ($type->fields as $matrixField) {
+                Themes::$plugin->fields->delete($matrixField);
+            }
+        }
+        return parent::delete($field);
     }
 
     /**

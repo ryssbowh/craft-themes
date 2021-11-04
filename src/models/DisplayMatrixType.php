@@ -38,9 +38,7 @@ class DisplayMatrixType extends Model
         return [
             'type_uid' => $this->type->uid,
             'fields' => array_map(function ($field) {
-                $config = $field->getConfig();
-                $config['fieldUid'] = $field->uid ?? StringHelper::UUID();
-                return $config;
+                return $field->uid;
             }, $this->fields)
         ];
     }

@@ -49,7 +49,11 @@ class TablesService extends Service
     {
         return $this->allPivots()
             ->where('table_id', $tableId)
-            ->firstWhere('field_id', $fieldId) ?? new TablePivotRecord;
+            ->firstWhere('field_id', $fieldId) 
+            ?? new TablePivotRecord([
+                'table_id' => $tableId,
+                'field_id' => $fieldId
+            ]);
     }
 
     public function getTableForField(int $fieldId): ?Table

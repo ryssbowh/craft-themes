@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\TablePivotRecord;
@@ -79,18 +80,62 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
+    public static function save(FieldInterface $field): bool
+    {
+        foreach ($field->fields as $tableField) {
+            $tableField->table = $field;
+            Themes::$plugin->fields->save($tableField);
+        }
+        return parent::save($field);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function handleChanged(string $uid, array $data)
+    {
+        parent::handleChanged($uid, $data);
+        $table = Themes::$plugin->fields->getRecordByUid($uid);
+        $fields = $data['fields'] ?? [];
+        ProjectConfigHelper::ensureFieldsProcessed(array_map(function ($data) {
+            return $data['uid'];
+        }, $fields));
+        foreach ($fields as $order => $fieldData) {
+            $field = Themes::$plugin->fields->getRecordByUid($fieldData['uid']);
+            $pivot = Themes::$plugin->tables->getTablePivotRecord($table->id, $field->id);
+            $pivot->order = $order;
+            $pivot->name = $fieldData['name'];
+            $pivot->handle = $fieldData['handle'];
+            $pivot->save(false);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function delete(FieldInterface $field): bool
+    {
+        foreach ($field->fields as $tableField) {
+            Themes::$plugin->fields->delete($tableField);
+        }
+        return parent::delete($field);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function onCraftFieldChanged(BaseField $craftField): bool
     {
         $oldFields = $this->fields;
         $newFields = [];
+        $fieldIdsToKeep = [];
         $order = 0;
         foreach ($craftField->columns as $column) {
             $newConfig = TableField::buildConfig($column);
             if (isset($oldFields[$order])) {
                 $oldField = $oldFields[$order];
                 if ($oldField->craft_field_class != $newConfig['craft_field_class']) {
-                    //Column has changed field class, creating a new field 
-                    //and copying old fields attributes
+                    //Column has changed field class, creating a new field and copying old fields attributes
                     $field = TableField::create($newConfig);
                     $field->id = $oldField->id;
                     $field->uid = $oldField->uid;
@@ -104,6 +149,7 @@ class Table extends CraftField
                     $field->name = $column['heading'];
                     $field->handle = $column['handle'];
                 }
+                $fieldIdsToKeep[] = $field->id;
             } else {
                 //New column was added to the table
                 $field = TableField::create($newConfig);
@@ -113,64 +159,17 @@ class Table extends CraftField
             $order++;
         }
         $this->fields = $newFields;
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function save(string $uid, array $data): bool
-    {
-        $table = Themes::$plugin->fields->getRecordByUid($uid);
-        $craftField = \Craft::$app->fields->getFieldByUid($data['craft_field_id']);
-        $data['craft_field_id'] = $craftField->id;
-        $data['craft_field_class'] = get_class($craftField);
-        $fields = $data['fields'] ?? [];
-        unset($data['fields']);
-        $table->setAttributes($data, false);
-        $res = $table->save(false);
-        $pivotIds = [];
-        foreach ($fields as $order => $fieldData) {
-            $field = Themes::$plugin->fields->getRecordByUid($fieldData['fieldUid']);
-            unset($fieldData['fieldUid']);
-            $field->setAttributes($fieldData, false);
-            $field->save(false);
-            $pivot = Themes::$plugin->tables->getTablePivotRecord($table->id, $field->id);
-            $pivot->field_id = $field->id;
-            $pivot->table_id = $table->id;
-            $pivot->order = $order;
-            $pivot->name = $fieldData['name'];
-            $pivot->handle = $fieldData['handle'];
-            $pivot->save(false);
-            $pivotIds[] = $pivot->id;
-        }
-        //deleting old field records
+        //Deleting all fields apart from those that haven't changed to make sure project config is synced
+        //New fields will be created later when the table is saved
         $oldRecords = TablePivotRecord::find()
-            ->where(['table_id' => $table->id])
-            ->andWhere(['not in', 'id', $pivotIds])
+            ->where(['table_id' => $this->id])
+            ->andWhere(['not in', 'field_id', $fieldIdsToKeep])
             ->all();
-        $fieldIds = [];
         foreach ($oldRecords as $record) {
-            $fieldIds[] = $record->field_id;
+            $field = Themes::$plugin->fields->getById($record->field_id);
+            Themes::$plugin->fields->delete($field);
         }
-        \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['in', 'id', $fieldIds])
-            ->execute();
-        return $res;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function delete(string $uid, array $data)
-    {
-        parent::delete($uid, $data);
-        $fieldUids = array_map(function ($field) {
-            return $field['fieldUid'];
-        }, $data['fields'] ?? []);
-        \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['in', 'uid', $fieldUids])
-            ->execute();
+        return true;
     }
 
     /**
@@ -191,9 +190,11 @@ class Table extends CraftField
     {
         $config = parent::getConfig();
         $config['fields'] = array_map(function ($field) {
-            $config = $field->getConfig();
-            $config['fieldUid'] = $field->uid ?? StringHelper::UUID();
-            return $config;
+            return [
+                'name' => $field->name,
+                'handle' => $field->handle,
+                'uid' => $field->uid
+            ];
         }, $this->fields);
         return $config;
     }

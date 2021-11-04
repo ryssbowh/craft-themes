@@ -15,6 +15,7 @@ use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\FieldsService;
 use craft\base\Element;
 use craft\base\Field as BaseField;
+use craft\helpers\StringHelper;
 
 /**
  * Base class for all fields
@@ -99,11 +100,55 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public static function save(string $uid, array $data): bool
+    public static function save(FieldInterface $field): bool
+    {
+        $projectConfig = \Craft::$app->getProjectConfig();
+        $configData = $field->getConfig();
+        $uid = $field->uid ?? StringHelper::UUID();
+        $configPath = FieldsService::CONFIG_KEY . '.' . $uid;
+        $projectConfig->set($configPath, $configData);
+
+        $record = Themes::$plugin->fields->getRecordByUid($uid);
+        $field->setAttributes($record->getAttributes());
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function handleChanged(string $uid, array $data)
     {
         $field = Themes::$plugin->fields->getRecordByUid($uid);
         $field->setAttributes($data, false);
-        return $field->save(false);
+        $field->save(false);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function delete(FieldInterface $field): bool
+    {
+        \Craft::$app->getProjectConfig()->remove(FieldsService::CONFIG_KEY . '.' . $field->uid);
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function handleDeleted(string $uid, array $data)
+    {
+        \Craft::$app->getDb()->createCommand()
+            ->delete(FieldRecord::tableName(), ['uid' => $uid])
+            ->execute();
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function shouldExistOnLayout(LayoutInterface $layout): bool
+    {
+        return false;
     }
 
     /**
@@ -114,24 +159,6 @@ abstract class Field extends DisplayItem implements FieldInterface
         $attributes = $this->safeAttributes();
         $data = array_intersect_key($data, array_flip($attributes));
         $this->setAttributes($data);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function delete(string $uid, array $data)
-    {
-        \Craft::$app->getDb()->createCommand()
-            ->delete(FieldRecord::tableName(), ['uid' => $uid])
-            ->execute();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function shouldExistOnLayout(LayoutInterface $layout): bool
-    {
-        return false;
     }
 
     /**

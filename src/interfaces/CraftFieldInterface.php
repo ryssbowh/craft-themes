@@ -29,7 +29,7 @@ interface CraftFieldInterface extends FieldInterface
      * Callback when the associated Craft field is changed
      * 
      * @param  CraftField $field
-     * @return bool should the layout be saved
+     * @return bool should the associated display be resaved
      */
     public function onCraftFieldChanged(BaseField $field): bool;
 }

@@ -40,13 +40,30 @@ interface FieldInterface
     public static function create(?array $config = null): FieldInterface;
 
     /**
-     * Saves a field from an array of data
+     * Saves a field
      * 
      * @param  array  $uid
      * @param  array  $data
      * @return bool
      */
-    public static function save(string $uid, array $data): bool;
+    public static function save(FieldInterface $field): bool;
+
+    /**
+     * Handle a project config change
+     * 
+     * @param  string $uid
+     * @param  array  $data
+     * @return bool
+     */
+    public static function handleChanged(string $uid, array $data);
+
+    /**
+     * Delete a field
+     * 
+     * @param  FieldInterface $field
+     * @return bool
+     */
+    public static function delete(FieldInterface $field): bool;
 
     /**
      * Deletes a field record
@@ -54,7 +71,7 @@ interface FieldInterface
      * @param array  $uid
      * @param array  $data
      */
-    public static function delete(string $uid, array $data);
+    public static function handleDeleted(string $uid, array $data);
 
     /**
      * Populate this field from post data
@@ -65,6 +82,7 @@ interface FieldInterface
 
     /**
      * Should this field exist on a layout, called during the creation of a layout
+     * to automatically create this field on that layout.
      * 
      * @param  LayoutInterface $layout
      * @return bool

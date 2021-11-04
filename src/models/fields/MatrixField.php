@@ -25,7 +25,7 @@ class MatrixField extends CraftField
     }
 
     /**
-     * Matrix getter
+     * Matrix field getter
      * 
      * @return Matrix
      */
