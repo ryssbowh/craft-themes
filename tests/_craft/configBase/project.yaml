@@ -4,7 +4,6 @@ plugins:
     schemaVersion: 3.0.0
     edition: pro
     enabled: true
-    installed: true
 system:
   edition: pro
   live: true

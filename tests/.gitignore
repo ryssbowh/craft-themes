@@ -1,0 +1,5 @@
+/_craft/storage/logs
+/_craft/config/project
+/.env
+/.env.mysql
+/.env.postgres

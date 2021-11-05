@@ -20,8 +20,6 @@ class ThemesRegistry extends Service
 {   
     const EVENT_THEME_SET = 'themes.set';
     const THEMES_WEBROOT = '@webroot/themes/';
-    const EVENT_AFTER_INSTALL_THEME = 'after_install_theme';
-    const EVENT_AFTER_UNINSTALL_THEME = 'after_uninstall_theme';
 
     /**
      * @var ?array

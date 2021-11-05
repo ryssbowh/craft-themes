@@ -42,12 +42,12 @@ class ViewTest extends Unit
 
         $layout = $this->layouts->get('child-theme', 'entry', $entryType->uid);
         $html = $this->view->renderLayout($layout, 'default', $entry);
-        $this->assertStringContainsString('<div class="layout layout-entry view-mode-default handle-'.$entryType->handle.'">', $html);
+        $this->assertStringContainsString('<div class="layout" data-viewmode="default" data-handle="'.$section->handle."-".$entryType->handle.'" data-type="entry">', $html);
         $this->assertStringContainsString("<h1>
                     My Entry
             </h1>", $html);
-        $this->assertStringContainsString('<div class="display field field-title title_default">', $html);
-        $this->assertStringContainsString('<div class="display field field-author author_default">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="title_default" data-field="title">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="author_default" data-field="author">', $html);
 
     }
 

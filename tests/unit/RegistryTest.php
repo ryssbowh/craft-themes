@@ -80,15 +80,11 @@ class RegistryTest extends Unit
 
     protected function installChildTheme()
     {
-        $this->tester->expectEvent(ThemesRegistry::class, ThemesRegistry::EVENT_AFTER_INSTALL_THEME, function () {
-            Craft::$app->plugins->installPlugin('child-theme');
-        });
+        Craft::$app->plugins->installPlugin('child-theme');
     }
 
     protected function uninstallPartialTheme()
     {
-        $this->tester->expectEvent(ThemesRegistry::class, ThemesRegistry::EVENT_AFTER_UNINSTALL_THEME, function () {
-            Craft::$app->plugins->uninstallPlugin('partial-theme');
-        });
+        Craft::$app->plugins->uninstallPlugin('partial-theme');
     }
 }
