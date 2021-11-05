@@ -39,7 +39,7 @@
                 <a href="#" @click.prevent="deleteGroup" v-if="!groupDisplays.length" class="delete"><span class="icon delete"></span></a>
             </div>
         </div>
-        <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('No displays in that group') }}</i></span>
+        <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('This group is empty') }}</i></span>
         <draggable
             class="displays"
             item-key="uid"
@@ -199,21 +199,19 @@ export default {
         background: #f3f7fc;
         border-radius: 5px;
         padding: 7px 0;
+        position: relative;
         .line:first-child {
             margin-top: 0;
         }
-    }
-    .displays {
-        position: relative;
         .no-displays {
             position: absolute;
             left: 15px;
-            top: 19px;
+            top: 55px;
             opacity: 0.7;
         }
-        & > div {
-            min-height: 50px;
-        }
+    }
+    .displays {
+        min-height: 34px;
     }
     .line {
         min-height: unset !important;
