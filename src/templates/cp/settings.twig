@@ -3,17 +3,25 @@
 {% set title = 'Themes settings'|t('themes') %}
 
 {{
-    forms.selectField({
-        label: 'Main menu goes to :'|t('themes'),
-        options: settings.redirectToOptions,
-        value: settings.redirectTo,
-        name: 'redirectTo',
+    forms.textField({
+        label: 'Main menu item label'|t('themes'),
+        value: settings.menuItemName,
+        name: 'menuItemName',
         fieldClass: 'first'
     })
 }}
 
+{{
+    forms.selectField({
+        label: 'Main menu goes to :'|t('themes'),
+        options: settings.redirectToOptions,
+        value: settings.redirectTo,
+        name: 'redirectTo'
+    })
+}}
+
 {% if isPro %}
-     {{ 
+    {{ 
         forms.lightswitchField({
             label: 'Control panel shortcuts'|t('themes'),
             name: 'showCpShortcuts',

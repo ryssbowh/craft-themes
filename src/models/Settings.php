@@ -72,13 +72,29 @@ class Settings extends Model
     public $showCpShortcuts = true;
 
     /**
+     * @var string
+     */
+    public $menuItemName;
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        if (is_null($this->menuItemName)) {
+            $this->menuItemName = \Craft::t('themes', 'Theming');
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function defineRules(): array
     {
         return [
             ['showCpShortcuts', 'boolean'],
-            [['redirectTo'], 'string']
+            [['redirectTo', 'menuItemName'], 'string']
         ];
     }
 

@@ -145,7 +145,7 @@ class Themes extends \craft\base\Plugin
         if ($user->checkPermission('accessPlugin-themes')) {
             $item = [
                 'url' => 'themes',
-                'label' => \Craft::t('themes', 'Theming'),
+                'label' => $this->settings->menuItemName,
                 'subnav' => [
                     'themes' => [
                         'url' => 'themes/list',
