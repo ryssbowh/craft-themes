@@ -1,25 +1,14 @@
+@import '~craftcms-sass/_mixins';
+
 .themes-displays {
     .line, .matrix-type, .table-type {
         transition: opacity 0.3s;
     }
     .line.matrix, .line.table {
-        background: #f3f7fc;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        padding: 7px 0;
-        margin-bottom: 0;
+        width: 100%;
     }
     .table-type, .matrix-type {
-        background: #f3f7fc;
-        &:last-child {
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            padding-bottom: 7px;
-            margin-bottom: 7px;
-        }
-        .line:first-child {
-            margin-top: 0;
-        }
+        width: 100%;
         .line:last-child {
             margin-bottom: 0;
         }
@@ -27,6 +16,7 @@
     .matrix-type {
         position: relative;
         .matrix-type-name {
+            opacity: 0.7;
             padding-left: 1.5%;
         }
         .col.move {
@@ -39,7 +29,7 @@
             opacity: 0.5;
         }
     }
-    .line.group {
+    .group {
         .matrix-type {
             .col.move {
                 justify-content: end !important;

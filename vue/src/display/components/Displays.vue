@@ -19,6 +19,7 @@
                     :list="rootDisplays"
                     group="displays"
                     handle=".move"
+                    swapThreshold="0.65"
                     @change="onDragChange"
                     >
                     <template #item="{element}">
@@ -125,23 +126,33 @@ export default {
 </script>
 
 <style lang="scss">
+@import '~craftcms-sass/_mixins';
+
 .content-pane {
     border-top-left-radius: 0;
 }
 .display-table {
     .head {
         font-weight: bold;
-        background: #f3f7fc;
+        background: $grey050;
         border-radius: 5px;
     }
     .line {
         display: grid;
         grid-template-columns: 5% 24% 12% 17% 17% 19% 6%;
         align-items: center;
-        margin: 0;
+        margin-bottom: 7px;
     }
-    .line {
-        margin: 7px 0;
+    .line-wrapper {
+        display: flex;
+        flex-direction: column;
+        border-radius: 5px;
+        background: $grey050;
+        padding: 7px 0;
+        margin-bottom: 7px;
+    }
+    .line-wrapper:last-child, .line:last-child {
+        margin-bottom: 0;
     }
     .head .col {
         padding: 7px 8px;

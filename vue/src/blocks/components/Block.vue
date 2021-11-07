@@ -2,7 +2,7 @@
     <div :class="{'block': true, original: original, active: (block.active && !original)}">
         <div class="inner">
             <div class="description">
-                <div class="name">{{ block.name }} <span class="red-star" v-if="hasErrors">*</span></div>
+                <div class="name">{{ block.name }} <span class="error" data-icon="alert" aria-label="Error" v-if="hasErrors"></span></div>
                 <div class="small" v-if="original">{{ block.smallDescription }}</div>
                 <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="!original && showFieldHandles" @click="copyValue">
                     <input type="text" :value="fullName" readonly="" :size="fullName.length">
@@ -11,7 +11,7 @@
             </div>
             <span class="info" v-if="original && block.longDescription">{{ block.longDescription }}</span>
             <div class="actions">
-                <a v-if="!original" :class="'settings icon' + (blockOptionId == block.index ? ' active' : '')" @click.prevent="setShowOptionsModal({show:true, block: block})"></a>
+                <a v-if="!original" :class="{settings: true, icon: true, active: blockOptionId == block.index, error: hasErrors}" @click.prevent="setShowOptionsModal({show:true, block: block})"></a>
                 <a v-if="!original" class="delete icon" @click.prevent="$emit('remove', block)"></a>
             </div>
         </div>
@@ -53,20 +53,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '~craftcms-sass/_mixins';
   .block {
     padding: 8px 14px;
-    border-bottom: solid rgba(51, 64, 77, 0.1);
+    border-bottom: solid $grey200;
     border-width: 1px 0;
     transition: all 0.3s;
-    background-color: #cdd8e4;
+    background-color: $grey100;
     opacity: 0.5;
     min-height: 34px;
     display: flex;
     align-items: center;
     cursor: grab;
-    .red-star {
-        color: red;
-    }
     .copytextbtn:hover {
         margin-left: 0;
         margin-right: -16px;
@@ -94,7 +92,6 @@ export default {
     }
     &.original {
         opacity: 1;
-        background-color: #e4edf6;
         .description {
             flex-direction: column;
             margin-right: 5px;
@@ -121,12 +118,6 @@ export default {
         padding: 0 2px;
         cursor: pointer;
         font-size: 16px;
-    }
-    .settings {
-        opacity: 0.5;
-        &:hover {
-            opacity: 1;
-        }
     }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="group">
+    <div class="line-wrapper group">
         <div :class="classes">
             <div class="move col"><div class="move icon"></div></div>
             <div class="title col">
@@ -45,6 +45,7 @@
             item-key="uid"
             :list="groupDisplays"
             :group="{name: 'displays', put: canPut}"
+            swapThreshold="1.2"
             handle=".move"
             @change="onDragChange"
             >
@@ -192,39 +193,35 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-    .delete {
-        margin-left: 5px;
+@import '~craftcms-sass/_mixins';
+
+.delete {
+    margin-left: 5px;
+}
+.group {
+    position: relative;
+    .no-displays {
+        position: absolute;
+        left: 15px;
+        top: 50px;
+        opacity: 0.7;
     }
-    .group {
-        background: #f3f7fc;
-        border-radius: 5px;
-        padding: 7px 0;
-        position: relative;
-        .line:first-child {
-            margin-top: 0;
-        }
-        .no-displays {
-            position: absolute;
-            left: 15px;
-            top: 55px;
-            opacity: 0.7;
-        }
-    }
-    .displays {
-        min-height: 34px;
-    }
-    .line {
+    & > .line {
         min-height: unset !important;
-        &:last-child {
-            margin-bottom: 0;
+        &.opaque ~ .displays {
+            opacity: 0.5;
         }
     }
-    .line.opaque ~ .displays {
-        opacity: 0.5;
+}
+.displays {
+    min-height: 34px;
+    .line-wrapper {
+        padding: 0;
     }
+}
 </style>
 <style lang="scss">
-    .display-table .group .displays .col.move {
-        justify-content: center;
-    }
+.display-table .group .displays .col.move {
+    justify-content: center;
+}
 </style>

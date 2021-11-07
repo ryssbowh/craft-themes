@@ -31,6 +31,9 @@ document.addEventListener("register-field-displayers-components", function(e) {
             getErrors: function (kind) {
                 return this.errors[kind] ? this.errors[kind][0] ?? {} : {};
             },
+            hasErrors: function (kind) {
+                return Object.keys(this.getErrors(kind)).length != 0;
+            },
             updateOptions: function (kind, options) {
                 this.options.displayers[kind].options = merge(this.options.displayers[kind].options, options);
                 this.$emit('updateOptions', this.options);
@@ -60,7 +63,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div :class="{'kind-item': true, sel: currentKind == handle}" v-for="elem, handle in displayer.displayersMapping" v-bind:key="handle" @click.prevent="currentKind = handle">
                     <div class="name">
-                        <h4>{{ elem.label }}</h4>
+                        <h4>{{ elem.label }} <span class="error" data-icon="alert" aria-label="Error" v-if="hasErrors(handle)"></span></h4>
                         <div class="smalltext light code" v-if="options.displayers[handle].displayer ?? null">
                             {{ getDisplayerName(handle) }}
                         </div>

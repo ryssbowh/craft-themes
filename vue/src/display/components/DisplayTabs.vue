@@ -120,6 +120,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@import '~craftcms-sass/_mixins';
+
 .icon.delete, .icon.edit {
     margin-left: 10px;
     margin-right: 0 !important;
@@ -146,7 +148,7 @@ export default {
     left: 12px;
     top: 20px;
     text-transform: uppercase;
-    color: #596673;
+    color: $mediumTextColor;
     font-size: 11px;
     font-weight: bold;
 }

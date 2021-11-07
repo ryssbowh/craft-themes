@@ -107,6 +107,8 @@ export default {
 </style>
 
 <style lang="scss" scoped>
+@import '~craftcms-sass/_mixins';
+
 .slide-enter-active {
     transition-duration: 0.3s;
     transition-timing-function: ease-in;
@@ -131,7 +133,7 @@ export default {
     position: relative;
     display: flex;
     border-radius: 3px;
-    background-color: #f3f7fc;
+    background-color: $grey050;
     overflow: hidden;
     border: 1px solid rgba(96, 125, 159, 0.25);
     box-shadow: 0 0 0 1px rgba(31, 41, 51, 0.1), 0 2px 5px -2px rgba(31, 41, 51, 0.2);
@@ -195,7 +197,7 @@ export default {
     .heading {
         padding: 7px 14px 6px;
         border-bottom: 1px solid rgba(96, 125, 159, 0.25);
-        background-color: #f3f7fc;
+        background-color: $grey050;
         background-image: linear-gradient(rgba(51, 64, 77, 0), rgba(51, 64, 77, 0.05));
     }
     h5.slide {

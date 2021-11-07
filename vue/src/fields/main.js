@@ -28,10 +28,10 @@ document.addEventListener("register-fields-components", function(e) {
             },
             emits: ['updateItem'],
             template: `
-            <div>
+            <div class="line line-wrapper">
                 <field :item="item" @updateItem="$emit('updateItem', $event)"></field>
                 <div class="matrix-type" v-for="type, index in item.types" v-bind:key="index">
-                    <div class="matrix-type-name">{{ t('Type {type}', {type: type.type.name}) }}</div>
+                    <div class="matrix-type-name"><i>{{ t('Type {type}', {type: type.type.name}) }}</i></div>
                     <draggable
                         item-key="id"
                         :list="type.fields"
@@ -69,7 +69,7 @@ document.addEventListener("register-fields-components", function(e) {
             },
             emits: ['updateItem'],
             template: `
-            <div>
+            <div class="line line-wrapper">
                 <field :item="item" @updateItem="$emit('updateItem', $event)"></field>
                 <div class="table-type">
                     <field :item="element" v-for="element, key in item.fields" :moveable="false" v-bind:key="key" @updateItem="updateTableItem(key, $event)"></field>

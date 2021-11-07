@@ -262,9 +262,11 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 - 1.x documentation [there](README1.md)
 - 2.x documentation [there](README2.md)
 
-## Roadmap
+## Roadmap/Ideas
 
 - Themes preferences not related to project config
 - Restricted version of blocks page for envs where admin changes are disabled
 - SCSS compiler
 - theme dependencies recursive
+- Preview on displays/blocks
+- Delete non-empty display groups

@@ -1,3 +1,5 @@
+@import '~craftcms-sass/_mixins';
+
 .displayer-file_default.options-modal {
     .body .content .main {
         overflow: hidden;
@@ -43,7 +45,7 @@
 
 .displayers-sidebar {
     position: absolute;
-    background-color: #f3f7fc;
+    background-color: $grey050;
     left: 0;
     width: 205px;
     height: 100%;
@@ -51,18 +53,21 @@
     .heading {
         padding: 7px 14px 6px;
         border-bottom: 1px solid rgba(51, 64, 77, 0.1);
-        background-color: #f3f7fc;
+        background-color: $grey050;
         background-image: linear-gradient(rgba(51, 64, 77, 0), rgba(51, 64, 77, 0.05));
     }
     .kind-item {
         display: flex;
         justify-content: space-between;
         padding: 8px 14px;
-        border: solid rgba(51, 64, 77, 0.1);
+        border-bottom: solid $grey200;
         border-width: 1px 0;
-        background-color: #e4edf6;
+        background-color: $grey100;
         &.sel {
-            background-color: #cdd8e4
+            background-color: $grey200
+        }
+        &:last-child {
+            border-bottom: none;
         }
     }
     h4 {
