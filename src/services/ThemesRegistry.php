@@ -159,9 +159,13 @@ class ThemesRegistry extends Service
      */
     public function getDependencies(ThemeInterface $theme): array
     {
-        return array_filter($this->all(), function ($theme2) use ($theme) {
+        $dependencies = array_values(array_filter($this->all(), function ($theme2) use ($theme) {
             return $theme2->extends == $theme->handle;
-        });
+        }));
+        foreach ($dependencies as $theme2) {
+            $dependencies = array_merge($dependencies, $this->getDependencies($theme2));
+        }
+        return $dependencies;
     }
 
     /**
