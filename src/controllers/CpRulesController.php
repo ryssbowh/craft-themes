@@ -96,6 +96,9 @@ class CpRulesController extends Controller
 
         $settings = $this->request->getRequiredParam('settings');
         $plugin = \Craft::$app->getPlugins()->getPlugin('themes');
+        if (!$settings['themesRules']) {
+            $settings['themesRules'] = [];
+        }
 
         if (!\Craft::$app->getPlugins()->savePluginSettings($plugin, $settings)) {
             $this->setFailFlash(\Craft::t('themes', 'Couldn’t save theme rules'));

@@ -13,7 +13,7 @@ class Installer extends Module
     {
         parent::init();
 
-        // Make sur the themes plugin is installed first and install its dependencies before a theme is installed
+        // Make sure the themes plugin is installed first and install its dependencies before a theme is installed
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin instanceof ThemeInterface) {
