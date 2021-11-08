@@ -10,6 +10,7 @@ use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\models\Settings;
+use Ryssbowh\CraftThemes\scss\Compiler;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
@@ -82,6 +83,12 @@ class Themes extends \craft\base\Plugin
         $this->registerSwitchEdition();
         $this->registerBehaviors();
         $this->registerProjectConfig();
+
+        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_SITE_URL_RULES, function(RegisterUrlRulesEvent $event) {
+            $event->rules = array_merge($event->rules, [
+                'scss' => 'themes/cp-themes/scss',
+            ]);
+        });
 
         if ($this->is($this::EDITION_PRO)) {
             $this->initPro();
@@ -391,6 +398,7 @@ class Themes extends \craft\base\Plugin
             'tables' => TablesService::class,
             'fileDisplayers' => FileDisplayerService::class,
             'groups' => GroupsService::class,
+            'scssCompiler' => Compiler::class,
         ]);
     }
 

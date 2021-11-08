@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\ListAssets;
+use Ryssbowh\CraftThemes\scss\Compiler;
 use craft\web\Response;
 
 /**
@@ -42,5 +43,15 @@ class CpThemesController extends Controller
             'themes' => Themes::$plugin->registry->all(),
             'isPro' => Themes::$plugin->is(Themes::EDITION_PRO)
         ]);
+    }
+
+    public function actionScss()
+    {
+        $theme = Themes::$plugin->registry->getTheme('front-theme');
+        $compiler = new Compiler($theme, 'assets/src/front.scss', 'themes/front/front.css', [
+            'manifest' => true,
+            'fileName' => '[name]'
+        ]);
+        return $compiler->run();
     }
 }
