@@ -24,6 +24,9 @@ document.addEventListener("register-fields-components", function(e) {
                             field = merge(field, data);
                         }
                     }
+                },
+                sortableGroup: function (type) {
+                    return 'matrix-'+type.type_id;
                 }
             },
             emits: ['updateItem'],
@@ -35,7 +38,7 @@ document.addEventListener("register-fields-components", function(e) {
                     <draggable
                         item-key="id"
                         :list="type.fields"
-                        group="'matrix-'+type.type_id"
+                        :group="sortableGroup(type)"
                         handle=".move"
                         >
                         <template #item="{element}">
