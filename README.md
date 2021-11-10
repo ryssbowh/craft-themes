@@ -269,4 +269,3 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 - Restricted version of blocks page for envs where admin changes are disabled
 - SCSS compiler
 - Preview on displays/blocks
-- Delete non-empty display groups

@@ -36,7 +36,7 @@
             </div>
             <div class="options col">
                 <a href="#" @click.prevent="editGroup"><span class="icon settings"></span></a>
-                <a href="#" @click.prevent="deleteGroup" v-if="!groupDisplays.length" class="delete"><span class="icon delete"></span></a>
+                <a href="#" @click.prevent="deleteGroup" class="delete"><span class="icon delete"></span></a>
             </div>
         </div>
         <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('This group is empty') }}</i></span>
@@ -77,7 +77,7 @@ export default {
         groupDisplays: function () {
             return sortBy(this.item.displays, 'order');
         },
-        ...mapState(['showFieldHandles', 'labelsVisibility', 'itemsVisibility'])
+        ...mapState(['showFieldHandles', 'labelsVisibility', 'itemsVisibility', 'viewMode'])
     },
     props: {
         item: Object,
@@ -139,6 +139,16 @@ export default {
             this.setShowGroupModal({show: true, editUid: this.display.uid});
         },
         deleteGroup: function () {
+            if (!confirm(this.t('Are you sure you want to delete this group ?'))) {
+                return;
+            }
+            let order = this.viewMode.displays.length - 1;
+            for (let display of this.groupDisplays) {
+                display.group_id = null;
+                display.order = order;
+                order++;
+                this.addDisplay(display);
+            }
             this.removeDisplay(this.display);
         },
         onDragChange: function (e) {
@@ -186,7 +196,7 @@ export default {
                 movedElem.order = newIndex;
             }
         },
-        ...mapMutations(['setShowGroupModal', 'addDisplayToGroup', 'removeDisplayFromGroup', 'removeDisplay']),
+        ...mapMutations(['setShowGroupModal', 'addDisplayToGroup', 'removeDisplayFromGroup', 'removeDisplay', 'addDisplay']),
         ...mapActions([]),
     },
     emits: ['updateItem', 'delete'],

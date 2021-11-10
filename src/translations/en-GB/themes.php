@@ -18,6 +18,7 @@ return [
 	"A custom template" => "A custom template",
 	"Add group" => "Add group",
 	"Any" => "Any",
+	"Are you sure you want to delete this group ?" => "Are you sure you want to delete this group ?",
 	"Are you sure you want to delete this layout ?" => "Are you sure you want to delete this layout ?",
 	"Asset title" => "Asset title",
 	"Author" => "Author",

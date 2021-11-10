@@ -143,8 +143,8 @@ return [
 	"Cache depends on view port (mobile, tablet or desktop)" => "Mettre en cache différemment en fonction de la vue de l'utilisateur (mobile, tablette, ou bureau)",
 	"Cache depends on user authentication" => "Mettre en cache différemment si l'utilisateur est connecté ou non",
 	"Caching" => "Mise en cache",
-	"View mode" => "Mode de vue",
 	"Rendered as view mode" => "Mode de vue",
+	"View mode" => "Mode de vue",
 	"View mode is invalid" => "Mode de vue invalide",
 	"View mode for volume {volume}" => "Mode de vue pour le volume {volume}",
 	"View mode for {type}" => "Mode de vue pour {type}",
@@ -242,6 +242,7 @@ return [
 	"here" => "ici",
 	"Extends from {theme}" => "Étends {theme} ",
 	"Tag : {name}" => "Étiquette : {name}",
+	"Are you sure you want to delete this group ?" => "Êtes vous sur de vouloir supprimer ce groupe ?",
 	"Are you sure you want to delete this layout ?" => "Êtes-vous sur de vouloir supprimer cette disposition ?",
 ];
 
