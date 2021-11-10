@@ -12,7 +12,8 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryList;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CheckboxesDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\ColourDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DateDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\Date;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\DateTime;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DropdownDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EmailDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryLink;
@@ -31,7 +32,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\TableDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagList;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitleDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\Time;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserDefault;
@@ -73,7 +74,8 @@ class FieldDisplayerEvent extends Event
             CategoryList::class,
             CheckboxesDefault::class,
             ColourDefault::class,
-            DateDefault::class,
+            Date::class,
+            DateTime::class,
             DropdownDefault::class,
             EmailDefault::class,
             EntryLink::class,
@@ -92,7 +94,7 @@ class FieldDisplayerEvent extends Event
             TagList::class,
             TagTitleDefault::class,
             TagRendered::class,
-            TimeDefault::class,
+            Time::class,
             TitleDefault::class,
             UrlDefault::class,
             UserDefault::class,

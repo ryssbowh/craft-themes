@@ -34,7 +34,6 @@
         <p v-if="layouts.length == 0 && !isLoading">
             {{ t('No layouts available, you should reinstall the themes data in the settings') }}
         </p>
-        <options-modal/>
         <group-modal @closeModal="setShowGroupModal({show: false})"/>
     </div>
 </template>

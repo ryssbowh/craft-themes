@@ -2,10 +2,10 @@
 
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
-class DateDefaultOptions extends DateOptions
+class DateTimeOptions extends DateOptions
 {
     /**
      * @var string
      */
-    public $format = 'd/m/Y';
+    public $format = 'd/m/Y H:i:s';
 }

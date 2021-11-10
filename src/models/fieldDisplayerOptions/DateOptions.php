@@ -4,12 +4,12 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 
-class TimeDefaultOptions extends FieldDisplayerOptions
+class DateOptions extends FieldDisplayerOptions
 {
     /**
      * @var string
      */
-    public $format = 'H:i:s';
+    public $format = 'd/m/Y';
 
     /**
      * @var string
@@ -24,9 +24,20 @@ class TimeDefaultOptions extends FieldDisplayerOptions
         return [
             [['format', 'custom'], 'string'],
             ['format', 'required'],
+            ['format', 'in', 'range' => array_keys($this->formats)],
             ['custom', 'required', 'when' => function ($model) {
                 return $model->format == 'custom';
             }],
         ];
+    }
+
+    /**
+     * Get available formats
+     * 
+     * @return array
+     */
+    public function getFormats(): array
+    {
+        return $this->displayer->formats;
     }
 }

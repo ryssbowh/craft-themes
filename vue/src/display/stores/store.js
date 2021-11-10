@@ -58,15 +58,11 @@ const store = createStore({
             viewModes: [],
             originalViewModes: [],
             viewMode: null,
-            showOptionsModal: false,
             showGroupModal: false,
             editedGroupUid: null,
-            displayer: {},
-            editedItem: {},
             showFieldHandles: false,
             itemsVisibility: null,
-            labelsVisibility: null,
-            resetItemOptions: false,
+            labelsVisibility: null
         }
     },
     mutations: {
@@ -175,12 +171,6 @@ const store = createStore({
         },
         setIsSaving(state, value) {
             state.isSaving = value;
-        },
-        openDisplayerOptions(state, {show, displayer = {}, item = {}, resetOptions = false}) {
-            state.showOptionsModal = show;
-            state.displayer = displayer;
-            state.editedItem = item;
-            state.resetItemOptions = resetOptions;
         },
         setShowGroupModal(state, {show, editUid = null}) {
             state.showGroupModal = show;

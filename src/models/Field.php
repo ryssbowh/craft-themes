@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
@@ -226,8 +227,12 @@ abstract class Field extends DisplayItem implements FieldInterface
         if (!$this->displayerHandle) {
             return null;
         }
-        $this->_displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle);
-        $this->_displayer->field = $this;
+        try {
+            $this->_displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle);
+            $this->_displayer->field = $this;
+        } catch (FieldDisplayerException $e) {
+            //Field displayer is set but invalid (its handle has changed ?)          
+        }
         return $this->_displayer;
     }
 

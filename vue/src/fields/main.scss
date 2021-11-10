@@ -7,6 +7,9 @@
     .line.matrix, .line.table {
         width: 100%;
     }
+    .line.matrix {
+        margin-bottom: 0;
+    }
     .table-type, .matrix-type {
         width: 100%;
         .line:last-child {

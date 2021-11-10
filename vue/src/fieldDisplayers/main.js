@@ -228,49 +228,6 @@ document.addEventListener("register-field-displayers-components", function(e) {
         </div>`
     };
 
-    e.detail['time_default'] = {
-        props: {
-            displayer: Object,
-            options: Object,
-            errors: Object
-        },
-        emits: ['updateOptions'],
-        template: `
-        <div>
-            <div class="field">
-                <div class="heading">
-                    <label class="required">{{ t('Format') }}</label>
-                </div>
-                <div class="input ltr">                    
-                    <div class="select">
-                        <select v-model="options.format" @input="$emit('updateOptions', {format: $event.target.value})">
-                            <option value="H:i:s">{{ t('Full : {timeFormat}', {timeFormat: '13:25:36'}) }}</option>
-                            <option value="H:iY">{{ t('Without seconds : {timeFormat}', {timeFormat: '13:25'}) }}</option>
-                            <option value="custom">{{ t('Custom') }}</option>
-                        </select>
-                    </div>
-                </div>
-                <ul class="errors" v-if="errors.format">
-                    <li v-for="error in errors.format">{{ error }}</li>
-                </ul>
-            </div>
-            <div class="field" v-if="options.format == 'custom'">
-                <div class="heading">
-                    <label class="required">{{ t('Custom') }}</label>
-                </div>
-                <div class="instructions">
-                    <p><span v-html="t('View available formats')"></span> <a href="https://www.php.net/manual/fr/datetime.format.php" target="_blank">{{ t('here') }}</a></p>
-                </div>
-                <div class="input ltr">
-                    <input type="text" class="fullwidth text" :value="options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
-                </div>
-                <ul class="errors" v-if="errors.custom">
-                    <li v-for="error in errors.custom">{{ error }}</li>
-                </ul>
-            </div>
-        </div>`
-    };
-
     e.detail['redactor_truncated'] = {
         props: {
             displayer: Object,
@@ -419,7 +376,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         </div>`
     };
 
-    e.detail['date_default'] = {
+    e.detail['date_date'] = {
         props: {
             displayer: Object,
             options: Object,
@@ -434,11 +391,8 @@ document.addEventListener("register-field-displayers-components", function(e) {
                 </div>
                 <div class="input ltr">                    
                     <div class="select">
-                        <select name="format" v-model="options.format" @input="$emit('updateOptions', {format: $event.target.value})">
-                            <option value="d/m/Y H:i:s">{{ t('Full : {dateFormat}', {dateFormat: '31/10/2005 13:25:13'}) }}</option>
-                            <option value="d/m/Y">{{ t('Date : {dateFormat}', {dateFormat: '31/10/2005'}) }}</option>
-                            <option value="H:i">{{ t('Time : {timeFormat}', {timeFormat: '13:25'}) }}</option>
-                            <option value="custom">{{ t('Custom') }}</option>
+                        <select v-model="options.format" @input="$emit('updateOptions', {format: $event.target.value})">
+                            <option :value="format" v-for="label, format in displayer.formats">{{ label }}</option>
                         </select>
                     </div>
                 </div>
@@ -451,7 +405,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
                     <label class="required">{{ t('Custom') }}</label>
                 </div>
                 <div class="instructions">
-                    <p><span v-html="t('View available formats')"></span> <a href="https://www.php.net/manual/fr/datetime.format.php" target="_blank">{{ t('here') }}</a></p>
+                    <p><span v-html="t('View available formats')"></span> <a href="https://www.php.net/manual/en/datetime.format.php" target="_blank">{{ t('here') }}</a></p>
                 </div>
                 <div class="input ltr">
                     <input type="text" class="fullwidth text" :value="options.custom" @input="$emit('updateOptions', {custom: $event.target.value})">
@@ -462,6 +416,10 @@ document.addEventListener("register-field-displayers-components", function(e) {
             </div>
         </div>`
     };
+
+    e.detail['date_datetime'] = {...e.detail['date_date']};
+
+    e.detail['time_time'] = {...e.detail['date_date']};
 
     e.detail['email_default'] = {
         props: {

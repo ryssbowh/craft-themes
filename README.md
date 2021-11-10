@@ -154,7 +154,8 @@ Here is a list of available displayers for each type of field :
 | Category      | Rendered (category layout) | View mode                                        |
 | Checkboxes    | Default                    |                                                  |
 | Colour        | Default                    |                                                  |
-| Date          | Default                    | Format                                           |
+| Date          | Date                       | Predefined or custom format                      |
+| Date          | Date and time              | Predefined or custom format                      |
 | Dropdown      | Default                    |                                                  |
 | Email         | Default                    | Output as link                                   |
 | Entries       | Link to entry              | Label, new tab                                   |
@@ -169,7 +170,7 @@ Here is a list of available displayers for each type of field :
 | Table         | Default                    |                                                  |
 | Tag           | List                       |                                                  |
 | Tag           | Rendered (tag layout)      | View mode                                        |
-| Time          | Default                    | Format                                           |
+| Time          | Time                       | Predefined or custom format                      |
 | Url           | Default                    | New tab, label                                   |
 | Users         | Default                    | Show firstname/surname/email, link email         |
 | Users         | Rendered (user layout)     | View mode                                        |

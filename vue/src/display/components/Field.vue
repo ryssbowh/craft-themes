@@ -41,8 +41,9 @@
             <span v-if="!hasDisplayers">{{ t('None available') }}</span>
         </div>
         <div class="options col">
-            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="openDisplayerOptions({show: true, displayer: displayer, item: this.item})"><div class="icon settings"></div></a>
+            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="showModal = true"><div class="icon settings"></div></a>
         </div>
+        <options-modal @onSave="onSaveModal" v-if="showModal" :resetoptions="resetDisplayerOptions" :displayer="displayer" :item="item" @onHide="closeModal"/>
     </div>
 </template>
 
@@ -116,6 +117,7 @@ export default {
     data() {
         return {
             showModal: false,
+            resetDisplayerOptions: false
         }
     },
     watch: {
@@ -138,9 +140,12 @@ export default {
             Craft.cp.displayNotice(this.t('Copied to clipboard.', 'app'));
             input.setSelectionRange(0, 0);
         },
+        closeModal: function () {
+            this.showModal = false;
+            this.resetDisplayerOptions = false;
+        },
         onSaveModal: function (data) {
             this.$emit("updateItem", {options: data});
-            this.showModal = false;
         },
         updateLabelVisibility: function (e) {
             let val = e.originalTarget.value;
@@ -154,7 +159,6 @@ export default {
                 data.labelHidden = false;
                 data.labelVisuallyHidden = true;
             }
-            console.log(data);
             this.$emit("updateItem", data);
         },
         updateVisibility: function (e) {
@@ -173,12 +177,11 @@ export default {
         },
         updateDisplayer: function(e) {
             this.$emit("updateItem", {displayerHandle: e.originalTarget.value});
+            this.resetDisplayerOptions = true;
             if(this.displayer.hasOptions) {
-                this.openDisplayerOptions({show: true, displayer: this.displayer, item: this.item, resetOptions: true});
+                this.showModal = true;
             }
-        },
-        ...mapMutations(['openDisplayerOptions']),
-        ...mapActions([]),
+        }
     },
     emits: ['updateItem'],
 };

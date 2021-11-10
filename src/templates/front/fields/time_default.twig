@@ -1,6 +1,0 @@
-{% extends "fields/_field" %}
-
-{% block content %}
-    {% set format = options.format == 'custom' ? options.custom : options.format %}
-    {{ value|date(format) }}
-{% endblock %}

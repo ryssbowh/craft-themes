@@ -24,6 +24,7 @@ document.addEventListener("register-fields-components", function(e) {
                             field = merge(field, data);
                         }
                     }
+                    this.$emit('updateItem', this.item);
                 },
                 sortableGroup: function (type) {
                     return 'matrix-'+type.type_id;
@@ -65,9 +66,10 @@ document.addEventListener("register-fields-components", function(e) {
                 display: Object
             },
             methods: {
-                updateTableItem: function (key, data) {
+                updateTableField: function (key, data) {
                     let item = this.item.fields[key];
                     item = merge(item, data);
+                    this.$emit('updateItem', this.item);
                 }
             },
             emits: ['updateItem'],
@@ -75,7 +77,7 @@ document.addEventListener("register-fields-components", function(e) {
             <div class="line line-wrapper">
                 <field :item="item" @updateItem="$emit('updateItem', $event)"></field>
                 <div class="table-type">
-                    <field :item="element" v-for="element, key in item.fields" :moveable="false" v-bind:key="key" @updateItem="updateTableItem(key, $event)"></field>
+                    <field :item="element" v-for="element, key in item.fields" :moveable="false" v-bind:key="key" @updateItem="updateTableField(key, $event)"></field>
                 </div>
             </div>`
         },

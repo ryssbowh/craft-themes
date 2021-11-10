@@ -6,7 +6,7 @@
         <div class="body">
             <div class="content">
                 <form class="main" ref="form">
-                    <component :is="optionsComponent" :displayer="displayer" :options="options" :errors="errors ?? {}" @updateOptions="updateOptions" :key="editedItem.id"></component>
+                    <component :is="optionsComponent" :displayer="displayer" :options="options" :errors="errors ?? {}" @updateOptions="updateOptions" :key="item.id"></component>
                 </form>
             </div>
         </div>
@@ -27,8 +27,12 @@ export default {
     computed: {
         optionsComponent: function () {
             return 'fieldDisplayer-' + this.displayer.handle;
-        },
-        ...mapState(['showOptionsModal', 'displayer', 'editedItem', 'displayerOptionsErrors', 'resetItemOptions'])
+        }
+    },
+    props: {
+        displayer: Object,
+        item: Object,
+        resetoptions: Boolean
     },
     data() {
         return {
@@ -37,43 +41,41 @@ export default {
             errors: {}
         }
     },
-    watch: {
-        showOptionsModal: function () {
-            if (this.showOptionsModal) {
-                if (this.resetItemOptions) {
-                    this.options = merge({}, this.displayer.options);
-                } else {
-                    this.options = merge(this.displayer.options, this.editedItem.options);
-                }
-                this.errors = this.editedItem.errors;
-                this.modal.show();
-            } else {
-                this.modal.hide();
-            }
-        },
+    created() {
+        //resetoptions will be true when the displayer is changed, 
+        //we need then to reset the options to the displayer's defaults
+        if (this.resetoptions) {
+            this.options = merge({}, this.displayer.options);
+        } else {
+            this.options = merge({}, this.item.options);
+        }
+        this.errors = this.item.errors;
     },
     beforeUnmount () {
         this.modal.destroy();
     },
     mounted: function () {
+        let _this = this;
         this.modal = new Garnish.Modal(this.$refs.modal, {
             hideOnEsc: false,
             hideOnShadeClick: false,
-            autoShow: false
+            onHide: () => {
+                this.$emit('onHide');
+            }
         });
     },
     methods: {
         closeModal () {
             this.options = {};
             this.errors = {};
-            this.openDisplayerOptions({show:false})
+            this.modal.hide();
         },
         updateOptions (options) {
             this.options = {...this.options, ...options};
         },
         save () {
             let data = {
-                fieldId: this.editedItem.id,
+                fieldId: this.item.id,
                 displayer: this.displayer.handle,
                 options: this.options
             };
@@ -86,17 +88,15 @@ export default {
                 if (Object.keys(response.data.errors).length > 0) {
                     this.errors = response.data.errors;
                 } else {
-                    this.editedItem.options = this.options;
-                    this.updateItem(this.editedItem);
+                    this.$emit('onSave', this.options);
                     this.closeModal();
                 }
             }).catch((err) => {
                 this.handleError(err);
             });
-        },
-        ...mapMutations(['updateItem', 'openDisplayerOptions'])
+        }
     },
-    emits: [],
+    emits: ['onSave', 'onHide'],
 };
 </script>
 <style lang="scss" scoped>
