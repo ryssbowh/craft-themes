@@ -1,5 +1,8 @@
 {% extends "fields/_field" %}
 
+{% set value = value.options|filter(e => e.selected)|map(e => e.label)|join(', ') %}
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {{ value.options|filter(e => e.selected)|map(e => e.label)|join(', ') }}
+    {{ value }}
 {% endblock %}

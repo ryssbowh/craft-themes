@@ -1,16 +1,16 @@
 {% extends "fields/_field" %}
 {% import "_includes/macros" as macros %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {% if value|length %}
-        {% if craftField.limit == '1' %}
-            {{ macros.assetLink(value.0, options) }}
-        {% else %}
-            <ul class="asset-list">
-                {% for asset in value %}
-                    <li class="asset-list-item">{{ macros.assetLink(asset, options) }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+    {% if craftField.limit == '1' %}
+        {{ macros.assetLink(value.0, options) }}
+    {% else %}
+        <ul class="asset-list">
+            {% for asset in value %}
+                <li class="asset-list-item">{{ macros.assetLink(asset, options) }}</li>
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endblock %}

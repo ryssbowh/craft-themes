@@ -4,16 +4,16 @@
     {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind))|raw }}
 {% endmacro %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {% if value|length %}
-        {% if craftField.limit == '1' %}
-            {{ _self.render(value.0, field, options) }}
-        {% else %}
-            <ul class="asset-files">
-                {% for asset in value %}
-                    <li class="asset-file-item">{{ _self.render(asset, field, options) }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+    {% if craftField.limit == '1' %}
+        {{ _self.render(value.0, field, options) }}
+    {% else %}
+        <ul class="asset-files">
+            {% for asset in value %}
+                <li class="asset-file-item">{{ _self.render(asset, field, options) }}</li>
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endblock %}

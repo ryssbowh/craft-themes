@@ -1,5 +1,7 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
     {% set format = options.format == 'custom' ? options.custom : options.format %}
     {{ value|date(format) }}

@@ -1,3 +1,4 @@
 {% extends "fields/_field" %}
 
 {% set value = value.label %}
+{% set show_field = value|length > 0 %}

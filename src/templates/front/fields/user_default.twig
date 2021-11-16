@@ -1,25 +1,25 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {% if value %}
-        {% for user in value %}
-            <p class="user">
-                {% if options.firstName %}
-                    {{ user.firstName }}
+    {% for user in value %}
+        <p class="user">
+            {% if options.firstName %}
+                {{ user.firstName }}
+            {% endif %}
+            {% if options.lastName %}
+                {{ user.lastName }}
+            {% endif %}
+            {% if options.email %}
+                ({% if options.linkEmail %}
+                    <a href="mailto:{{ user.email }}">
                 {% endif %}
-                {% if options.lastName %}
-                    {{ user.lastName }}
-                {% endif %}
-                {% if options.email %}
-                    ({% if options.linkEmail %}
-                        <a href="mailto:{{ user.email }}">
-                    {% endif %}
-                    {{ user.email }}
-                    {% if options.linkEmail %}
-                        </a>
-                    {% endif %})
-                {% endif %}
-                    </p>
-        {% endfor %}
-    {% endif %}
+                {{ user.email }}
+                {% if options.linkEmail %}
+                    </a>
+                {% endif %})
+            {% endif %}
+                </p>
+    {% endfor %}
 {% endblock %}

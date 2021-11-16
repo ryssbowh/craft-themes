@@ -67,7 +67,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
     public function getBlockAttributes(BlockInterface $block): array
     {
         return [
-            'data-handle' => 'block-' . $block->getMachineName()
+            'data-handle' => $block->getMachineName()
         ];
     }
 

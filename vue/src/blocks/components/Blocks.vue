@@ -8,7 +8,7 @@
                 <h3>Blocks</h3>
             </div>
             <div v-for="provider in providers" v-bind:key="provider.handle">
-                <h5 class="sub-heading slide" :class="{closed: !slideStates[provider.handle]}" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>
+                <h5 class="sub-heading slide" :class="{icon: true, expand: !slideStates[provider.handle], collapse: slideStates[provider.handle]}" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>
                 <transition name="slide">
                     <div>
                         <draggable v-if="slideStates[provider.handle]"
@@ -109,26 +109,6 @@ export default {
 <style lang="scss" scoped>
 @import '~craftcms-sass/_mixins';
 
-.slide-enter-active {
-    transition-duration: 0.3s;
-    transition-timing-function: ease-in;
-}
-
-.slide-leave-active {
-    transition-duration: 0.3s;
-    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
-}
-
-.slide-enter-to, .slide-leave {
-    max-height: 100px;
-    overflow: hidden;
-}
-
-.slide-enter, .slide-leave-to {
-    overflow: hidden;
-    max-height: 0;
-}
-
 .blocks {
     position: relative;
     display: flex;
@@ -201,31 +181,10 @@ export default {
         background-image: linear-gradient(rgba(51, 64, 77, 0), rgba(51, 64, 77, 0.05));
     }
     h5.slide {
-        &:after {
-            transition: all 0.3s;
-            display: block;
-            content: '.';
-            font-size: 0;
-            width: 5px;
-            height: 5px;
-            border: solid #596673;
-            border-width: 0 2px 2px 0;
-            -webkit-transform: rotate(-135deg);
-            -o-transform: rotate(-135deg);
-            transform: rotate(-135deg);
-            top: calc(50% - 2px);
+        position: relative;
+        &:before {
             position: absolute;
-            z-index: 1;
-            right: 15px;
-            -webkit-user-select: none;
-            user-select: none;
-            pointer-events: none;
-        }
-        &.closed:after {
-            -webkit-transform: rotate(45deg);
-            -o-transform: rotate(45deg);
-            transform: rotate(45deg);
-            top: calc(50% - 5px);
+            right: 10px;
         }
     }
 }

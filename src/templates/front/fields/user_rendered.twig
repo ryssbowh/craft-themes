@@ -1,9 +1,9 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 and options.viewMode %}
+
 {% block content %}
-    {% if options.viewMode %}
-        {% for user in value %}
-            {{ displayer.userLayout.render(user, options.viewMode.handle)|raw }}
-        {% endfor %}
-    {% endif %}
+    {% for user in value %}
+        {{ displayer.userLayout.render(user, options.viewMode.handle)|raw }}
+    {% endfor %}
 {% endblock %}

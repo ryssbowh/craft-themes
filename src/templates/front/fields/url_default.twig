@@ -1,5 +1,7 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
     <a href="{{ value }}" {% if options.newTab %}target="_blank"{% endif %}>{{ options.label ? options.label : value }}</a>
 {% endblock %}

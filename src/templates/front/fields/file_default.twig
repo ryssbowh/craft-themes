@@ -1,7 +1,7 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {% if value %}
-        {{ craft.themes.view.renderFile(value, field, options.getDisplayerForKind(value.kind))|raw }}
-    {% endif %}
+    {{ craft.themes.view.renderFile(value, field, options.getDisplayerForKind(value.kind))|raw }}
 {% endblock %}

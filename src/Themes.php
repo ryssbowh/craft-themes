@@ -145,6 +145,7 @@ class Themes extends \craft\base\Plugin
         if ($user->checkPermission('accessPlugin-themes')) {
             $item = [
                 'url' => 'themes',
+                'icon' => '@Ryssbowh/CraftThemes/icon-mask.svg',
                 'label' => $this->settings->menuItemName,
                 'subnav' => [
                     'themes' => [

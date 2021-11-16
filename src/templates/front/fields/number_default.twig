@@ -1,11 +1,15 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {% if options.showPrefix %}
-        <span class="prefix">{{ craftField.prefix }}</span>
-    {% endif %}
-    <span class="value">{{ value|number_format(options.decimals) }}</span>
-    {% if options.showSuffix %}
-        <span class="suffix">{{ craftField.suffix }}</span>
-    {% endif %}
+    {% spaceless %}
+        {% if options.showPrefix and craftField.prefix %}
+            <span class="prefix">{{ craftField.prefix }}</span>
+        {% endif %}
+        <span class="value">{{ value|number_format(options.decimals) }}</span>
+        {% if options.showSuffix and craftField.suffix %}
+            <span class="suffix">{{ craftField.suffix }}</span>
+        {% endif %}
+    {% endspaceless %}
 {% endblock %}

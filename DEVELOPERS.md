@@ -491,14 +491,15 @@ Available variables :
 
 ## Aliases
 
-4 new aliases are set :
+5 new aliases are set :
 
 `@themePath` : Base directory of the current theme. This is not set if no theme is set.
 
 And three that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
 `@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
-`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.  
+`@themesWeb` : Web url for themes, equivalent to `@web/themes`  
+`@themeWebPath` : Web url for current theme. This is not set if no theme is set.  
 `@themeWeb` : Base web url for the current theme. This is not set if no theme is set.
 
 ## Reinstall data (Pro)

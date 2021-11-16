@@ -10,6 +10,8 @@
     {% endif %}
 {% endmacro %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
     {% if craftField.limit == 1 %}
         {{ _self.entryLink(value.0, options) }}

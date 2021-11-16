@@ -1,24 +1,24 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 and field.visibleFields|length > 0 %}
+
 {% block content %}
-    {% if value|length and field.visibleFields|length %}
-        <table>
-           <thead>
+    <table>
+       <thead>
+            <tr>
+                {% for fieldToRender in field.visibleFields %}
+                    <th>{{ fieldToRender.name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in value %}
                 <tr>
                     {% for fieldToRender in field.visibleFields %}
-                        <th>{{ fieldToRender.name }}</th>
+                        <td>{{ craft.themes.view.renderField(fieldToRender, row[fieldToRender.handle])|raw }}</td>
                     {% endfor %}
                 </tr>
-            </thead>
-            <tbody>
-                {% for row in value %}
-                    <tr>
-                        {% for fieldToRender in field.visibleFields %}
-                            <td>{{ craft.themes.view.renderField(fieldToRender, row[fieldToRender.handle])|raw }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,9 +1,9 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 and options.viewMode %}
+
 {% block content %}
-    {% if options.viewMode %}
-        {% for tag in value %}
-            {{ craft.themes.view.renderLayout(displayer.tagLayout, options.viewMode.handle, tag)|raw }}
-        {% endfor %}
-    {% endif %}
+    {% for tag in value %}
+        {{ craft.themes.view.renderLayout(displayer.tagLayout, options.viewMode.handle, tag)|raw }}
+    {% endfor %}
 {% endblock %}

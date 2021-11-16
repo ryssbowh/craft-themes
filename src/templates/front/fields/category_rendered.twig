@@ -1,9 +1,9 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 and option.viewMode %}
+
 {% block content %}
-    {% if options.viewMode %}
-        {% for category in value %}
-            {{ displayer.groupLayout.render(category, options.viewMode.handle)|raw }}
-        {% endfor %}
-    {% endif %}
+    {% for category in value %}
+        {{ displayer.groupLayout.render(category, options.viewMode.handle)|raw }}
+    {% endfor %}
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {% if value %}
-        <div class="colour" style="background-color:{{ value }}"></div>
-    {% endif %}
+    <div class="colour" style="background-color:{{ value }}"></div>
 {% endblock %}

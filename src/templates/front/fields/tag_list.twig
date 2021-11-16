@@ -1,13 +1,13 @@
 {% extends "fields/_field" %}
 
+{% set show_field = value|length > 0 %}
+
 {% block content %}
-    {% if value|length %}
-        <ul class="tag-list">
-            {% for tag in value %}
-                <li class="tag-list-item">
-                    {{ tag.title }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <ul class="tag-list">
+        {% for tag in value %}
+            <li class="tag-list-item">
+                {{ tag.title }}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
