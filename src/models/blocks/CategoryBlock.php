@@ -73,4 +73,12 @@ class CategoryBlock extends Block
         }
         return $this->_categories;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(bool $fromCache): bool
+    {
+        return sizeof($this->categories) > 0;
+    }
 }

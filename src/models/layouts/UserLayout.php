@@ -1,9 +1,8 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\layouts;
 
-use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\traits\ElementLayout;
 use craft\elements\User;
 use craft\models\FieldLayout;
 
@@ -12,7 +11,7 @@ use craft\models\FieldLayout;
  */
 class UserLayout extends Layout
 {
-    use ElementLayoutTrait;
+    use ElementLayout;
 
     /**
      * @var string

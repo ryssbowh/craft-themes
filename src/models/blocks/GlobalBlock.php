@@ -107,4 +107,12 @@ class GlobalBlock extends Block
     {
         return array_merge(parent::fields(), ['sets']);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(bool $fromCache): bool
+    {
+        return $this->globalSet != null;
+    }
 }

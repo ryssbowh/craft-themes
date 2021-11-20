@@ -144,6 +144,14 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
+    public function beforeRender(): bool
+    {
+        return sizeof($this->visibleDisplays) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function render(): string
     {
         return Themes::$plugin->view->renderGroup($this);

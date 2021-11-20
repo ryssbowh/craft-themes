@@ -73,4 +73,12 @@ class UserBlock extends Block
         }
         return $this->_users;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(bool $fromCache): bool
+    {
+        return sizeof($this->users) > 0;
+    }
 }

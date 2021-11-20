@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\models\fields\Author;

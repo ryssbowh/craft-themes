@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\events\RegisterBlockProviders;

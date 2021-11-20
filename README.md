@@ -146,34 +146,40 @@ Here is a list of available displayers for each type of field :
 
 | Field type    | displayer                  | Options                                          |
 |---------------|----------------------------|--------------------------------------------------|
-| Title         | Default                    | html tag, linked to element                      |
+| Title         | Title                      | html tag, linked to element                      |
 | Assets        | Link to asset              | Label, new tab, download                         |
 | Assets        | Rendered (volume layout)   | View mode                                        |
 | Assets        | Render file                | Various options for each kind of file, see below |
+| Assets        | Slick Carousel             | View mode, most of slick options                 |
 | Category      | List                       | Output as links                                  |
 | Category      | Rendered (category layout) | View mode                                        |
-| Checkboxes    | Default                    |                                                  |
+| Category      | Slick Carousel             | View mode, most of slick options                 |
+| Checkboxes    | Label                      |                                                  |
 | Colour        | Default                    |                                                  |
 | Date          | Date                       | Predefined or custom format                      |
 | Date          | Date and time              | Predefined or custom format                      |
-| Dropdown      | Default                    |                                                  |
-| Email         | Default                    | Output as link                                   |
+| Dropdown      | Label                      |                                                  |
+| Email         | Email                      | Output as link                                   |
 | Entries       | Link to entry              | Label, new tab                                   |
 | Entries       | Rendered (entry layout)    | View mode                                        |
+| Entries       | Slick Carousel             | View mode, most of slick options                 |
 | Matrix        | Default                    |                                                  |
-| Multi select  | Default                    |                                                  |
+| Matrix        | Slick Carousel             | Most of slick options                            |
+| Multi select  | Label                      |                                                  |
 | Number        | Default                    | Decimals, Show prefix/suffix                     |
 | Plain text    | Full                       |                                                  |
 | Plain text    | Truncated                  | Limit, ellipsis, link to entry                   |
-| Radio buttons | Default                    |                                                  |
-| Lightswitch   | Default                    |                                                  |
+| Radio buttons | Label                      |                                                  |
+| Lightswitch   | Label                      |                                                  |
 | Table         | Default                    |                                                  |
-| Tag           | List                       |                                                  |
+| Tag           | Label                      |                                                  |
 | Tag           | Rendered (tag layout)      | View mode                                        |
+| Tag           | Slick Carousel             | View mode, most of slick options                 |
 | Time          | Time                       | Predefined or custom format                      |
-| Url           | Default                    | New tab, label                                   |
+| Url           | Link                       | New tab, label                                   |
 | Users         | Default                    | Show firstname/surname/email, link email         |
 | Users         | Rendered (user layout)     | View mode                                        |
+| Users         | Slick Carousel             | View mode, most of slick options                 |
 
 And a list of available file displayers :  
 Every file type will also have the displayer "Link to asset" available, with options label, new tab and download.
@@ -268,4 +274,3 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 - Themes preferences not related to project config
 - Restricted version of blocks page for envs where admin changes are disabled
 - SCSS compiler
-- Preview on displays/blocks

@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
     computed: {
@@ -97,7 +97,7 @@ export default {
             }
             return this.displayer.handle
         },
-        ...mapState(['showFieldHandles', 'itemsVisibility', 'labelsVisibility'])
+        ...mapState(['showFieldHandles', 'itemsVisibility', 'labelsVisibility', 'switchLabelsVisibility', 'switchItemsVisibility'])
     },
     props: {
         item: Object,
@@ -121,15 +121,11 @@ export default {
         }
     },
     watch: {
-        itemsVisibility: function () {
-            if (this.itemsVisibility !== null) {
-                this.$emit("updateItem", {hidden: !this.itemsVisibility});
-            }
+        switchItemsVisibility: function () {
+            this.$emit("updateItem", {hidden: !this.itemsVisibility});
         },
-        labelsVisibility: function () {
-            if (this.labelsVisibility !== null) {
-                this.$emit("updateItem", {labelHidden: !this.labelsVisibility});
-            }
+        switchLabelsVisibility: function () {
+            this.$emit("updateItem", {labelHidden: !this.labelsVisibility});
         }
     },
     methods: {

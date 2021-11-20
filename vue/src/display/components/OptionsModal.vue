@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
 import { merge } from 'lodash';
 
 export default {
@@ -55,7 +54,6 @@ export default {
         this.modal.destroy();
     },
     mounted: function () {
-        let _this = this;
         this.modal = new Garnish.Modal(this.$refs.modal, {
             hideOnEsc: false,
             hideOnShadeClick: false,

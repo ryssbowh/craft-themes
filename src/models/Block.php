@@ -307,6 +307,14 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
+    public function getCacheTags(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): BlockOptionsInterface
     {
         return new BlockOptions;
@@ -333,6 +341,14 @@ abstract class Block extends Model implements BlockInterface
             'blocks/' . $this->machineName, 
             'blocks/block'
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(bool $fromCache): bool
+    {
+        return true;
     }
 
     /**

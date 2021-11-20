@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Model;
@@ -64,4 +63,13 @@ interface FieldDisplayerInterface
      * @return array
      */
     public function eagerLoad(): array;
+
+    /**
+     * Callback before rendering, returning false will skip the field rendering.
+     * The value will be null when this is called for a cached content block.
+     * 
+     * @param  $value
+     * @return bool;
+     */
+    public function beforeRender($value): bool;
 }

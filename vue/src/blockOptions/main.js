@@ -583,4 +583,21 @@ document.addEventListener("register-block-option-components", function(e) {
         </div>`,
         emits: ['updateOptions']
     };
+
+    e.detail['system-flash-messages'] = {
+        props: {
+            block: Object,
+            errors: Object,
+            options: Object
+        },
+        template: `
+        <div class="field">
+            <div class="heading">
+                <label>{{ t('Remove messages from session') }}</label>
+            </div>
+            <lightswitch :on="options.removeMessages" @change="$emit('updateOptions', {removeMessages: $event})">
+            </lightswitch>
+        </div>`,
+        emits: ['updateOptions']
+    };
 });

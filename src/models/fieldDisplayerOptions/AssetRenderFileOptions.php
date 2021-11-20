@@ -1,7 +1,6 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
-class AssetRenderFileOptions extends FileDefaultOptions
+class AssetRenderFileOptions extends FileFileOptions
 {
 }

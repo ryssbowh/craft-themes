@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
@@ -111,6 +110,21 @@ interface BlockInterface
      * @return array
      */
     public function getTemplates(LayoutInterface $layout, RegionInterface $region): array;
+
+    /**
+     * Get extra cache dependencies tags
+     * 
+     * @return array
+     */
+    public function getCacheTags(): array;
+
+    /**
+     * Callback before rendering, returning false will skip the block rendering.
+     *
+     * @param  bool $fromCache whether the block is rendered from cache or not
+     * @return bool;
+     */
+    public function beforeRender(bool $fromCache): bool;
 
     /**
      * Render this block

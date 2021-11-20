@@ -13,6 +13,7 @@ use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
+use Ryssbowh\CraftThemes\models\blocks\ContentBlock;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Element;
 use craft\elements\Asset;
@@ -138,6 +139,9 @@ class ViewService extends Service
      */
     public function renderRegion(RegionInterface $region): string
     {
+        if (!$region->beforeRender()) {
+            return '';
+        }
         $oldRegion = $this->renderingRegion;
         $this->_renderingRegion = $region;
         $theme = $this->themesRegistry()->current;
@@ -162,6 +166,9 @@ class ViewService extends Service
     public function renderBlock(BlockInterface $block): string
     {
         $cache = $this->blockCacheService()->getBlockCache($block);
+        if (!$block->beforeRender($cache !== null)) {
+            return '';
+        }
         if ($cache !== null) {
             return $cache;
         }
@@ -187,7 +194,7 @@ class ViewService extends Service
      */
     public function renderField(FieldInterface $field, $value): string
     {
-        if (!$displayer = $field->getDisplayer()) {
+        if (!$displayer = $field->getDisplayer() or !$displayer->beforeRender($value)) {
             return '';
         }
         $theme = $this->themesRegistry()->current;
@@ -217,6 +224,9 @@ class ViewService extends Service
      */
     public function renderGroup(GroupInterface $group): string
     {
+        if (!$group->beforeRender()) {
+            return '';
+        }
         $theme = $this->themesRegistry()->current;
         $templates = $group->getTemplates($this->renderingLayout, $this->renderingViewMode);
         $variables = $this->getPageVariables([
@@ -241,7 +251,7 @@ class ViewService extends Service
      */
     public function renderFile(Asset $asset, FieldInterface $field, ?FileDisplayerInterface $displayer): string
     {
-        if (!$displayer) {
+        if (!$displayer or !$displayer->beforeRender($asset)) {
             return '';
         }
         $theme = $this->themesRegistry()->current;
@@ -288,7 +298,9 @@ class ViewService extends Service
             'classes' => new ClassBag($theme->preferences->getLayoutClasses($layout, true)),
             'attributes' => new AttributeBag($theme->preferences->getLayoutAttributes($layout, true)),
             'visibleDisplays' => $viewMode->visibleDisplays,
-            'regions' => $layout->regions
+            'regions' => $layout->regions,
+            'layout' => $layout,
+            'viewMode' => $viewMode
         ]);
         if ($mode == LayoutInterface::RENDER_MODE_DISPLAYS) {
             $templates = $layout->getTemplates($viewMode);
@@ -374,6 +386,9 @@ class ViewService extends Service
     protected function render(string $eventType, array $templates, array $variables): string
     {
         $event = $this->triggerRenderingEvent($eventType, $templates, $variables);
+        if (!$event->render) {
+            return '';
+        }
         $template = $this->resolveTemplateFromCache($event->templates);   
         $html = $this->getDevModeHtml($event->templates, $template, $event->variables);
         $html .= \Craft::$app->view->renderTemplate($template, $event->variables);

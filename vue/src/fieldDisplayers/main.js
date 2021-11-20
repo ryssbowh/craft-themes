@@ -1,9 +1,193 @@
 import './main.scss';
 import { merge } from 'lodash';
 
+function slickOptions() {
+    return `
+    <div class="field">
+        <div class="heading">
+            <label class="required">{{ t('Lazy load') }}</label>
+        </div>
+        <div class="input ltr">                    
+            <div class="select">
+                <select v-model="options.lazyLoad" @input="$emit('updateOptions', {lazyLoad: $event.target.value})">
+                    <option value="ondemand">{{ t('On demand') }}</option>
+                    <option value="progressive">{{ t('Progressive') }}</option>
+                </select>
+            </div>
+        </div>
+        <ul class="errors" v-if="errors.lazyLoad">
+            <li v-for="error in errors.lazyLoad">{{ error }}</li>
+        </ul>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Autoplay') }}</label>
+        </div>
+        <lightswitch :on="options.autoplay" @change="$emit('updateOptions', {autoplay: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Autoplay speed') }}</label>
+        </div>
+        <div class="input ltr">
+            <input type="number" class="fullwidth text" @input="$emit('updateOptions', {autoplaySpeed: $event.target.value})" min="100" step="100" :value="options.autoplaySpeed">
+        </div>
+        <ul class="errors" v-if="errors.autoplaySpeed">
+            <li v-for="error in errors.autoplaySpeed">{{ error }}</li>
+        </ul>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Adaptive height') }}</label>
+        </div>
+        <lightswitch :on="options.adaptiveHeight" @change="$emit('updateOptions', {adaptiveHeight: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Arrows') }}</label>
+        </div>
+        <lightswitch :on="options.arrows" @change="$emit('updateOptions', {arrows: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Dots') }}</label>
+        </div>
+        <lightswitch :on="options.dots" @change="$emit('updateOptions', {dots: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Draggable') }}</label>
+        </div>
+        <lightswitch :on="options.draggable" @change="$emit('updateOptions', {draggable: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Fade') }}</label>
+        </div>
+        <lightswitch :on="options.fade" @change="$emit('updateOptions', {fade: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Infinite') }}</label>
+        </div>
+        <lightswitch :on="options.infinite" @change="$emit('updateOptions', {infinite: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Pause on focus') }}</label>
+        </div>
+        <lightswitch :on="options.pauseOnFocus" @change="$emit('updateOptions', {pauseOnFocus: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Pause on hover') }}</label>
+        </div>
+        <lightswitch :on="options.pauseOnHover" @change="$emit('updateOptions', {pauseOnHover: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Swipe') }}</label>
+        </div>
+        <lightswitch :on="options.swipe" @change="$emit('updateOptions', {swipe: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Touch move') }}</label>
+        </div>
+        <lightswitch :on="options.touchMove" @change="$emit('updateOptions', {touchMove: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Vertical') }}</label>
+        </div>
+        <lightswitch :on="options.vertical" @change="$emit('updateOptions', {vertical: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Vertical swiping') }}</label>
+        </div>
+        <lightswitch :on="options.verticalSwiping" @change="$emit('updateOptions', {verticalSwiping: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label>{{ t('Right to left') }}</label>
+        </div>
+        <lightswitch :on="options.rtl" @change="$emit('updateOptions', {rtl: $event})">
+        </lightswitch>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label class="required">{{ t('Slides to show') }}</label>
+        </div>
+        <div class="input ltr">
+            <input type="number" class="fullwidth text" @input="$emit('updateOptions', {slidesToShow: $event.target.value})" min="100" step="100" :value="options.slidesToShow">
+        </div>
+        <ul class="errors" v-if="errors.slidesToShow">
+            <li v-for="error in errors.slidesToShow">{{ error }}</li>
+        </ul>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label class="required">{{ t('Rows') }}</label>
+        </div>
+        <div class="input ltr">
+            <input type="number" class="fullwidth text" @input="$emit('updateOptions', {rows: $event.target.value})" min="100" step="100" :value="options.rows">
+        </div>
+        <ul class="errors" v-if="errors.rows">
+            <li v-for="error in errors.rows">{{ error }}</li>
+        </ul>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label class="required">{{ t('Slides per rows') }}</label>
+        </div>
+        <div class="input ltr">
+            <input type="number" class="fullwidth text" @input="$emit('updateOptions', {slidesPerRow: $event.target.value})" min="100" step="100" :value="options.slidesPerRow">
+        </div>
+        <ul class="errors" v-if="errors.slidesPerRow">
+            <li v-for="error in errors.slidesPerRow">{{ error }}</li>
+        </ul>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label class="required">{{ t('Slides to scroll') }}</label>
+        </div>
+        <div class="input ltr">
+            <input type="number" class="fullwidth text" @input="$emit('updateOptions', {slidesToScroll: $event.target.value})" min="100" step="100" :value="options.slidesToScroll">
+        </div>
+        <ul class="errors" v-if="errors.slidesToScroll">
+            <li v-for="error in errors.slidesToScroll">{{ error }}</li>
+        </ul>
+    </div>
+    <div class="field">
+        <div class="heading">
+            <label class="required">{{ t('Animation speed') }}</label>
+        </div>
+        <div class="input ltr">
+            <input type="number" class="fullwidth text" @input="$emit('updateOptions', {speed: $event.target.value})" min="100" step="100" :value="options.speed">
+        </div>
+        <ul class="errors" v-if="errors.speed">
+            <li v-for="error in errors.speed">{{ error }}</li>
+        </ul>
+    </div>`;
+}
+
 document.addEventListener("register-field-displayers-components", function(e) {
 
-    e.detail['file_default'] = {
+    e.detail['file_file'] = {
         props: {
             displayer: Object,
             options: Object,
@@ -95,7 +279,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         `
     };
 
-    e.detail['asset_render_file'] = {...e.detail['file_default']}
+    e.detail['asset_render_file'] = {...e.detail['file_file']}
 
     e.detail['entry_rendered'] = {
         props: {
@@ -195,7 +379,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         </div>`
     };
 
-    e.detail['url_default'] = {
+    e.detail['url_link'] = {
         props: {
             displayer: Object,
             options: Object,
@@ -421,7 +605,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
 
     e.detail['time_time'] = {...e.detail['date_date']};
 
-    e.detail['email_default'] = {
+    e.detail['email_email'] = {
         props: {
             displayer: Object,
             options: Object,
@@ -440,7 +624,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         </div>`
     };
 
-    e.detail['category_list'] = {
+    e.detail['category_label'] = {
         props: {
             displayer: Object,
             options: Object,
@@ -557,7 +741,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
         </div>`
     };
 
-    e.detail['title_default'] = {
+    e.detail['title_title'] = {
         props: {
             displayer: Object,
             options: Object,
@@ -605,7 +789,7 @@ document.addEventListener("register-field-displayers-components", function(e) {
     };
 
 
-    e.detail['tag-title_default'] = {
+    e.detail['tag-title_title'] = {
         props: {
             displayer: Object,
             options: Object,
@@ -637,4 +821,115 @@ document.addEventListener("register-field-displayers-components", function(e) {
             </div>
         </div>`
     };
+
+    e.detail['asset_slick'] = {
+        props: {
+            displayer: Object,
+            options: Object,
+            errors: Object
+        },
+        emits: ['updateOptions'],
+        template: `
+        <div>
+            <div class="field" v-for="elem, volumeUid in displayer.viewModes">
+                <div class="heading">
+                    <label class="required">{{ t('View mode for volume {volume}', {volume: elem.label}) }}</label>
+                </div>
+                <div class="input ltr">                    
+                    <div class="select">
+                        <select v-model="options.viewModes[volumeUid]" @change="$emit('updateOptions', {viewModes: options.viewModes})">
+                            <option v-for="label, uid in elem.viewModes" :value="uid">{{ label }}</option>
+                        </select>
+                    </div>
+                </div>
+                <ul class="errors" v-if="errors['viewMode-'+volumeUid]">
+                    <li v-for="error in errors['viewMode-'+volumeUid]">{{ error }}</li>
+                </ul>
+            </div>
+            <div class="field" v-if="displayer.viewModes.length == 0">
+                <div class="warning with-icon">
+                    {{ t("It seems this field doesn't have any valid source") }}
+                </div>
+            </div> ` + slickOptions() + `
+        </div>`
+    };
+
+    e.detail['category_slick'] = {
+        props: {
+            displayer: Object,
+            options: Object,
+            errors: Object
+        },
+        emits: ['updateOptions'],
+        template: `
+        <div>
+            <div class="field">
+                <div class="heading">
+                    <label class="required">{{ t('View mode') }}</label>
+                </div>
+                <div class="input ltr">                    
+                    <div class="select">
+                        <select v-model="options.viewModeUid" @input="$emit('updateOptions', {viewModeUid: $event.target.value})">
+                            <option v-for="label, uid in displayer.viewModes" :value="uid">{{ label }}</option>
+                        </select>
+                    </div>
+                </div>
+                <ul class="errors" v-if="errors.viewModeUid">
+                    <li v-for="error in errors.viewModeUid">{{ error }}</li>
+                </ul>
+                <div class="warning with-icon" v-if="displayer.viewModes.length == 0">
+                    {{ t("It seems this field doesn't have any valid source") }}
+                </div>
+            </div> ` + slickOptions() + `
+        </div>`
+    };
+
+    e.detail['matrix_slick'] = {
+        props: {
+            displayer: Object,
+            options: Object,
+            errors: Object
+        },
+        emits: ['updateOptions'],
+        template: `
+        <div>
+            ` + slickOptions() + `
+        </div>`
+    };
+
+    e.detail['entry_slick'] = {
+        props: {
+            displayer: Object,
+            options: Object,
+            errors: Object
+        },
+        emits: ['updateOptions'],
+        template: `
+        <div>
+            <div class="field" v-for="elem, typeUid in displayer.viewModes">
+                <div class="heading">
+                    <label class="required">{{ t('View mode for {type}', {type: elem.type}) }}</label>
+                </div>
+                <div class="input ltr">                    
+                    <div class="select">
+                        <select v-model="options.viewModes[typeUid]" @change="$emit('updateOptions', {viewModes: options.viewModes})">
+                            <option v-for="label, uid in elem.viewModes" :value="uid">{{ label }}</option>
+                        </select>
+                    </div>
+                </div>
+                <ul class="errors" v-if="errors['viewMode-'+typeUid]">
+                    <li v-for="error in errors['viewMode-'+typeUid]">{{ error }}</li>
+                </ul>
+            </div>
+            <div class="field" v-if="displayer.viewModes.length == 0">
+                <div class="warning with-icon">
+                    {{ t("It seems this field doesn't have any valid source") }}
+                </div>
+            </div> ` + slickOptions() + `
+        </div>`
+    };
+
+    e.detail['tag_slick'] = {... e.detail['category_slick']};
+
+    e.detail['user_slick'] = {... e.detail['category_slick']};
 });

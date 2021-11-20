@@ -73,4 +73,12 @@ class AssetBlock extends Block
         }
         return $this->_assets;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(bool $fromCache): bool
+    {
+        return sizeof($this->assets) > 0;
+    }
 }

@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;

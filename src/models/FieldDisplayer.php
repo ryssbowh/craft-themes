@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
@@ -119,5 +118,13 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     public function getOptionsModel(): string
     {
         return NoOptions::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender($value): bool
+    {
+        return true;
     }
 }

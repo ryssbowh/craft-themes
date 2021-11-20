@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -73,6 +72,12 @@ class AssetRenderedOptions extends FieldDisplayerOptions
         }
     }
 
+    /**
+     * Get the view mode for an asset
+     * 
+     * @param  Asset  $asset
+     * @return ?ViewModeInterface
+     */
     public function getViewMode(Asset $asset): ?ViewModeInterface
     {
         $volume = $asset->volume;

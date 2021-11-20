@@ -1,16 +1,15 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\layouts;
 
-use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\traits\ElementLayout;
 
 /**
  * A layout associated to a global set and a theme
  */
 class GlobalLayout extends Layout
 {
-    use ElementLayoutTrait;
+    use ElementLayout;
 
     /**
      * @var string

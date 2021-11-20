@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -61,6 +60,16 @@ class Region extends Model implements RegionInterface
     /**
      * @inheritDoc
      */
+    public function getVisibleBlocks(): array
+    {
+        return array_filter($this->blocks, function ($block) {
+            return $block->isVisible();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setBlocks(?array $blocks)
     {
         if (is_array($blocks)) {
@@ -83,11 +92,9 @@ class Region extends Model implements RegionInterface
     /**
      * @inheritDoc
      */
-    public function getVisibleBlocks(): array
+    public function hasVisibleBlocks(): bool
     {
-        return array_filter($this->blocks, function ($block) {
-            return $block->isVisible();
-        });
+        return sizeof($this->visibleBlocks) > 0;
     }
 
     /**
@@ -124,6 +131,14 @@ class Region extends Model implements RegionInterface
             'regions/region-' . $this->handle, 
             'regions/region'
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(): bool
+    {
+        return true;
     }
 
     /**

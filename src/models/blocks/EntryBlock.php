@@ -73,4 +73,12 @@ class EntryBlock extends Block
         }
         return $this->_entries;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(bool $fromCache): bool
+    {
+        return sizeof($this->entries) > 0;
+    }
 }

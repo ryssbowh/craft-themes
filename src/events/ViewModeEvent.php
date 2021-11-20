@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;

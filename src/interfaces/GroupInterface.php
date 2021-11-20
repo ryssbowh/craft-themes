@@ -37,6 +37,13 @@ interface GroupInterface
     public function getTemplates(LayoutInterface $layout, ViewModeInterface $viewMode): array;
 
     /**
+     * Callback before rendering, returning false will skip the group rendering
+     * 
+     * @return bool;
+     */
+    public function beforeRender(): bool;
+
+    /**
      * Render this group
      * 
      * @return string

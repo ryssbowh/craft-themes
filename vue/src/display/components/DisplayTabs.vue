@@ -19,7 +19,7 @@
         <div id="overflow-tab-menu" class="menu">
             <ul role="listbox"></ul>
         </div>
-        <view-mode-modal :show-modal="showModal" :editedViewMode="edited" @closeModal="onCloseModal"/>
+        <view-mode-modal :show-modal="showModal" :editedViewMode="editedViewMode" @closeModal="onCloseModal"/>
     </nav>
 </template>
 
@@ -35,7 +35,7 @@ export default {
     data() {
         return {
             showModal: false,
-            edited: null,
+            editedViewMode: null,
             tabsInited: false,
             overflowTabBtn: null
         }
@@ -69,11 +69,11 @@ export default {
             this.overflowTabBtn.data('menubtn').hideMenu();
         },
         addViewMode: function () {
-            this.edited = null;
+            this.editedViewMode = null;
             this.showModal = true;
         },
         editViewMode: function (viewMode) {
-            this.edited = viewMode;
+            this.editedViewMode = viewMode;
             this.showModal = true;
         },
         confirmAndDeleteViewMode: function (viewMode) {
@@ -141,7 +141,6 @@ export default {
 .add-viewmode {
     font-size: 14px;
     margin-left: 10px;
-    // background-image: unset !important;
 }
 .heading {
     position: absolute;

@@ -1,17 +1,16 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\layouts;
 
-use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\traits\ElementLayout;
 
 /**
  * A layout associated to a entry type and a theme
  */
 class EntryLayout extends Layout
 {
-    use ElementLayoutTrait;
+    use ElementLayout;
 
     /**
      * @var string

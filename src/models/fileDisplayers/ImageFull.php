@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fileDisplayers;
 
 use Ryssbowh\CraftThemes\models\FileDisplayer;

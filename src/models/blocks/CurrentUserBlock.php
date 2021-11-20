@@ -51,4 +51,12 @@ class CurrentUserBlock extends Block
     {
         return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::USER_HANDLE, '');
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(bool $fromCache): bool
+    {
+        return \Craft::$app->user->getIdentity() != null;
+    }
 }

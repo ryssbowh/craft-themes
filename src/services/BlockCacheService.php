@@ -1,9 +1,12 @@
 <?php
 namespace Ryssbowh\CraftThemes\services;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\RegisterBlockCacheStrategies;
 use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\models\blocks\ContentBlock;
+use Ryssbowh\CraftThemes\models\blocks\CurrentUserBlock;
 use yii\caching\TagDependency;
 
 class BlockCacheService extends Service
@@ -49,6 +52,7 @@ class BlockCacheService extends Service
     {
         if ($this->shouldCacheBlock($block)) {
             \Craft::$app->elements->startCollectingCacheTags();
+            Themes::$plugin->viewModes->startCollectingCacheTags();
         }
     }
 
@@ -61,7 +65,12 @@ class BlockCacheService extends Service
     {
         if ($this->shouldCacheBlock($block)) {
             $dep = \Craft::$app->elements->stopCollectingCacheTags();
-            $dep->tags[] = self::BLOCK_CACHE_TAG;
+            $dep->tags = array_merge(
+                $dep->tags,
+                Themes::$plugin->viewModes->stopCollectingCacheTags(),
+                $block->getCacheTags(),
+                [self::BLOCK_CACHE_TAG]
+            );
             $this->setBlockCache($block, $data, $dep);
         }
     }

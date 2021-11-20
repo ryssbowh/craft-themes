@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\exceptions;
 
 use Ryssbowh\CraftThemes\models\fields\CraftField;

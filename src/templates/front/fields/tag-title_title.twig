@@ -1,0 +1,9 @@
+{% extends "fields/_field" %}
+
+{% set show_field = value|length > 0 %}
+
+{% block content %}
+    <{{ options.tag }}>
+        {{ value }}
+    </{{ options.tag }}>
+{% endblock %}

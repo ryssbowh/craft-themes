@@ -1,11 +1,11 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use Ryssbowh\CraftThemes\models\fileDisplayerOptions\NoOptions;
 use craft\base\Model;
+use craft\elements\Asset;
 
 /**
  * Base class for all file displayers
@@ -93,5 +93,13 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     public function getOptionsModel(): Model
     {
         return new NoOptions;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(Asset $asset): bool
+    {
+        return true;
     }
 }

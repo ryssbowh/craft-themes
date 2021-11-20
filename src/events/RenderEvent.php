@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\events;
 
 use yii\base\Event;
@@ -15,6 +14,12 @@ class RenderEvent extends Event
      * @var array
      */
     public $variables;
+
+    /**
+     * Render this element or not
+     * @var bool
+     */
+    public $render = true;
 
     /**
      * Prepend a template to the list of templates

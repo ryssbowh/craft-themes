@@ -61,8 +61,10 @@ const store = createStore({
             showGroupModal: false,
             editedGroupUid: null,
             showFieldHandles: false,
-            itemsVisibility: null,
-            labelsVisibility: null
+            itemsVisibility: false,
+            labelsVisibility: false,
+            switchItemsVisibility: 0,
+            switchLabelsVisibility: 0
         }
     },
     mutations: {
@@ -120,23 +122,12 @@ const store = createStore({
             let display;
             for (let v in state.viewModes) {
                 for (let d in state.viewModes[v].displays) {
-                    display = state.viewMode.displays[d];
+                    display = state.viewModes[v].displays[d];
                     if (display.uid != uid) {
                         continue;
                     }
                     state.viewModes[v].displays[d] = merge(display, data);
                     break;
-                }
-            }
-        },
-        updateItem(state, item) {
-            for (let v in state.viewModes) {
-                for (let d in state.viewModes[v].displays) {
-                    if (state.viewModes[v].displays[d].item.uid != item.uid) {
-                        continue;
-                    }
-                    state.viewModes[v].displays[d].item = item;
-                    return;
                 }
             }
         },
@@ -178,9 +169,11 @@ const store = createStore({
         },
         setItemsVisibility(state, value) {
             state.itemsVisibility = value;
+            state.switchItemsVisibility = Date.now();
         },
         setLabelsVisibility(state, value) {
             state.labelsVisibility = value;
+            state.switchLabelsVisibility = Date.now();
         }
     },
     actions: {

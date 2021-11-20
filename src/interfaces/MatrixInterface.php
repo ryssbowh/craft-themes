@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Field as BaseField;

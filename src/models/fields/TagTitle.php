@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;

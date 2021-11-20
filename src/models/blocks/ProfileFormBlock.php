@@ -32,11 +32,8 @@ class ProfileFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function isVisible(): bool
+    public function beforeRender(bool $fromCache): bool
     {
-        if (!\Craft::$app->user->getIdentity()) {
-            return false;
-        }
-        return $this->active;
+        return \Craft::$app->user->getIdentity() != null;
     }
 }

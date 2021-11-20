@@ -77,7 +77,7 @@ export default {
         groupDisplays: function () {
             return sortBy(this.item.displays, 'order');
         },
-        ...mapState(['showFieldHandles', 'labelsVisibility', 'itemsVisibility', 'viewMode'])
+        ...mapState(['showFieldHandles', 'labelsVisibility', 'itemsVisibility', 'viewMode', 'switchLabelsVisibility', 'switchItemsVisibility'])
     },
     props: {
         item: Object,
@@ -89,10 +89,10 @@ export default {
         }
     },
     watch: {
-        itemsVisibility: function () {
+        switchItemsVisibility: function () {
             this.$emit("updateItem", {hidden: !this.itemsVisibility});
         },
-        labelsVisibility: function () {
+        switchLabelsVisibility: function () {
             this.$emit("updateItem", {labelHidden: !this.labelsVisibility});
         }
     },

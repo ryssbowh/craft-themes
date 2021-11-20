@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
@@ -7,37 +6,43 @@ use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRenderFile;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetSlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AuthorDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryList;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryRendered;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\CheckboxesDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\CategorySlick;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\CheckboxesLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\ColourDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\Date;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DateTime;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DropdownDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\EmailDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\DropdownLabel;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\EmailEmail;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryRendered;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\FileDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\LightswitchDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\EntrySlick;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\FileFile;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\LightswitchLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixSlick;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\NumberDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextFull;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextTruncated;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorFull;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorTruncated;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TableDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\TagList;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TagLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagRendered;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitleDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TagSlick;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitleTitle;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\Time;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleTitle;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserInfoDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserRendered;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\UserSlick;
 use yii\base\Event;
 
 class FieldDisplayerEvent extends Event
@@ -65,41 +70,48 @@ class FieldDisplayerEvent extends Event
      */
     public function init()
     {
+        parent::init();
         $this->registerMany([
             AssetLink::class,
+            AssetSlick::class,
             AssetRendered::class,
             AssetRenderFile::class,
             AuthorDefault::class,
             CategoryRendered::class,
-            CategoryList::class,
-            CheckboxesDefault::class,
+            CategoryLabel::class,
+            CategorySlick::class,
+            CheckboxesLabel::class,
             ColourDefault::class,
             Date::class,
             DateTime::class,
-            DropdownDefault::class,
-            EmailDefault::class,
+            DropdownLabel::class,
+            EmailEmail::class,
             EntryLink::class,
             EntryRendered::class,
-            FileDefault::class,
-            LightswitchDefault::class,
+            EntrySlick::class,
+            FileFile::class,
+            LightswitchLabel::class,
             MatrixDefault::class,
-            MultiSelectDefault::class,
+            MatrixSlick::class,
+            MultiSelectLabel::class,
             NumberDefault::class,
             PlainTextFull::class,
             PlainTextTruncated::class,
-            RadioButtonsDefault::class,
+            RadioButtonsLabel::class,
             RedactorFull::class,
             RedactorTruncated::class,
             TableDefault::class,
-            TagList::class,
-            TagTitleDefault::class,
+            TagLabel::class,
+            TagTitleTitle::class,
             TagRendered::class,
+            TagSlick::class,
             Time::class,
-            TitleDefault::class,
-            UrlDefault::class,
+            TitleTitle::class,
+            UrlLink::class,
             UserDefault::class,
             UserInfoDefault::class,
-            UserRendered::class
+            UserRendered::class,
+            UserSlick::class,
         ]);
     }
 

@@ -1,16 +1,15 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\layouts;
 
-use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\traits\ElementLayout;
 
 /**
  * A layout associated to a tag group and a theme
  */
 class TagLayout extends Layout
 {
-    use ElementLayoutTrait;
+    use ElementLayout;
 
     /**
      * @var string

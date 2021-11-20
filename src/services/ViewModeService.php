@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -15,6 +14,7 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
+use yii\caching\TagDependency;
 
 class ViewModeService extends Service
 {
@@ -25,6 +25,16 @@ class ViewModeService extends Service
     const EVENT_BEFORE_DELETE = 'before_delete';
     const CONFIG_KEY = 'themes.viewModes';
     const DEFAULT_HANDLE = 'default';
+
+    /**
+     * @var boolean
+     */
+    protected $collectingCacheTags = false;
+
+    /**
+     * @var array
+     */
+    protected $cacheTags = [];
 
     /**
      * @var Collection
@@ -145,6 +155,8 @@ class ViewModeService extends Service
         }
         Themes::$plugin->displays->cleanUp($allDisplays, $viewMode);
 
+        TagDependency::invalidate(\Craft::$app->cache, 'themes::viewModes::' . $viewMode->id);
+
         return true;
     }
 
@@ -187,6 +199,8 @@ class ViewModeService extends Service
 
         $this->_viewModes = $this->all()->where('id', '!=', $viewMode->id);
         $viewMode->layout->viewModes = null;
+
+        TagDependency::invalidate(\Craft::$app->cache, 'themes::viewModes::' . $viewMode->id);
 
         return true;
     }
@@ -264,6 +278,29 @@ class ViewModeService extends Service
     }
 
     /**
+     * Start collecting cache tags
+     */
+    public function startCollectingCacheTags()
+    {
+        $this->collectingCacheTags = true;
+        $this->cacheTags = [];
+    }
+
+    /**
+     * Stop collecting cache tags and return collected tags
+     * 
+     * @return array
+     */
+    public function stopCollectingCacheTags(): array
+    {
+        $this->collectingCacheTags = false;
+        if (sizeof($this->cacheTags) > 0) {
+            array_unshift($this->cacheTags, 'themes::viewModes');
+        }
+        return $this->cacheTags;
+    }
+
+    /**
      * Populates a view mode from posted data
      * 
      * @param  array $data
@@ -317,6 +354,7 @@ class ViewModeService extends Service
     public function getById(int $id): ViewModeInterface
     {
         if ($viewMode = $this->all()->firstWhere('id', $id)) {
+            $this->collectCacheTag($viewMode);
             return $viewMode;
         }
         throw ViewModeException::noId($id);
@@ -332,6 +370,7 @@ class ViewModeService extends Service
     public function getByUid(string $uid): ViewModeInterface
     {
         if ($viewMode = $this->all()->firstWhere('uid', $uid)) {
+            $this->collectCacheTag($viewMode);
             return $viewMode;
         }
         throw ViewModeException::noUid($uid);
@@ -377,9 +416,13 @@ class ViewModeService extends Service
         if (!$layout->id) {
             return null;
         }
-        return $this->all()
+        $viewMode = $this->all()
             ->where('layout.id', $layout->id)
             ->firstWhere('handle', $handle);
+        if ($viewMode) {
+            $this->collectCacheTag($viewMode);
+        }
+        return $viewMode;
     }
 
     /**
@@ -402,6 +445,18 @@ class ViewModeService extends Service
     {
         if (!$this->all()->firstWhere('id', $viewMode->id)) {
             $this->all()->push($viewMode);
+        }
+    }
+
+    /**
+     * Collect a tag for a view mode
+     * @param ViewModeInterface $viewMode
+     */
+    protected function collectCacheTag(ViewModeInterface $viewMode)
+    {
+        $tag = 'themes::viewModes::' . $viewMode->id;
+        if ($this->collectingCacheTags and !in_array($tag, $this->cacheTags)) {
+            $this->cacheTags[] = $tag;
         }
     }
 }

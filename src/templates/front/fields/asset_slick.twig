@@ -1,0 +1,14 @@
+{% extends "fields/_field" %}
+
+{% set show_field = value|length > 0 %}
+
+{% block content %}
+    <div class="slick-carousel" data-slick="{{ options.attributes|json_encode }}">
+        {% for asset in value %}
+            {% set viewMode = options.getViewMode(asset) %}
+            {% if viewMode %}
+                {{ asset.volume.layout.render(asset, viewMode.handle)|raw }}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

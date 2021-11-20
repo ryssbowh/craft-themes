@@ -1,8 +1,6 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\layouts;
 
-use Ryssbowh\CraftThemes\helpers\ElementLayoutTrait;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
 /**

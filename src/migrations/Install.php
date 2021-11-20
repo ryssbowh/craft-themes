@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\migrations;
 
 use craft\db\Migration;

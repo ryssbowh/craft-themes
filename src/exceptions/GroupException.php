@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\exceptions;
 
 class GroupException extends \Exception

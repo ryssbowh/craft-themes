@@ -1,5 +1,4 @@
 <?php
-
 namespace Ryssbowh\CraftThemes\models\layouts;
 
 use Ryssbowh\CraftThemes\Themes;

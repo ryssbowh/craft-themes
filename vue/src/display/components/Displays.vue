@@ -56,7 +56,7 @@ export default {
         ...mapState(['viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes', 'layouts'])
     },
     watch: {
-        viewModes: {
+        viewMode: {
             deep: true,
             handler() {
                 this.checkChanges();
@@ -65,13 +65,15 @@ export default {
                 for (let display of this.rootDisplays) {
                     if (display.item.hidden) {
                         this.allItemsVisible = false;
-                    }
-                    if (display.item.labelHidden) {
-                        this.allLabelsVisible = false;
+                        break;
                     }
                 }
-                this.setItemsVisibility(null);
-                this.setLabelsVisibility(null);
+                for (let display of this.rootDisplays) {
+                    if (display.item.labelHidden) {
+                        this.allLabelsVisible = false;
+                        break;
+                    }
+                }
             }
         }
     },

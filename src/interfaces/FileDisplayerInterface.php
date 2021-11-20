@@ -1,8 +1,8 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use craft\base\Model;
+use craft\elements\Asset;
 
 /**
  * A file displayer renders an asset. It can handle several file kinds
@@ -60,4 +60,12 @@ interface FileDisplayerInterface
      * @return FieldDisplayerInterface
      */
     public function getDisplayer(): FieldDisplayerInterface;
+
+    /**
+     * Callback before rendering, returning false will skip the file rendering
+     *
+     * @param  Asset $asset
+     * @return bool;
+     */
+    public function beforeRender(Asset $asset): bool;
 }

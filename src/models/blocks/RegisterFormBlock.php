@@ -34,12 +34,12 @@ class RegisterFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function isVisible(): bool
+    public function beforeRender(bool $fromCache): bool
     {
         if ($this->options->onlyIfNotAuthenticated and \Craft::$app->user->getIdentity()) {
             return false;
         }
-        return $this->active;
+        return true;
     }
 
     /**

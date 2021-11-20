@@ -453,6 +453,12 @@ Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (Ren
     $e->variables['labelAttributes']->remove('label-id');
 });
 ```
+Or to skip the rendering of any element :
+```
+Event::on(ViewService::class, ViewService::BEFORE_RENDERING_ASSET, function (RenderEvent $event) {
+    $event->render = false;
+});
+```
 
 ### Theme preferences (Pro)
 

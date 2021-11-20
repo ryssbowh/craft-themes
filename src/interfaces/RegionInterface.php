@@ -14,6 +14,13 @@ interface RegionInterface
     public function getBlocks(): array;
 
     /**
+     * Get visible blocks
+     * 
+     * @return array
+     */
+    public function getVisibleBlocks(): array;
+
+    /**
      * Does this region have blocks
      * 
      * @return boolean
@@ -21,11 +28,11 @@ interface RegionInterface
     public function hasBlocks(): bool;
 
     /**
-     * Get visible blocks
+     * Does this region have visible blocks
      * 
-     * @return array
+     * @return boolean
      */
-    public function getVisibleBlocks(): array;
+    public function hasVisibleBlocks(): bool;
 
     /**
      * Blocks setter
@@ -55,6 +62,13 @@ interface RegionInterface
      * @return array
      */
     public function getTemplates(LayoutInterface $layout): array;
+
+    /**
+     * Callback before rendering, returning false will skip the region rendering
+     * 
+     * @return bool;
+     */
+    public function beforeRender(): bool;
 
     /**
      * Render this region
