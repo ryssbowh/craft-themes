@@ -14,9 +14,8 @@ class BlocksAssets extends ThemesBaseAssets
      * @inheritDoc
      */
     public $js = [
-        'blockOptions.js',
-        'blockStrategies.js',
         'chunk-vendors.js',
+        'chunk-common.js',
         'blocks.js',
     ];
 

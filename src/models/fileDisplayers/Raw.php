@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fileDisplayers;
 
 use Ryssbowh\CraftThemes\models\FileDisplayer;
+use Ryssbowh\CraftThemes\models\fileDisplayerOptions\RawOptions;
 use craft\base\Model;
 
 /**
@@ -28,5 +29,13 @@ class Raw extends FileDisplayer
     public static function getKindTargets()
     {
         return ['javascript', 'html', 'php', 'text', 'xml', 'json'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return RawOptions::class;
     }
 }

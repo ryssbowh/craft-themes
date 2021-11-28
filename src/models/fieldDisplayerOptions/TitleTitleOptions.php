@@ -6,19 +6,47 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 class TitleTitleOptions extends FieldDisplayerOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $tag = 'h1';
+    public function defineOptions(): array
+    {
+        return [
+            'tag' => [
+                'field' => 'select',
+                'options' => [
+                    'h1' => 'h1', 
+                    'h2' => 'h2', 
+                    'h3' => 'h3', 
+                    'h4' => 'h4', 
+                    'h5' => 'h5', 
+                    'h6' => 'h6', 
+                    'p' => 'p'
+                ],
+                'required' => true,
+                'label' => \Craft::t('themes', 'Tag')
+            ],
+            'linked' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Link to Element')
+            ],
+            'newTab' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Open in new tab')
+            ]
+        ];
+    }
 
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $linked = false;
-
-    /**
-     * @var boolean
-     */
-    public $newTab = false;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'tag' => 'h1',
+            'linked' => true,
+            'newTab' => true
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -27,7 +55,7 @@ class TitleTitleOptions extends FieldDisplayerOptions
     {
         return [
             ['tag', 'string'],
-            ['tag', 'in', 'range' => ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']],
+            ['tag', 'in', 'range' => array_keys($this->definitions['tag']['options'])],
             [['linked', 'newTab'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }

@@ -1,7 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
+use Ryssbowh\CraftThemes\models\BlockStrategyOptions;
 use yii\caching\TagDependency;
 
 /**
@@ -56,14 +56,14 @@ interface BlockCacheStrategyInterface
     /**
      * Get options model (populated)
      * 
-     * @return BlockCacheStrategyOptions
+     * @return BlockStrategyOptions
      */
-    public function getOptions(): BlockCacheStrategyOptions;
+    public function getOptions(): BlockStrategyOptions;
 
     /**
      * Get options model
      * 
-     * @return BlockCacheStrategyOptions
+     * @return BlockStrategyOptions
      */
-    public function getOptionsModel(): BlockCacheStrategyOptions;
+    public function getOptionsModel(): BlockStrategyOptions;
 }

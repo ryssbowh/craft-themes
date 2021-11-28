@@ -4,8 +4,21 @@ import BlocksContext from './components/BlocksContext.vue';
 import BlocksMenu from './components/BlocksMenu.vue';
 import LayoutModal from './components/LayoutModal'
 import Blocks from './components/Blocks.vue';
-import Lightswitch from '../forms/Lightswitch.vue';
 import { store } from './stores/store.js';
+
+import Lightswitch from '../forms/Lightswitch.vue';
+import Select from '../forms/Select.vue';
+import Text from '../forms/Text.vue';
+import DateField from '../forms/Date.vue';
+import Time from '../forms/Time.vue';
+import Color from '../forms/Color.vue';
+import DateTime from '../forms/DateTime.vue';
+import Textarea from '../forms/Textarea.vue';
+import MultiSelect from '../forms/MultiSelect.vue';
+import Checkboxes from '../forms/Checkboxes.vue';
+import Radio from '../forms/Radio.vue';
+import FetchViewMode from '../forms/FetchViewMode.vue';
+import Elements from '../forms/Elements.vue';
 
 const app = createApp({
     components: {
@@ -18,21 +31,20 @@ const app = createApp({
 app.use(store);
 
 app.component('layout-modal', LayoutModal);
-app.component('lightswitch', Lightswitch);
 
-let event = new CustomEvent("register-block-option-components", {detail: {}});
-document.dispatchEvent(event);
-
-for (let name in event.detail) {
-    app.component(name, event.detail[name]);
-}
-
-event = new CustomEvent("register-block-strategy-components", {detail: {}});
-document.dispatchEvent(event);
-
-for (let name in event.detail) {
-    app.component('strategy-'+name, event.detail[name]);
-}
+app.component('formfield-lightswitch', Lightswitch);
+app.component('formfield-select', Select);
+app.component('formfield-text', Text);
+app.component('formfield-date', DateField);
+app.component('formfield-time', Time);
+app.component('formfield-color', Color);
+app.component('formfield-datetime', DateTime);
+app.component('formfield-textarea', Textarea);
+app.component('formfield-multiselect', MultiSelect);
+app.component('formfield-checkboxes', Checkboxes);
+app.component('formfield-radio', Radio);
+app.component('formfield-fetchviewmode', FetchViewMode);
+app.component('formfield-elements', Elements);
 
 const Translate = {
   install(app) {

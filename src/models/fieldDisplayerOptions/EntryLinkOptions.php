@@ -6,19 +6,41 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 class EntryLinkOptions extends FieldDisplayerOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $label = 'title';
+    public function defineOptions(): array
+    {
+        return [
+            'label' => [
+                'field' => 'select',
+                'options' => [
+                    'title' => \Craft::t('themes', 'Entry title'),
+                    'custom' => \Craft::t('themes', 'Custom'),
+                ],
+                'label' => \Craft::t('app', 'Label')
+            ],
+            'custom' => [
+                'field' => 'text',
+                'label' => \Craft::t('themes', 'Custom')
+            ],
+            'newTab' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Open in new tab')
+            ]
+        ];
+    }
 
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $custom = '';
-
-    /**
-     * @var boolean
-     */
-    public $newTab = false;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'label' => 'title',
+            'custom' => '',
+            'newTab' => false
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -28,7 +50,7 @@ class EntryLinkOptions extends FieldDisplayerOptions
         return [
             [['label', 'custom'], 'string'],
             ['newTab', 'boolean', 'trueValue' => true, 'falseValue' => false],
-            ['label', 'in', 'range' => ['title', 'custom']],
+            ['label', 'in', 'range' => array_keys($this->definitions['label']['options'])],
             ['custom', 'required', 'when' => function ($model) {
                 return $model->label == 'custom';
             }],

@@ -2,12 +2,11 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
-use craft\base\Model;
 
 /**
  * Base class for all file displayers options
  */
-class FileDisplayerOptions extends Model
+class FileDisplayerOptions extends EventDefinableOptions
 {
     /**
      * @var FileDisplayerInterface
@@ -32,5 +31,13 @@ class FileDisplayerOptions extends Model
     public function setDisplayer(FileDisplayerInterface $displayer)
     {
         $this->_displayer = $displayer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function reservedWords(): array
+    {
+        return array_merge(parent::reservedWords(), ['displayer']);
     }
 }

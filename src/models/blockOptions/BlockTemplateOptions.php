@@ -9,9 +9,28 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockTemplateOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $template = '';
+    public function defineOptions(): array
+    {
+        return [
+            'template' => [
+                'field' => 'text',
+                'required' => true,
+                'label' => \Craft::t('app', 'Template Path')
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'template' => ''
+        ];
+    }
 
     /**
      * @inheritDoc

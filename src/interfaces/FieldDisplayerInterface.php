@@ -1,12 +1,13 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use craft\base\Model;
 
 /**
  * A displayer renders one and one only type of field, it can have options.
  */
-interface FieldDisplayerInterface
+interface FieldDisplayerInterface 
 {
     /**
      * Field target class
@@ -23,6 +24,20 @@ interface FieldDisplayerInterface
     public static function getHandle(): string;
 
     /**
+     * Field setter
+     * 
+     * @param FieldInterface $field
+     */
+    public function setField(FieldInterface $field);
+
+    /**
+     * Field getter
+     * 
+     * @return FieldInterface
+     */
+    public function getField(): FieldInterface
+
+    /**
      * Get options model class
      * 
      * @return string
@@ -32,9 +47,9 @@ interface FieldDisplayerInterface
     /**
      * Get options
      * 
-     * @return Model
+     * @return FieldDisplayerOptions
      */
-    public function getOptions(): Model;
+    public function getOptions(): FieldDisplayerOptions;
 
     /**
      * Options setter
@@ -49,6 +64,13 @@ interface FieldDisplayerInterface
      * @return bool
      */
     public function getHasOptions(): bool;
+
+    /**
+     * Theme getter
+     * 
+     * @return ThemeInterface
+     */
+    public function getTheme(): ThemeInterface;
 
     /**
      * Get name

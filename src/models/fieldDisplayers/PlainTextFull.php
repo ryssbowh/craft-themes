@@ -36,4 +36,12 @@ class PlainTextFull extends FieldDisplayer
     {
         return PlainText::class;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return PlainTextFullOptions::class;
+    }
 }

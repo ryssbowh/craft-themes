@@ -3,7 +3,7 @@
 {% set show_field = value|length > 0 and options.viewMode %}
 
 {% block content %}
-    <div class="slick-carousel" data-slick="{{ options.attributes|json_encode }}">
+    <div class="slick-carousel" data-slick="{{ options.getAttributes(null, ['viewModeUid'])|json_encode }}">
         {% for user in value %}
             {{ displayer.userLayout.render(user, options.viewMode.handle)|raw }}
         {% endfor %}

@@ -5,6 +5,9 @@
 {% block content %}
     {% for user in value %}
         <p class="user">
+            {% if options.username %}
+                {{ user.username }}
+            {% endif %}
             {% if options.firstName %}
                 {{ user.firstName }}
             {% endif %}

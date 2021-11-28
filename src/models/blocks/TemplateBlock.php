@@ -1,8 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
-use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockTemplateOptions;
 
 /**
@@ -42,8 +42,8 @@ class TemplateBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptionsInterface
+    public function getOptionsModel(): string
     {
-        return new BlockTemplateOptions;
+        return BlockTemplateOptions::class;
     }
 }

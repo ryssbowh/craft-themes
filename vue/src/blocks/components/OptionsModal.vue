@@ -4,13 +4,8 @@
             <h3>{{ t('Edit block {block} options', {block: this.editedBlock.name}) }}</h3>
         </div>
         <div class="body" v-if="editedBlock">
-            <div class="field">
-                <div class="heading">
-                    <label>{{ t('Active') }}</label>
-                </div>
-                <lightswitch :on="active ? true : false" @change="active = $event">
-                </lightswitch>
-            </div>
+            <formfield-lightswitch :value="active ? true : false" :definition="{label: t('Active')}" @change="active = $event" :name="active">
+            </formfield-lightswitch>
             <div class="field">
                 <div class="heading">
                     <label>{{ t('Caching') }}</label>                                    
@@ -18,20 +13,20 @@
                 <div class="instructions">{{ strategyDescription }}</div>
                 <div class="input ltr">
                     <div class="select">
-                        <select id="type" name="cacheStrategy" :value="options.cacheStrategy" @input="updateOptions({cacheStrategy: $event.target.value})">
+                        <select id="type" @change="updateCacheStrategy($event.target.value)" v-model="cacheStrategy.handle">
                             <option value="">{{ t('No cache') }}</option>
                             <option :value="strategy.handle" v-for="strategy in cacheStrategies" v-bind:key="strategy.handle">{{ strategy.name }}</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <component class="strategy" :is="cacheStrategyOptionsComponent" :block="editedBlock" :options="options.cacheStrategyOptions ?? {}" :errors="errors.cacheStrategy ?? {}" @updateOptions="updateStrategyOptions"></component>
-            <component :is="optionsComponent" :block="editedBlock" :errors="errors.options ?? {}" :options="options" @updateOptions="updateOptions"></component>
+            <component v-for="definition, name in strategyFieldsDefinitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="cacheStrategy.options[name] ?? null" :errors="getCacheStrategyErrors(name)" @change="updateStrategyOption(name, $event)" :key="name"></component>
+            <component v-for="definition, name in editedBlock.optionsDefinitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="options[name] ?? null" :errors="getOptionErrors(name)" @change="updateOption(name, $event)" :key="name"></component>
         </div>
         <div class="footer">
             <div class="buttons right">
                 <button type="button" class="btn" @click="closeModal">{{ t('Close', {}, 'app') }}</button>
-                <button type="button" class="btn submit" @click="save">{{ t('Save', {}, 'app') }}</button>
+                <button type="button" class="btn submit" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
             </div>
         </div>
     </div>
@@ -44,18 +39,18 @@ import { merge } from 'lodash';
 export default {
     computed: {
         strategyDescription: function () {
-            for (let i in this.cacheStrategies) {
-                if (this.cacheStrategies[i].handle == this.options.cacheStrategy) {
-                    return this.cacheStrategies[i].description;
-                }
+            let strategy = this.getStrategy(this.cacheStrategy.handle);
+            if (!strategy) {
+                return '';
             }
-            return '';
+            return strategy.description;
         },
-        optionsComponent: function () {
-            return this.editedBlock.provider + '-' + this.editedBlock.handle;
-        },
-        cacheStrategyOptionsComponent: function () {
-            return 'strategy-' + this.options.cacheStrategy;
+        strategyFieldsDefinitions: function () {
+            let strategy = this.getStrategy(this.cacheStrategy.handle);
+            if (!strategy) {
+                return '';
+            }
+            return strategy.options.definitions;
         },
         ...mapState(['cacheStrategies', 'showOptionsModal', 'editedBlock'])
     },
@@ -64,7 +59,8 @@ export default {
             modal: null,
             options: {},
             errors: {},
-            active: null
+            active: null,
+            cacheStrategy: null
         }
     },
     watch: {
@@ -73,6 +69,7 @@ export default {
                 this.options = merge({}, this.editedBlock.options);
                 this.active = this.editedBlock.active;
                 this.errors = this.editedBlock.errors;
+                this.cacheStrategy = this.editedBlock.cacheStrategy;
                 this.modal.show();
             } else {
                 this.modal.hide();
@@ -86,30 +83,58 @@ export default {
         this.createModal();
     },
     methods: {
-        createModal () {
+        formFieldComponent (field) {
+            return 'formfield-' + field;
+        },
+        getStrategy(handle) {
+            return this.cacheStrategies[handle] ?? null;
+        },
+        createModal() {
             this.modal = new Garnish.Modal(this.$refs.modal, {
                 hideOnEsc: false,
                 hideOnShadeClick: false,
                 autoShow: false
             });
         },
-        closeModal () {
+        closeModal() {
             this.options = {};
             this.errors = {};
             this.active = null;
             this.setShowOptionsModal({show:false})
         },
-        updateOptions (options) {
-            this.options = {...this.options, ...options};
+        updateStrategyOption(name, value) {
+            this.cacheStrategy.options[name] = value;
         },
-        updateStrategyOptions (options) {
-            this.options.cacheStrategyOptions = {...this.options.cacheStrategyOptions, ...options};
+        updateOption(name, value) {
+            this.options[name] = value;
         },
-        save () {
+        updateCacheStrategy(handle) {
+            if (handle) {
+                this.cacheStrategy.handle = handle;
+                this.cacheStrategy.options = this.getStrategy(handle).options.defaultValues;
+            } else {
+                this.cacheStrategy.handle = '';
+                this.cacheStrategy.options = {};
+            }
+        },
+        getCacheStrategyErrors(name) {
+            if (!this.errors.cacheStrategy) {
+                return [];
+            }
+            return this.errors.cacheStrategy[name] ?? [];
+        },
+        getOptionErrors(name) {
+            if (!this.errors.options) {
+                return [];
+            }
+            return this.errors.options[name] ?? [];
+        },
+        save() {
             let data = {
                 blockHandle: this.editedBlock.handle,
                 provider: this.editedBlock.provider,
-                options: this.options
+                options: this.options,
+                cacheStrategy: this.cacheStrategy
             };
             axios({
                 method: 'post',
@@ -122,6 +147,7 @@ export default {
                 } else {
                     this.editedBlock.active = this.active;
                     this.editedBlock.options = this.options;
+                    this.editedBlock.cacheStrategy = this.cacheStrategy;
                     this.updateBlock(this.editedBlock);
                     this.closeModal();
                 }

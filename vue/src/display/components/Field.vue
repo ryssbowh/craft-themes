@@ -43,7 +43,7 @@
         <div class="options col">
             <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="showModal = true"><div class="icon settings"></div></a>
         </div>
-        <options-modal @onSave="onSaveModal" v-if="showModal" :resetoptions="resetDisplayerOptions" :displayer="displayer" :item="item" @onHide="closeModal"/>
+        <options-modal @onSave="onSaveModal" v-if="showModal" :displayerHasChanged="displayerHasChanged" :displayer="displayer" :item="item" @onHide="closeModal"/>
     </div>
 </template>
 
@@ -60,14 +60,6 @@ export default {
             classes[this.item.type] = true;
             return classes;
         },
-        displayer: function () {
-            for (let i in this.item.availableDisplayers) {
-                if (this.item.availableDisplayers[i].handle == this.item.displayerHandle) {
-                    return this.item.availableDisplayers[i];
-                }
-            }
-            return false;
-        },
         visible: function () {
             return !this.item.visuallyHidden && !this.item.hidden
         },
@@ -81,15 +73,10 @@ export default {
             if (!this.item.displayerHandle) {
                 return false;
             }
-            for (let i in this.item.availableDisplayers) {
-                if (this.item.availableDisplayers[i].handle == this.item.displayerHandle) {
-                    return true;
-                }
-            }
-            return false;
+            return this.displayer !== false;
         },
         isOpaque: function () {
-            return (this.item.hidden || this.item.visuallyHidden || !this.displayerDefined || !this.hasDisplayers || !this.item.displayerHandle);
+            return (this.item.hidden || this.item.visuallyHidden || !this.displayerDefined || !this.hasDisplayers);
         },
         fullHandle: function () {
             if (!this.displayer) {
@@ -117,8 +104,12 @@ export default {
     data() {
         return {
             showModal: false,
-            resetDisplayerOptions: false
+            displayerHasChanged: false,
+            displayer: false
         }
+    },
+    created() {
+        this.displayer = this.getDisplayer(this.item.displayerHandle);
     },
     watch: {
         switchItemsVisibility: function () {
@@ -138,7 +129,7 @@ export default {
         },
         closeModal: function () {
             this.showModal = false;
-            this.resetDisplayerOptions = false;
+            this.displayerHasChanged = false;
         },
         onSaveModal: function (data) {
             this.$emit("updateItem", {options: data});
@@ -152,7 +143,6 @@ export default {
             if (val == 'hidden') {
                 data.labelHidden = true;
             } else if (val == 'visuallyHidden') {
-                data.labelHidden = false;
                 data.labelVisuallyHidden = true;
             }
             this.$emit("updateItem", data);
@@ -166,14 +156,22 @@ export default {
             if (val == 'hidden') {
                 data.hidden = true;
             } else if (val == 'visuallyHidden') {
-                data.hidden = false;
                 data.visuallyHidden = true;
             }
             this.$emit("updateItem", data);
         },
+        getDisplayer: function (handle) {
+            for (let i in this.item.availableDisplayers) {
+                if (this.item.availableDisplayers[i].handle == handle) {
+                    return this.item.availableDisplayers[i];
+                }
+            }
+            return false;
+        },
         updateDisplayer: function(e) {
             this.$emit("updateItem", {displayerHandle: e.originalTarget.value});
-            this.resetDisplayerOptions = true;
+            this.displayerHasChanged = true;
+            this.displayer = this.getDisplayer(e.originalTarget.value);
             if(this.displayer.hasOptions) {
                 this.showModal = true;
             }

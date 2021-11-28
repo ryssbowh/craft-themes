@@ -3,7 +3,8 @@ namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\NoOptions;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use craft\base\Model;
 use craft\fields\BaseRelationField;
@@ -39,24 +40,16 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function getHasOptions(): bool
-    {
-        return $this->getOptionsModel() != NoOptions::class;
-    }
-
-    /**
-     * TO BE REVIEWED
-     */
-    public function setField($field)
+    public function setField(FieldInterface $field)
     {
         $this->_field = $field;
         $this->_options = null;
     }
 
     /**
-     * TO BE REVIEWED
+     * @inheritDoc
      */
-    public function getField(): ?object
+    public function getField(): FieldInterface
     {
         return $this->_field;
     }
@@ -64,7 +57,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function getOptions(): Model
+    public function getOptions(): FieldDisplayerOptions
     {
         if ($this->_options === null) {
             $class = $this->getOptionsModel();
@@ -78,17 +71,23 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function setOptions(array $options)
+    public function getHasOptions(): bool
     {
-        $attributes = $this->safeAttributes();
-        $options = array_intersect_key($options, array_flip($attributes));
-        $this->options->setAttributes($options);
+        return sizeof($this->options->definitions) > 0;
     }
 
     /**
-     * TO BE REVIEWED
+     * @inheritDoc
      */
-    public function getTheme()
+    public function setOptions(array $options)
+    {
+        $this->options->setValues($options);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTheme(): ThemeInterface
     {
         return $this->field->layout->theme;
     }
@@ -110,14 +109,6 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     public function fields()
     {
         return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return NoOptions::class;
     }
 
     /**

@@ -11,9 +11,31 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockEntryOptions extends BlockOptions
 {
     /**
-     * @var array
+     * @inheritDoc
      */
-    public $entries = [];
+    public function defineOptions(): array
+    {
+        return [
+            'entries' => [
+                'field' => 'elements',
+                'elementType' => 'entries',
+                'addElementLabel' => \Craft::t('app', 'Add an entry'),
+                'required' => true,
+                'label' => \Craft::t('app', 'Entries'),
+                'saveInConfig' => false
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'entries' => []
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -28,19 +50,5 @@ class BlockEntryOptions extends BlockOptions
                 }
             }]
         ]);
-    }
-
-    /**
-     * Saving the entry option field after save as it's not included in project config
-     * 
-     * @param BlockInterface $block
-     */
-    public function afterSave(BlockInterface $block)
-    {
-        $record = Themes::$plugin->blocks->getRecordByUid($block->uid);
-        $options = json_decode($record->options, true);
-        $options['entries'] = $this->entries;
-        $record->options = $options;
-        $record->save(false);
     }
 }

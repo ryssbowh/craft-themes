@@ -44,27 +44,4 @@ class Time extends FieldDisplayer
     {
         return TimeOptions::class;
     }
-
-    /**
-     * Get available date formats
-     * 
-     * @return array
-     */
-    public function getFormats(): array
-    {
-        return [
-            'H:i:s' => \Craft::t('themes', '13:25:13'),
-            'H:i' => \Craft::t('themes', '13:25'),
-            'g:ia' => \Craft::t('themes', '1:25pm'),
-            'custom' => \Craft::t('themes', 'Custom'),
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['formats']);
-    }
 }

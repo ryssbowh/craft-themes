@@ -6,9 +6,37 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 class TagTitleTitleOptions extends FieldDisplayerOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $tag = 'h1';
+    public function defineOptions(): array
+    {
+        return [
+            'tag' => [
+                'field' => 'select',
+                'options' => [
+                    'h1' => 'h1', 
+                    'h2' => 'h2', 
+                    'h3' => 'h3', 
+                    'h4' => 'h4', 
+                    'h5' => 'h5', 
+                    'h6' => 'h6', 
+                    'p' => 'p'
+                ],
+                'required' => true,
+                'label' => \Craft::t('themes', 'Tag')
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'tag' => 'p'
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -17,7 +45,7 @@ class TagTitleTitleOptions extends FieldDisplayerOptions
     {
         return [
             ['tag', 'string'],
-            ['tag', 'in', 'range' => ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']]
+            ['tag', 'in', 'range' => array_keys($this->definitions['tag']['options'])]
         ];
     }
 }

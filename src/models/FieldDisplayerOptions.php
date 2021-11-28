@@ -2,12 +2,11 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use craft\base\Model;
 
 /**
  * Base class for all field displayer options
  */
-class FieldDisplayerOptions extends Model
+class FieldDisplayerOptions extends EventDefinableOptions
 {
     /**
      * @var FieldDisplayerInterface
@@ -32,5 +31,13 @@ class FieldDisplayerOptions extends Model
     public function setDisplayer(FieldDisplayerInterface $displayer)
     {
         $this->_displayer = $displayer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function reservedWords(): array
+    {
+        return array_merge(parent::reservedWords(), ['displayer']);
     }
 }

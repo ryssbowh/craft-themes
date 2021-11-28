@@ -60,9 +60,24 @@ abstract class Block extends Model implements BlockInterface
     public $uid;
 
     /**
-     * @var array
+     * @var BlockOptions
      */
     protected $_optionsModel;
+
+    /**
+     * @var string
+     */
+    protected $_cacheStrategyHandle;
+
+    /**
+     * @var array
+     */
+    protected $_cacheStrategyOptions = [];
+
+    /**
+     * @var CacheStrategyInterface
+     */
+    protected $_cacheStrategy;
 
     /**
      * @var LayoutInterface
@@ -88,11 +103,6 @@ abstract class Block extends Model implements BlockInterface
      */
     public function getConfig(): array
     {
-        $options = $this->options->getConfig();
-        $strategyOptions = $this->getCacheStrategyOptions();
-        if ($strategyOptions) {
-            $options = array_merge($options, ['cacheStrategyOptions' => $strategyOptions->getConfig()]);
-        }
         return [
             'layout_id' => $this->layout->uid,
             'region' => $this->region,
@@ -100,7 +110,11 @@ abstract class Block extends Model implements BlockInterface
             'provider' => $this->provider,
             'order' => $this->order,
             'active' => (bool)$this->active,
-            'options' => $options
+            'options' => $this->options->getConfig(),
+            'cacheStrategy' => $this->cacheStrategy ? [
+                'handle' => $this->cacheStrategy->handle,
+                'options' => $this->cacheStrategy->options->getConfig()
+            ] : []
         ];
     }
 
@@ -115,7 +129,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function getLayout(): LayoutInterface
+    public function getLayout(): ?LayoutInterface
     {
         if (is_null($this->_layout)) {
             $this->_layout = Themes::$plugin->layouts->getById($this->layout_id);
@@ -161,8 +175,8 @@ abstract class Block extends Model implements BlockInterface
                 $this->options->validate();
             }],
             ['cacheStrategy', function () {
-                if ($cacheStrategyOptions = $this->cacheStrategyOptions) {
-                    $cacheStrategyOptions->validate();    
+                if ($cacheStrategy = $this->cacheStrategy) {
+                    $cacheStrategy->options->validate();    
                 }
             }]
         ];
@@ -173,17 +187,24 @@ abstract class Block extends Model implements BlockInterface
      */
     public function hasErrors($attribute = null)
     {
+        if ($attribute == 'options') {
+            return $this->options->hasErrors();
+        }
+        $strategy = $this->cacheStrategy;
+        if ($attribute == 'cacheStrategy') {
+            return $strategy ? $strategy->options->hasErrors() : false;
+        }
         if ($attribute !== null) {
             return parent::hasErrors($attribute);    
         }
         if ($this->options->hasErrors()) {
             return true;
         }
-        $strategyOptions = $this->cacheStrategyOptions;
-        if ($strategyOptions and $strategyOptions->hasErrors()) {
+        $strategy = $this->cacheStrategy;
+        if ($strategy and $strategy->options->hasErrors()) {
             return true;
         }
-        return parent::hasErrors($attribute);
+        return false;
     }
 
     /**
@@ -194,9 +215,9 @@ abstract class Block extends Model implements BlockInterface
         if ($attribute == 'options') {
             return $this->options->errors;
         }
-        $strategyOptions = $this->cacheStrategyOptions;
+        $strategy = $this->cacheStrategy;
         if ($attribute == 'cacheStrategy') {
-            return $strategyOptions ? $strategyOptions->errors : [];
+            return $strategy ? $strategy->options->errors : [];
         }
         if ($attribute !== null) {
             return parent::getErrors($attribute);
@@ -205,7 +226,7 @@ abstract class Block extends Model implements BlockInterface
         if ($errors2 = $this->options->errors) {
             $errors['options'] = $errors2;
         }
-        if ($strategyOptions and $errors2 = $strategyOptions->errors) {
+        if ($strategy and $errors2 = $strategy->options->errors) {
             $errors['cacheStrategy'] = $errors2;
         }
         return $errors;
@@ -252,26 +273,15 @@ abstract class Block extends Model implements BlockInterface
     }
 
     /**
-     * Get block cache strategy options
-     * 
-     * @return ?BlockCacheStrategyOptions
-     */
-    public function getCacheStrategyOptions(): ?BlockCacheStrategyOptions
-    {
-        $strategy = $this->cacheStrategy;
-        if ($strategy) {
-            return $strategy->options;
-        }
-        return null;
-    }
-
-    /**
      * @inheritDoc
      */
-    public function getOptions(): BlockOptionsInterface
+    public function getOptions(): BlockOptions
     {
         if ($this->_optionsModel === null) {
-            $this->_optionsModel = $this->getOptionsModel();
+            $class = $this->getOptionsModel();
+            $this->_optionsModel = new $class([
+                'block' => $this
+            ]);
         }
         return $this->_optionsModel;
     }
@@ -284,13 +294,36 @@ abstract class Block extends Model implements BlockInterface
         if (is_string($options)) {
             $options = json_decode($options, true);
         }
-        $cacheStrategyOptions = $options['cacheStrategyOptions'] ?? [];
-        unset($options['cacheStrategyOptions']);
-        $this->options->setAttributes($options);
-        $strategy = $this->cacheStrategy;
-        if ($strategy) {
-            $strategy->options->setAttributes($cacheStrategyOptions);
+        $this->options->setValues($options);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $array = parent::toArray($fields, $expand, $recursive);
+        $array['options'] = $this->options->values;
+        $array['optionsDefinitions'] = $this->options->definitions;
+        $array['optionsDefault'] = $this->options->defaultValues;
+        $array['cacheStrategy'] = [
+            'handle' => $this->cacheStrategy ? $this->cacheStrategy->handle : '',
+            'options' => $this->cacheStrategy ? $this->cacheStrategy->options->values : []
+        ];
+        return $array;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCacheStrategy($strategy)
+    {
+        if (is_string($strategy)) {
+            $strategy = json_decode($strategy, true);
         }
+        $this->_cacheStrategy = null;
+        $this->_cacheStrategyHandle = $strategy['handle'] ?? null;
+        $this->_cacheStrategyOptions = $strategy['options'] ?? [];
     }
     
     /**
@@ -298,10 +331,15 @@ abstract class Block extends Model implements BlockInterface
      */
     public function getCacheStrategy(): ?BlockCacheStrategyInterface
     {
-        if ($this->options->cacheStrategy and Themes::$plugin->blockCache->hasStrategy($this->options->cacheStrategy)) {
-            return Themes::$plugin->blockCache->getStrategy($this->options->cacheStrategy);
+        if ($this->_cacheStrategy === null) {
+            if ($this->_cacheStrategyHandle and Themes::$plugin->blockCache->hasStrategy($this->_cacheStrategyHandle)) {
+                $this->_cacheStrategy = Themes::$plugin->blockCache->getStrategy($this->_cacheStrategyHandle);
+                $this->_cacheStrategy->options->setValues($this->_cacheStrategyOptions);
+            } else {
+                $this->_cacheStrategy = false;
+            }
         }
-        return null;
+        return $this->_cacheStrategy ?: null;
     }
 
     /**
@@ -315,17 +353,18 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptionsInterface
-    {
-        return new BlockOptions;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function afterSave()
     {
-        $this->options->afterSave($this);
+        $record = Themes::$plugin->blocks->getRecordByUid($this->uid);
+        $options = $this->options->values;
+        foreach ($this->options->definitions as  $name => $definition) {
+            $save = $definition['saveInConfig'] ?? true;
+            if (!$save) {
+                $options[$name] = $this->$name;
+            }
+        }
+        $record->options = $options;
+        $record->save(false);
     }
 
     /**

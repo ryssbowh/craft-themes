@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\CheckboxesLabelOptions;
 use craft\base\Model;
 use craft\fields\Checkboxes;
 
@@ -34,5 +35,13 @@ class CheckboxesLabel extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return Checkboxes::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return CheckboxesLabelOptions::class;
     }
 }

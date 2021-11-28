@@ -309,6 +309,7 @@ document.addEventListener("register-block-option-components", function(e) {
                     sources: '*',
                     viewMode: 'small',
                     theme: this.theme,
+                    branchLimit: 1,
                     selectable: 0,
                     createElementCallback: this.createElement,
                     initialIds: Object.keys(this.options.assets).map((i) => {

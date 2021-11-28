@@ -9,9 +9,27 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class FlashMessagesBlockOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $removeMessages = true;
+    public function defineOptions(): array
+    {
+        return [
+            'removeMessages' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('app', 'Remove messages from session')
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'removeMessages' => true
+        ];
+    }
 
     /**
      * @inheritDoc

@@ -10,6 +10,21 @@ function handleError(err) {
     }
 }
 
+/**
+ * Empty items options will come as an array, converting it to object
+ */
+function sanitizeOptions(viewModes) {
+    for (let v in viewModes) {
+        for (let d in viewModes[v].displays) {
+            let options = viewModes[v].displays[d].item.options;
+            if (Array.isArray(options)) {
+                viewModes[v].displays[d].item.options = {};
+            }
+        }
+    }
+    return viewModes;
+}
+
 function setWindowUrl(theme, layout, viewMode) {
     let url = document.location.pathname.split('/');
     let i = url.findIndex(e => e == 'display');
@@ -126,7 +141,7 @@ const store = createStore({
                     if (display.uid != uid) {
                         continue;
                     }
-                    state.viewModes[v].displays[d] = merge(display, data);
+                    state.viewModes[v].displays.splice(d, 1, merge(display, data));
                     break;
                 }
             }
@@ -197,7 +212,7 @@ const store = createStore({
             commit('setIsFetching', true);
             return axios.post(Craft.getCpUrl('themes/ajax/view-modes'), {layoutId: state.layout.id})
             .then((response) => {
-                commit('setViewModes', response.data.viewModes);
+                commit('setViewModes', sanitizeOptions(response.data.viewModes));
                 let viewModeExists = (viewModeHandle && state.viewModes.filter((v) => v.handle == viewModeHandle).length);
                 if (viewModeExists) {
                     dispatch('setViewModeByHandle', viewModeHandle);
@@ -223,7 +238,7 @@ const store = createStore({
                 },
             })
             .then(res => {
-                commit('setViewModes', res.data.viewModes);
+                commit('setViewModes', sanitizeOptions(res.data.viewModes));
                 Craft.cp.displayNotice(res.data.message);
             })
             .catch(err => {

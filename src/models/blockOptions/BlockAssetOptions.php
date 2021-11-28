@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
+use craft\elements\Category;
 
 /**
  * Options for the block asset
@@ -11,10 +12,32 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockAssetOptions extends BlockOptions
 {
     /**
-     * @var array
+     * @inheritDoc
      */
-    public $assets = [];
+    public function defineOptions(): array
+    {
+        return [
+            'assets' => [
+                'field' => 'elements',
+                'elementType' => 'assets',
+                'addElementLabel' => \Craft::t('app', 'Add an asset'),
+                'required' => true,
+                'label' => \Craft::t('app', 'Assets'),
+                'saveInConfig' => false
+            ]
+        ];
+    }
 
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'assets' => []
+        ];
+    }
+    
     /**
      * @inheritDoc
      */
@@ -28,19 +51,5 @@ class BlockAssetOptions extends BlockOptions
                 }
             }]
         ]);
-    }
-
-    /**
-     * Saving the asset option field after save as it's not included in project config
-     * 
-     * @param BlockInterface $block
-     */
-    public function afterSave(BlockInterface $block)
-    {
-        $record = Themes::$plugin->blocks->getRecordByUid($block->uid);
-        $options = json_decode($record->options, true);
-        $options['assets'] = $this->assets;
-        $record->options = $options;
-        $record->save(false);
     }
 }

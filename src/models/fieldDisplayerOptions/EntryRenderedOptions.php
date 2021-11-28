@@ -4,39 +4,27 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\traits\ViewModesOptions;
 use craft\elements\Entry;
 
 class EntryRenderedOptions extends FieldDisplayerOptions
 {
-    /**
-     * @var array
-     */
-    protected $_viewModes;
+    use ViewModesOptions;
 
     /**
      * @inheritDoc
      */
-    public function getViewModes()
+    public function defineRules(): array
     {
-        if ($this->_viewModes === null) {
-            $this->_viewModes = [];
-            foreach ($this->displayer->getViewModes() as $typeUid => $viewModes) {
-                $keys = array_keys($viewModes['viewModes']);
-                $this->_viewModes[$typeUid] = $keys[0];
-            }
-        }
-        return $this->_viewModes;
+        return array_merge(parent::defineRules(), $this->defineViewModesRules());
     }
 
     /**
-     * View modes setter
-     * 
-     * @param array $viewModes
+     * @inheritDoc
      */
-    public function setViewModes(array $viewModes)
+    public function defineOptions(): array
     {
-        $this->_viewModes = $viewModes;
+        return array_merge(parent::defineOptions(), $this->defineViewModesOptions());
     }
 
     /**
@@ -52,38 +40,5 @@ class EntryRenderedOptions extends FieldDisplayerOptions
             return Themes::$plugin->viewModes->getByUid($uid);
         }
         return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['viewModes']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function defineRules(): array
-    {
-        return [
-            ['viewModes', 'validateViewModes', 'skipOnEmpty' => false]
-        ];
-    }
-
-    /**
-     * validate view modes
-     */
-    public function validateViewModes()
-    {
-        $validViewModes = $this->displayer->getViewModes();
-        foreach ($validViewModes as $typeUid => $viewModes) {
-            if (!isset($this->viewModes[$typeUid])) {
-                $this->addError('viewMode-'.$typeUid, \Craft::t('themes', 'View mode is required')); 
-            } elseif (!in_array($this->viewModes[$typeUid], array_keys($viewModes['viewModes'] ?? []))) {
-                $this->addError('viewMode-'.$typeUid, \Craft::t('themes', 'View mode is invalid'));
-            }
-        }
     }
 }

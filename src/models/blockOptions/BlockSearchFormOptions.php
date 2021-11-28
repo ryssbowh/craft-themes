@@ -9,14 +9,34 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockSearchFormOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $action = 'search';
+    public function defineOptions(): array
+    {
+        return [
+            'action' => [
+                'field' => 'text',
+                'required' => true,
+                'label' => \Craft::t('app', 'Form action')
+            ],
+            'inputName' => [
+                'field' => 'text',
+                'required' => true,
+                'label' => \Craft::t('app', 'Search term name')
+            ]
+        ];
+    }
 
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $inputName = 'term';
+    public function defineDefaultValues(): array
+    {
+        return [
+            'action' => 'search',
+            'inputName' => 'term'
+        ];
+    }
 
     /**
      * @inheritDoc

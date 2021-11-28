@@ -39,9 +39,9 @@ class ImageTransform extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new ImageTransformOptions;
+        return ImageTransformOptions::class;
     }
 
     /**

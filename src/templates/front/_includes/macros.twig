@@ -22,7 +22,7 @@
         {% elseif options.label == 'filename' %}
             {{ asset.filename }}
         {% else %}
-            {{ options.custom ? 'no label' }}
+            {{ options.custom ?? 'no label' }}
         {% endif %}
     </a>
 {% endmacro %}

@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TagLabelOptions;
 use craft\base\Model;
 use craft\fields\Tags;
 
@@ -34,5 +35,13 @@ class TagLabel extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return Tags::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return TagLabelOptions::class;
     }
 }

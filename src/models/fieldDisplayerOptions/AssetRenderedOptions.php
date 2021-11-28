@@ -4,72 +4,27 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\traits\ViewModesOptions;
 use craft\elements\Asset;
 
 class AssetRenderedOptions extends FieldDisplayerOptions
 {
-    /**
-     * @var array
-     */
-    protected $_viewModes;
-
-    /**
-     * Get all view modes
-     * 
-     * @return array
-     */
-    public function getViewModes(): array
-    {
-        if (is_null($this->_viewModes)) {
-            $this->_viewModes = [];
-            foreach ($this->displayer->getViewModes() as $volumeUid => $viewModes) {
-                $keys = array_keys($viewModes['viewModes']);
-                $this->_viewModes[$volumeUid] = $keys[0];
-            }
-        }
-        return $this->_viewModes;
-    }
-
-    /**
-     * View modes setter
-     * 
-     * @param array $viewModes
-     */
-    public function setViewModes(array $viewModes)
-    {
-        $this->_viewModes = $viewModes;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['viewModes']);
-    }
+    use ViewModesOptions;
 
     /**
      * @inheritDoc
      */
     public function defineRules(): array
     {
-        return [
-            ['viewModes', 'validateViewModes', 'skipOnEmpty' => false]
-        ];
+        return array_merge(parent::defineRules(), $this->defineViewModesRules());
     }
 
     /**
-     * Validate view modes
+     * @inheritDoc
      */
-    public function validateViewModes()
+    public function defineOptions(): array
     {
-        $validViewModes = $this->displayer->getViewModes();
-        foreach ($this->viewModes as $volumeUid => $viewModeUid) {
-            if (!isset($validViewModes[$volumeUid]['viewModes'][$viewModeUid])) {
-               $this->addError('viewMode-'.$volumeUid, \Craft::t('themes', 'View mode is invalid'));
-            }
-        }
+        return array_merge(parent::defineOptions(), $this->defineViewModesOptions());
     }
 
     /**
@@ -82,7 +37,7 @@ class AssetRenderedOptions extends FieldDisplayerOptions
     {
         $volume = $asset->volume;
         if ($volume) {
-            $viewModeUid = $this->viewModes[$volume->uid] ?? null;
+            $viewModeUid = $this->getViewModes()[$volume->uid] ?? null;
             return $viewModeUid ? Themes::$plugin->viewModes->getByUid($viewModeUid) : null;
         }
         return null;

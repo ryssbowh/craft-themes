@@ -208,9 +208,6 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function setDisplayerHandle(string $handle)
     {
-        // if ($handle) {
-        //     Themes::$plugin->fieldDisplayers->ensureDisplayerIsValidForField($handle, $this);
-        // }
         $this->_displayerHandle = $handle;
         $this->_displayer = null;
     }
@@ -227,8 +224,10 @@ abstract class Field extends DisplayItem implements FieldInterface
             return null;
         }
         try {
-            $this->_displayer = Themes::$plugin->fieldDisplayers->getByHandle($this->displayerHandle);
-            $this->_displayer->field = $this;
+            $class = Themes::$plugin->fieldDisplayers->getClassByHandle($this->displayerHandle);
+            $this->_displayer = new $class([
+                'field' => $this
+            ]);
         } catch (FieldDisplayerException $e) {
             //Field displayer is set but invalid (its handle has changed ?)          
         }
@@ -243,7 +242,7 @@ abstract class Field extends DisplayItem implements FieldInterface
         if (!$this->displayer) {
             return [];
         }
-        return $this->displayer->options->toArray();
+        return $this->displayer->options->values;
     }
 
     /**
@@ -251,10 +250,8 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function setOptions(?array $options)
     {
-        if ($this->displayer and $this->displayer->hasOptions) {
-            $attributes = $this->displayer->options->safeAttributes();
-            $options = array_intersect_key($options, array_flip($attributes));
-            $this->displayer->options->setAttributes($options);
+        if ($this->displayer) {
+            $this->displayer->options->values = $options ?? [];
         }
     }
 

@@ -95,7 +95,7 @@ Templates are created by the system automatically, their types as mentionned in 
 
 ### Custom layouts
 
-You can add a custom programmatically layout by doing :
+You can add a custom layout programmatically by doing :
 
 ```
 $layout = Themes::$plugin->layouts->createCustom([
@@ -149,35 +149,8 @@ An exception will be thrown if you register 2 blocks with the same handle within
 ### Defining new blocks
 
 New block classes must implements `BlockInterface`, the model `Block` should be used to extend from.  
-You can override the `getOptionsModel` method to define more options, this method must return an instance that implements `BlockOptionsInterface`.
+You can override the `getOptionsModel` method to define more options. Or use the [configurable options](#configurable-options) system to modify an existing block's options.
 
-To hook in the backend Vue system, register a js file with a bundle :
-```
-Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
-    $event->bundles[] = MyBundle::class;
-});
-```  
-Yout javascript must respond to the event `register-block-option-components` and add your component to the `event.detail` variable. 
-
-Examples [here](vue/src/blockOptions/main.js)
-
-The key is built like so : {provider handle}-{block handle}.
-
-You can pass data from your block to Vue by overriding the `fields` method of your block class :
-```
-class MyBlock extends Block
-{
-    public function getMyVariable()
-    {
-        return 'my value';
-    }
-
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['myVariable']);
-    }
-}
-```
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your block options class.
 
 ### Creating/Deleting blocks programmatically
@@ -261,19 +234,9 @@ Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYE
 ```
 
 Your field displayer class must implements `FieldDisplayerInterface` class (`FieldDisplayer` model should be used to extend from) and define the field it can handle in its `getFieldTarget` method. 
-Registering a field displayer with a handle already existing will **replace** the current displayer.
+:warning: Registering a field displayer with a handle already existing will **replace** the current displayer.
 
-To hook in the backend Vue system, register a js file with a bundle :
-```
-Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
-    $event->bundles[] = MyBundle::class;
-});
-```  
-Your javascript must respond to the event `register-field-displayers-components` and add your component to the `event.detail` variable.  
-
-Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
-
-Examples [here](vue/src/fieldDisplayers/main.js)
+Displayers use [configurable options](#configurable-options).
 
 ## File displayers (Pro)
 
@@ -290,19 +253,54 @@ Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS
 ```
 
 Your file displayer class must extend the `FileDisplayerInterface` class (`FileDisplayer` model should be used to extend from) and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
-Registering a file displayer with a handle already existing will **replace** the current displayer.
+:warning: Registering a file displayer with a handle already existing will **replace** the current displayer.
 
-To hook in the backend Vue system, register a js file with a bundle :
+Displayers use [configurable options](#configurable-options).
+
+## Configurable options
+
+Many classes (field/file displayers, blocks, cache strategies) use configurable options, a class that allow modifications of options and how they are rendered in CP by other modules.  
+A configurable options class must define `defineOptions(): array` and `defineDefaultValues(): array`.
+
+These are the allowed field types that must be referenced in the `field` attribute of an option definition :
+- checkboxes
+- color
+- date
+- datetime
+- lightswitch
+- multiselect
+- radio
+- select
+- text
+- textarea
+- time
+- elements : select an element (user, entry, category or asset) through a modal, and a view mode for each
+- fetchviewmode : fetch view modes for a layout type and current theme and an optional element. Displays a select
+- filedisplayers : File displayers options for each asset kind
+- viewmodes : multiple grouped selects to choose a view mode for different elements
+
+You can add/remove/change options by responding to the options definitions event :
+
 ```
-Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
-    $event->bundles[] = MyBundle::class;
-});
-```  
-Your javascript must respond to the event `register-file-displayers-components` and add your component to the `event.detail` variable.   
-
-Validating your options and saving them will be handled automatically, as long as you have defined rules in your displayer options class.
-
-Examples [here](vue/src/fileDisplayers/main.js)
+Event::on(AssetLinkOptions::class, AssetLinkOptions::EVENT_OPTIONS_DEFINITIONS, function (FieldDisplayerOptionsDefinitions $e)) {
+    $e->definitions['newOption'] = [
+        'field' => 'text',
+        'label' => 'My new option',
+        'required' => true,
+        'type' => 'number',
+        'min' => 10,
+        'step' => 1
+    ];
+    $e->defaultValues['newOption'] = 56;
+}
+``` 
+If you need to define validation rules as well :
+```
+Event::on(AssetLinkOptions::class, AssetLinkOptions::EVENT_DEFINE_RULES, function (DefineRulesEvent $e)) {
+    $e->rules[] = ['newOption', 'required'];
+    $e->rules[] = ['newOption', 'double'];
+}
+```
 
 ## Templating (Pro)
 
@@ -423,6 +421,8 @@ Where `{displayer}` is the handle of the file displayer.
 Where `{field}` is the handle of the field.  
 Where `{viewMode}` is the rendered view mode's handle.
 
+### Events
+
 More templates and variables can be defined by listening to events on the `ViewService` class :
 
 - Layouts : event `BEFORE_RENDERING_LAYOUT`  
@@ -467,14 +467,14 @@ To override the preferences for your theme, override the method `getPreferencesM
 
 ### Root templates folder
 
-It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
+:warning: It is recommended to not use the root `templates` folder when using themes, if some templates are defined both in this folder and in a theme, the root templates folder will take precedence.
 
-A theme **can't** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
+:warning: A theme **can't** override templates that have a namespace (ie other plugin templates), unless they register their templates roots with the '' (empty string) key.
 
 ## Eager loading (Pro)
 
 By default, when a layout is rendered it will eager load every field it contains.  
-It could be changed by creating the `config/themes.php` file :
+This could be changed by creating the `config/themes.php` file :
 
 ```
 <?php 
@@ -483,7 +483,7 @@ return [
     'eagerLoad' => false
 ];
 ```
-All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
+:warning: All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
 
 ## Twig
 
@@ -501,7 +501,7 @@ Available variables :
 
 `@themePath` : Base directory of the current theme. This is not set if no theme is set.
 
-And three that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
+And 4 that are not used by the system, but could be useful if you're using a tool (such as webpack, gulp etc) to build your assets :
 
 `@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
 `@themesWeb` : Web url for themes, equivalent to `@web/themes`  
@@ -563,16 +563,5 @@ Event::on(BlockCacheService::class, BlockCacheService::REGISTER_STRATEGIES, func
     $event->add(new MyCacheStrategy);
 });
 ```
-Strategy classes must implement `BlockCacheStrategyInterface` and their options extend `BlockCacheStrategyOptions`;
+Strategy classes must implement `BlockCacheStrategyInterface` and their options extend `BlockStrategyOptions` which is a [configurable options](#configurable-options) class (but is not modifiable through events).
 
-To hook in the backend Vue system, register a js file with a bundle :
-```
-Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
-    $event->bundles[] = MyBundle::class;
-});
-```  
-Your javascript must respond to the event `register-block-strategy-components` and add your component to the `event.detail` variable. 
-
-Validating your options and saving them will be handled automatically, as long as you have defined rules in your strategy options class.
-
-Examples [here](vue/src/blockStrategies/main.js)

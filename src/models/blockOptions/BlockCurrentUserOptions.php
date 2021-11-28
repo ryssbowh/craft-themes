@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
+use Ryssbowh\CraftThemes\services\LayoutService;
 
 /**
  * Options for the block current user
@@ -11,9 +12,29 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockCurrentUserOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $viewMode;
+    public function defineOptions(): array
+    {
+        return [
+            'viewMode' => [
+                'field' => 'fetchviewmode',
+                'required' => true,
+                'layoutType' => LayoutService::USER_HANDLE,
+                'label' => \Craft::t('app', 'View mode')
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'viewMode' => null
+        ];
+    }
 
     /**
      * @inheritDoc

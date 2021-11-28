@@ -9,9 +9,27 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockLoginFormOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $onlyIfNotAuthenticated = true;
+    public function defineOptions(): array
+    {
+        return [
+            'onlyIfNotAuthenticated' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('app', 'Show only if the user is not authenticated')
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'onlyIfNotAuthenticated' => true,
+        ];
+    }
 
     /**
      * @inheritDoc

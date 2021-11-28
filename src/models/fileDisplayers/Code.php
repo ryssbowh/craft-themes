@@ -2,6 +2,8 @@
 namespace Ryssbowh\CraftThemes\models\fileDisplayers;
 
 use Ryssbowh\CraftThemes\models\FileDisplayer;
+use Ryssbowh\CraftThemes\models\fileDisplayerOptions\CodeOptions;
+use craft\base\Model;
 
 /**
  * Renders a file as code
@@ -27,5 +29,13 @@ class Code extends FileDisplayer
     public static function getKindTargets()
     {
         return ['javascript', 'html', 'php', 'text', 'xml', 'json'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return CodeOptions::class;
     }
 }

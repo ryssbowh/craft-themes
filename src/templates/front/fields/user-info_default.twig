@@ -3,6 +3,9 @@
 {% set show_field = value|length > 0 %}
 
 {% block content %}
+    {% if options.username %}
+        {{ value.username }}
+    {% endif %}
     {% if options.firstName %}
         {{ value.firstName }}
     {% endif %}

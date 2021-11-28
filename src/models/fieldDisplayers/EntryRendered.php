@@ -69,7 +69,7 @@ class EntryRendered extends FieldDisplayer
                 $viewModes = $viewModes + $this->getSingleEntriesViewModes();
             } else {
                 $elems = explode(':', $source);
-                $viewModes = $viewModes + $this->getEntryViewModes($elems[1]);
+                $viewModes = $viewModes + $this->getSectionViewModes($elems[1]);
             }
         }
         return $viewModes;
@@ -92,7 +92,7 @@ class EntryRendered extends FieldDisplayer
                     $viewModes2[$viewMode->uid] = $viewMode->name;
                 }
                 $viewModes[$type->uid] = [
-                    'type' => $type->name,
+                    'label' => $section->name . ' : ' . $type->name,
                     'viewModes' => $viewModes2
                 ];
             }
@@ -117,7 +117,7 @@ class EntryRendered extends FieldDisplayer
                 $viewModes2[$viewMode->uid] = $viewMode->name;
             }
             $viewModes[$type->uid] = [
-                'type' => $type->name,
+                'label' => $section->name . ' : ' . $type->name,
                 'viewModes' => $viewModes2
             ];
         }
@@ -125,11 +125,11 @@ class EntryRendered extends FieldDisplayer
     }
 
     /**
-     * Get all view modes defined for this displayer's field (for one section uid)
+     * Get all view modes defined for this displayer's field (for one section)
      * 
      * @return array
      */
-    protected function getEntryViewModes(string $uid): array
+    protected function getSectionViewModes(string $uid): array
     {
         $section = \Craft::$app->sections->getSectionByUid($uid);
         $types = [];
@@ -141,7 +141,7 @@ class EntryRendered extends FieldDisplayer
                 $viewModes[$viewMode->handle] = $viewMode->name;
             }
             $types[] = [$type->uid => [
-                'type' => $type->name,
+                'label' => $section->name . ' : ' . $type->name,
                 'viewModes' => $viewModes
             ]];
         }

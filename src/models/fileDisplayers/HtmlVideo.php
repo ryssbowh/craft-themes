@@ -44,8 +44,8 @@ class HtmlVideo extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new HtmlVideoOptions;
+        return HtmlVideoOptions::class;
     }
 }

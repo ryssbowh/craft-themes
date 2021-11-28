@@ -137,11 +137,13 @@ class CpBlocksAjaxController extends Controller
         $blockHandle = $this->request->getRequiredParam('blockHandle');
         $provider = $this->request->getRequiredParam('provider');
         $optionsData = $this->request->getRequiredParam('options');
+        $cacheStrategyData = $this->request->getRequiredParam('cacheStrategy');
 
         $provider = $this->blockProviders->getByHandle($provider);
         $block = $provider->createBlock($blockHandle);
 
         $block->options = $optionsData;
+        $block->cacheStrategy = $cacheStrategyData;
         $block->validate(['options', 'cacheStrategy']);
 
         return [

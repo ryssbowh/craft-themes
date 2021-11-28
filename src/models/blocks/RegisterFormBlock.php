@@ -1,8 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\blocks;
 
-use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockRegisterFormOptions;
 
 /**
@@ -45,8 +45,8 @@ class RegisterFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptionsInterface
+    public function getOptionsModel(): string
     {
-        return new BlockRegisterFormOptions;
+        return BlockRegisterFormOptions::class;
     }
 }

@@ -6,7 +6,7 @@ use craft\db\Table;
 
 class Install extends Migration
 {
-	/**
+    /**
      * @inheritdoc
      */
     public function safeUp()
@@ -24,6 +24,7 @@ class Install extends Migration
             'order' => $this->integer(11)->unsigned()->notNull(),
             'active' => $this->boolean()->defaultValue(true),
             'options' => $this->text(),
+            'cacheStrategy' => $this->text(),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid()

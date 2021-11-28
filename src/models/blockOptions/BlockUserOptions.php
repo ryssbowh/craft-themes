@@ -11,9 +11,31 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockUserOptions extends BlockOptions
 {
     /**
-     * @var array
+     * @inheritDoc
      */
-    public $users = [];
+    public function defineOptions(): array
+    {
+        return [
+            'users' => [
+                'field' => 'elements',
+                'required' => true,
+                'elementType' => 'users',
+                'addElementLabel' => \Craft::t('app', 'Add a user'),
+                'label' => \Craft::t('app', 'Users'),
+                'saveInConfig' => false
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'users' => []
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -28,19 +50,5 @@ class BlockUserOptions extends BlockOptions
                 }
             }]
         ]);
-    }
-
-    /**
-     * Saving the user option field after save as it's not included in project config
-     * 
-     * @param BlockInterface $block
-     */
-    public function afterSave(BlockInterface $block)
-    {
-        $record = Themes::$plugin->blocks->getRecordByUid($block->uid);
-        $options = json_decode($record->options, true);
-        $options['users'] = $this->users;
-        $record->options = $options;
-        $record->save(false);
     }
 }

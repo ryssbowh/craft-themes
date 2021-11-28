@@ -1,8 +1,5 @@
 /** global: Craft */
-/** global: Garnish */
-/**
- * Select input
- */
+
 let SelectInput = Craft.BaseElementSelectInput.extend({
 
     theme: null,

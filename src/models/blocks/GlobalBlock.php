@@ -2,9 +2,9 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockGlobalOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\GlobalSet;
@@ -51,30 +51,9 @@ class GlobalBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptionsInterface
+    public function getOptionsModel(): string
     {
-        return new BlockGlobalOptions;
-    }
-
-    /**
-     * Get all global sets as array
-     * 
-     * @return array
-     */
-    public function getSets(): array
-    {
-        $all = [];
-        $sets = \Craft::$app->globals->getAllSets();
-        foreach ($sets as $set) {
-            $all[] = [
-                'uid' => $set->uid,
-                'name' => $set->name
-            ];
-        }
-        usort($all, function ($a, $b) {
-            return ($a['name'] < $b['name']) ? -1 : 1;
-        });
-        return $all;
+        return BlockGlobalOptions::class;
     }
 
     /**
@@ -98,14 +77,6 @@ class GlobalBlock extends Block
     public function getGlobalSetLayout(): LayoutInterface
     {
         return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::GLOBAL_HANDLE, $this->options->set);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['sets']);
     }
 
     /**

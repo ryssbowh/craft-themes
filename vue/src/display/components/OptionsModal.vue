@@ -5,14 +5,14 @@
         </div>
         <div class="body">
             <div class="content">
-                <form class="main" ref="form">
-                    <component :is="optionsComponent" :displayer="displayer" :options="options" :errors="errors ?? {}" @updateOptions="updateOptions" :key="item.id"></component>
+                <form class="main" @submit.prevent="save">
+                    <component v-for="definition, name in displayer.options.definitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="options[name] ?? null" :errors="errors[name] ?? []" @change="updateOption(name, $event)" :key="name"></component>
                 </form>
             </div>
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="closeModal">{{ t('Close', {}, 'app') }}</button>
+                <button type="button" class="btn" @click="closeModal" v-if="!displayerHasChanged">{{ t('Close', {}, 'app') }}</button>
                 <button type="button" class="btn submit" @click="save">{{ t('Save', {}, 'app') }}</button>
             </div>
         </div>
@@ -24,14 +24,12 @@ import { merge } from 'lodash';
 
 export default {
     computed: {
-        optionsComponent: function () {
-            return 'fieldDisplayer-' + this.displayer.handle;
-        }
+        
     },
     props: {
         displayer: Object,
         item: Object,
-        resetoptions: Boolean
+        displayerHasChanged: Boolean
     },
     data() {
         return {
@@ -41,14 +39,13 @@ export default {
         }
     },
     created() {
-        //resetoptions will be true when the displayer is changed, 
-        //we need then to reset the options to the displayer's defaults
-        if (this.resetoptions) {
-            this.options = merge({}, this.displayer.options);
+        //we need then to reset the options to the displayer's defaults if it has changed
+        if (this.displayerHasChanged) {
+            this.options = merge({}, this.displayer.options.defaultValues);
         } else {
             this.options = merge({}, this.item.options);
         }
-        this.errors = this.item.errors;
+        this.errors = this.item.errors ?? {};
     },
     beforeUnmount () {
         this.modal.destroy();
@@ -63,13 +60,16 @@ export default {
         });
     },
     methods: {
+        formFieldComponent (field) {
+            return 'formfield-' + field;
+        },
         closeModal () {
             this.options = {};
             this.errors = {};
             this.modal.hide();
         },
-        updateOptions (options) {
-            this.options = {...this.options, ...options};
+        updateOption (name, value) {
+            this.options[name] = value;
         },
         save () {
             let data = {

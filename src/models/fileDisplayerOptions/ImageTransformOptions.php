@@ -6,19 +6,40 @@ use Ryssbowh\CraftThemes\models\FileDisplayerOptions;
 class ImageTransformOptions extends FileDisplayerOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $transform;
+    public function defineOptions(): array
+    {
+        return [
+            'transform' => [
+                'field' => 'select',
+                'options' => array_merge($this->getDisplayer()->getImageTransforms(), ['_custom' => \Craft::t('themes', 'Custom')]),
+                'label' => \Craft::t('themes', 'Transform')
+            ],
+            'custom' => [
+                'field' => 'text',
+                'instructions' => \Craft::t('themes', 'Enter a json list of options to transform the image, example: {"width": 300, "height": 300}'),
+                'label' => \Craft::t('themes', 'Custom')
+            ],
+            'sizes' => [
+                'field' => 'text',
+                'instructions' => \Craft::t('themes', 'Enter a json list of options to generate different sizes (srcset), example: ["1.5x", "2x", "3x"]'),
+                'label' => \Craft::t('themes', 'Sizes')
+            ]
+        ];
+    }
 
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $custom;
-
-    /**
-     * @var string
-     */
-    public $sizes;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'transform' => null,
+            'custom' => '',
+            'sizes' => '',
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -33,7 +54,7 @@ class ImageTransformOptions extends FileDisplayerOptions
             }],
             ['custom', 'validateCustom'],
             ['sizes', 'validateSizes'],
-            ['transform', 'in', 'range' => array_merge(array_keys($this->displayer->getImageTransforms()), ['_custom'])]
+            ['transform', 'in', 'range' => array_keys($this->definitions['transform']['options'])]
         ];
     }
 

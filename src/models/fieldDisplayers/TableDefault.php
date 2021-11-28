@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TableDefaultOptions;
 use craft\fields\Table;
 
 /**
@@ -33,5 +34,13 @@ class TableDefault extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return Table::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return TableDefaultOptions::class;
     }
 }

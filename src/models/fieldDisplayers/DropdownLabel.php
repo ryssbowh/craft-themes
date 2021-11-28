@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\DropdownLabelOptions;
 use craft\base\Model;
 use craft\fields\Dropdown;
 
@@ -34,5 +35,13 @@ class DropdownLabel extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return Dropdown::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return DropdownLabelOptions::class;
     }
 }

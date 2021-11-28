@@ -5,7 +5,7 @@ use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\base\BlockCacheStrategy;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
+use Ryssbowh\CraftThemes\models\BlockStrategyOptions;
 use Ryssbowh\CraftThemes\models\blockCacheOptions\GlobalOptions;
 
 /**
@@ -46,7 +46,7 @@ class QueryBlockCache extends BlockCacheStrategy
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockCacheStrategyOptions
+    public function getOptionsModel(): BlockStrategyOptions
     {
         return new GlobalOptions;
     }

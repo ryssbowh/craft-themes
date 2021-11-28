@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\RadioButtonsLabelOptions;
 use craft\base\Model;
 use craft\fields\RadioButtons;
 
@@ -34,5 +35,13 @@ class RadioButtonsLabel extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return RadioButtons::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return RadioButtonsLabelOptions::class;
     }
 }

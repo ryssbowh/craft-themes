@@ -2,9 +2,9 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\BlockCurrentUserOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
@@ -37,9 +37,9 @@ class CurrentUserBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockOptionsInterface
+    public function getOptionsModel(): string
     {
-        return new BlockCurrentUserOptions;
+        return BlockCurrentUserOptions::class;
     }
 
     /**
@@ -50,6 +50,20 @@ class CurrentUserBlock extends Block
     public function getUserLayout(): LayoutInterface
     {
         return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::USER_HANDLE, '');
+    }
+
+    /**
+     * Get all view modes for user layout
+     * 
+     * @return array
+     */
+    public function getViewModes(): array
+    {
+        $viewModes = [];
+        foreach ($this->userLayout->viewModes as $viewMode) {
+            $viewModes[$viewMode->uid] = $viewMode->name;
+        }
+        return $viewModes;
     }
 
     /**

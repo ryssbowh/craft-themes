@@ -1,6 +1,6 @@
 {% extends "fields/_field" %}
 
-{% set show_field = value|length > 0 and option.viewMode %}
+{% set show_field = value|length > 0 and options.viewMode %}
 
 {% block content %}
     {% for category in value %}

@@ -3,7 +3,7 @@
 {% set show_field = value|length > 0 %}
 
 {% block content %}
-    <div class="slick-carousel" data-slick="{{ options.attributes|json_encode }}">
+    <div class="slick-carousel" data-slick="{{ options.getAttributes(null, ['viewModes'])|json_encode }}">
         {% for entry in value %}
             {% set layout = entry.type.layout %}
             {% set viewMode = options.getEntryViewMode(entry) %}

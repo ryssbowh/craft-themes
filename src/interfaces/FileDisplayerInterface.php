@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Ryssbowh\CraftThemes\models\FileDisplayerOptions;
 use craft\base\Model;
 use craft\elements\Asset;
 
@@ -24,14 +25,14 @@ interface FileDisplayerInterface
      * 
      * @return Model
      */
-    public function getOptionsModel(): ?Model;
+    public function getOptionsModel(): string;
 
     /**
      * Get options
      * 
      * @return Model
      */
-    public function getOptions(): Model;
+    public function getOptions(): FileDisplayerOptions;
 
     /**
      * Get name

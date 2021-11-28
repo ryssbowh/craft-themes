@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
+use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
  * Defines a block. Blocks are defined by providers, they can have various options
@@ -44,9 +45,9 @@ interface BlockInterface
     /**
      * Get options model
      * 
-     * @return BlockOptionsInterface
+     * @return BlockOptions
      */
-    public function getOptions(): BlockOptionsInterface;
+    public function getOptions(): BlockOptions;
 
     /**
      * Options setter
@@ -54,6 +55,23 @@ interface BlockInterface
      * @param string|array $options
      */
     public function setOptions($options);
+
+    /**
+     * Set the cache strategy, $strategy should be an array : 
+     * [
+     *     'handle' => 'strategyHandle',
+     *     'options' => []
+     * ]
+     * @param array $strategy
+     */
+    public function setCacheStrategy($strategy);
+
+    /**
+     * Get the cache strategy for this block
+     * 
+     * @return ?BlockCacheStrategyInterface
+     */
+    public function getCacheStrategy(): ?BlockCacheStrategyInterface;
 
     /**
      * Get full machine name, in the form provider-handle
@@ -65,9 +83,9 @@ interface BlockInterface
     /**
      * Model that defines this block's options 
      * 
-     * @return BlockOptionsInterface
+     * @return string
      */
-    public function getOptionsModel(): BlockOptionsInterface;
+    public function getOptionsModel(): string;
 
     /**
      * Get layout object

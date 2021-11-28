@@ -44,8 +44,8 @@ class HtmlAudio extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new HtmlAudioOptions;
+        return HtmlAudioOptions::class;
     }
 }

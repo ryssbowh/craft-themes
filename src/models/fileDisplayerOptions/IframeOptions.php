@@ -6,14 +6,38 @@ use Ryssbowh\CraftThemes\models\FileDisplayerOptions;
 class IframeOptions extends FileDisplayerOptions
 {
     /**
-     * @var integer
+     * @inheritDoc
      */
-    public $width = 500;
+    public function defineOptions(): array
+    {
+        return [
+            'width' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 0,
+                'step' => 100,
+                'label' => \Craft::t('themes', 'Width')
+            ],
+            'height' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 0,
+                'step' => 100,
+                'label' => \Craft::t('themes', 'Height')
+            ]
+        ];
+    }
 
     /**
-     * @var integer
+     * @inheritDoc
      */
-    public $height = 500;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'width' => 500,
+            'height' => 500
+        ];
+    }
 
     /**
      * @inheritDoc

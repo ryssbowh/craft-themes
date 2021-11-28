@@ -6,19 +6,41 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 class RedactorTruncatedOptions extends FieldDisplayerOptions
 {
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $linked = true;
+    public function defineOptions(): array
+    {
+        return [
+            'truncated' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 0,
+                'step' => 10,
+                'required' => true,
+                'label' => \Craft::t('themes', 'Character limit')
+            ],
+            'ellipsis' => [
+                'field' => 'text',
+                'label' => \Craft::t('themes', 'Ellipsis')
+            ],
+            'linked' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Link ellipsis to element')
+            ]
+        ];
+    }
 
     /**
-     * @var integer
+     * @inheritDoc
      */
-    public $truncated = 30;
-
-    /**
-     * @var string
-     */
-    public $ellipsis = '...';
+    public function defineDefaultValues(): array
+    {
+        return [
+            'linked' => false,
+            'truncated' => 100,
+            'ellipsis' => '...'
+        ];
+    }
 
     /**
      * @inheritDoc

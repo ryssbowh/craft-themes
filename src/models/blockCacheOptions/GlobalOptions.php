@@ -1,25 +1,45 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\blockCacheOptions;
 
+use Ryssbowh\CraftThemes\models\BlockStrategyOptions;
+
 /**
  * Global block cache strategy options
  */
-class GlobalOptions extends BlockCacheStrategyOptions
+class GlobalOptions extends BlockStrategyOptions
 {
     /**
-     * @var bool
+     * @inheritDoc
      */
-    public $cachePerAuthenticated = false;
+    public function defineOptions(): array
+    {
+        return [
+            'cachePerAuthenticated' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Cache depends on user authentication')
+            ],
+            'cachePerUser' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Cache depends on user')
+            ],
+            'cachePerViewport' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Cache depends on view port (mobile, tablet or desktop)')
+            ]
+        ];
+    }
 
     /**
-     * @var bool
+     * @inheritDoc
      */
-    public $cachePerUser = false;
-
-    /**
-     * @var bool
-     */
-    public $cachePerViewport = false;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'cachePerAuthenticated' => false,
+            'cachePerUser' => false,
+            'cachePerViewport' => false
+        ];
+    }
 
     /**
      * @inheritDoc

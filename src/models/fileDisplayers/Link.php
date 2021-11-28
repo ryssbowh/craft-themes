@@ -44,8 +44,8 @@ class Link extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): Model
+    public function getOptionsModel(): string
     {
-        return new LinkOptions;
+        return LinkOptions::class;
     }
 }

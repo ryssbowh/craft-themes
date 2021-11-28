@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\MatrixDefaultOptions;
 use craft\fields\BaseRelationField;
 use craft\fields\Matrix;
 
@@ -50,5 +51,13 @@ class MatrixDefault extends FieldDisplayer
             }
         }
         return $eagerLoad;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return MatrixDefaultOptions::class;
     }
 }

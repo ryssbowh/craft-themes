@@ -3,7 +3,7 @@ namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\interfaces\BlockCacheStrategyInterface;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
+use Ryssbowh\CraftThemes\models\BlockStrategyOptions;
 use craft\base\Component;
 use yii\caching\TagDependency;
 
@@ -63,10 +63,11 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
     /**
      * @inheritDoc
      */
-    public function getOptions(): BlockCacheStrategyOptions
+    public function getOptions(): BlockStrategyOptions
     {
         if ($this->_options === null) {
-            $this->_options = $this->getOptionsModel();
+            $class = $this->getOptionsModel();
+            $this->_options = new $class;
         }
         return $this->_options;
     }
@@ -74,9 +75,9 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockCacheStrategyOptions
+    public function getOptionsModel(): BlockStrategyOptions
     {
-        return new BlockCacheStrategyOptions;
+        return new BlockStrategyOptions;
     }
 
     /**

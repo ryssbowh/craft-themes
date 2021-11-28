@@ -2,41 +2,42 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
-use Ryssbowh\CraftThemes\interfaces\BlockOptionsInterface;
-use craft\base\Model;
 
 /**
  * Default class for block options
  */
-class BlockOptions extends Model implements BlockOptionsInterface
+class BlockOptions extends EventDefinableOptions
 {
     /**
-     * @var string
+     * @var BlockInterface
      */
-    public $cacheStrategy;
+    protected $_block;
 
     /**
-     * @inheritDoc
+     * Block getter
+     * 
+     * @return BlockInterface
      */
-    public function defineRules(): array
+    public function getBlock(): BlockInterface
     {
-        return [
-            ['cacheStrategy', 'string']
-        ];
+        return $this->_block;
+    }
+
+    /**
+     * Block setter
+     * 
+     * @param BlockInterface $block
+     */
+    public function setBlock(BlockInterface $block)
+    {
+        $this->_block = $block;
     }
 
     /**
      * @inheritDoc
      */
-    public function getConfig(): array
+    protected function reservedWords(): array
     {
-        return $this->attributes;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function afterSave(BlockInterface $block)
-    {
+        return array_merge(parent::reservedWords(), ['block']);
     }
 }

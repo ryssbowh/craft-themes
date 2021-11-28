@@ -6,9 +6,27 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 class RedactorFullOptions extends FieldDisplayerOptions
 {
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $stripped = false;
+    public function defineOptions(): array
+    {
+        return [
+            'stripped' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Strip HTML tags')
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'stripped' => false
+        ];
+    }
 
     /**
      * @inheritDoc

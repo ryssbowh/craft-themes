@@ -11,9 +11,31 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockCategoryOptions extends BlockOptions
 {
     /**
-     * @var array
+     * @inheritDoc
      */
-    public $categories = [];
+    public function defineOptions(): array
+    {
+        return [
+            'categories' => [
+                'field' => 'elements',
+                'elementType' => 'categories',
+                'addElementLabel' => \Craft::t('app', 'Add a category'),
+                'required' => true,
+                'label' => \Craft::t('app', 'Categories'),
+                'saveInConfig' => false
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'categories' => []
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -28,19 +50,5 @@ class BlockCategoryOptions extends BlockOptions
                 }
             }]
         ]);
-    }
-
-    /**
-     * Saving the categories option field after save as it's not included in project config
-     * 
-     * @param BlockInterface $block
-     */
-    public function afterSave(BlockInterface $block)
-    {
-        $record = Themes::$plugin->blocks->getRecordByUid($block->uid);
-        $options = json_decode($record->options, true);
-        $options['categories'] = $this->categories;
-        $record->options = $options;
-        $record->save(false);
     }
 }

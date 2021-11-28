@@ -48,7 +48,7 @@ class CpDisplayAjaxController extends Controller
             $displayer = $this->fieldDisplayers->getByHandle($displayerHandle);
         }
         $options = $displayer->getOptions();
-        $options->setAttributes($optionsData);
+        $options->setValues($optionsData);
         $options->validate();
         return [
             'errors' => $options->getErrors()

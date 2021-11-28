@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\LightswitchLabelOptions;
 use craft\base\Model;
 use craft\fields\Lightswitch;
 
@@ -34,5 +35,13 @@ class LightswitchLabel extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return Lightswitch::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return LightswitchLabelOptions::class;
     }
 }

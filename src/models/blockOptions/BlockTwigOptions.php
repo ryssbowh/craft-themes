@@ -9,9 +9,28 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 class BlockTwigOptions extends BlockOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $twig = '';
+    public function defineOptions(): array
+    {
+        return [
+            'twig' => [
+                'field' => 'textarea',
+                'required' => true,
+                'label' => \Craft::t('app', 'Twig Code')
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return [
+            'twig' => ''
+        ];
+    }
 
     /**
      * @inheritDoc

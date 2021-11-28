@@ -30,8 +30,6 @@ export default {
     computed: {
         ...mapState(['viewModes', 'viewMode'])
     },
-    props: {
-    },
     data() {
         return {
             showModal: false,

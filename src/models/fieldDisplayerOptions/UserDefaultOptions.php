@@ -6,24 +6,47 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 class UserDefaultOptions extends FieldDisplayerOptions
 {
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $firstName = true;
+    public function defineOptions(): array
+    {
+        return [
+            'firstName' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Display first name')
+            ],
+            'lastName' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Display last name')
+            ],
+            'username' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Display username')
+            ],
+            'email' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Display email')
+            ],
+            'linkEmail' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Link email')
+            ],
+        ];
+    }
 
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $lastName = true;
-
-    /**
-     * @var boolean
-     */
-    public $email = false;
-
-    /**
-     * @var boolean
-     */
-    public $linkEmail = false;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'firstName' => true,
+            'lastName' => true,
+            'username' => false,
+            'email' => false,
+            'linkEmail' => false
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -31,7 +54,7 @@ class UserDefaultOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            [['firstName', 'lastName', 'email', 'linkEmail'], 'boolean', 'trueValue' => true, 'falseValue' => false]
+            [['firstName', 'lastName', 'email', 'username', 'linkEmail'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 }

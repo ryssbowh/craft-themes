@@ -6,14 +6,33 @@ use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 class UrlLinkOptions extends FieldDisplayerOptions
 {
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $newTab = true;
+    public function defineOptions(): array
+    {
+        return [
+            'label' => [
+                'field' => 'text',
+                'label' => \Craft::t('app', 'Label'),
+                'instructions' => \Craft::t('themes', 'Leave blank to use the url itself')
+            ],
+            'newTab' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Open in new tab')
+            ]
+        ];
+    }
 
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $label;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'label' => '',
+            'newTab' => false
+        ];
+    }
 
     /**
      * @inheritDoc

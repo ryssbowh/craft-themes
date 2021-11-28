@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
-use Ryssbowh\CraftThemes\models\fileDisplayerOptions\NoOptions;
 use craft\base\Model;
 use craft\elements\Asset;
 
@@ -28,7 +27,7 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     public $hasOptions = false;
 
     /**
-     * @var Model
+     * @var FileDisplayerOptions
      */
     protected $_options;
 
@@ -59,12 +58,13 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function getOptions(): Model
+    public function getOptions(): FileDisplayerOptions
     {
         if ($this->_options === null) {
-            $model = $this->getOptionsModel();
-            $model->displayer = $this;
-            $this->_options = $model;
+            $class = $this->getOptionsModel();
+            $this->_options = new $class([
+                'displayer' => $this
+            ]);
         }
         return $this->_options;
     }
@@ -85,14 +85,6 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     public function fields()
     {
         return array_merge(parent::fields(), ['name', 'options', 'handle']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): Model
-    {
-        return new NoOptions;
     }
 
     /**

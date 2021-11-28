@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\assets;
 
 use craft\web\assets\cp\CpAsset;
+use craft\web\assets\timepicker\TimepickerAsset;
 
 class DisplayAssets extends ThemesBaseAssets
 {
@@ -9,13 +10,13 @@ class DisplayAssets extends ThemesBaseAssets
 
     public $js = [
         'chunk-vendors.js',
+        'chunk-common.js',
         'display.js',
     ];
 
     public $depends = [
         CpAsset::class,
         FieldsAsset::class,
-        FieldDisplayerAsset::class,
-        FileDisplayerAsset::class
+        TimepickerAsset::class
     ];
 }

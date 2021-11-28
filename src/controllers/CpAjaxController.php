@@ -96,7 +96,7 @@ class CpAjaxController extends Controller
                 continue;
             }
             $layout = Themes::$plugin->layouts->get($theme, LayoutService::VOLUME_HANDLE, $asset->volume->uid);
-            $asset->setTransform(['width' => 34, 'height' => 18]);
+            $asset->setTransform(['width' => 34, 'height' => 25]);
             $data[] = [
                 'id' => $asset->id,
                 'title' => $asset->title,

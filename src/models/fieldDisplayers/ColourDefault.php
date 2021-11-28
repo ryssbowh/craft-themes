@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\ColourDefaultOptions;
 use craft\fields\Color;
 
 /**
@@ -33,5 +34,13 @@ class ColourDefault extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return Color::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return ColourDefaultOptions::class;
     }
 }

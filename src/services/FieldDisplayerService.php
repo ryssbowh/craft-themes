@@ -80,16 +80,28 @@ class FieldDisplayerService extends Service
     }
 
     /**
+     * Get a displayer class by handle
+     * 
+     * @param  string $handle
+     * @throws FieldDisplayerException
+     * @return string
+     */
+    public function getClassByHandle(string $handle): string
+    {
+        $this->ensureDisplayerIsDefined($handle);
+        return $this->all()[$handle];
+    }
+
+    /**
      * Get a displayer by handle
      * 
      * @param  string $handle
      * @throws FieldDisplayerException
-     * @return ?FieldDisplayerInterface
+     * @return FieldDisplayerInterface
      */
     public function getByHandle(string $handle): FieldDisplayerInterface
     {
-        $this->ensureDisplayerIsDefined($handle);
-        $class = $this->all()[$handle];
+        $class = $this->getClassByHandle($handle);
         return new $class;
     }
 
@@ -136,9 +148,23 @@ class FieldDisplayerService extends Service
     }
 
     /**
+     * Get all displayers indexed by the field target (either the craft field class or the field class)
+     *
+     * @return array
+     */
+    public function getAllByFieldTarget(): array
+    {
+        $displayers = [];
+        foreach ($this->all() as $displayer) {
+            $displayers[$displayer::getFieldTarget()][] = new $displayer;
+        }
+        return $displayers;
+    }
+
+    /**
      * Get many displayers, by handle
      * 
-     * @param  array  $handles
+     * @param  array $handles
      * @return array
      */
     protected function getByHandles(array $handles): array

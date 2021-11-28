@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\MultiSelectLabelOptions;
 use craft\base\Model;
 use craft\fields\MultiSelect;
 
@@ -34,5 +35,13 @@ class MultiSelectLabel extends FieldDisplayer
     public static function getFieldTarget(): String
     {
         return MultiSelect::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return MultiSelectLabelOptions::class;
     }
 }

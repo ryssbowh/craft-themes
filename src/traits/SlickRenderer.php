@@ -3,6 +3,9 @@ namespace Ryssbowh\CraftThemes\traits;
 
 use Ryssbowh\CraftThemes\assets\SlickAssets;
 
+/**
+ * Trait for displayers that display a slick carousel
+ */
 trait SlickRenderer
 {
     /**

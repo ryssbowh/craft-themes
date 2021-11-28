@@ -1,112 +1,158 @@
 <?php
 namespace Ryssbowh\CraftThemes\traits;
 
+/**
+ * Trait to be used for configurable options that handle a slick carousel
+ */
 trait SlickOptions
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    public $lazyLoad = 'ondemand';
+    public function defineSlickOptions(): array
+    {
+        return [
+            'lazyLoad' => [
+                'field' => 'select',
+                'options' => [
+                    'ondemand' => \Craft::t('themes', 'On demand'),
+                    'progressive' => \Craft::t('themes', 'Progressive')
+                ],
+                'label' => \Craft::t('themes', 'Lazy load')
+            ],
+            'autoplay' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Autoplay')
+            ],
+            'autoplaySpeed' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 100,
+                'step' => 100,
+                'required' => true,
+                'label' => \Craft::t('themes', 'Autoplay speed')
+            ],
+            'adaptiveHeight' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Adaptive height')
+            ],
+            'arrows' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Show arrows')
+            ],
+            'dots' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Show dots')
+            ],
+            'draggable' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Draggable')
+            ],
+            'fade' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Fade')
+            ],
+            'infinite' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Infinite')
+            ],
+            'pauseOnFocus' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Pause on focus')
+            ],
+            'pauseOnHover' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Pause on hover')
+            ],
+            'swipe' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Enable swipe')
+            ],
+            'touchMove' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Enable touch move')
+            ],
+            'vertical' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Vertical')
+            ],
+            'verticalSwiping' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Vertical swiping')
+            ],
+            'rtl' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Right to left')
+            ],
+            'rows' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 1,
+                'step' => 1,
+                'required' => true,
+                'label' => \Craft::t('themes', 'Rows')
+            ],
+            'slidesToShow' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 1,
+                'step' => 1,
+                'required' => true,
+                'label' => \Craft::t('themes', 'Slides to show')
+            ],
+            'slidesPerRow' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 1,
+                'step' => 1,
+                'required' => true,
+                'label' => \Craft::t('themes', 'Slides per row')
+            ],
+            'slidesToScroll' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 1,
+                'step' => 1,
+                'required' => true,
+                'label' => \Craft::t('themes', 'Slides to scroll')
+            ],
+            'speed' => [
+                'field' => 'text',
+                'type' => 'number',
+                'min' => 100,
+                'step' => 100,
+                'required' => true,
+                'label' => \Craft::t('themes', 'Animation speed')
+            ],
+        ];
+    }
 
-    /**
-     * @var string
-     */
-    public $autoplaySpeed = 3000;
-    
-    /**
-     * @var boolean
-     */
-    public $adaptiveHeight = false;
-
-    /**
-     * @var boolean
-     */
-    public $autoplay = false;
-
-    /**
-     * @var boolean
-     */
-    public $arrows = true;
-
-    /**
-     * @var boolean
-     */
-    public $dots = false;
-
-    /**
-     * @var boolean
-     */
-    public $draggable = true;
-
-    /**
-     * @var boolean
-     */
-    public $fade = false;
-
-    /**
-     * @var boolean
-     */
-    public $infinite = true;
-
-    /**
-     * @var boolean
-     */
-    public $pauseOnFocus = true;
-
-    /**
-     * @var boolean
-     */
-    public $pauseOnHover = true;
-
-    /**
-     * @var boolean
-     */
-    public $swipe = true;
-
-    /**
-     * @var boolean
-     */
-    public $touchMove = true;
-
-    /**
-     * @var boolean
-     */
-    public $vertical = false;
-
-    /**
-     * @var boolean
-     */
-    public $verticalSwiping = false;
-
-    /**
-     * @var boolean
-     */
-    public $rtl = false;
-
-    /**
-     * @var integer
-     */
-    public $rows = 1;
-
-    /**
-     * @var integer
-     */
-    public $slidesPerRow = 1;
-
-    /**
-     * @var integer
-     */
-    public $slidesToScroll = 1;
-
-    /**
-     * @var integer
-     */
-    public $slidesToShow = 1;
-
-    /**
-     * @var integer
-     */
-    public $speed = 300;
+    public function defineDefaultSlickValues(): array
+    {
+        return [
+            'lazyLoad' => 'ondemand',
+            'autoplaySpeed' => 3000,
+            'autoplay' => false,
+            'adaptiveHeight' => false,
+            'arrows' => true,
+            'dots' => false,
+            'draggable' => false,
+            'fade' => false,
+            'infinite' => true,
+            'pauseOnFocus' => true,
+            'pauseOnHover' => true,
+            'swipe' => true,
+            'touchMove' => true,
+            'vertical' => false,
+            'verticalSwiping' => false,
+            'rtl' => false,
+            'rows' => 1,
+            'slidesPerRow' => 1,
+            'slidesToScroll' => 1,
+            'slidesToShow' => 1,
+            'speed' => 300,
+        ];
+    }
 
     /**
      * @inheritDoc

@@ -6,19 +6,37 @@ use Ryssbowh\CraftThemes\models\FileDisplayerOptions;
 class HtmlAudioOptions extends FileDisplayerOptions
 {
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $controls = false;
+    public function defineOptions(): array
+    {
+        return [
+            'controls' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Show controls')
+            ],
+            'muted' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Muted')
+            ],
+            'autoplay' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Autoplay')
+            ]
+        ];
+    }
 
     /**
-     * @var boolean
+     * @inheritDoc
      */
-    public $muted = false;
-
-    /**
-     * @var boolean
-     */
-    public $autoplay = false;
+    public function defineDefaultValues(): array
+    {
+        return [
+            'controls' => false,
+            'muted' => false,
+            'autoplay' => false
+        ];
+    }
 
     /**
      * @inheritDoc

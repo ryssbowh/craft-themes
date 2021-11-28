@@ -9,10 +9,17 @@ use craft\helpers\Assets;
 class FileFileOptions extends FieldDisplayerOptions
 {
     /**
-     * Displayers, indexed by asset kind
-     * @var array
+     * @inheritDoc
      */
-    public $displayers;
+    public function defineOptions(): array
+    {
+        return [
+            'displayers' => [
+                'field' => 'filedisplayers',
+                'mapping' => $this->getDisplayer()->getDisplayersMapping()
+            ]
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -24,15 +31,18 @@ class FileFileOptions extends FieldDisplayerOptions
         ];
     }
 
-    public function init()
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
     {
-        parent::init();
-        if ($this->displayers === null) {
-            $this->displayers = [];
-            foreach (Themes::$plugin->fileDisplayers->getDefaults() as $kind => $displayer) {
-                $this->displayers[$kind]['displayer'] = $displayer;
-            }
+        $displayers = [];
+        foreach (Themes::$plugin->fileDisplayers->getDefaults() as $kind => $displayer) {
+            $displayer = Themes::$plugin->fileDisplayers->getByHandle($displayer);
+            $displayers[$kind]['displayer'] = $displayer->handle;
+            $displayers[$kind]['options'] = $displayer->options->defaultValues;
         }
+        return $displayers;
     }
 
     /**
@@ -78,7 +88,7 @@ class FileFileOptions extends FieldDisplayerOptions
         foreach ($this->displayers as $kind => $elem) {
             $displayer = $this->getDisplayerForKind($kind);
             if ($displayer and !$displayer->options->validate()) {
-                $this->addError($kind, $displayer->options->getErrors());
+                $this->addError('displayers', [$kind => $displayer->options->getErrors()]);
             }
         }
     }
