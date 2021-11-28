@@ -4,8 +4,8 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
- * Options for the content block
+ * Options for the profile form block
  */
-class BlockSiteNameOptions extends BlockOptions
+class ProfileFormBlockOptions extends BlockOptions
 {
 }

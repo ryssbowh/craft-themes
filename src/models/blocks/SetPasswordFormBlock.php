@@ -2,9 +2,10 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\blockOptions\SetPasswordFormBlockOptions;
 
 /**
- * Block displaying the set password block
+ * Block displaying the set password form
  */
 class SetPasswordFormBlock extends Block
 {
@@ -27,5 +28,13 @@ class SetPasswordFormBlock extends Block
     public function getSmallDescription(): string
     {
         return \Craft::t('themes', 'Displays the set password form');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return SetPasswordFormBlockOptions::class;
     }
 }

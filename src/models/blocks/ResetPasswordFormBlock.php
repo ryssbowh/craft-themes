@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\blockOptions\ResetPasswordFormBlockOptions;
 
 /**
  * Block displaying the reset password form
@@ -27,5 +28,13 @@ class ResetPasswordFormBlock extends Block
     public function getSmallDescription(): string
     {
         return \Craft::t('themes', 'Displays the reset password form');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return ResetPasswordFormBlockOptions::class;
     }
 }

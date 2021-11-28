@@ -2,11 +2,10 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockSearchFormOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\SearchFormBlockOptions;
 
 /**
- * Block displaying the search block
+ * Block displaying the search form
  */
 class SearchFormBlock extends Block
 {
@@ -36,6 +35,6 @@ class SearchFormBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockSearchFormOptions::class;
+        return SearchFormBlockOptions::class;
     }
 }

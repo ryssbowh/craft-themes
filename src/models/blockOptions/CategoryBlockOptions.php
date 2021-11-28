@@ -6,9 +6,9 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
- * Options for the block entry
+ * Options for the category block
  */
-class BlockEntryOptions extends BlockOptions
+class CategoryBlockOptions extends BlockOptions
 {
     /**
      * @inheritDoc
@@ -16,12 +16,12 @@ class BlockEntryOptions extends BlockOptions
     public function defineOptions(): array
     {
         return [
-            'entries' => [
+            'categories' => [
                 'field' => 'elements',
-                'elementType' => 'entries',
-                'addElementLabel' => \Craft::t('app', 'Add an entry'),
+                'elementType' => 'categories',
+                'addElementLabel' => \Craft::t('app', 'Add a category'),
                 'required' => true,
-                'label' => \Craft::t('app', 'Entries'),
+                'label' => \Craft::t('app', 'Categories'),
                 'saveInConfig' => false
             ]
         ];
@@ -33,7 +33,7 @@ class BlockEntryOptions extends BlockOptions
     public function defineDefaultValues(): array
     {
         return [
-            'entries' => []
+            'categories' => []
         ];
     }
 
@@ -43,10 +43,10 @@ class BlockEntryOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['entries'], 'required'],
-            ['entries', function () {
-                if (!is_array($this->entries)) {
-                    $this->addError('entries', \Craft::t('themes', 'Invalid entries'));
+            [['categories'], 'required'],
+            ['categories', function () {
+                if (!is_array($this->categories)) {
+                    $this->addError('categories', \Craft::t('themes', 'Invalid categories'));
                 }
             }]
         ]);

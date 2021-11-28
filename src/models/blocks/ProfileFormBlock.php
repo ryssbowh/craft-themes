@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\blockOptions\ProfileFormBlockOptions;
 
 /**
  * Block displaying the profile form
@@ -35,5 +36,13 @@ class ProfileFormBlock extends Block
     public function beforeRender(bool $fromCache): bool
     {
         return \Craft::$app->user->getIdentity() != null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return ProfileFormBlockOptions::class;
     }
 }

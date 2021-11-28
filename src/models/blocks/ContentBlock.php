@@ -3,11 +3,11 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockContentOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\ContentBlockOptions;
 
 /**
  * Special block to handle the content of the page. 
- * It's content will be the current page layout's displays
+ * Its content will be the current page layout's displays
  */
 class ContentBlock extends Block
 {
@@ -45,7 +45,7 @@ class ContentBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockContentOptions::class;
+        return ContentBlockOptions::class;
     }
 
     /**

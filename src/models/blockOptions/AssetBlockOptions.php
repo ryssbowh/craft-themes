@@ -4,11 +4,12 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
+use craft\elements\Category;
 
 /**
- * Options for the block user
+ * Options for the asset block
  */
-class BlockUserOptions extends BlockOptions
+class AssetBlockOptions extends BlockOptions
 {
     /**
      * @inheritDoc
@@ -16,14 +17,14 @@ class BlockUserOptions extends BlockOptions
     public function defineOptions(): array
     {
         return [
-            'users' => [
+            'assets' => [
                 'field' => 'elements',
+                'elementType' => 'assets',
+                'addElementLabel' => \Craft::t('app', 'Add an asset'),
                 'required' => true,
-                'elementType' => 'users',
-                'addElementLabel' => \Craft::t('app', 'Add a user'),
-                'label' => \Craft::t('app', 'Users'),
+                'label' => \Craft::t('app', 'Assets'),
                 'saveInConfig' => false
-            ],
+            ]
         ];
     }
 
@@ -33,20 +34,20 @@ class BlockUserOptions extends BlockOptions
     public function defineDefaultValues(): array
     {
         return [
-            'users' => []
+            'assets' => []
         ];
     }
-
+    
     /**
      * @inheritDoc
      */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['users'], 'required'],
-            ['users', function () {
-                if (!is_array($this->users)) {
-                    $this->addError('users', \Craft::t('themes', 'Invalid users'));
+            [['assets'], 'required'],
+            ['assets', function () {
+                if (!is_array($this->assets)) {
+                    $this->addError('assets', \Craft::t('themes', 'Invalid assets'));
                 }
             }]
         ]);

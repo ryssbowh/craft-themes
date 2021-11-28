@@ -6,9 +6,9 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
- * Options for the block category
+ * Options for the user block
  */
-class BlockCategoryOptions extends BlockOptions
+class UserBlockOptions extends BlockOptions
 {
     /**
      * @inheritDoc
@@ -16,14 +16,14 @@ class BlockCategoryOptions extends BlockOptions
     public function defineOptions(): array
     {
         return [
-            'categories' => [
+            'users' => [
                 'field' => 'elements',
-                'elementType' => 'categories',
-                'addElementLabel' => \Craft::t('app', 'Add a category'),
                 'required' => true,
-                'label' => \Craft::t('app', 'Categories'),
+                'elementType' => 'users',
+                'addElementLabel' => \Craft::t('app', 'Add a user'),
+                'label' => \Craft::t('app', 'Users'),
                 'saveInConfig' => false
-            ]
+            ],
         ];
     }
 
@@ -33,7 +33,7 @@ class BlockCategoryOptions extends BlockOptions
     public function defineDefaultValues(): array
     {
         return [
-            'categories' => []
+            'users' => []
         ];
     }
 
@@ -43,10 +43,10 @@ class BlockCategoryOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['categories'], 'required'],
-            ['categories', function () {
-                if (!is_array($this->categories)) {
-                    $this->addError('categories', \Craft::t('themes', 'Invalid categories'));
+            [['users'], 'required'],
+            ['users', function () {
+                if (!is_array($this->users)) {
+                    $this->addError('users', \Craft::t('themes', 'Invalid users'));
                 }
             }]
         ]);

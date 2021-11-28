@@ -2,7 +2,6 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockOptions\FlashMessagesBlockOptions;
 
 /**

@@ -2,8 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockRegisterFormOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\RegisterFormBlockOptions;
 
 /**
  * Block displaying the register form
@@ -47,6 +46,6 @@ class RegisterFormBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockRegisterFormOptions::class;
+        return RegisterFormBlockOptions::class;
     }
 }

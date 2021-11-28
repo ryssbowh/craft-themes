@@ -4,9 +4,9 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
- * Options for the block search form
+ * Options for the template block
  */
-class BlockSearchFormOptions extends BlockOptions
+class TemplateBlockOptions extends BlockOptions
 {
     /**
      * @inheritDoc
@@ -14,16 +14,11 @@ class BlockSearchFormOptions extends BlockOptions
     public function defineOptions(): array
     {
         return [
-            'action' => [
+            'template' => [
                 'field' => 'text',
                 'required' => true,
-                'label' => \Craft::t('app', 'Form action')
+                'label' => \Craft::t('app', 'Template Path')
             ],
-            'inputName' => [
-                'field' => 'text',
-                'required' => true,
-                'label' => \Craft::t('app', 'Search term name')
-            ]
         ];
     }
 
@@ -33,8 +28,7 @@ class BlockSearchFormOptions extends BlockOptions
     public function defineDefaultValues(): array
     {
         return [
-            'action' => 'search',
-            'inputName' => 'term'
+            'template' => ''
         ];
     }
 
@@ -44,8 +38,8 @@ class BlockSearchFormOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['action', 'inputName'], 'string'],
-            [['action', 'inputName'], 'required']
+            ['template', 'string'],
+            ['template', 'required']
         ]);
     }
 }

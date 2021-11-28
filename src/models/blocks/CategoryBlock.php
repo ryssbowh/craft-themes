@@ -2,11 +2,8 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockCategoryOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\models\blockOptions\CategoryBlockOptions;
 use craft\elements\Category;
 
 /**
@@ -53,7 +50,7 @@ class CategoryBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockCategoryOptions::class;
+        return CategoryBlockOptions::class;
     }
 
     /**

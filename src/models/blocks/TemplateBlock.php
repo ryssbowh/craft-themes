@@ -2,8 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockTemplateOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\TemplateBlockOptions;
 
 /**
  * Block displaying a custom template
@@ -44,6 +43,6 @@ class TemplateBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockTemplateOptions::class;
+        return TemplateBlockOptions::class;
     }
 }

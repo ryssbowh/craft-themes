@@ -1,15 +1,12 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
-use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
 
 /**
- * Options for the block current user
+ * Options for the search form block
  */
-class BlockCurrentUserOptions extends BlockOptions
+class SearchFormBlockOptions extends BlockOptions
 {
     /**
      * @inheritDoc
@@ -17,11 +14,15 @@ class BlockCurrentUserOptions extends BlockOptions
     public function defineOptions(): array
     {
         return [
-            'viewMode' => [
-                'field' => 'fetchviewmode',
+            'action' => [
+                'field' => 'text',
                 'required' => true,
-                'layoutType' => LayoutService::USER_HANDLE,
-                'label' => \Craft::t('app', 'View mode')
+                'label' => \Craft::t('app', 'Form action')
+            ],
+            'inputName' => [
+                'field' => 'text',
+                'required' => true,
+                'label' => \Craft::t('app', 'Search term name')
             ]
         ];
     }
@@ -32,7 +33,8 @@ class BlockCurrentUserOptions extends BlockOptions
     public function defineDefaultValues(): array
     {
         return [
-            'viewMode' => null
+            'action' => 'search',
+            'inputName' => 'term'
         ];
     }
 
@@ -42,8 +44,8 @@ class BlockCurrentUserOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            [['viewMode'], 'required'],
-            [['viewMode'], 'string']
+            [['action', 'inputName'], 'string'],
+            [['action', 'inputName'], 'required']
         ]);
     }
 }

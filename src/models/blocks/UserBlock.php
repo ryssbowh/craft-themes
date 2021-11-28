@@ -2,11 +2,8 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockUserOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\models\blockOptions\UserBlockOptions;
 use craft\elements\User;
 
 /**
@@ -53,7 +50,7 @@ class UserBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockUserOptions::class;
+        return UserBlockOptions::class;
     }
 
     /**

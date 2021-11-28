@@ -4,8 +4,7 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockCurrentUserOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\CurrentUserBlockOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
 /**
@@ -39,7 +38,7 @@ class CurrentUserBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockCurrentUserOptions::class;
+        return CurrentUserBlockOptions::class;
     }
 
     /**

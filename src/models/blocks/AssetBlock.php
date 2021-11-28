@@ -2,11 +2,8 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockAssetOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
+use Ryssbowh\CraftThemes\models\blockOptions\AssetBlockOptions;
 use craft\elements\Asset;
 
 /**
@@ -53,7 +50,7 @@ class AssetBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockAssetOptions::class;
+        return AssetBlockOptions::class;
     }
 
     /**

@@ -2,8 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockTwigOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\TwigBlockOptions;
 
 /**
  * Block displaying some custom twig code
@@ -44,6 +43,6 @@ class TwigBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockTwigOptions::class;
+        return TwigBlockOptions::class;
     }
 }

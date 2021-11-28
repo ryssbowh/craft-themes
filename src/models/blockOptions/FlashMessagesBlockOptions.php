@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
- * Options for the block login form
+ * Options for the flash messages block
  */
 class FlashMessagesBlockOptions extends BlockOptions
 {

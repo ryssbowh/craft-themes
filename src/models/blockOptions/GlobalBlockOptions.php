@@ -5,9 +5,9 @@ use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
 /**
- * Options for the block global
+ * Options for the global block
  */
-class BlockGlobalOptions extends BlockOptions
+class GlobalBlockOptions extends BlockOptions
 {
     public function defineOptions(): array
     {

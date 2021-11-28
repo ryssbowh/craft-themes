@@ -2,7 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockSiteNameOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\SiteNameBlockOptions;
 
 /**
  * Block displaying the site name
@@ -35,6 +35,6 @@ class SiteNameBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockSiteNameOptions::class;
+        return SiteNameBlockOptions::class;
     }
 }

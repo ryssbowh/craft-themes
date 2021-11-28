@@ -1,12 +1,15 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
+use Ryssbowh\CraftThemes\services\LayoutService;
 
 /**
- * Options for the block template
+ * Options for the current user block
  */
-class BlockTemplateOptions extends BlockOptions
+class CurrentUserBlockOptions extends BlockOptions
 {
     /**
      * @inheritDoc
@@ -14,11 +17,12 @@ class BlockTemplateOptions extends BlockOptions
     public function defineOptions(): array
     {
         return [
-            'template' => [
-                'field' => 'text',
+            'viewMode' => [
+                'field' => 'fetchviewmode',
                 'required' => true,
-                'label' => \Craft::t('app', 'Template Path')
-            ],
+                'layoutType' => LayoutService::USER_HANDLE,
+                'label' => \Craft::t('app', 'View mode')
+            ]
         ];
     }
 
@@ -28,7 +32,7 @@ class BlockTemplateOptions extends BlockOptions
     public function defineDefaultValues(): array
     {
         return [
-            'template' => ''
+            'viewMode' => null
         ];
     }
 
@@ -38,8 +42,8 @@ class BlockTemplateOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            ['template', 'string'],
-            ['template', 'required']
+            [['viewMode'], 'required'],
+            [['viewMode'], 'string']
         ]);
     }
 }

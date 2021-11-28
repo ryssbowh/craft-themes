@@ -2,8 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockLoginFormOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\LoginFormBlockOptions;
 
 /**
  * Block displaying the login form
@@ -47,6 +46,6 @@ class LoginFormBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockLoginFormOptions::class;
+        return LoginFormBlockOptions::class;
     }
 }

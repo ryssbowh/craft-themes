@@ -4,9 +4,9 @@ namespace Ryssbowh\CraftThemes\models\blockOptions;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
- * Options for the block twig
+ * Options for the login form block
  */
-class BlockTwigOptions extends BlockOptions
+class LoginFormBlockOptions extends BlockOptions
 {
     /**
      * @inheritDoc
@@ -14,11 +14,10 @@ class BlockTwigOptions extends BlockOptions
     public function defineOptions(): array
     {
         return [
-            'twig' => [
-                'field' => 'textarea',
-                'required' => true,
-                'label' => \Craft::t('app', 'Twig Code')
-            ],
+            'onlyIfNotAuthenticated' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('app', 'Show only if the user is not authenticated')
+            ]
         ];
     }
 
@@ -28,7 +27,7 @@ class BlockTwigOptions extends BlockOptions
     public function defineDefaultValues(): array
     {
         return [
-            'twig' => ''
+            'onlyIfNotAuthenticated' => true,
         ];
     }
 
@@ -38,7 +37,7 @@ class BlockTwigOptions extends BlockOptions
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
-            ['twig', 'string']
+            ['onlyIfNotAuthenticated', 'boolean', 'trueValue' => true, 'falseValue' => false],
         ]);
     }
 }

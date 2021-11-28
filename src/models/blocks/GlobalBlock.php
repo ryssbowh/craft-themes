@@ -4,8 +4,7 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Block;
-use Ryssbowh\CraftThemes\models\BlockOptions;
-use Ryssbowh\CraftThemes\models\blockOptions\BlockGlobalOptions;
+use Ryssbowh\CraftThemes\models\blockOptions\GlobalBlockOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\elements\GlobalSet;
 
@@ -53,7 +52,7 @@ class GlobalBlock extends Block
      */
     public function getOptionsModel(): string
     {
-        return BlockGlobalOptions::class;
+        return GlobalBlockOptions::class;
     }
 
     /**
