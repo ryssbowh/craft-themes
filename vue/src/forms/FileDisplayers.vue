@@ -1,41 +1,39 @@
 <template>
     <form-field :errors="errors" :definition="definition" :name="name">
         <template #main>
-            <div class="displayers-config">
-                <div class="displayers-sidebar">
-                    <div class="heading">
-                        <h5>{{ t('File Kinds') }}</h5>
-                    </div>
-                    <div :class="{'kind-item': true, sel: currentKind == handle}" v-for="elem, handle in definition.mapping" v-bind:key="handle" @click.prevent="currentKind = handle">
-                        <div class="name">
-                            <h4>{{ elem.label }} <span class="error" data-icon="alert" aria-label="Error" v-if="hasErrors(handle)"></span></h4>
-                            <div class="smalltext light code" v-if="realValue[handle].displayer ?? null">
-                                {{ getDisplayerName(handle) }}
-                            </div>
+            <div class="displayers-sidebar">
+                <div class="heading">
+                    <h5>{{ t('File Kinds') }}</h5>
+                </div>
+                <a :class="{'kind-item': true, sel: currentKind == handle}" v-for="elem, handle in definition.mapping" v-bind:key="handle" @click.prevent="currentKind = handle">
+                    <div class="name">
+                        <h4>{{ elem.label }} <span class="error" data-icon="alert" aria-label="Error" v-if="hasErrors(handle)"></span></h4>
+                        <div class="smalltext light code" v-if="realValue[handle].displayer ?? null">
+                            {{ getDisplayerName(handle) }}
                         </div>
                     </div>
-                </div>
-                <div class="displayers-settings">
-                    <div class="settings-container">
-                        <div v-for="elem, handle in definition.mapping" v-bind:key="handle">
-                            <div class="displayer-settings" v-show="currentKind == handle">
-                                <div class="field">
-                                    <div class="heading">
-                                        <label>{{ t('Displayer') }}</label>
-                                    </div>
-                                    <div :class="inputClass">
-                                        <div class="select">
-                                            <select v-model="realValue[handle].displayer" @change="updateDisplayer(handle, $event.target.value)">
-                                                <option v-for="displayer, key in elem.displayers" :value="displayer.handle" v-bind:key="key">{{ displayer.name }}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="warning with-icon" v-if="realValue[handle].displayer == 'raw'">
-                                        {{ t("This could be used to run potentially dangerous code on your site, do you trust the data you're going to display ?") }}
+                </a>
+            </div>
+            <div class="displayers-settings">
+                <div class="settings-container">
+                    <div v-for="elem, handle in definition.mapping" v-bind:key="handle">
+                        <div class="displayer-settings" v-show="currentKind == handle">
+                            <div class="field">
+                                <div class="heading">
+                                    <label class="required">{{ t('Displayer') }}</label>
+                                </div>
+                                <div :class="inputClass">
+                                    <div class="select">
+                                        <select v-model="realValue[handle].displayer" @change="updateDisplayer(handle, $event.target.value)">
+                                            <option v-for="displayer, key in elem.displayers" :value="displayer.handle" v-bind:key="key">{{ displayer.name }}</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <component v-for="definition, name in getDisplayer(handle).options.definitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="realValue[handle].options[name] ?? null" :errors="getErrors(handle)[name] ?? []" @change="updateOption(handle, name, $event)" :key="name"></component>
+                                <div class="warning with-icon" v-if="realValue[handle].displayer == 'raw'">
+                                    {{ t("This could be used to run potentially dangerous code on your site, do you trust the data you're going to display ?") }}
+                                </div>
                             </div>
+                            <component v-for="definition, name in getDisplayer(handle).options.definitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="realValue[handle].options[name] ?? null" :errors="getErrors(handle)[name] ?? []" @change="updateOption(handle, name, $event)" :key="name"></component>
                         </div>
                     </div>
                 </div>
@@ -81,8 +79,23 @@ export default {
         name: String
     },
     created() {
-        this.realValue = this.value;
-        this.currentKind = Object.keys(this.definition.mapping)[0];
+        let defaultDisplayer;
+        for (let kind in this.definition.mapping) {
+            defaultDisplayer = this.definition.mapping[kind].displayers[0];
+            if (this.value[kind] ?? null) {
+                this.realValue[kind] = this.value[kind];
+                
+            } else {
+                this.realValue[kind] = {};
+            }
+            if (!this.realValue[kind].options) {
+                this.realValue[kind].options = defaultDisplayer.options.defaultValues;
+            }
+            if (!this.realValue[kind].displayer) {
+                this.realValue[kind].displayer = defaultDisplayer.handle;
+            }
+        }
+        this.currentKind = Object.keys(this.definition.mapping)[0] ?? null;
     },
     watch: {
         realValue: {
@@ -109,13 +122,16 @@ export default {
             return Object.keys(this.getErrors(kind)).length != 0;
         },
         getDisplayer: function (kind) {
+            if (!this.definition.mapping[kind]) {
+                return null;
+            }
             for (let i in this.definition.mapping[kind].displayers) {
                 let displayer = this.definition.mapping[kind].displayers[i];
                 if (this.realValue[kind].displayer == displayer.handle) {
                     return displayer;
                 }
             }
-            return '';
+            return null;
         },
         getDisplayerName: function (kind) {
             let displayer = this.getDisplayer(kind);
@@ -137,20 +153,18 @@ export default {
     emits: ['change']
 };
 </script>
+<style lang="scss">
+.options-modal {
+    &.displayer-asset_render_file, &.displayer-file_file {
+        width: 50% !important;
+        height: 80vh !important;
+    }
+}
+</style>
 <style lang="scss" scoped>
 @import '~craftcms-sass/_mixins';
 
-.field[name=displayers] {
-    height: 100%;
-}
-
-.displayer-file_default.options-modal {
-    .body .content .main {
-        overflow: hidden;
-    }
-}
-
-.displayers-config {
+#field-displayers {
     position: relative;
     height: calc(100% - 2px);
     border-radius: 3px;
@@ -207,6 +221,9 @@ export default {
         border-bottom: solid $grey200;
         border-width: 1px 0;
         background-color: $grey100;
+        &:hover {
+            text-decoration: none;
+        }
         &.sel {
             background-color: $grey200
         }

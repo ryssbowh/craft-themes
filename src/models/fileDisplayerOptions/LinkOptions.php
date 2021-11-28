@@ -13,6 +13,7 @@ class LinkOptions extends FileDisplayerOptions
         return [
             'label' => [
                 'field' => 'select',
+                'required' => true,
                 'options' => [
                     'title' => \Craft::t('themes', 'Asset title'),
                     'filename' => \Craft::t('themes', 'File name'),
@@ -54,6 +55,7 @@ class LinkOptions extends FileDisplayerOptions
     public function defineRules(): array
     {
         return [
+            ['label', 'required'],
             [['label', 'custom'], 'string'],
             [['newTab', 'download'], 'boolean', 'trueValue' => true, 'falseValue' => false],
             ['custom', 'required', 'when' => function ($model) {

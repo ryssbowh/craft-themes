@@ -16,7 +16,7 @@ class FileFileOptions extends FieldDisplayerOptions
         return [
             'displayers' => [
                 'field' => 'filedisplayers',
-                'mapping' => $this->getDisplayer()->getDisplayersMapping()
+                'mapping' => $this->displayersMapping()
             ]
         ];
     }
@@ -42,7 +42,7 @@ class FileFileOptions extends FieldDisplayerOptions
             $displayers[$kind]['displayer'] = $displayer->handle;
             $displayers[$kind]['options'] = $displayer->options->defaultValues;
         }
-        return $displayers;
+        return ['displayers' => $displayers];
     }
 
     /**
@@ -54,30 +54,13 @@ class FileFileOptions extends FieldDisplayerOptions
     public function getDisplayerForKind(string $kind): ?FileDisplayerInterface
     {
         $displayer = null;
-        if ($this->displayers[$kind] ?? null) {
-            $displayer = Themes::$plugin->fileDisplayers->getByHandle($this->displayers[$kind]['displayer']);
-        } else {
-            $displayer = Themes::$plugin->fileDisplayers->getForKind($kind)[0];
-        }
-        if ($options = $this->getOptionsForDisplayer($kind, $displayer::$handle)) {
-            $displayer->options->setAttributes($options, false);
+        if ($handle = $this->displayers[$kind]['displayer'] ?? null) {
+            $displayer = Themes::$plugin->fileDisplayers->getByHandle($handle);
+            if ($options = $this->displayers[$kind]['options'] ?? null) {
+                $displayer->options->setValues($options);
+            }
         }
         return $displayer;
-    }
-
-    /**
-     * Get options for an asset kind and a displayer
-     * 
-     * @param  string $kind
-     * @param  string $displayer
-     * @return array
-     */
-    public function getOptionsForDisplayer(string $kind, string $displayer): array
-    {
-        if (isset($this->displayers[$kind]) and $this->displayers[$kind]['displayer'] == $displayer) {
-            return $this->displayers[$kind]['options'] ?? [];
-        }
-        return [];
     }
 
     /**
@@ -91,5 +74,22 @@ class FileFileOptions extends FieldDisplayerOptions
                 $this->addError('displayers', [$kind => $displayer->options->getErrors()]);
             }
         }
+    }
+
+    /**
+     * Maps all displayer and options per asset kind
+     * 
+     * @return array
+     */
+    protected function displayersMapping(): array
+    {
+        $mapping = [];
+        foreach ($this->getDisplayer()->getAllowedFileKinds() as $handle => $kind) {
+            $mapping[$handle] = [
+                'label' => $kind['label'],
+                'displayers' => Themes::$plugin->fileDisplayers->getForKind($handle)
+            ];
+        }
+        return $mapping;
     }
 }

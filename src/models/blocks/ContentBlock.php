@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\Block;
+use Ryssbowh\CraftThemes\models\blockOptions\BlockContentOptions;
 
 /**
  * Special block to handle the content of the page. 
@@ -37,6 +38,14 @@ class ContentBlock extends Block
     public function getLongDescription(): string
     {
         return \Craft::t('themes', 'Should be present on each block layout');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionsModel(): string
+    {
+        return BlockContentOptions::class;
     }
 
     /**

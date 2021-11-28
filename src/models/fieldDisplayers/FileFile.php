@@ -29,6 +29,9 @@ class FileFile extends FieldDisplayer
      */
     protected $_displayerMapping;
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'File');
@@ -62,36 +65,12 @@ class FileFile extends FieldDisplayer
     }
 
     /**
-     * Get available displayers, indexed by asset kind
+     * Get available file kinds
      * 
      * @return array
      */
-    public function getDisplayersMapping(): array
+    public function getAllowedFileKinds(): array
     {
-        if ($this->_displayerMapping === null) {
-            $mapping = [];
-            foreach (Assets::getFileKinds() as $handle => $kind) {
-                $displayers = Themes::$plugin->fileDisplayers->getForKind($handle);
-                foreach ($displayers as $displayer) {
-                    if ($options = $this->options->getOptionsForDisplayer($handle, $displayer::$handle)) {
-                        $displayer->options->setAttributes($options);
-                    }
-                }
-                $mapping[$handle] = [
-                    'label' => $kind['label'],
-                    'displayers' => $displayers
-                ];
-            }
-            $this->_displayerMapping = $mapping;
-        }
-        return $this->_displayerMapping;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['displayersMapping']);
+        return Assets::getFileKinds();
     }
 }

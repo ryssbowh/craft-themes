@@ -104,10 +104,6 @@ export default {
     min-height: 300px;
     height: 60vh;
     width: 30%;
-    &.displayer-asset_render_file, &.displayer-file_default {
-        width: 60%;
-        height: 80vh;
-    }
     .body {
         height: calc(100% - 65px);
     }

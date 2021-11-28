@@ -248,10 +248,10 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function setOptions(?array $options)
+    public function setOptions($options)
     {
         if ($this->displayer) {
-            $this->displayer->options->values = $options ?? [];
+            $this->displayer->options->setValues($options ?? []);
         }
     }
 

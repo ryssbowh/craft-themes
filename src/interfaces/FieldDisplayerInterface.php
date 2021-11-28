@@ -35,7 +35,7 @@ interface FieldDisplayerInterface
      * 
      * @return FieldInterface
      */
-    public function getField(): FieldInterface
+    public function getField(): FieldInterface;
 
     /**
      * Get options model class

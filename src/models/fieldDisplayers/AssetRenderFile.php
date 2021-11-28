@@ -19,11 +19,6 @@ class AssetRenderFile extends FieldDisplayer
     public static $handle = 'asset_render_file';
 
     /**
-     * @var array
-     */
-    protected $_displayerMapping;
-
-    /**
      * @inheritDoc
      */
     public function getName(): string
@@ -48,40 +43,19 @@ class AssetRenderFile extends FieldDisplayer
     }
 
     /**
-     * Get available displayers, indexed by asset kind
+     * Get available file kinds
      * 
      * @return array
      */
-    public function getDisplayersMapping(): array
+    public function getAllowedFileKinds(): array
     {
-        if ($this->_displayerMapping === null) {
+        $kinds = AssetsHelper::getFileKinds();
+        if ($this->field->craftField->restrictFiles) {
             $allowed = $this->field->craftField->allowedKinds;
-            if (!$this->field->craftField->restrictFiles) {
-                $allowed = array_keys(AssetsHelper::getFileKinds());
-            }
-            $mapping = [];
-            foreach ($allowed as $kind) {
-                $displayers = Themes::$plugin->fileDisplayers->getForKind($kind);
-                foreach ($displayers as $displayer) {
-                    if ($options = $this->options->getOptionsForDisplayer($kind, $displayer::$handle)) {
-                        $displayer->options->setAttributes($options);
-                    }
-                }
-                $mapping[$kind] = [
-                    'label' => AssetsHelper::getFileKindLabel($kind),
-                    'displayers' => $displayers
-                ];
-            }
-            $this->_displayerMapping = $mapping;
+            $kinds = array_filter($kinds, function ($key) use ($allowed) {
+                return in_array($key, $allowed);
+            }, ARRAY_FILTER_USE_KEY);
         }
-        return $this->_displayerMapping;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['displayersMapping']);
+        return $kinds;
     }
 }
