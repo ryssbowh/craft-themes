@@ -714,7 +714,7 @@ class LayoutService extends Service
         foreach ($layout->viewModes as $viewMode) {
             $viewMode->displays = $this->displayService()->createViewModeDisplays($viewMode);
         }
-        return $this->save($layout);
+        return $this->save($layout, false);
     }
 
     /**
