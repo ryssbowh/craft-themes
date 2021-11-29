@@ -187,7 +187,7 @@ return [
 	"Output as link" => "Output as link",
 	"Output as links" => "Output as links",
 	"Partial theme" => "Partial theme",
-	"Path (or regex)" => "Path (or regex)",
+	"Path or regex (example /^blog*/)" => "Path or regex (example /^blog*/)",
 	"Pause on focus" => "Pause on focus",
 	"Pause on hover" => "Pause on hover",
 	"Phone" => "Phone",
@@ -278,7 +278,6 @@ return [
 	"Volume : {name}" => "Volume : {name}",
 	"Width" => "Width",
 	"Will fetch the message from the 'notice' and 'error' session flash data" => "Will fetch the message from the 'notice' and 'error' session flash data",
-	"You have unsaved changes, continue anyway ?" => "You have unsaved changes, continue anyway ?",
 	"You will loose unsaved changes, continue anyway ?" => "You will loose unsaved changes, continue anyway ?",
 ];
 

@@ -41,7 +41,7 @@ class CpRulesController extends Controller
             ],
             'url' => [
                 'type' => 'type',
-                'heading' => \Craft::t('themes', 'Path (or regex)'),
+                'heading' => \Craft::t('themes', 'Path or regex (example /^blog*/)'),
                 'class' => 'url cell',
                 'placeholder' => \Craft::t('themes', 'Enter path here')
             ],
