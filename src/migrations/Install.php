@@ -11,10 +11,6 @@ class Install extends Migration
      */
     public function safeUp()
     {
-        $tableSchema = \Yii::$app->db->schema->getTableSchema('{{%themes_blocks}}');
-        if ($tableSchema) {
-            return;
-        }
         $this->createTable('{{%themes_blocks}}', [
             'id' => $this->primaryKey(),
             'region' => $this->string(255)->notNull(),
