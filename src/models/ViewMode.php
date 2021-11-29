@@ -70,6 +70,33 @@ class ViewMode extends Model implements ViewModeInterface
     /**
      * @inheritDoc
      */
+    public function afterValidate()
+    {
+        foreach ($this->displays as $display) {
+            $display->validate();
+        }
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);
+        }
+        foreach ($this->displays as $display) {
+            if ($display->hasErrors()) {
+                return true;
+            }
+        }
+        return parent::hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return [

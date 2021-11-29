@@ -17,15 +17,11 @@ export default {
         layoutsWithBlocks: function () {
             return this.layouts.filter(layout => layout.hasBlocks);
         },
-        ...mapState(['layout', 'layouts', 'hasChanged'])
+        ...mapState(['layout', 'layouts'])
     },
     methods: {
         confirmAndChangeLayout: function (id) {
-            if (this.hasChanged) {
-                if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                    this.setLayoutAndFetch(id);
-                }
-            } else {
+            if (confirm(this.t('You will loose unsaved changes, continue anyway ?'))) {
                 this.setLayoutAndFetch(id);
             }
         },

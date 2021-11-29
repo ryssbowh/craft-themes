@@ -301,6 +301,33 @@ Event::on(AssetLinkOptions::class, AssetLinkOptions::EVENT_DEFINE_RULES, functio
     $e->rules[] = ['newOption', 'double'];
 }
 ```
+### New Vue component
+
+If you need to define a new Vue form field component, register an asset bundle :
+```
+Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+    $event->bundles[] = MyBundle::class;
+});
+//or
+Event::on(CpBlocksController::class, CpBlocksController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+    $event->bundles[] = MyBundle::class;
+});
+```  
+Your javascript must respond to the event `register-form-fields-components` and add your component `event.detail` variable.
+```
+import MyFieldComponent from './myFieldComponent';
+
+document.addEventListener("register-form-fields-components", function(e) {
+    event.details['my-field'] = MyFieldComponent;
+});
+```
+You can now use `my-field` as a value for the `field` argument of any field definition. Your component will receive these 4 props :
+```
+value: Array
+definition: Object
+errors: Array
+name: String
+```
 
 ## Templating (Pro)
 

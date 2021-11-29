@@ -12,20 +12,7 @@ import GroupModal from './components/GroupModal.vue';
 import Field from './components/Field.vue';
 import Group from './components/Group.vue';
 import Draggable from 'vuedraggable';
-
-import Lightswitch from '../forms/Lightswitch.vue';
-import Select from '../forms/Select.vue';
-import Text from '../forms/Text.vue';
-import DateField from '../forms/Date.vue';
-import Time from '../forms/Time.vue';
-import Color from '../forms/Color.vue';
-import DateTime from '../forms/DateTime.vue';
-import Textarea from '../forms/Textarea.vue';
-import MultiSelect from '../forms/MultiSelect.vue';
-import Checkboxes from '../forms/Checkboxes.vue';
-import Radio from '../forms/Radio.vue';
-import ViewModes from '../forms/ViewModes.vue';
-import FileDisplayers from '../forms/FileDisplayers.vue';
+import FormFields from '../FormFields';
 
 const app = createApp({
   components: {
@@ -46,20 +33,9 @@ app.component('options-modal', OptionsModal);
 app.component('group-modal', GroupModal);
 app.component('display-item', DisplayItem);
 
-app.component('formfield-lightswitch', Lightswitch);
-app.component('formfield-select', Select);
-app.component('formfield-text', Text);
-app.component('formfield-date', DateField);
-app.component('formfield-time', Time);
-app.component('formfield-color', Color);
-app.component('formfield-datetime', DateTime);
-app.component('formfield-textarea', Textarea);
-app.component('formfield-multiselect', MultiSelect);
-app.component('formfield-checkboxes', Checkboxes);
-app.component('formfield-radio', Radio);
-app.component('formfield-viewmodes', ViewModes);
-app.component('formfield-filedisplayers', FileDisplayers);
-
+for (let name in FormFields) {
+  app.component('formfield-' + name, FormFields[name]);
+}
 
 let event = new CustomEvent("register-fields-components", {detail: {}});
 document.dispatchEvent(event);

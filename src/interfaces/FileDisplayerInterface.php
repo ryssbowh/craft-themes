@@ -35,6 +35,13 @@ interface FileDisplayerInterface
     public function getOptions(): FileDisplayerOptions;
 
     /**
+     * Does this displayer define options
+     * 
+     * @return bool
+     */
+    public function getHasOptions(): bool;
+
+    /**
      * Get name
      * 
      * @return string

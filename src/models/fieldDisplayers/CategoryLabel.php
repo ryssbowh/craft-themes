@@ -26,7 +26,7 @@ class CategoryLabel extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Label');
+        return \Craft::t('app', 'Label');
     }
 
     /**

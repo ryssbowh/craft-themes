@@ -16,11 +16,6 @@ class ImageTransform extends FileDisplayer
     public static $handle = 'image_transform';
 
     /**
-     * @var boolean
-     */
-    public $hasOptions = true;
-
-    /**
      * @inheritDoc
      */
     public function getName(): string

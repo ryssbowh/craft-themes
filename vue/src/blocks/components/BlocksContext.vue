@@ -14,7 +14,7 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
     computed: {
-        ...mapState(['layouts', 'layout', 'theme', 'hasChanged'])
+        ...mapState(['layouts', 'layout', 'theme'])
     },
     props: {
         initialTheme: String,
@@ -72,11 +72,7 @@ export default {
             }
         },
         checkAndSetTheme: function (theme) {
-            if (this.hasChanged) {
-                if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                    this.setThemeAndFetch(theme);
-                }
-            } else {
+            if (confirm(this.t('You will loose unsaved changes, continue anyway ?'))) {
                 this.setThemeAndFetch(theme);
             }
         },

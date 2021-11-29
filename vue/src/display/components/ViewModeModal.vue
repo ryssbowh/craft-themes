@@ -5,7 +5,7 @@
         </div>
         <div class="body">
             <div class="content">
-                <form class="main">
+                <form @submit.prevent="save">
                     <div class="field width-100">
                         <div class="heading">
                             <label class="required" for="name">{{ t('Name', {}, 'app') }}</label>

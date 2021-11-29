@@ -37,17 +37,13 @@ export default {
             return this.layouts.filter(layout => !layout.hasBlocks);
         },
         canSave: function () {
-            return (!this.isSaving && !this.isLoading && this.hasChanged);
+            return (!this.isSaving && !this.isLoading);
         },
-        ...mapState(['isSaving', 'hasChanged', 'isFetching', 'availableLayouts', 'layouts', 'isCopying', 'layout'])
+        ...mapState(['isSaving', 'isFetching', 'availableLayouts', 'layouts', 'isCopying', 'layout'])
     },
     methods: {
         checkAndCopy: function(layout) {
-            if (this.hasChanged) {
-                if (confirm(this.t('You have unsaved changes, continue anyway ?'))) {
-                    this.copy(layout);
-                }
-            } else {
+            if (confirm(this.t('You will loose unsaved changes, continue anyway ?'))) {
                 this.copy(layout);
             }
         },

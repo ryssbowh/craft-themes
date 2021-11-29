@@ -23,11 +23,6 @@ class Link extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public $hasOptions = true;
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Link to asset');

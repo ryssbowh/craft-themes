@@ -20,11 +20,6 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
      * @var FieldDisplayerInterface
      */
     protected $_displayer;
-        
-    /**
-     * @var boolean
-     */
-    public $hasOptions = false;
 
     /**
      * @var FileDisplayerOptions
@@ -70,6 +65,14 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getHasOptions(): bool
+    {
+        return sizeof($this->options->definitions) > 0;
+    }
+
+    /**
      * Get theme associated to this displayer
      * 
      * @return ThemeInterface
@@ -84,7 +87,7 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['name', 'options', 'handle']);
+        return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions']);
     }
 
     /**

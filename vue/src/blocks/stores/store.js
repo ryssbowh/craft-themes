@@ -42,13 +42,10 @@ const store = createStore({
             isCopying: false,
             isFetching: {},
             blocks: [],
-            originalBlocks: [],
             layouts: [],
             layout: {},
-            originalLayout: {},
             allLayouts: {},
             regions: {},
-            hasChanged: false,
             cacheStrategies: {},
             showLayoutModal: false,
             showOptionsModal: false,
@@ -93,12 +90,6 @@ const store = createStore({
             }
             state.blocks = blocks;
         },
-        setOriginals (state, blocks) {
-            for (let i in blocks) {
-                blocks[i].index = i;
-            }
-            state.originalBlocks = blocks;
-        },
         addBlock(state, block) {
             block.index = state.blocks.length;
             state.blocks.push(block);
@@ -130,7 +121,6 @@ const store = createStore({
         },
         updateCustomLayout(state, data) {
             state.layout = merge(state.layout, data);
-            state.originalLayout = {...state.layout};
         },
         setLayouts(state, value) {
             state.layouts = value;
@@ -139,22 +129,17 @@ const store = createStore({
             state.isCopying = false;
             if (typeof id == 'object') {
                 state.layout = id;
-                state.originalLayout = {...id};
                 return;
             }
             for (let i in state.layouts) {
                 if (state.layouts[i].id == id) {
                     state.layout = state.layouts[i];
-                    state.originalLayout = {...state.layouts[i]};
                     return;
                 }
             }
         },
         setAllLayouts(state, value) {
             state.allLayouts = value;
-        },
-        setHasChanged(state, value) {
-            state.hasChanged = value;
         },
         setIsFetching(state, {key, value}) {
             state.isFetching[key] = value;
@@ -185,15 +170,12 @@ const store = createStore({
                     commit('updateLayout', res.data.layout);
                 }
                 setWindowUrl(state.theme, res.data.layout.id);
-                commit('setOriginals', res.data.blocks);
-                commit('setBlocks', cloneDeep(res.data.blocks));
+                commit('setBlocks', res.data.blocks);
                 commit('setLayout', res.data.layout);
-                commit('setHasChanged', false);
                 Craft.cp.displayNotice(res.data.message);
             })
             .catch(err => {
-                commit('setOriginals', err.response.data.blocks);
-                commit('setBlocks', cloneDeep(err.response.data.blocks));
+                commit('setBlocks', err.response.data.blocks);
                 handleError(err);
             })
             .finally(() => {
@@ -209,7 +191,6 @@ const store = createStore({
                 blocks[i].dateUpdated = null;
             }
             commit('setBlocks', blocks);
-            commit('setOriginals', []);
         },
         fetchBlocks({state, commit}) {
             let data = {};
@@ -217,8 +198,7 @@ const store = createStore({
             commit('setIsFetching', {key: 'blocks', value: true});
             return axios.post(Craft.getCpUrl('themes/ajax/blocks/'+state.layout.id), data)
             .then((response) => {
-                commit('setOriginals', response.data.blocks);
-                commit('setBlocks', cloneDeep(response.data.blocks));
+                commit('setBlocks', response.data.blocks);
             })
             .catch((err) => {
                 handleError(err);
@@ -226,28 +206,6 @@ const store = createStore({
             .finally(() => {
                 commit('setIsFetching', {key: 'blocks', value: false});
             });
-        },
-        checkChanges({state, commit}) {
-            let res = false;
-            if (!isEqual(state.originalLayout, state.layout) || state.originalBlocks.length !== state.blocks.length) {
-                res = true;
-            } else {
-                outer:
-                for (let i in state.originalBlocks) {
-                    for (let j of Object.keys(state.originalBlocks[i])) {
-                        switch (typeof state.blocks[i][j]) {
-                            case 'object':
-                                res = !isEqual(state.blocks[i][j], state.originalBlocks[i][j]);
-                                break;
-                            default:
-                                res = state.originalBlocks[i][j] !== state.blocks[i][j];
-                                break;
-                        }
-                        if (res) break outer;
-                    }
-                }
-            }
-            commit('setHasChanged', res);
         },
         fetchProviders({commit}) {
             let data = {};
@@ -286,18 +244,15 @@ const store = createStore({
             commit('setLayout', layout);
             setWindowUrl(state.theme, layout.id);
             commit('setIsCopying', true);
-            commit('setHasChanged', true);
             dispatch('resetBlocks', state.blocks);
         },
         createLayout({state, commit, dispatch}, layout) {
             commit('setLayout', layout);
             commit('setIsCopying', true);
             dispatch('resetBlocks', state.blocks);
-            dispatch('checkChanges');
         },
         updateCustomLayout({commit, dispatch}, data) {
             commit('updateCustomLayout', data);
-            dispatch('checkChanges');
         },
         deleteLayout({state, commit, dispatch}) {
             let data = {};

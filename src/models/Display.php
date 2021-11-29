@@ -74,6 +74,29 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
+    public function afterValidate()
+    {
+        $this->item->validate();
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);
+        }
+        if ($this->item->hasErrors()) {
+            return true;
+        }
+        return parent::hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return [

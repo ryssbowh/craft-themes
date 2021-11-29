@@ -43,7 +43,7 @@ class LinkOptions extends FileDisplayerOptions
     {
         return [
             'label' => 'title',
-            'custom' => null,
+            'custom' => '',
             'newTab' => false,
             'download' => false,
         ];

@@ -45,7 +45,7 @@ export default {
         } else {
             this.options = merge({}, this.item.options);
         }
-        this.errors = this.item.errors ?? {};
+        this.errors = this.item.errors.displayer ?? {};
     },
     beforeUnmount () {
         this.modal.destroy();

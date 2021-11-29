@@ -14,11 +14,11 @@ import { mapState, mapActions } from 'vuex';
 
 export default {
     computed: {
-        ...mapState(['layout', 'layouts', 'hasChanges'])
+        ...mapState(['layout', 'layouts'])
     },
     methods: {
         confirmAndChangeLayout: function (id) {
-            if (this.hasChanges && !confirm(this.t('You have unsaved changes, continue anyway ?'))) {
+            if (!confirm(this.t('You will loose unsaved changes, continue anyway ?'))) {
                 return;
             }
             this.setLayout({layoutId: id});

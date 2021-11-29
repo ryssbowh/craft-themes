@@ -63,12 +63,6 @@ export default {
     props: {
     },
     watch: {
-        blocks: {
-            deep: true,
-            handler() {
-                this.checkChanges();
-            }
-        },
         providers: { 
             deep: true,
             handler (providers) {

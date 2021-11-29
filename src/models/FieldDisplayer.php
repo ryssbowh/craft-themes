@@ -40,6 +40,31 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
+    public function hasErrors($attribute = null)
+    {
+        return $this->options->hasErrors($attribute);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrors($attribute = null)
+    {
+        return $this->options->getErrors($attribute);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterValidate()
+    {
+        $this->options->validate();
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setField(FieldInterface $field)
     {
         $this->_field = $field;

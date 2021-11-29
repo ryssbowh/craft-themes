@@ -75,6 +75,7 @@ class CpViewModesAjaxController extends Controller
 
         $layout = $this->layouts->getById($layoutId);
 
+        $hasErrors = false;
         $viewModes = [];
         foreach ($viewModesData as $data) {
             if ($data['id'] ?? null) {
@@ -82,15 +83,26 @@ class CpViewModesAjaxController extends Controller
             } else {
                 $viewMode = $this->viewModes->create($data);
             }
-            $this->viewModes->save($viewMode);
+            if (!$viewMode->validate()) {
+                $hasErrors = true;
+            }
             $viewModes[] = $viewMode;
         }
 
-        $this->viewModes->cleanUp($viewModes, $layout);
+        if (!$hasErrors) {
+            foreach ($viewModes as $viewMode) {
+                $this->viewModes->save($viewMode, false);
+            }
+            $this->viewModes->cleanUp($viewModes, $layout);
+            $message = \Craft::t('themes', 'Displays have been saved successfully');
+        } else {
+            $this->response->setStatusCode(400);
+            $message = \Craft::t('themes', 'Error while saving view modes');
+        }
 
         return [
-            'viewModes' => $layout->viewModes,
-            'message' => \Craft::t('themes', 'Displays have been saved successfully')
+            'viewModes' => $viewModes,
+            'message' => $message
         ];
     }
 }

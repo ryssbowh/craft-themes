@@ -65,6 +65,9 @@ export default {
     },
     methods: {
         changeTheme: function (theme) {
+            if (!confirm(this.t('You will loose unsaved changes, continue anyway ?'))) {
+                return;
+            }
             let layoutElement = this.layout.element;
             this.setTheme(theme);
             for (let i in this.layouts) {

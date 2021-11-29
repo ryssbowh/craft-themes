@@ -21,11 +21,6 @@ class HtmlAudio extends FileDisplayer
     public static $handle = 'html_audio';
 
     /**
-     * @var boolean
-     */
-    public $hasOptions = true;
-
-    /**
      * @inheritDoc
      */
     public function getName(): string

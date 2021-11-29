@@ -16,11 +16,6 @@ class Iframe extends FileDisplayer
     public static $handle = 'iframe';
 
     /**
-     * @var boolean
-     */
-    public $hasOptions = true;
-
-    /**
      * @inheritDoc
      */
     public function getName(): string

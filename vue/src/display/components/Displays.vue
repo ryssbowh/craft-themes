@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import { sortBy } from 'lodash';
 
 export default {
@@ -59,7 +59,6 @@ export default {
         viewMode: {
             deep: true,
             handler() {
-                this.checkChanges();
                 this.allItemsVisible = true;
                 this.allLabelsVisible = true;
                 for (let display of this.rootDisplays) {
@@ -111,17 +110,16 @@ export default {
                 if (movedElem && display.id == movedElem.id) {
                     continue;
                 }
-                // this.updateDisplay({uid: display.uid, data: {order: newOrder}});
                 display.order = newOrder;
+                this.updateDisplay({uid: display.uid, data: {order: newOrder}});
                 newOrder++;
             }
             if (movedElem) {
-                // this.updateDisplay({uid: movedElem.uid, data: {order: newIndex}});
                 movedElem.order = newIndex;
+                this.updateDisplay({uid: movedElem.uid, data: {order: newIndex}});
             }
         },
-        ...mapMutations(['updateDisplay', 'setShowGroupModal', 'addDisplay', 'removeDisplay', 'setItemsVisibility', 'setLabelsVisibility']),
-        ...mapActions(['checkChanges']),
+        ...mapMutations(['updateDisplay', 'setShowGroupModal', 'addDisplay', 'removeDisplay', 'setItemsVisibility', 'setLabelsVisibility'])
     }
 };
 </script>

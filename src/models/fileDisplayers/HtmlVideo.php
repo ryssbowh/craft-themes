@@ -21,11 +21,6 @@ class HtmlVideo extends FileDisplayer
     public static $handle = 'html_video';
 
     /**
-     * @var boolean
-     */
-    public $hasOptions = true;
-
-    /**
      * @inheritDoc
      */
     public function getName(): string

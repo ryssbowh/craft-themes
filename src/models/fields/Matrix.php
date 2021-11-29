@@ -36,6 +36,37 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);
+        }
+        foreach ($this->types as $type) {
+            foreach ($type->fields as $field) {
+                if ($field->hasErrors()) {
+                    return true;
+                }
+            }
+        }
+        return parent::hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterValidate()
+    {
+        foreach ($this->types as $type) {
+            foreach ($type->fields as $field) {
+                $field->validate();
+            }
+        }
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getType(): string
     {
         return 'matrix';

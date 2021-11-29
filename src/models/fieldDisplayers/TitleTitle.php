@@ -26,7 +26,7 @@ class TitleTitle extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Title');
+        return \Craft::t('app', 'Title');
     }
 
     /**

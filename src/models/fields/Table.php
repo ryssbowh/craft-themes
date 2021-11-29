@@ -30,6 +30,33 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);
+        }
+        foreach ($this->fields as $field) {
+            if ($field->hasErrors()) {
+                return true;
+            }
+        }
+        return parent::hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterValidate()
+    {
+        foreach ($this->fields as $field) {
+            $field->validate();
+        }
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getType(): string
     {
         return 'table';

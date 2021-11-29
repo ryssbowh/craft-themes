@@ -5,7 +5,7 @@
         </div>
         <div class="body">
             <div class="content">
-                <form class="main">
+                <form @submit.prevent="save">
                     <div class="field">
                         <div class="heading">
                             <label class="required" for="name">{{ t('Name', {}, 'app') }}</label>
@@ -149,7 +149,7 @@ export default {
                 return;
             }
             if (this.editedGroupUid !== null) {
-                this.updateDisplay({uid: this.editedGroup.uid, data: {item: {name: this.name, handle: this.handle}}});
+                this.updateItem({displayUid: this.editedGroup.uid, data: {name: this.name, handle: this.handle}});
             } else {
                 this.addDisplay({
                     id: null,
@@ -169,7 +169,7 @@ export default {
             }
             this.closeModal();
         },
-        ...mapMutations(['updateDisplay', 'addDisplay'])
+        ...mapMutations(['updateItem', 'addDisplay'])
     },
     emits: ['closeModal'],
 };

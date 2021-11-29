@@ -2,7 +2,7 @@
     <div :class="classes">
         <div class="move col"><div class="move icon" v-if="moveable"></div></div>
         <div class="title col">
-            <span class="name">{{ item.name }}</span>
+            <span class="name">{{ item.name }} <span class="error" data-icon="alert" aria-label="Error" v-if="hasErrors"></span></span>
             <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="showFieldHandles && fullHandle" @click="copyValue">
                 <input type="text" :value="fullHandle" readonly="" :size="fullHandle.length">
                 <span data-icon="clipboard" aria-hidden="true"></span>
@@ -41,7 +41,7 @@
             <span v-if="!hasDisplayers">{{ t('None available') }}</span>
         </div>
         <div class="options col">
-            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="showModal = true"><div class="icon settings"></div></a>
+            <a v-if="displayer && displayer.hasOptions" href="#" @click.prevent="showModal = true"><div :class="{icon: true, settings: true, error: hasErrors}"></div></a>
         </div>
         <options-modal @onSave="onSaveModal" v-if="showModal" :displayerHasChanged="displayerHasChanged" :displayer="displayer" :item="item" @onHide="closeModal"/>
     </div>
@@ -59,6 +59,12 @@ export default {
             };
             classes[this.item.type] = true;
             return classes;
+        },
+        hasErrors: function () {
+            if (Array.isArray(this.item.errors)) {
+                return this.item.errors.length > 0;
+            }
+            return Object.keys(this.item.errors).length > 0;
         },
         visible: function () {
             return !this.item.visuallyHidden && !this.item.hidden

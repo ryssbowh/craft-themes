@@ -113,4 +113,12 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
     {
         return $this->viewMode->layout;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function fields()
+    {
+        return array_merge(parent::fields(), ['errors']);
+    }
 }

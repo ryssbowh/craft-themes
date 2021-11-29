@@ -68,6 +68,51 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);
+        }
+        $displayer = $this->displayer;
+        if ($displayer and $displayer->hasErrors()) {
+            return true;
+        }
+        return parent::hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrors($attribute = null)
+    {
+        $displayer = $this->displayer;
+        if ($displayer and $attribute == 'displayer') {
+            return $displayer->errors;
+        }
+        if ($attribute !== null) {
+            return parent::getErrors($attribute);
+        }
+        $errors = parent::getErrors();
+        if ($displayer and $errors2 = $displayer->errors) {
+            $errors['displayer'] = $errors2;
+        }
+        return $errors;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterValidate()
+    {
+        if ($displayer = $this->displayer) {
+            $this->displayer->validate();
+        }
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getType(): string
     {
         return DisplayService::TYPE_FIELD;
