@@ -12,10 +12,13 @@
                         </select>
                     </div>
                 </div>
-                <ul class="errors" v-if="errors['viewMode-'+typeUid]">
-                    <li v-for="error, index in errors['viewMode-'+typeUid]" v-bind:key="index">{{ error }}</li>
+                <ul class="errors" v-if="viewModeError(typeUid)">
+                    <li class="error">{{ viewModeError(typeUid) }}</li>
                 </ul>
             </div>
+        </template>
+        <template #errors>
+            <span></span>
         </template>
     </form-field>
 </template>
@@ -32,6 +35,16 @@ export default {
     computed: {
         inputClass: function () {
             return 'input ' + Craft.orientation;
+        }
+    },
+    methods: {
+        viewModeError: function (typeUid) {
+            for (let i in this.errors) {
+                if (this.errors[i][typeUid] ?? false) {
+                    return this.errors[i][typeUid];
+                }
+            }
+            return false;
         }
     },
     props: {

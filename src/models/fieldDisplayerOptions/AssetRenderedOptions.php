@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\traits\ViewModesOptions;
@@ -37,8 +38,14 @@ class AssetRenderedOptions extends FieldDisplayerOptions
     {
         $volume = $asset->volume;
         if ($volume) {
-            $viewModeUid = $this->getViewModes()[$volume->uid] ?? null;
-            return $viewModeUid ? Themes::$plugin->viewModes->getByUid($viewModeUid) : null;
+            $viewModeUid = $this->viewModes[$volume->uid] ?? null;
+            if ($viewModeUid) {
+                try {
+                    return Themes::$plugin->viewModes->getByUid($viewModeUid);
+                } catch (ViewModeException $e) {
+                    return null;
+                }
+            }
         }
         return null;
     }

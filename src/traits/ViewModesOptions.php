@@ -8,11 +8,6 @@ namespace Ryssbowh\CraftThemes\traits;
 trait ViewModesOptions
 {
     /**
-     * @var array
-     */
-    protected $_viewModes;
-
-    /**
      * @return array
      */
     public function defineViewModesOptions(): array
@@ -38,23 +33,6 @@ trait ViewModesOptions
     }
 
     /**
-     * Get all view modes
-     * 
-     * @return array
-     */
-    public function getViewModes(): array
-    {
-        if (is_null($this->_viewModes)) {
-            $this->_viewModes = [];
-            foreach ($this->displayer->getViewModes() as $uid => $viewModes) {
-                $keys = array_keys($viewModes['viewModes']);
-                $this->_viewModes[$uid] = $keys[0];
-            }
-        }
-        return $this->_viewModes;
-    }
-
-    /**
      * View modes setter
      * 
      * @param array $viewModes
@@ -72,7 +50,7 @@ trait ViewModesOptions
         $validViewModes = $this->displayer->getViewModes();
         foreach ($this->viewModes as $uid => $viewModeUid) {
             if (!isset($validViewModes[$uid]['viewModes'][$viewModeUid])) {
-               $this->addError('viewMode-'.$uid, \Craft::t('themes', 'View mode is invalid'));
+                $this->addError('viewModes', [$uid => \Craft::t('themes', 'View mode is invalid')]);
             }
         }
     }

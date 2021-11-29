@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\traits;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -32,7 +33,11 @@ trait ViewModeOptions
     public function getViewMode(): ?ViewModeInterface
     {
         if ($this->viewModeUid) {
-            return Themes::$plugin->viewModes->getByUid($this->viewModeUid);
+            try {
+                Themes::$plugin->viewModes->getByUid($this->viewModeUid);
+            } catch(ViewModeException $e) {
+                return null;
+            }
         }
         return null;
     }
