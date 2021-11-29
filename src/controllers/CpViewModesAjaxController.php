@@ -37,8 +37,13 @@ class CpViewModesAjaxController extends Controller
     {
         $layoutId = $this->request->getRequiredParam('layoutId');
 
+        $viewModes = array_map(function ($viewMode) {
+            $viewMode->validate();
+            return $viewMode;
+        }, $this->layouts->getById($layoutId)->viewModes);
+
         return [
-            'viewModes' => $this->layouts->getById($layoutId)->viewModes
+            'viewModes' => $viewModes
         ];
     }
 

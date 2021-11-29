@@ -73,9 +73,13 @@ class CpBlocksAjaxController extends Controller
      */
     public function actionBlocks(int $layout): array
     {
-        $layout = $this->layouts->getById($layout);
+        $blocks = array_map(function ($block) {
+            $block->validate();
+            return $block;
+        }, $this->layouts->getById($layout)->blocks);
+
         return [
-            'blocks' => $layout->blocks
+            'blocks' => $blocks
         ];
     }
 
