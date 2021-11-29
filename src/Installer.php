@@ -7,6 +7,9 @@ use craft\services\Plugins;
 use yii\base\Event;
 use yii\base\Module;
 
+/**
+ * Yii module listening to events related to Themes installation
+ */
 class Installer extends Module
 {
     public function init()

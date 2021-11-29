@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\ShortcutsAssets;
+use Ryssbowh\CraftThemes\events\RenderEvent;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use craft\elements\Asset;
 use craft\elements\Category;
@@ -32,18 +33,12 @@ class ShortcutsService extends Service
      */
     public $showShortcuts;
 
-    public function initShortcuts()
-    {
-        if ($this->inited) {
-            return;
-        }
-        \Craft::$app->view->registerAssetBundle(ShortcutsAssets::class);
-        $this->js = "var shortcutData = {
-        };";
-        $this->inited = true;
-    }
-
-    public function registerLayout($e) {
+    /**
+     * Registers a layout
+     * 
+     * @param RenderEvent $e
+     */
+    public function registerLayout(RenderEvent $e) {
         if (!$this->showShortcuts) {
             return;
         }
@@ -118,5 +113,19 @@ class ShortcutsService extends Service
         }
         $this->js .= $js .'];';
         \Craft::$app->view->registerJs($this->js, View::POS_BEGIN, 'themes-shortcuts');
+    }
+
+    /**
+     * Initialize the shortcuts
+     */
+    protected function initShortcuts()
+    {
+        if ($this->inited) {
+            return;
+        }
+        \Craft::$app->view->registerAssetBundle(ShortcutsAssets::class);
+        $this->js = "var shortcutData = {
+        };";
+        $this->inited = true;
     }
 }
