@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\AssetBlockOptions;
 use craft\elements\Asset;
@@ -61,12 +62,21 @@ class AssetBlock extends Block
     public function getAssets(): array
     {
         if ($this->_assets === null) {
-            $this->_assets = array_map(function ($row) {
-                return [
-                    'asset' => Asset::find()->id($row['id'])->one(),
-                    'viewMode' => Themes::$plugin->viewModes->getByUid($row['viewMode'])
-                ];
-            }, $this->options->assets);
+            $this->_assets = [];
+            foreach ($this->options->assets as $array) {
+                try {
+                    $viewMode = Themes::$plugin->viewModes->getByUid($array['viewMode']);
+                } catch (ViewModeException $e) {
+                    continue;
+                }
+                $asset = Asset::find()->id($array['id'])->one();
+                if ($asset) {
+                    $this->_assets[] = [
+                        'asset' => $asset,
+                        'viewMode' => $viewMode
+                    ];
+                }
+            }
         }
         return $this->_assets;
     }

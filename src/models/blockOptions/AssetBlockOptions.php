@@ -2,9 +2,8 @@
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\BlockOptions;
-use craft\elements\Category;
 
 /**
  * Options for the asset block
@@ -48,6 +47,13 @@ class AssetBlockOptions extends BlockOptions
             ['assets', function () {
                 if (!is_array($this->assets)) {
                     $this->addError('assets', \Craft::t('themes', 'Invalid assets'));
+                }
+                foreach ($this->assets as $array) {
+                    try {
+                        Themes::$plugin->viewModes->getByUid($array['viewMode']);
+                    } catch (ViewModeException $e) {
+                        $this->addError('assets', [$array['id'] => \Craft::t('themes', 'View mode is invalid')]);
+                    }
                 }
             }]
         ]);

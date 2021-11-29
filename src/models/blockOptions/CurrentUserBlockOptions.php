@@ -2,7 +2,6 @@
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 

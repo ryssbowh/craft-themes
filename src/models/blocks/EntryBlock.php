@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\EntryBlockOptions;
 use craft\elements\Entry;
@@ -61,12 +62,21 @@ class EntryBlock extends Block
     public function getEntries(): array
     {
         if ($this->_entries === null) {
-            $this->_entries = array_map(function ($row) {
-                return [
-                    'entry' => Entry::find()->id($row['id'])->one(),
-                    'viewMode' => Themes::$plugin->viewModes->getByUid($row['viewMode'])
-                ];
-            }, $this->options->entries);
+            $this->_entries = [];
+            foreach ($this->options->entries as $array) {
+                try {
+                    $viewMode = Themes::$plugin->viewModes->getByUid($array['viewMode']);
+                } catch (ViewModeException $e) {
+                    continue;
+                }
+                $entry = Entry::find()->id($array['id'])->one();
+                if ($entry) {
+                    $this->_entries[] = [
+                        'entry' => $entry,
+                        'viewMode' => $viewMode
+                    ];
+                }
+            }
         }
         return $this->_entries;
     }

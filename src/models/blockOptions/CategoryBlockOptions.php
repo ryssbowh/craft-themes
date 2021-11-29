@@ -2,7 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
@@ -47,6 +47,13 @@ class CategoryBlockOptions extends BlockOptions
             ['categories', function () {
                 if (!is_array($this->categories)) {
                     $this->addError('categories', \Craft::t('themes', 'Invalid categories'));
+                }
+                foreach ($this->categories as $array) {
+                    try {
+                        Themes::$plugin->viewModes->getByUid($array['viewMode']);
+                    } catch (ViewModeException $e) {
+                        $this->addError('categories', [$array['id'] => \Craft::t('themes', 'View mode is invalid')]);
+                    }
                 }
             }]
         ]);

@@ -112,6 +112,7 @@ class BlockService extends Service
         $record = $this->getRecordByUid($uid);
         $attributes = $record->getAttributes();
         unset($attributes['handle']);
+        unset($attributes['options']);
         $block->setAttributes($attributes);
         $block->afterSave();
         

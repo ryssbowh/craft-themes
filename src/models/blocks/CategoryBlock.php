@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\CategoryBlockOptions;
 use craft\elements\Category;
@@ -61,12 +62,21 @@ class CategoryBlock extends Block
     public function getCategories(): array
     {
         if ($this->_categories === null) {
-            $this->_categories = array_map(function ($row) {
-                return [
-                    'category' => Category::find()->id($row['id'])->one(),
-                    'viewMode' => Themes::$plugin->viewModes->getByUid($row['viewMode'])
-                ];
-            }, $this->options->categories);
+            $this->_categories = [];
+            foreach ($this->options->categories as $array) {
+                try {
+                    $viewMode = Themes::$plugin->viewModes->getByUid($array['viewMode']);
+                } catch (ViewModeException $e) {
+                    continue;
+                }
+                $category = Category::find()->id($array['id'])->one();
+                if ($category) {
+                    $this->_categories[] = [
+                        'category' => $category,
+                        'viewMode' => $viewMode
+                    ];
+                }
+            }
         }
         return $this->_categories;
     }

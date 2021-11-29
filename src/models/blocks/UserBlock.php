@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\UserBlockOptions;
 use craft\elements\User;
@@ -61,12 +62,21 @@ class UserBlock extends Block
     public function getUsers(): array
     {
         if ($this->_users === null) {
-            $this->_users = array_map(function ($row) {
-                return [
-                    'user' => User::find()->id($row['id'])->one(),
-                    'viewMode' => Themes::$plugin->viewModes->getByUid($row['viewMode'])
-                ];
-            }, $this->options->users);
+            $this->_users = [];
+            foreach ($this->options->users as $array) {
+                try {
+                    $viewMode = Themes::$plugin->viewModes->getByUid($array['viewMode']);
+                } catch (ViewModeException $e) {
+                    continue;
+                }
+                $user = User::find()->id($array['id'])->one();
+                if ($user) {
+                    $this->_users[] = [
+                        'user' => $user,
+                        'viewMode' => $viewMode
+                    ];
+                }
+            }
         }
         return $this->_users;
     }

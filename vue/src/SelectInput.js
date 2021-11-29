@@ -6,6 +6,7 @@ let SelectInput = Craft.BaseElementSelectInput.extend({
     actionUrl: null,
     createElementCallback: null,
     initialIds: [],
+    errors: {},
 
     init(args) {
         this.base(args);
@@ -16,6 +17,7 @@ let SelectInput = Craft.BaseElementSelectInput.extend({
                     elements.push(this.createElementCallback(data));
                 }
                 this.selectElements2(elements);
+                this.updateErrors();
             });
         }
     },
@@ -26,6 +28,7 @@ let SelectInput = Craft.BaseElementSelectInput.extend({
         this.actionUrl = arguments[0].actionUrl;
         this.createElementCallback = arguments[0].createElementCallback;
         this.initialIds = arguments[0].initialIds;
+        this.errors = arguments[0].errors;
     },
 
     createNewElement: function (elementInfo) {
@@ -34,12 +37,22 @@ let SelectInput = Craft.BaseElementSelectInput.extend({
         $row.append(element);
         if (!elementInfo.viewModes) {
             this.fetchViewModes(elementInfo.id).done((response) => {
-                this.appendViewModes($row, response[0].viewModes, elementInfo.viewMode);
+                this.appendViewModes($row, response[0].viewModes, elementInfo.viewMode ?? response[0].viewModes[0].uid);
+                this.trigger('viewModesChanged');
             })
         } else {
             this.appendViewModes($row, elementInfo.viewModes, elementInfo.viewMode);
         }
         return $row;
+    },
+
+    updateErrors: function () {
+        this.$container.find('.element-error').remove();
+        for (let id in this.errors) {
+            let $elem = this.$elements.find('.element[data-id=' + id + ']').parent();
+            let $error = $('<div class="error element-error">' + this.errors[id] + '</div>');
+            $elem.find('.select-wrapper').append($error);
+        }
     },
 
     /**
@@ -69,12 +82,12 @@ let SelectInput = Craft.BaseElementSelectInput.extend({
     },
 
     appendViewModes: function ($row, viewModes, selectedViewMode) {
-        let select = $('<div class="select"><select></select></div>');
+        let select = $('<div class="select-wrapper"><div class="select"><select><option value="">' + Craft.t('themes', 'Select a view mode') + '</select></select></div></div>');
         viewModes.forEach((viewMode) => {
             select.find('select').append('<option value="' + viewMode.uid + '"'+(viewMode.uid == selectedViewMode ? ' selected' : '')+'>' + viewMode.name + '</options>');
         });
         select.find('select').on('change', () => {
-            this.trigger('selectElements');
+            this.trigger('viewModesChanged');
         });
         $row.append(select);
     },
@@ -99,6 +112,36 @@ let SelectInput = Craft.BaseElementSelectInput.extend({
         return data;
     },
 
+    removeElements: function($elements) {
+        if (this.settings.selectable) {
+            this.elementSelect.removeItems($elements);
+        }
+
+        if (this.modal) {
+            var ids = [];
+
+            for (var i = 0; i < $elements.length; i++) {
+                var id = $elements.find('.element').eq(i).data('id');
+
+                if (id) {
+                    ids.push(id);
+                }
+            }
+
+            if (ids.length) {
+                this.modal.elementIndex.enableElementsById(ids);
+            }
+        }
+
+        // Disable the hidden input in case the form is submitted before this element gets removed from the DOM
+        $elements.children('input').prop('disabled', true);
+
+        this.$elements = this.$elements.not($elements);
+        this.updateAddElementsBtn();
+
+        this.onRemoveElements();
+    },
+
     removeElement: function($element) {
         this.removeElements($element.parent());
         this.animateElementAway($element.parent(), () => {
@@ -111,7 +154,7 @@ let SelectInput = Craft.BaseElementSelectInput.extend({
         this.base();
         this.elementSort.settings.ignoreHandleSelector = '.delete, .select';
         this.elementSort.settings.onSortChange = () => {
-            this.resetElements();
+            this.trigger('orderChanged');
         };
     },
 });

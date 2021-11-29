@@ -17,6 +17,13 @@
                 </div>
             </div>
         </template>
+        <template v-slot:errors>
+            <ul class="errors" v-if="mainErrors">
+                <li class="error" v-for="error, index in mainErrors" v-bind:key="index">
+                    {{ error }}
+                </li>
+            </ul>
+        </template>
     </form-field>
 </template>
 
@@ -34,6 +41,15 @@ export default {
     computed: {
         inputClass: function () {
             return 'input ' + Craft.orientation;
+        },
+        mainErrors: function () {
+            let main = [];
+            for (let i in this.errors) {
+                if (typeof this.errors[i] == 'string') {
+                    main.push(this.errors[i]);
+                }
+            }
+            return main;
         },
         options: function () {
             switch (this.definition.elementType) {
@@ -103,15 +119,19 @@ export default {
                 theme: this.theme,
                 selectable: 0,
                 createElementCallback: this.createElement,
+                errors: this.getElementsErrors(),
                 initialIds: Object.keys(this.realValue).map((i) => {
                     return this.realValue[i].id;
                 })
             });
-            this.selector.on('selectElements', () => {
-                this.updateElements(Craft.BaseElementSelectInput.ADD_FX_DURATION);
+            this.selector.on('viewModesChanged', () => {
+                this.realValue = this.selector.getSelectedElementData();
             });
             this.selector.on('removeElements', () => {
-                this.updateElements(Craft.BaseElementSelectInput.REMOVE_FX_DURATION);
+                this.realValue = this.selector.getSelectedElementData();
+            });
+            this.selector.on('orderChanged', () => {
+                this.realValue = this.selector.getSelectedElementData();
             });
         },
         createElement: function (element) {
@@ -161,17 +181,31 @@ export default {
                 viewMode: this.realValue.filter((e) => e.id == element.id)[0].viewMode ?? null
             };
         },
-        updateElements: function (waitTime) {
-            //Need to wait on Garnish transition to finish or data will be wrong
-            setTimeout(() => {
-                this.realValue = this.selector.getSelectedElementData();
-            }, waitTime + 50);
-        },
+        getElementsErrors: function () {
+            let errors = {};
+            for (let i in this.errors) {
+                if (typeof this.errors[i] == 'string') {
+                    continue;
+                }
+                let keys = Object.keys(this.errors[i]);
+                errors[keys[0]] = this.errors[i][keys[0]];
+            }
+            return errors;
+        }
     },
     watch: {
         realValue: {
             handler: function () {
                 this.$emit('change', this.realValue);
+            },
+            deep: true
+        },
+        errors: {
+            handler: function () {
+                if (this.selector) {
+                    this.selector.errors = this.getElementsErrors();
+                    this.selector.updateErrors();
+                }
             },
             deep: true
         }

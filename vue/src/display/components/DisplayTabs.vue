@@ -59,11 +59,11 @@ export default {
             this.showModal = false;
         },
         setViewMode2: function (viewMode) {
-            this.setViewMode(viewMode);
+            this.setViewMode({viewMode: viewMode});
         },
         selectViewMode (id) {
             let viewMode = this.viewModes.filter((v) => v.id == id)[0];
-            this.setViewMode(viewMode);
+            this.setViewMode({viewMode: viewMode});
             this.overflowTabBtn.data('menubtn').hideMenu();
         },
         addViewMode: function () {

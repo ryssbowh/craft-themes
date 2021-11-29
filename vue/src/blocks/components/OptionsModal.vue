@@ -4,7 +4,7 @@
             <h3>{{ t('Edit block {block} options', {block: this.editedBlock.name}) }}</h3>
         </div>
         <div class="body" v-if="editedBlock">
-            <formfield-lightswitch :value="active ? true : false" :definition="{label: t('Active')}" @change="active = $event" :name="active">
+            <formfield-lightswitch :value="active ? true : false" :definition="{label: t('Active')}" @change="active = $event" :name="'active'">
             </formfield-lightswitch>
             <div class="field">
                 <div class="heading">

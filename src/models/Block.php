@@ -360,7 +360,7 @@ abstract class Block extends Model implements BlockInterface
         foreach ($this->options->definitions as  $name => $definition) {
             $save = $definition['saveInConfig'] ?? true;
             if (!$save) {
-                $options[$name] = $this->$name;
+                $options[$name] = $this->options->$name;
             }
         }
         $record->options = $options;

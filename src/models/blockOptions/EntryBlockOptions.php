@@ -2,7 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\interfaces\BlockInterface;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 
 /**
@@ -47,6 +47,13 @@ class EntryBlockOptions extends BlockOptions
             ['entries', function () {
                 if (!is_array($this->entries)) {
                     $this->addError('entries', \Craft::t('themes', 'Invalid entries'));
+                }
+                foreach ($this->entries as $array) {
+                    try {
+                        Themes::$plugin->viewModes->getByUid($array['viewMode']);
+                    } catch (ViewModeException $e) {
+                        $this->addError('entries', [$array['id'] => \Craft::t('themes', 'View mode is invalid')]);
+                    }
                 }
             }]
         ]);
