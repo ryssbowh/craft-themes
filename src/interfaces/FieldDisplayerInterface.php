@@ -91,7 +91,7 @@ interface FieldDisplayerInterface
      * The value will be null when this is called for a cached content block.
      * 
      * @param  $value
-     * @return bool;
+     * @return bool
      */
     public function beforeRender($value): bool;
 }

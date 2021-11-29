@@ -19,6 +19,8 @@ interface BlockInterface
 
     /**
      * Is this block visible
+     *
+     * @return bool
      */
     public function isVisible(): bool;
     
@@ -140,7 +142,7 @@ interface BlockInterface
      * Callback before rendering, returning false will skip the block rendering.
      *
      * @param  bool $fromCache whether the block is rendered from cache or not
-     * @return bool;
+     * @return bool
      */
     public function beforeRender(bool $fromCache): bool;
 

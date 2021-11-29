@@ -73,7 +73,7 @@ interface FileDisplayerInterface
      * Callback before rendering, returning false will skip the file rendering
      *
      * @param  Asset $asset
-     * @return bool;
+     * @return bool
      */
     public function beforeRender(Asset $asset): bool;
 }

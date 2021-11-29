@@ -66,7 +66,7 @@ interface RegionInterface
     /**
      * Callback before rendering, returning false will skip the region rendering
      * 
-     * @return bool;
+     * @return boolean
      */
     public function beforeRender(): bool;
 

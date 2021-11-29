@@ -39,7 +39,7 @@ interface GroupInterface
     /**
      * Callback before rendering, returning false will skip the group rendering
      * 
-     * @return bool;
+     * @return bool
      */
     public function beforeRender(): bool;
 

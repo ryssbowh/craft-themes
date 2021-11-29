@@ -128,8 +128,6 @@ interface ThemeInterface
      * This will be called even when installing themes through project config.
      * If you add project config driven data in here, you might want to check that the
      * theme's data is not already installed to avoid project config syncing issues.
-     * 
-     * @see $this->hasDataInstalled()
      */
     public function afterThemeInstall();
 }
