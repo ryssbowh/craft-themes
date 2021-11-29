@@ -4,7 +4,11 @@ const path = require('path')
 module.exports = {
     lintOnSave: process.env.NODE_ENV !== 'production',
     runtimeCompiler: true,
+    filenameHashing: false,
     outputDir: 'vue/dist',
+    css: {
+        extract: false
+    },
     chainWebpack: config => {
         // delete default entry point 'app'
         config.entryPoints.delete("app").end();

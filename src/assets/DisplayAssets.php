@@ -12,6 +12,7 @@ class DisplayAssets extends ThemesBaseAssets
         'chunk-vendors.js',
         'chunk-common.js',
         'display.js',
+        'fields.js',
     ];
 
     public $depends = [
