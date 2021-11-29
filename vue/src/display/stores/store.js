@@ -139,7 +139,6 @@ const store = createStore({
             }
         },
         updateItem(state, {displayUid, data}) {
-            console.log(data);
             let display;
             for (let v in state.viewModes) {
                 for (let d in state.viewModes[v].displays) {
