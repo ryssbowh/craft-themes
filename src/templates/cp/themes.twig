@@ -52,14 +52,14 @@
                         <div class="extends fullwidth">
                             {% set parent = theme.getParent() %}
                             {% if parent %}
-                                {{ 'Extends from {theme}'|t('site', {theme: parent.name}) }}
+                                {{ 'Extends from {theme}'|t('themes', {theme: parent.name}) }}
                             {% endif %}
                         </div>
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            <p>{{ 'No themes are currently installed'|t('site') }}</p>
+            <p>{{ 'No themes are currently installed'|t('themes') }}</p>
         {% endif %}
     </div>
 {% endblock %}

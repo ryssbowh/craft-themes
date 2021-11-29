@@ -20,7 +20,7 @@ class CurrentUserBlockOptions extends BlockOptions
                 'field' => 'fetchviewmode',
                 'required' => true,
                 'layoutType' => LayoutService::USER_HANDLE,
-                'label' => \Craft::t('app', 'View mode')
+                'label' => \Craft::t('themes', 'View mode')
             ]
         ];
     }

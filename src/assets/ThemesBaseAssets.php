@@ -43,6 +43,7 @@ class ThemesBaseAssets extends AssetBundle
             'User',
             'Users',
             'Template',
+            'Active',
             'Asset',
             'Assets',
             'Category',
@@ -57,7 +58,8 @@ class ThemesBaseAssets extends AssetBundle
             'Add an entry',
             'Add an asset',
             'Add a category',
-            'Add a user'
+            'Add a user',
+            'Tag'
         ]);
     }
 }

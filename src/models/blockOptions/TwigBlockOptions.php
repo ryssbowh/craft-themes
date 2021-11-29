@@ -17,7 +17,7 @@ class TwigBlockOptions extends BlockOptions
             'twig' => [
                 'field' => 'textarea',
                 'required' => true,
-                'label' => \Craft::t('app', 'Twig Code')
+                'label' => \Craft::t('themes', 'Twig Code')
             ],
         ];
     }

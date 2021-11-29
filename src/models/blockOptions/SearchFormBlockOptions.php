@@ -17,12 +17,12 @@ class SearchFormBlockOptions extends BlockOptions
             'action' => [
                 'field' => 'text',
                 'required' => true,
-                'label' => \Craft::t('app', 'Form action')
+                'label' => \Craft::t('themes', 'Form action')
             ],
             'inputName' => [
                 'field' => 'text',
                 'required' => true,
-                'label' => \Craft::t('app', 'Search term name')
+                'label' => \Craft::t('themes', 'Search term name')
             ]
         ];
     }

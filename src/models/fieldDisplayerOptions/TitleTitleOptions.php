@@ -23,7 +23,7 @@ class TitleTitleOptions extends FieldDisplayerOptions
                     'p' => 'p'
                 ],
                 'required' => true,
-                'label' => \Craft::t('themes', 'Tag')
+                'label' => \Craft::t('themes', 'Html tag')
             ],
             'linked' => [
                 'field' => 'lightswitch',

@@ -16,7 +16,7 @@ class LoginFormBlockOptions extends BlockOptions
         return [
             'onlyIfNotAuthenticated' => [
                 'field' => 'lightswitch',
-                'label' => \Craft::t('app', 'Show only if the user is not authenticated')
+                'label' => \Craft::t('themes', 'Show only if the user is not authenticated')
             ]
         ];
     }

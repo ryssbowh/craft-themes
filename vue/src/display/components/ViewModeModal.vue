@@ -1,7 +1,7 @@
 <template>
     <div class="modal elementselectormodal modal-viewmode" style="display:none" ref="modal">
         <div class="header">
-            <h3>{{ editedViewMode ? t('Edit View Mode') : t('Add View Mode') }}</h3>
+            <h3>{{ editedViewMode ? t('Edit view mode') : t('Add view mode') }}</h3>
         </div>
         <div class="body">
             <div class="content">

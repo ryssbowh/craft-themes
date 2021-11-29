@@ -17,7 +17,7 @@ class TemplateBlockOptions extends BlockOptions
             'template' => [
                 'field' => 'text',
                 'required' => true,
-                'label' => \Craft::t('app', 'Template Path')
+                'label' => \Craft::t('themes', 'Template Path')
             ],
         ];
     }

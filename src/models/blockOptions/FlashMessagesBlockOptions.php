@@ -16,7 +16,7 @@ class FlashMessagesBlockOptions extends BlockOptions
         return [
             'removeMessages' => [
                 'field' => 'lightswitch',
-                'label' => \Craft::t('app', 'Remove messages from session')
+                'label' => \Craft::t('themes', 'Remove messages from session')
             ],
         ];
     }

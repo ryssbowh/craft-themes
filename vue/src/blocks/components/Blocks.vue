@@ -5,7 +5,7 @@
         </div>
         <div class="blocks-sidebar">
             <div class="heading">
-                <h3>Blocks</h3>
+                <h3>{{ t('Blocks') }}</h3>
             </div>
             <div v-for="provider in providers" v-bind:key="provider.handle">
                 <h5 class="sub-heading slide" :class="{icon: true, expand: !slideStates[provider.handle], collapse: slideStates[provider.handle]}" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>

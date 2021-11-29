@@ -18,13 +18,13 @@ class GlobalBlockOptions extends BlockOptions
                 'field' => 'select',
                 'required' => true,
                 'options' => $this->getSets(),
-                'label' => \Craft::t('app', 'Global')
+                'label' => \Craft::t('themes', 'Global')
             ],
             'viewMode' => [
                 'field' => 'fetchviewmode',
                 'element' => 'from:#field-set:select',
                 'layoutType' => LayoutService::GLOBAL_HANDLE,
-                'label' => \Craft::t('app', 'View mode'),
+                'label' => \Craft::t('themes', 'View mode'),
                 'required' => true
             ]
         ];
