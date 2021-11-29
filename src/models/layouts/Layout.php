@@ -121,6 +121,53 @@ class Layout extends Model implements LayoutInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function afterValidate()
+    {
+        foreach ($this->viewModes as $viewMode) {
+            $viewMode->validate();
+        }
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);
+        }
+        foreach ($this->viewModes as $viewMode) {
+            if ($viewMode->hasErrors()) {
+                return true;
+            }
+        }
+        return parent::hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrors($attribute = null)
+    {
+        $errors = parent::getErrors();
+        foreach ($this->viewModes as $index => $viewMode) {
+            if ($viewMode->hasErrors()) {
+                $errors['viewModes'][$index] = $viewMode->getErrors();
+            }
+        }
+        if ($attribute === 'viewModes') {
+            return $errors['viewModes'] ?? [];
+        }
+        if ($attribute !== null) {
+            return parent::getErrors($attribute);
+        }
+        return $errors;
+    }
+
+    /**
      * Is custom getter
      * 
      * @return bool

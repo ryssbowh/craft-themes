@@ -97,6 +97,24 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
+    public function getErrors($attribute = null)
+    {
+        if ($attribute == 'item') {
+            return $this->item->errors;
+        }
+        if ($attribute !== null) {
+            return parent::getErrors($attribute);
+        }
+        $errors = parent::getErrors();
+        if ($errors2 = $this->item->errors) {
+            $errors['item'] = $errors2;
+        }
+        return $errors;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getConfig(): array
     {
         return [

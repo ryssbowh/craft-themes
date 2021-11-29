@@ -95,6 +95,26 @@ class ViewMode extends Model implements ViewModeInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getErrors($attribute = null)
+    {
+        $errors = parent::getErrors();
+        foreach ($this->displays as $index => $display) {
+            if ($display->hasErrors()) {
+                $errors['displays'][$index] = $display->getErrors();
+            }
+        }
+        if ($attribute === 'displays') {
+            return $errors['displays'] ?? [];
+        }
+        if ($attribute !== null) {
+            return parent::getErrors($attribute);
+        }
+        return $errors;
+    }
+
+    /**
      * Has errors getter
      * 
      * @return bool
