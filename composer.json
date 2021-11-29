@@ -20,7 +20,8 @@
         "ext-intl": "*",
         "craftcms/cms": "3.5.* || 3.6.* || 3.7.*",
         "illuminate/support": "^8.3",
-        "mobiledetect/mobiledetectlib": "^2.8"
+        "mobiledetect/mobiledetectlib": "^2.8",
+        "twig/intl-extra": "^3.3"
     },
     "require-dev": {
         "codeception/codeception": "^4.0",
