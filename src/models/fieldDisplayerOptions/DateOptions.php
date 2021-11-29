@@ -14,7 +14,7 @@ class DateOptions extends FieldDisplayerOptions
      */
     public function defineRules(): array
     {
-        return array_merge(parent::defineRules(), $this->defineDateRules());
+        return $this->defineDateRules();
     }
 
     /**
@@ -22,7 +22,7 @@ class DateOptions extends FieldDisplayerOptions
      */
     public function defineOptions(): array
     {
-        return array_merge(parent::defineOptions(), $this->defineDateOptions());
+        return $this->defineDateOptions();
     }
 
     /**

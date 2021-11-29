@@ -13,7 +13,7 @@ class UserRenderedOptions extends FieldDisplayerOptions
      */
     public function defineRules(): array
     {
-        return array_merge(parent::defineRules(), $this->defineViewModeRules());
+        return $this->defineViewModeRules();
     }
 
     /**
@@ -21,7 +21,7 @@ class UserRenderedOptions extends FieldDisplayerOptions
      */
     public function defineOptions(): array
     {
-        return array_merge(parent::defineOptions(), $this->defineViewModeOptions());
+        return $this->defineViewModeOptions();
     }
 
     /**
@@ -29,6 +29,6 @@ class UserRenderedOptions extends FieldDisplayerOptions
      */
     public function defineDefaultValues(): array
     {
-        return array_merge(parent::defineDefaultValues(), $this->defineViewModeDefaultValues());
+        return $this->defineViewModeDefaultValues();
     }
 }

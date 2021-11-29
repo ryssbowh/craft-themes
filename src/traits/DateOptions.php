@@ -30,6 +30,7 @@ trait DateOptions
             'custom' => [
                 'field' => 'text',
                 'label' => \Craft::t('themes', 'Custom'),
+                'placeholder' => 'dd/LL/y kk:mm:ss',
                 'instructions' => \Craft::t('themes', 'ICU date format, view documentation {tag}here{endtag}', ['tag' => '<a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax" target="_blank">', 'endtag' => '</a>'])
             ],
         ];

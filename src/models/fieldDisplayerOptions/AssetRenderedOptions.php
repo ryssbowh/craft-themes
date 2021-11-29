@@ -17,7 +17,7 @@ class AssetRenderedOptions extends FieldDisplayerOptions
      */
     public function defineRules(): array
     {
-        return array_merge(parent::defineRules(), $this->defineViewModesRules());
+        return $this->defineViewModesRules();
     }
 
     /**
@@ -25,7 +25,7 @@ class AssetRenderedOptions extends FieldDisplayerOptions
      */
     public function defineOptions(): array
     {
-        return array_merge(parent::defineOptions(), $this->defineViewModesOptions());
+        return $this->defineViewModesOptions();
     }
 
     /**

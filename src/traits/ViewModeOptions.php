@@ -34,7 +34,7 @@ trait ViewModeOptions
     {
         if ($this->viewModeUid) {
             try {
-                Themes::$plugin->viewModes->getByUid($this->viewModeUid);
+                return Themes::$plugin->viewModes->getByUid($this->viewModeUid);
             } catch(ViewModeException $e) {
                 return null;
             }

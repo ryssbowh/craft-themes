@@ -13,7 +13,7 @@ class MatrixSlickOptions extends FieldDisplayerOptions
      */
     public function defineRules(): array
     {
-        return array_merge(parent::defineRules(), $this->defineSlickRules());
+        return $this->defineSlickRules();
     }
 
     /**
@@ -21,7 +21,7 @@ class MatrixSlickOptions extends FieldDisplayerOptions
      */
     public function defineOptions(): array
     {
-        return array_merge(parent::defineOptions(), $this->defineSlickOptions());
+        return $this->defineSlickOptions();
     }
 
     /**
@@ -29,6 +29,6 @@ class MatrixSlickOptions extends FieldDisplayerOptions
      */
     public function defineDefaultValues(): array
     {
-        return array_merge(parent::defineDefaultValues(), $this->defineDefaultSlickValues());
+        return $this->defineDefaultSlickValues();
     }
 }

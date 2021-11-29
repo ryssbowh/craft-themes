@@ -19,6 +19,11 @@ class MatrixSlick extends MatrixDefault
     /**
      * @inheritDoc
      */
+    public static $isDefault = false;
+
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Slick Carousel');

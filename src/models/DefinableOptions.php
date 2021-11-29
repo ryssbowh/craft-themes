@@ -102,7 +102,10 @@ abstract class DefinableOptions extends Model
      */
     public function getValue(string $name)
     {
-        return $this->_values[$name] ?? null;
+        if (isset($this->definitions[$name])) {
+            return $this->_values[$name] ?? $this->defaultValues[$name] ?? null;
+        }
+        return null;
     }
 
     /**
