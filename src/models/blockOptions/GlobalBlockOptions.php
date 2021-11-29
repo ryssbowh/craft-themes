@@ -1,6 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\blockOptions;
 
+use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
 
@@ -35,7 +37,14 @@ class GlobalBlockOptions extends BlockOptions
     {
         return array_merge(parent::defineRules(), [
             [['set', 'viewMode'], 'required'],
-            [['set'], 'in', 'range' => array_keys($this->definitions['set']['options'])]
+            [['set'], 'in', 'range' => array_keys($this->definitions['set']['options'])],
+            ['viewMode', function () {
+                try {
+                    Themes::$plugin->viewModes->getByUid($this->viewMode);
+                } catch (ViewModeException $e) {
+                    $this->addError('viewMode', \Craft::t('themes', 'View mode is invalid'));
+                }
+            }]
         ]);
     }
 
