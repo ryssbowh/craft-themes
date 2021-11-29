@@ -2,7 +2,9 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\GlobalBlockOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -69,13 +71,30 @@ class GlobalBlock extends Block
     }
 
     /**
+     * Get the view mode as defined in the options
+     * 
+     * @return ?ViewModeInterface
+     */
+    public function getViewMode(): ?ViewModeInterface
+    {
+        try {
+            return Themes::$plugin->viewModes->getByUid($this->options->viewMode);
+        } catch (ViewModeException $e) {
+            return null;
+        }
+    }
+
+    /**
      * Get layout associated to global set defined in options
      * 
-     * @return LayoutInterface
+     * @return ?LayoutInterface
      */
-    public function getGlobalSetLayout(): LayoutInterface
+    public function getGlobalSetLayout(): ?LayoutInterface
     {
-        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::GLOBAL_HANDLE, $this->options->set);
+        if (!$this->globalSet) {
+            return null;
+        }
+        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::GLOBAL_HANDLE, $this->globalSet->uid);
     }
 
     /**
