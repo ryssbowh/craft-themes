@@ -160,8 +160,8 @@ export default {
             }
             this.closeModal();
         },
-        ...mapMutations(['setShowLayoutModal']),
-        ...mapActions(['createLayout', 'updateCustomLayout'])
+        ...mapMutations(['setShowLayoutModal', 'updateCustomLayout']),
+        ...mapActions(['createLayout'])
     }
 };
 </script>

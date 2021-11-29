@@ -27,7 +27,9 @@ let fields = {
     checkboxes: Checkboxes,
     radio: Radio,
     viewmodes: ViewModes,
-    filedisplayers: FileDisplayers
+    filedisplayers: FileDisplayers,
+    fetchviewmode: FetchViewMode,
+    elements: Elements
 };
 
 let event = new CustomEvent("register-form-fields-components", {detail: {}});

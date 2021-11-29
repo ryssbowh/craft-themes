@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { cloneDeep, isEqual, merge, filter } from 'lodash';
+import { cloneDeep, merge, filter } from 'lodash';
 
 function handleError(err) {
     if (err.response) {
@@ -250,9 +250,6 @@ const store = createStore({
             commit('setLayout', layout);
             commit('setIsCopying', true);
             dispatch('resetBlocks', state.blocks);
-        },
-        updateCustomLayout({commit, dispatch}, data) {
-            commit('updateCustomLayout', data);
         },
         deleteLayout({state, commit, dispatch}) {
             let data = {};

@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { cloneDeep, isEqual, merge, has, filter } from 'lodash';
+import { cloneDeep, has, filter } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 function handleError(err) {
@@ -260,7 +260,7 @@ const store = createStore({
                     dispatch('setViewModeByHandle', {handle: state.viewMode.handle, setUrl: false});
                 }
             })
-            .finally((res) => {
+            .finally(() => {
                 commit('setIsSaving', false);
             })
         },
