@@ -4,5 +4,5 @@
 
 {% block content %}
     {% set format = options.format == 'custom' ? options.custom : options.format %}
-    {{ value|date(format) }}
+    {{ value|format_datetime(pattern=format,locale=craft.app.locale) }}
 {% endblock %}

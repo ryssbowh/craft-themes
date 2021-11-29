@@ -13,6 +13,7 @@ use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
+use Twig\Extra\Intl\IntlExtension;
 use craft\base\PluginInterface;
 use craft\base\Volume;
 use craft\elements\GlobalSet;
@@ -79,6 +80,7 @@ class Themes extends \craft\base\Plugin
         $this->registerClearCacheEvent();
         $this->registerPluginsEvents();
         $this->registerTwigVariables();
+        $this->registerTwigIntl();
         $this->registerSwitchEdition();
         $this->registerBehaviors();
         $this->registerProjectConfig();
@@ -146,7 +148,7 @@ class Themes extends \craft\base\Plugin
             $item = [
                 'url' => 'themes',
                 'icon' => '@Ryssbowh/CraftThemes/icon-mask.svg',
-                'label' => $this->settings->menuItemName,
+                'label' => $this->settings->menuItemName ?: \Craft::t('themes', 'Theming'),
                 'subnav' => [
                     'themes' => [
                         'url' => 'themes/list',
@@ -207,6 +209,16 @@ class Themes extends \craft\base\Plugin
                 $event->sender->set('themes', ThemesVariable::class);
             }
         );
+    }
+
+    /**
+     * Registers Twig Intl extension to get the filter `format_datetime`
+     *
+     * @see https://twig.symfony.com/doc/3.x/filters/format_datetime.html
+     */
+    protected function registerTwigIntl()
+    {
+        \Craft::$app->view->twig->addExtension(new IntlExtension());
     }
 
     /**

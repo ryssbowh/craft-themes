@@ -256,6 +256,7 @@ Uninstalling a theme will delete all its blocks/displays/layouts (Pro version on
 
 Craft 3.5 or over  
 PHP 7.3 or over
+PHP Intl extension
 
 ## Testing
 

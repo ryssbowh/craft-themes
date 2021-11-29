@@ -1,6 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\traits;
 
+use craft\i18n\FormatConverter;
+
 /**
  * Trait to be used for configurable options that handle dates
  */
@@ -11,19 +13,24 @@ trait DateOptions
      */
     public function defineDateOptions(): array
     {
+        $dt = new \DateTime;
+        $dt->setTimestamp(1638195320);
+        $formats = [];
+        foreach ($this->getFormats() as $format) {
+            $formats[$format] = \IntlDateFormatter::formatObject($dt, $format, \Craft::$app->locale);
+        }
+        $formats['custom'] = \Craft::t('themes', 'Custom');
         return [
             'format' => [
                 'field' => 'select',
-                'options' => array_merge($this->getFormats(), [
-                    'custom' => \Craft::t('themes', 'Custom')
-                ]),
+                'options' => $formats,
                 'required' => true,
                 'label' => \Craft::t('themes', 'Format')
             ],
             'custom' => [
                 'field' => 'text',
                 'label' => \Craft::t('themes', 'Custom'),
-                'instructions' => \Craft::t('themes', 'View available formats {tag}here{endtag}', ['tag' => '<a href="https://www.php.net/manual/en/datetime.format.php" target="_blank">', 'endtag' => '</a>'])
+                'instructions' => \Craft::t('themes', 'ICU date format, view documentation {tag}here{endtag}', ['tag' => '<a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax" target="_blank">', 'endtag' => '</a>'])
             ],
         ];
     }

@@ -9,6 +9,8 @@
         <ul>
             <li v-for="mode, index in viewModes" v-bind:key="index">
                 <a :class="{'sel': viewMode.handle === mode.handle}" @click.prevent="" href="#" :data-viewmode="mode.id">
+                    <span class="error" data-icon="alert" aria-label="Error" v-if="mode.hasErrors"></span>
+                    <span v-if="mode.hasErrors">&nbsp;</span>
                     <span @click.prevent="setViewMode2(mode)">{{ mode.name }}</span>
                     <span class="icon edit" @click.prevent="editViewMode(mode)" :title="t('Edit View Mode')" v-if="viewMode.handle === mode.handle"></span>
                     <span v-if="mode.handle != 'default' && viewMode.handle === mode.handle" class="icon delete" @click.prevent="confirmAndDeleteViewMode(mode)"></span>

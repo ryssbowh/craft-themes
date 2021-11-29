@@ -238,6 +238,16 @@ Your field displayer class must implements `FieldDisplayerInterface` class (`Fie
 
 Displayers use [configurable options](#configurable-options).
 
+### Date/Time displayers
+
+This plugin works with the intl for all displayers handling date/time. All formats are expected to be in [icu](https://unicode-org.github.io/icu/userguide/format_parse/datetime/).
+
+When outputing a date value in templates, you can use the `format_datetime` filter :
+
+```
+{{ date|format_datetime(pattern=format,locale=craft.app.locale) }}
+```
+
 ## File displayers (Pro)
 
 A file displayer defines how an asset file is rendered on the front end. Each displayer can handle one or several asset kinds.

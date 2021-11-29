@@ -30,23 +30,22 @@ class TimeOptions extends FieldDisplayerOptions
     public function defineDefaultValues(): array
     {
         return [
-            'format' => 'H:i:s',
+            'format' => 'kk:mm:ss',
             'custom' => '',
         ];
     }
 
     /**
-     * Get available date formats
+     * Get available time icu formats
      * 
      * @return array
      */
     public function getFormats(): array
     {
         return [
-            'H:i:s' => \Craft::t('themes', '13:25:13'),
-            'H:i' => \Craft::t('themes', '13:25'),
-            'g:ia' => \Craft::t('themes', '1:25pm'),
-            'custom' => \Craft::t('themes', 'Custom'),
+            'kk:mm:ss',
+            'kk:mm',
+            'K:mm a'
         ];
     }
 }

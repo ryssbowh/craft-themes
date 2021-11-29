@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\traits\DateOptions as DateOptionsTrait;
+use craft\i18n\FormatConverter;
 
 class DateOptions extends FieldDisplayerOptions
 {
@@ -30,25 +31,23 @@ class DateOptions extends FieldDisplayerOptions
     public function defineDefaultValues(): array
     {
         return [
-            'format' => 'd/m/Y',
+            'format' => 'dd/LL/y',
             'custom' => '',
         ];
     }
 
     /**
-     * Get available formats
+     * Get available icu formats
      * 
      * @return array
      */
-    public function getFormats(): array
+    protected function getFormats(): array
     {
         return [
-            'd/m/Y' => \Craft::t('themes', '31/10/2005'),
-            'm/d/Y' => \Craft::t('themes', '10/31/2005'),
-            'jS F Y' => \Craft::t('themes', '31st October 2005'),
-            'F j, Y' => \Craft::t('themes', 'October 31, 2005'),
-            'j F Y' => \Craft::t('themes', '31 October 2005'),
-            'custom' => \Craft::t('themes', 'Custom'),
+            'dd/LL/y',
+            'LL/dd/y',
+            'd LLLL y',
+            'LLLL d, y'
         ];
     }
 }

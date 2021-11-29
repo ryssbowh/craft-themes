@@ -95,6 +95,16 @@ class ViewMode extends Model implements ViewModeInterface
     }
 
     /**
+     * Has errors getter
+     * 
+     * @return bool
+     */
+    public function getHasErrors(): bool
+    {
+        return $this->hasErrors();
+    }
+
+    /**
      * @inheritDoc
      */
     public function getConfig(): array
@@ -178,6 +188,6 @@ class ViewMode extends Model implements ViewModeInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['displays']);
+        return array_merge(parent::fields(), ['displays', 'hasErrors']);
     }
 }
