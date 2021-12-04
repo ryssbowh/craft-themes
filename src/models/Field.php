@@ -105,7 +105,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     public function afterValidate()
     {
         if ($displayer = $this->displayer) {
-            $this->displayer->validate();
+            $displayer->validate();
         }
         parent::afterValidate();
     }

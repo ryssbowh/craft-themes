@@ -158,6 +158,7 @@ Here is a list of available displayers for each type of field :
 | Colour        | Default                    |                                                  |
 | Date          | Date                       | Predefined or custom format                      |
 | Date          | Date and time              | Predefined or custom format                      |
+| Date          | Time ago                   |                                                  |
 | Dropdown      | Label                      |                                                  |
 | Email         | Email                      | Output as link                                   |
 | Entries       | Link to entry              | Label, new tab                                   |

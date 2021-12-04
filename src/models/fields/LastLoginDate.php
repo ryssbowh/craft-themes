@@ -4,24 +4,24 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
-use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
+use Ryssbowh\CraftThemes\models\layouts\UserLayout;
 
 /**
- * Handles the postDate value of entry elements
+ * Handles the lastLoginDate value of users
  */
-class PostDate extends Field
+class LastLoginDate extends Field
 {
     /**
      * @var boolean
      */
     public $hidden = true;
-    
+
     /**
      * @inheritDoc
      */
     public static function getType(): string
     {
-        return 'post-date';
+        return 'date-lastlogindate';
     }
 
     /**
@@ -29,7 +29,7 @@ class PostDate extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        return get_class($layout) == EntryLayout::class;
+        return get_class($layout) == UserLayout::class;
     }
 
     /**
@@ -37,7 +37,7 @@ class PostDate extends Field
      */
     public function getHandle(): string
     {
-        return 'postDate';
+        return 'lastLoginDate';
     }
 
     /**
@@ -45,7 +45,7 @@ class PostDate extends Field
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Date posted');
+        return \Craft::t('themes', 'Last login date');
     }
 
     /**
@@ -53,7 +53,7 @@ class PostDate extends Field
      */
     public function render($value = null): string
     {
-        $value = Themes::$plugin->view->renderingElement->postDate;
+        $value = Themes::$plugin->view->renderingElement->lastLoginDate;
         return Themes::$plugin->view->renderField($this, $value);
     }
 }

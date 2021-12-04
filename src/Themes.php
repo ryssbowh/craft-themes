@@ -14,6 +14,7 @@ use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDis
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
+use Twig\TwigTest;
 use craft\base\PluginInterface;
 use craft\base\Volume;
 use craft\elements\GlobalSet;
@@ -79,8 +80,7 @@ class Themes extends \craft\base\Plugin
         $this->registerPermissions();
         $this->registerClearCacheEvent();
         $this->registerPluginsEvents();
-        $this->registerTwigVariables();
-        $this->registerTwigIntl();
+        $this->registerTwig();
         $this->registerSwitchEdition();
         $this->registerBehaviors();
         $this->registerProjectConfig();
@@ -198,9 +198,9 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Registers twig variables
+     * Modify twig
      */
-    protected function registerTwigVariables()
+    protected function registerTwig()
     {
         Event::on(
             CraftVariable::class,
@@ -209,16 +209,15 @@ class Themes extends \craft\base\Plugin
                 $event->sender->set('themes', ThemesVariable::class);
             }
         );
-    }
-
-    /**
-     * Registers Twig Intl extension to get the filter `format_datetime`
-     *
-     * @see https://twig.symfony.com/doc/3.x/filters/format_datetime.html
-     */
-    protected function registerTwigIntl()
-    {
-        \Craft::$app->view->twig->addExtension(new IntlExtension());
+        $twig = \Craft::$app->view->twig;
+        //Add the twig test 'is array'
+        $isArray = new TwigTest('array', function ($value) {
+            return is_array($value);
+        });
+        $twig->addTest($isArray);
+        // Registers Twig Intl extension to get the filter `format_datetime`
+        // @see https://twig.symfony.com/doc/3.x/filters/format_datetime.html
+        $twig->addExtension(new IntlExtension());
     }
 
     /**

@@ -180,16 +180,19 @@ Themes::$plugin->blocks->save($block);
 
 ## Fields (Pro)
 
-There are 10 types of fields defined by this plugin.
+There are 14 types of fields defined by this plugin.
 
-6 "themes" fields, created by this plugin, which can have their own displayers :
+9 "themes" fields, created by this plugin, which can have their own displayers :
 
 - Author : handles the author of an entry
 - File : handles the file of an asset
 - TagTitle : handles the title for a tag
 - Title : handles the title of an entry/category
-- UserInfo : handles the user info for user layouts
-- PostDate : handles the postDate attribute for all elements
+- UserInfo : handles the user info for user layouts (first, last name, email, username)
+- PostDate : handles the postDate attribute for entries
+- DateCreated : handles the dateCreated for all elements
+- DateUpdated : handles the dateUpdated for all elements
+- LastLoginDate : For users only
 
 And 5 that handle Craft fields, those can't have their own displayers. Their displayers will display the Craft field associated with them :
 

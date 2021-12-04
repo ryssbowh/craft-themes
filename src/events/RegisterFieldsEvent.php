@@ -3,8 +3,10 @@ namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\models\fields\Author;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
+use Ryssbowh\CraftThemes\models\fields\DateCreated;
 use Ryssbowh\CraftThemes\models\fields\DateUpdated;
 use Ryssbowh\CraftThemes\models\fields\File;
+use Ryssbowh\CraftThemes\models\fields\LastLoginDate;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\models\fields\MatrixField;
 use Ryssbowh\CraftThemes\models\fields\PostDate;
@@ -40,6 +42,8 @@ class RegisterFieldsEvent extends Event
         $this->add(TagTitle::class);
         $this->add(PostDate::class);
         $this->add(DateUpdated::class);
+        $this->add(DateCreated::class);
+        $this->add(LastLoginDate::class);
     }
 
     /**

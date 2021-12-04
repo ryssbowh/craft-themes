@@ -7,7 +7,6 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRenderFile;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetSlick;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\AuthorDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategoryRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\CategorySlick;
@@ -41,7 +40,6 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeAgo;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleTitle;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\UserInfoDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserSlick;
 use yii\base\Event;
@@ -77,7 +75,6 @@ class FieldDisplayerEvent extends Event
             AssetSlick::class,
             AssetRendered::class,
             AssetRenderFile::class,
-            AuthorDefault::class,
             CategoryRendered::class,
             CategoryLabel::class,
             CategorySlick::class,
@@ -111,7 +108,6 @@ class FieldDisplayerEvent extends Event
             TitleTitle::class,
             UrlLink::class,
             UserDefault::class,
-            UserInfoDefault::class,
             UserRendered::class,
             UserSlick::class,
         ]);

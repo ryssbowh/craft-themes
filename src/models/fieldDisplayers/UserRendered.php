@@ -5,8 +5,9 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserRenderedOptions;
+use Ryssbowh\CraftThemes\models\fields\Author;
+use Ryssbowh\CraftThemes\models\fields\UserInfo;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\base\Model;
 use craft\fields\Users;
 
 /**
@@ -32,7 +33,7 @@ class UserRendered extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Users::class];
+        return [Author::class, UserInfo::class, Users::class];
     }
 
     /**

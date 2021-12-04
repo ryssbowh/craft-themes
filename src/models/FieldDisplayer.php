@@ -29,7 +29,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
      */
     public static function isDefault(string $fieldClass): bool
     {
-        return true;
+        return false;
     }
 
     /**

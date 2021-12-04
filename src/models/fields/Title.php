@@ -15,6 +15,11 @@ use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 class Title extends Field
 {
     /**
+     * @var boolean
+     */
+    public $labelHidden = true;
+    
+    /**
      * @inheritDoc
      */
     public static function getType(): string

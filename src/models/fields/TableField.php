@@ -32,6 +32,11 @@ class TableField extends Field
     public $name;
 
     /**
+     * @var boolean
+     */
+    public $labelHidden = true;
+
+    /**
      * @var Table
      */
     protected $_table;

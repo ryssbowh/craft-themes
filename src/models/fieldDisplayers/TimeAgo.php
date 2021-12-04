@@ -1,11 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TimeAgoOptions;
-use Ryssbowh\CraftThemes\models\fields\DateUpdated;
-use Ryssbowh\CraftThemes\models\fields\PostDate;
-use craft\fields\Date as DateField;
 
 /**
  * Renders a date field as time ago

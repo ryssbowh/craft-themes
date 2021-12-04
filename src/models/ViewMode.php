@@ -49,11 +49,6 @@ class ViewMode extends Model implements ViewModeInterface
     protected $_layout;
 
     /**
-     * @var array
-     */
-    protected $_displays;
-
-    /**
      * @inheritdoc
      */
     public function defineRules(): array
@@ -69,53 +64,6 @@ class ViewMode extends Model implements ViewModeInterface
                 }
             }],
         ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function afterValidate()
-    {
-        foreach ($this->displays as $display) {
-            $display->validate();
-        }
-        parent::afterValidate();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasErrors($attribute = null)
-    {
-        if ($attribute !== null) {
-            return parent::hasErrors($attribute);
-        }
-        foreach ($this->displays as $display) {
-            if ($display->hasErrors()) {
-                return true;
-            }
-        }
-        return parent::hasErrors();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getErrors($attribute = null)
-    {
-        $errors = parent::getErrors();
-        foreach ($this->displays as $index => $display) {
-            if ($display->hasErrors()) {
-                $errors['displays'][$index] = $display->getErrors();
-            }
-        }
-        if ($attribute === 'displays') {
-            return $errors['displays'] ?? [];
-        }
-        if ($attribute !== null) {
-            return parent::getErrors($attribute);
-        }
-        return $errors;
     }
 
     /**
@@ -157,30 +105,9 @@ class ViewMode extends Model implements ViewModeInterface
     /**
      * @inheritDoc
      */
-    public function getDisplays(): array
-    {
-        if (is_null($this->_displays)) {
-            $this->_displays = Themes::$plugin->displays->getForViewMode($this);
-        }
-        return $this->_displays;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getAllDisplays(): array
     {
         return Themes::$plugin->displays->getForViewMode($this, false);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getVisibleDisplays(): array
-    {
-        return array_filter($this->displays, function ($display) {
-            return $display->group_id === null and $display->item->isVisible();
-        });
     }
 
     /**
@@ -221,5 +148,13 @@ class ViewMode extends Model implements ViewModeInterface
     public function fields()
     {
         return array_merge(parent::fields(), ['displays', 'hasErrors']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function loadDisplays(): array
+    {
+        return Themes::$plugin->displays->getForViewMode($this);
     }
 }

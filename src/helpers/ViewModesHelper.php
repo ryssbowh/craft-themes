@@ -51,7 +51,9 @@ class ViewModesHelper
             if (!$volume) {
                 continue;
             }
-            $layout = $volume->getLayout($theme);
+            if (!$layout = $volume->getLayout($theme)) {
+                continue;
+            }
             $volumeViewModes = [];
             foreach ($layout->viewModes as $viewMode) {
                 $volumeViewModes[$viewMode->uid] = $viewMode->name;
@@ -77,7 +79,10 @@ class ViewModesHelper
         $elems = explode(':', $field->source);
         $group = \Craft::$app->categories->getGroupByUid($elems[1]);
         if ($group) {
-            foreach ($group->getLayout($theme)->viewModes as $viewMode) {
+            if (!$layout = $group->getLayout($theme)) {
+                return [];
+            }
+            foreach ($layout->viewModes as $viewMode) {
                 $viewModes[$viewMode->uid] = $viewMode->name;
             }
         }
@@ -95,9 +100,12 @@ class ViewModesHelper
     {
         $viewModes = [];
         $elems = explode(':', $field->source);
-        $group = \Craft::$app->categories->getGroupByUid($elems[1]);
+        $group = \Craft::$app->tags->getTagGroupByUid($elems[1]);
         if ($group) {
-            foreach ($group->getLayout($theme)->viewModes as $viewMode) {
+            if (!$layout = $group->getLayout($theme)) {
+                return [];
+            }
+            foreach ($layout->viewModes as $viewMode) {
                 $viewModes[$viewMode->uid] = $viewMode->name;
             }
         }
@@ -113,6 +121,9 @@ class ViewModesHelper
     public static function getUserViewModes(ThemeInterface $theme): array
     {
         $layout = Themes::$plugin->layouts->get($theme, LayoutService::USER_HANDLE);
+        if (!$layout) {
+            return [];
+        }
         $viewModes = [];
         foreach ($layout->getViewModes() as $viewMode) {
             $viewModes[$viewMode->uid] = $viewMode->name;
@@ -154,6 +165,9 @@ class ViewModesHelper
         foreach ($sections as $section) {
             foreach ($section->getEntryTypes() as $type) {
                 $layout = $type->getLayout($theme);
+                if (!$layout) {
+                    continue;
+                }
                 $viewModes2 = [];
                 foreach ($layout->getViewModes() as $viewMode) {
                     $viewModes2[$viewMode->uid] = $viewMode->name;
@@ -180,6 +194,9 @@ class ViewModesHelper
         foreach ($sections as $section) {
             $type = $section->getEntryTypes()[0];
             $layout = $type->getLayout($theme);
+            if (!$layout) {
+                continue;
+            }
             $viewModes2 = [];
             foreach ($layout->getViewModes() as $viewMode) {
                 $viewModes2[$viewMode->uid] = $viewMode->name;
@@ -206,6 +223,9 @@ class ViewModesHelper
         if ($section) {
             $type = $section->getEntryTypes()[0];
             $layout = $type->getLayout($theme);
+            if (!$layout) {
+                return [];
+            }
             $viewModes = [];
             foreach ($layout->getViewModes() as $viewMode) {
                 $viewModes[$viewMode->handle] = $viewMode->name;

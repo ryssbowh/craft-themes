@@ -60,67 +60,9 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
-    public function hasErrors($attribute = null)
-    {
-        if ($attribute !== null) {
-            return parent::hasErrors($attribute);
-        }
-        foreach ($this->displays as $display) {
-            if ($display->hasErrors()) {
-                return true;
-            }
-        }
-        return parent::hasErrors();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function afterValidate()
-    {
-        foreach ($this->displays as $display) {
-            $display->validate();
-        }
-        parent::afterValidate();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getErrors($attribute = null)
-    {
-        $errors = parent::getErrors();
-        foreach ($this->displays as $index => $display) {
-            if ($display->hasErrors()) {
-                $errors['displays'][$index] = $display->getErrors();
-            }
-        }
-        if ($attribute === 'displays') {
-            return $errors['displays'] ?? [];
-        }
-        if ($attribute !== null) {
-            return parent::getErrors($attribute);
-        }
-        return $errors;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public static function getType(): string
     {
         return DisplayService::TYPE_GROUP;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDisplays(): array
-    {
-        if ($this->_displays == null) {
-            $this->_displays = Themes::$plugin->displays->getForGroup($this->id);
-        }
-        return $this->_displays;
     }
 
     /**
@@ -134,20 +76,10 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
-    public function getVisibleDisplays(): array
-    {
-        return array_filter($this->displays, function ($display) {
-            return $display->item->isVisible();
-        });
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function eagerLoad(): array
     {
         $fields = [];
-        foreach ($this->getVisibleDisplays() as $display) {
+        foreach ($this->visibleDisplays as $display) {
             $fields = array_merge($fields, $display->item->eagerLoad());
         }
         return $fields;
@@ -229,5 +161,13 @@ class Group extends DisplayItem implements GroupInterface
     public function render(): string
     {
         return Themes::$plugin->view->renderGroup($this);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function loadDisplays(): array
+    {
+        return Themes::$plugin->displays->getForGroup($this->id);
     }
 }

@@ -9,6 +9,79 @@ use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 trait HasDisplays
 {
     /**
+     * @var array
+     */
+    protected $_displays;
+
+    /**
+     * @inheritDoc
+     */
+    public function getDisplays(): array
+    {
+        if (is_null($this->_displays)) {
+            $this->_displays = $this->loadDisplays();
+        }
+        return $this->_displays;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getVisibleDisplays(): array
+    {
+        return array_filter($this->displays, function ($display) {
+            return $display->item->isVisible();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasErrors($attribute = null)
+    {
+        if ($attribute !== null) {
+            return parent::hasErrors($attribute);
+        }
+        foreach ($this->displays as $display) {
+            if ($display->hasErrors()) {
+                return true;
+            }
+        }
+        return parent::hasErrors();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterValidate()
+    {
+        foreach ($this->displays as $display) {
+            $display->validate();
+        }
+        parent::afterValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrors($attribute = null)
+    {
+        $errors = parent::getErrors();
+        foreach ($this->displays as $index => $display) {
+            if ($display->hasErrors()) {
+                $errors['displays'][$index] = $display->getErrors();
+            }
+        }
+        if ($attribute === 'displays') {
+            return $errors['displays'] ?? [];
+        }
+        if ($attribute !== null) {
+            return parent::getErrors($attribute);
+        }
+        return $errors;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getDisplayByUid(string $uid, bool $onlyRoots = true, bool $onlyVisibles = true): ?DisplayInterface
@@ -89,4 +162,16 @@ trait HasDisplays
             return false;
         });
     }
+
+    /**
+     * Load displays from db
+     * 
+     * @return array
+     */
+    abstract protected function loadDisplays(): array;
+
+    /**
+     * @inheritDoc
+     */
+    abstract public function setDisplays(?array $displays);
 }

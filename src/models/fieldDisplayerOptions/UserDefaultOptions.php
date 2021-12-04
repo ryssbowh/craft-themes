@@ -11,6 +11,10 @@ class UserDefaultOptions extends FieldDisplayerOptions
     public function defineOptions(): array
     {
         return [
+            'photo' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Display photo')
+            ],
             'firstName' => [
                 'field' => 'lightswitch',
                 'label' => \Craft::t('themes', 'Display first name')
@@ -40,6 +44,7 @@ class UserDefaultOptions extends FieldDisplayerOptions
     public function defineDefaultValues(): array
     {
         return [
+            'photo' => true,
             'firstName' => true,
             'lastName' => true,
             'username' => false,
@@ -54,7 +59,7 @@ class UserDefaultOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            [['firstName', 'lastName', 'email', 'username', 'linkEmail'], 'boolean', 'trueValue' => true, 'falseValue' => false]
+            [['firstName', 'lastName', 'email', 'username', 'linkEmail', 'photo'], 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 }

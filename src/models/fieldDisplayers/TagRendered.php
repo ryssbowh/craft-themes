@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TagRenderedOptions;
+use craft\fields\Tags;
 
 /**
  * Renders a tag field as rendered using a view mode

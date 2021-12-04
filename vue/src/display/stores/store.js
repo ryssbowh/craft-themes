@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { cloneDeep, has, filter } from 'lodash';
+import { has, filter, merge } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 function handleError(err) {
@@ -41,7 +41,7 @@ function setWindowUrl(theme, layout, viewMode) {
 }
 
 function cloneDisplay(oldDisplay) {
-    let display = cloneDeep(oldDisplay);
+    let display = merge({}, oldDisplay);
     display.id = null;
     display.uid = uuidv4();
     display.viewMode_id = null;

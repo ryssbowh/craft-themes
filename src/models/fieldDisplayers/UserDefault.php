@@ -3,11 +3,13 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserDefaultOptions;
+use Ryssbowh\CraftThemes\models\fields\Author;
+use Ryssbowh\CraftThemes\models\fields\UserInfo;
 use craft\base\Model;
 use craft\fields\Users;
 
 /**
- * Renders a user field
+ * Renders the author of an entry
  */
 class UserDefault extends FieldDisplayer
 {
@@ -37,7 +39,7 @@ class UserDefault extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Users::class];
+        return [Author::class, UserInfo::class, Users::class];
     }
 
     /**

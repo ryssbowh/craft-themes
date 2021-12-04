@@ -2,6 +2,11 @@
 
 {% set show_field = value|length > 0 and options.viewMode %}
 
+{% if not value is array %}
+    {# Users fields will return an array value, the others (user info, author) a single user #}
+    {% set value = [value] %}
+{% endif %}
+
 {% block content %}
     {% for user in value %}
         {{ displayer.userLayout.render(user, options.viewMode.handle)|raw }}

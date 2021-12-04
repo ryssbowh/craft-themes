@@ -8,7 +8,7 @@ use Ryssbowh\CraftThemes\models\layouts\UserLayout;
 use craft\base\Element;
 
 /**
- * The field userInfo is added to all user layouts automatically
+ * Display information about a user (user layouts only)
  */
 class UserInfo extends Field
 {

@@ -1,21 +1,26 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fields;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
-use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 
 /**
- * The field Author is added to all channels and structures
+ * Handles the dateUpdated value of elements
  */
-class Author extends Field
+class DateCreated extends Field
 {
+    /**
+     * @var boolean
+     */
+    public $hidden = true;
+
     /**
      * @inheritDoc
      */
     public static function getType(): string
     {
-        return 'author';
+        return 'date-created';
     }
 
     /**
@@ -23,10 +28,7 @@ class Author extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        if ($layout instanceof EntryLayout) {
-            return $layout->element->section->type != 'single';
-        }
-        return false;
+        return true;
     }
 
     /**
@@ -34,7 +36,7 @@ class Author extends Field
      */
     public function getHandle(): string
     {
-        return 'author';
+        return 'dateCreated';
     }
 
     /**
@@ -42,6 +44,15 @@ class Author extends Field
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Author');
+        return \Craft::t('themes', 'Date created');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render($value = null): string
+    {
+        $value = Themes::$plugin->view->renderingElement->dateCreated;
+        return Themes::$plugin->view->renderField($this, $value);
     }
 }

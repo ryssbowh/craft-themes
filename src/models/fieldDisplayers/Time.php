@@ -1,17 +1,13 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TimeOptions;
-use Ryssbowh\CraftThemes\models\fields\DateUpdated;
-use Ryssbowh\CraftThemes\models\fields\PostDate;
-use craft\base\Model;
 use craft\fields\Time as TimeField;
 
 /**
  * Renders a time field
  */
-class Time extends FieldDisplayer
+class Time extends Date
 {
     /**
      * @inheritDoc
@@ -23,7 +19,15 @@ class Time extends FieldDisplayer
      */
     public static function isDefault(string $fieldClass): bool
     {
-        return $fieldClass == TimeField::class;
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getFieldTargets(): array
+    {
+        return [TimeField::class];
     }
 
     /**
@@ -32,14 +36,6 @@ class Time extends FieldDisplayer
     public function getName(): string
     {
         return \Craft::t('themes', 'Time');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getFieldTargets(): array
-    {
-        return [TimeField::class, PostDate::class, DateUpdated::class];
     }
 
     /**

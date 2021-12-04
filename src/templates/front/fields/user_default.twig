@@ -1,28 +1,36 @@
 {% extends "fields/_field" %}
 
 {% set show_field = value|length > 0 %}
+{% if not value is array %}
+    {# Users fields will return an array value, the others (user info, author) a single user #}
+    {% set value = [value] %}
+{% endif %}
 
 {% block content %}
     {% for user in value %}
-        <p class="user">
-            {% if options.username %}
-                {{ user.username }}
+        {% if options.photo %}
+            {% set asset = user.photo %}
+            {% if asset %}
+                {{ asset.img }}
             {% endif %}
-            {% if options.firstName %}
-                {{ user.firstName }}
+        {% endif %}
+        {% if options.username %}
+            {{ user.username }}
+        {% endif %}
+        {% if options.firstName %}
+            {{ user.firstName }}
+        {% endif %}
+        {% if options.lastName %}
+            {{ user.lastName }}
+        {% endif %}
+        {% if options.email %}
+            ({% if options.linkEmail %}
+                <a href="mailto:{{ user.email }}">
             {% endif %}
-            {% if options.lastName %}
-                {{ user.lastName }}
-            {% endif %}
-            {% if options.email %}
-                ({% if options.linkEmail %}
-                    <a href="mailto:{{ user.email }}">
-                {% endif %}
-                {{ user.email }}
-                {% if options.linkEmail %}
-                    </a>
-                {% endif %})
-            {% endif %}
-                </p>
+            {{ user.email }}
+            {% if options.linkEmail %}
+                </a>
+            {% endif %})
+        {% endif %}
     {% endfor %}
 {% endblock %}

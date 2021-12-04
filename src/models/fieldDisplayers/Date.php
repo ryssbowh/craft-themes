@@ -3,9 +3,10 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\DateOptions;
+use Ryssbowh\CraftThemes\models\fields\DateCreated;
 use Ryssbowh\CraftThemes\models\fields\DateUpdated;
+use Ryssbowh\CraftThemes\models\fields\LastLoginDate;
 use Ryssbowh\CraftThemes\models\fields\PostDate;
-use craft\base\Model;
 use craft\fields\Date as DateField;
 
 /**
@@ -39,7 +40,7 @@ class Date extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [DateField::class, PostDate::class, DateUpdated::class];
+        return [DateField::class, PostDate::class, DateUpdated::class, DateCreated::class, LastLoginDate::class];
     }
 
     /**

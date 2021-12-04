@@ -6,7 +6,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 
 /**
- * The field userInfo is added to all user layouts automatically
+ * Handles the dateCreated value of elements
  */
 class DateUpdated extends Field
 {
