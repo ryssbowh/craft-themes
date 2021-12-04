@@ -53,6 +53,12 @@ class LayoutService extends Service
     protected $_layouts;
 
     /**
+     * Marker when layouts are being installed
+     * @var boolean
+     */
+    public static $isInstalling = false;
+
+    /**
      * All layouts getter
      * 
      * @return Collection
@@ -207,6 +213,7 @@ class LayoutService extends Service
         if (!$force and ProjectConfigHelper::isDataInstalledForTheme($theme)) {
             return false;
         }
+        static::$isInstalling = true;
         $ids = [];
         foreach ($this->getAvailable($theme->handle) as $layout) {
             if (!$layout2 = $this->get($theme, $layout->type, $layout->elementUid)) {
@@ -223,6 +230,7 @@ class LayoutService extends Service
         foreach ($layouts as $layout) {
             $this->delete($layout, true);
         }
+        static::$isInstalling = false;
         return true;
     }
 
@@ -714,7 +722,10 @@ class LayoutService extends Service
         foreach ($layout->viewModes as $viewMode) {
             $viewMode->displays = $this->displayService()->createViewModeDisplays($viewMode);
         }
-        return $this->save($layout, false);
+        if (!$this->save($layout)) {
+            throw LayoutException::cantSave($layout);
+        }
+        return true;
     }
 
     /**

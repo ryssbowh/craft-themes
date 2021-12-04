@@ -440,7 +440,9 @@ class DisplayService extends Service
                         'order' => $order,
                     ]);
                     $order++;
-                    $display->item = $fieldClass::create();
+                    $item = $fieldClass::create();
+                    $display->item = $item;
+                    $item->display = $display;
                 }
                 $displays[] = $display;
             }
@@ -461,7 +463,9 @@ class DisplayService extends Service
                     'order' => $order,
                 ]);
                 $order++;
-                $display->item = Themes::$plugin->fields->createFromField($craftField);
+                $item = Themes::$plugin->fields->createFromField($craftField);
+                $display->item = $item;
+                $item->display = $display;
             }
             $displays[] = $display;
         }

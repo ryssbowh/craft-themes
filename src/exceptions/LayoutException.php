@@ -59,4 +59,9 @@ class LayoutException extends \Exception
         }
         return new static($message);
     }
+
+    public static function cantSave(LayoutInterface $layout)
+    {
+        return new static("Can't save layout of type {$layout->type}. Errors : " . json_encode($layout->getErrors()));
+    }
 }
