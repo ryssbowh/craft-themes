@@ -21,6 +21,14 @@ interface FileDisplayerInterface
     public static function getKindTargets();
 
     /**
+     * Is this displayer the default for an asset kind
+     * 
+     * @param  string  $kind
+     * @return boolean
+     */
+    public static function isDefault(string $kind): bool;
+
+    /**
      * Get options model
      * 
      * @return Model

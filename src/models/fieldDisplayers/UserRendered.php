@@ -30,9 +30,9 @@ class UserRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): string
+    public static function getFieldTargets(): array
     {
-        return Users::class;
+        return [Users::class];
     }
 
     /**

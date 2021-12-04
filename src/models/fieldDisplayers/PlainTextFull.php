@@ -19,7 +19,10 @@ class PlainTextFull extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $isDefault = true;
+    public static function isDefault(string $fieldClass): bool
+    {
+        return true;
+    }
 
     /**
      * @inheritDoc
@@ -32,9 +35,9 @@ class PlainTextFull extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): String
+    public static function getFieldTargets(): array
     {
-        return PlainText::class;
+        return [PlainText::class];
     }
 
     /**

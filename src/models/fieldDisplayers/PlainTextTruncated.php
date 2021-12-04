@@ -27,9 +27,9 @@ class PlainTextTruncated extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): String
+    public static function getFieldTargets(): array
     {
-        return PlainText::class;
+        return [PlainText::class];
     }
 
     /**

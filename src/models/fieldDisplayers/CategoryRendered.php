@@ -32,9 +32,9 @@ class CategoryRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): string
+    public static function getFieldTargets(): array
     {
-        return Categories::class;
+        return [Categories::class];
     }
 
     /**

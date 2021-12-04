@@ -15,11 +15,6 @@ use craft\fields\BaseRelationField;
 abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
 {
     /**
-     * @var boolean
-     */
-    public static $isDefault = false;
-
-    /**
      * @var Field
      */
     protected $_field;
@@ -28,6 +23,14 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
      * @var Model
      */
     protected $_options;
+
+    /**
+     * @inheritDoc
+     */
+    public static function isDefault(string $fieldClass): bool
+    {
+        return true;
+    }
 
     /**
      * @inheritDoc

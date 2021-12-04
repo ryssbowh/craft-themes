@@ -3,6 +3,8 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\DateTimeOptions;
+use Ryssbowh\CraftThemes\models\fields\DateUpdated;
+use Ryssbowh\CraftThemes\models\fields\PostDate;
 use craft\base\Model;
 use craft\fields\Date;
 
@@ -14,12 +16,7 @@ class DateTime extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'date_datetime';
-
-    /**
-     * @inheritDoc
-     */
-    public static $isDefault = true;
+    public static $handle = 'datetime';
 
     /**
      * @inheritDoc
@@ -32,9 +29,9 @@ class DateTime extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): String
+    public static function getFieldTargets(): array
     {
-        return Date::class;
+        return [Date::class, PostDate::class, DateUpdated::class];
     }
 
     /**

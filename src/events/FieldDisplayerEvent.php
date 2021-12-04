@@ -37,6 +37,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\TagRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagSlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitleTitle;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\Time;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeAgo;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleTitle;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserDefault;
@@ -106,6 +107,7 @@ class FieldDisplayerEvent extends Event
             TagRendered::class,
             TagSlick::class,
             Time::class,
+            TimeAgo::class,
             TitleTitle::class,
             UrlLink::class,
             UserDefault::class,
@@ -158,14 +160,16 @@ class FieldDisplayerEvent extends Event
             throw FieldDisplayerException::alreadyDefined($class);
         }
         $this->displayers[$class::$handle] = $class;
-        if (!isset($this->mapping[$class::getFieldTarget()])) {
-            $this->mapping[$class::getFieldTarget()] = [];
-        }
-        if (!in_array($class::$handle, $this->mapping[$class::getFieldTarget()])) {
-            $this->mapping[$class::getFieldTarget()][] = $class::$handle;
-        }
-        if ($class::$isDefault) {
-            $this->defaults[$class::getFieldTarget()] = $class::$handle;
+        foreach ($class::getFieldTargets() as $fieldTarget) {
+            if (!isset($this->mapping[$fieldTarget])) {
+                $this->mapping[$fieldTarget] = [];
+            }
+            if (!in_array($class::$handle, $this->mapping[$fieldTarget])) {
+                $this->mapping[$fieldTarget][] = $class::$handle;
+            }
+            if ($class::isDefault($fieldTarget)) {
+                $this->defaults[$fieldTarget] = $class::$handle;
+            }
         }
     }
 

@@ -19,7 +19,10 @@ class CategoryLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $isDefault = true;
+    public static function isDefault(string $fieldClass): bool
+    {
+        return true;
+    }
 
     /**
      * @inheritDoc
@@ -32,9 +35,9 @@ class CategoryLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): string
+    public static function getFieldTargets(): array
     {
-        return Categories::class;
+        return [Categories::class];
     }
 
     /**

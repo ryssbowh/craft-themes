@@ -10,11 +10,11 @@ use craft\base\Model;
 interface FieldDisplayerInterface 
 {
     /**
-     * Field target class
+     * Field classes this displayer can handle
      * 
-     * @return string
+     * @return array
      */
-    public static function getFieldTarget(): string;
+    public static function getFieldTargets(): array;
 
     /**
      * Get handle
@@ -22,6 +22,14 @@ interface FieldDisplayerInterface
      * @return string
      */
     public static function getHandle(): string;
+
+    /**
+     * Is this displayer the default for a field class
+     * 
+     * @param  string  $fieldClass
+     * @return boolean
+     */
+    public static function isDefault(string $fieldClass): bool;
 
     /**
      * Field setter

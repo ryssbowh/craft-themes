@@ -11,11 +11,6 @@ use craft\base\Model;
 class Link extends FileDisplayer
 {
     /**
-     * @var boolean
-     */
-    public static $isDefault = true;
-
-    /**
      * @var string
      */
     public static $handle = 'link';
@@ -26,6 +21,14 @@ class Link extends FileDisplayer
     public function getName(): string
     {
         return \Craft::t('themes', 'Link to asset');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function isDefault(string $kind): bool
+    {
+        return true;
     }
 
     /**

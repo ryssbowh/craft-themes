@@ -156,7 +156,9 @@ class FieldDisplayerService extends Service
     {
         $displayers = [];
         foreach ($this->all() as $displayer) {
-            $displayers[$displayer::getFieldTarget()][] = new $displayer;
+            foreach ($displayer::getFieldTargets() as $fieldTarget) {
+                $displayers[$fieldTarget][] = new $displayer;
+            }
         }
         return $displayers;
     }

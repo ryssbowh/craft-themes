@@ -101,7 +101,7 @@ class FileDisplayerEvent extends Event
             if (!in_array($class::$handle, $this->mapping[$kind] ?? [])) {
                 $this->mapping[$kind][] = $class::$handle;
             }
-            if ($class::$isDefault) {
+            if ($class::isDefault($kind)) {
                 $this->defaults[$kind] = $class::$handle;
             }
         }

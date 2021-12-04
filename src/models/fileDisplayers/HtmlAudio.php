@@ -11,11 +11,6 @@ use craft\base\Model;
 class HtmlAudio extends FileDisplayer
 {
     /**
-     * @var boolean
-     */
-    public static $isDefault = true;
-
-    /**
      * @var string
      */
     public static $handle = 'html_audio';
@@ -26,6 +21,14 @@ class HtmlAudio extends FileDisplayer
     public function getName(): string
     {
         return \Craft::t('themes', 'Html Audio');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function isDefault(string $kind): bool
+    {
+        return true;
     }
 
     /**

@@ -8,19 +8,19 @@ use Ryssbowh\CraftThemes\models\Field;
 /**
  * The field userInfo is added to all user layouts automatically
  */
-class PostDate extends Field
+class DateUpdated extends Field
 {
     /**
      * @var boolean
      */
     public $hidden = true;
-    
+
     /**
      * @inheritDoc
      */
     public static function getType(): string
     {
-        return 'post-date';
+        return 'date-updated';
     }
 
     /**
@@ -36,7 +36,7 @@ class PostDate extends Field
      */
     public function getHandle(): string
     {
-        return 'postDate';
+        return 'dateUpdated';
     }
 
     /**
@@ -44,7 +44,7 @@ class PostDate extends Field
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Date posted');
+        return \Craft::t('themes', 'Date updated');
     }
 
     /**
@@ -52,7 +52,7 @@ class PostDate extends Field
      */
     public function render($value = null): string
     {
-        $value = Themes::$plugin->view->renderingElement->postDate;
+        $value = Themes::$plugin->view->renderingElement->dateUpdated;
         return Themes::$plugin->view->renderField($this, $value);
     }
 }

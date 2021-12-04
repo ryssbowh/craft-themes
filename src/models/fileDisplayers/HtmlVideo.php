@@ -11,11 +11,6 @@ use craft\base\Model;
 class HtmlVideo extends FileDisplayer
 {
     /**
-     * @var boolean
-     */
-    public static $isDefault = true;
-
-    /**
      * @var string
      */
     public static $handle = 'html_video';
@@ -26,6 +21,14 @@ class HtmlVideo extends FileDisplayer
     public function getName(): string
     {
         return \Craft::t('themes', 'Html Video');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function isDefault(string $kind): bool
+    {
+        return true;
     }
 
     /**

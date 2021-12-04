@@ -2,26 +2,27 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UrlLinkOptions;
-use craft\base\Model;
-use craft\fields\Url;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TimeAgoOptions;
+use Ryssbowh\CraftThemes\models\fields\DateUpdated;
+use Ryssbowh\CraftThemes\models\fields\PostDate;
+use craft\fields\Date as DateField;
 
 /**
- * Renders a url field
+ * Renders a date field as time ago
  */
-class UrlLink extends FieldDisplayer
+class TimeAgo extends Date
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'url_link';
+    public static $handle = 'time_ago';
 
     /**
      * @inheritDoc
      */
     public static function isDefault(string $fieldClass): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -29,15 +30,7 @@ class UrlLink extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Link');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getFieldTargets(): array
-    {
-        return [Url::class];
+        return \Craft::t('themes', 'Time ago');
     }
 
     /**
@@ -45,6 +38,6 @@ class UrlLink extends FieldDisplayer
      */
     public function getOptionsModel(): string
     {
-        return UrlLinkOptions::class;
+        return TimeAgoOptions::class;
     }
 }

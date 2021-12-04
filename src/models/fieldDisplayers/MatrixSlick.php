@@ -19,7 +19,10 @@ class MatrixSlick extends MatrixDefault
     /**
      * @inheritDoc
      */
-    public static $isDefault = false;
+    public static function isDefault(string $fieldClass): bool
+    {
+        return false;
+    }
 
     /**
      * @inheritDoc

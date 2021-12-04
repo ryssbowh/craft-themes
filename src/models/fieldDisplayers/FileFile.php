@@ -20,14 +20,17 @@ class FileFile extends FieldDisplayer
     public static $handle = 'file_file';
 
     /**
-     * @inheritDoc
-     */
-    public static $isDefault = true;
-
-    /**
      * @var array
      */
     protected $_displayerMapping;
+
+    /**
+     * @inheritDoc
+     */
+    public static function isDefault(string $fieldClass): bool
+    {
+        return true;
+    }
 
     /**
      * @inheritDoc
@@ -40,9 +43,9 @@ class FileFile extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): String
+    public static function getFieldTargets(): array
     {
-        return File::class;
+        return [File::class];
     }
 
     /**

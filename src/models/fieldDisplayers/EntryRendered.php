@@ -26,9 +26,9 @@ class EntryRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): String
+    public static function getFieldTargets(): array
     {
-        return Entries::class;
+        return [Entries::class];
     }
 
     /**

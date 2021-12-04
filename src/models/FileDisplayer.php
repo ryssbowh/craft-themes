@@ -11,11 +11,7 @@ use craft\elements\Asset;
  */
 abstract class FileDisplayer extends Model implements FileDisplayerInterface
 {
-    /**
-     * @var boolean
-     */
-    public static $isDefault = false;
-    
+
     /**
      * @var FieldDisplayerInterface
      */
@@ -25,6 +21,14 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
      * @var FileDisplayerOptions
      */
     protected $_options;
+
+    /**
+     * @inheritDoc
+     */
+    public static function isDefault(string $kind): bool
+    {
+        return false;
+    }
 
     /**
      * @inheritDoc

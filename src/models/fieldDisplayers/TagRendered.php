@@ -26,9 +26,9 @@ class TagRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTarget(): string
+    public static function getFieldTargets(): array
     {
-        return Tags::class;
+        return [Tags::class];
     }
 
     /**

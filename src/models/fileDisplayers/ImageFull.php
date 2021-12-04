@@ -11,11 +11,6 @@ use craft\base\Model;
 class ImageFull extends FileDisplayer
 {
     /**
-     * @var boolean
-     */
-    public static $isDefault = true;
-
-    /**
      * @var string
      */
     public static $handle = 'image_full';
@@ -26,6 +21,14 @@ class ImageFull extends FileDisplayer
     public function getName(): string
     {
         return \Craft::t('themes', 'Full image');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function isDefault(string $kind): bool
+    {
+        return true;
     }
 
     /**
