@@ -48,7 +48,7 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
     public function setCache(BlockInterface $block, string $data, TagDependency $dep)
     {
         $dep->tags[] = $this->getTag();
-        \Craft::$app->cache->set($this->buildKey($block), $data, null, $dep);
+        \Craft::$app->cache->set($this->buildKey($block), $data, $this->getDuration(), $dep);
     }
 
     /**
@@ -112,4 +112,11 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
      * @return string
      */
     abstract protected function getTag(): string;
+
+    /**
+     * Get cache duration in seconds. Null for forever
+     * 
+     * @return ?int
+     */
+    abstract protected function getDuration(): ?int;
 }

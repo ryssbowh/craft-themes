@@ -112,7 +112,7 @@ class BlockCacheService extends Service
         if (!$this->shouldCacheBlock($block)) {
             return null;
         }
-        return $this->getStrategy($block->options->cacheStrategy)->getCache($block);
+        return $block->cacheStrategy->getCache($block);
     }
 
     /**
@@ -131,7 +131,7 @@ class BlockCacheService extends Service
      */
     protected function shouldCacheBlock(BlockInterface $block): bool
     {
-        return ($this->cacheEnabled and $block->options->cacheStrategy);
+        return ($this->cacheEnabled and $block->cacheStrategy);
     }
 
     /**
@@ -155,6 +155,6 @@ class BlockCacheService extends Service
         if (!$this->shouldCacheBlock($block)) {
             return;
         }
-        $this->getStrategy($block->options->cacheStrategy)->setCache($block, $data, $dep);
+        $block->cacheStrategy->setCache($block, $data, $dep);
     }
 }
