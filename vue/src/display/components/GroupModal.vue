@@ -137,9 +137,18 @@ export default {
             if (!this.handle.trim()) {
                 this.handleError = this.t('Handle is required');
             }
-            for (let i in this.groups) {
-                if (this.groups[i].uid != this.editedGroupUid && this.groups[i].item.handle == this.handle.trim()) {
+            for (let i in this.displays) {
+                if (this.displays[i].uid != this.editedGroupUid && this.displays[i].item.handle == this.handle.trim()) {
                     this.handleError = this.t('This handle is already defined');
+                    return;
+                }
+                if (this.displays[i].type == 'group') {
+                    for (let j in this.displays[i].item.displays) {
+                        if (this.displays[i].item.displays[j].item.handle == this.handle.trim()) {
+                            this.handleError = this.t('This handle is already defined');
+                            return;           
+                        }
+                    }
                 }
             }
         },

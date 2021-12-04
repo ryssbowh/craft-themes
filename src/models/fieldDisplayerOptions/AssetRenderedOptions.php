@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ViewModeException;
+use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\traits\ViewModesOptions;
@@ -11,6 +12,14 @@ use craft\elements\Asset;
 class AssetRenderedOptions extends FieldDisplayerOptions
 {
     use ViewModesOptions;
+
+    /**
+     * @inheritDoc
+     */
+    public function defineDefaultValues(): array
+    {
+        return $this->defineViewModesDefaultValues();
+    }
 
     /**
      * @inheritDoc
@@ -38,7 +47,7 @@ class AssetRenderedOptions extends FieldDisplayerOptions
     {
         $volume = $asset->volume;
         if ($volume) {
-            $viewModeUid = $this->viewModes[$volume->uid] ?? null;
+            $viewModeUid = $this->getValue('viewMode-' . $volume->uid);
             if ($viewModeUid) {
                 try {
                     return Themes::$plugin->viewModes->getByUid($viewModeUid);
@@ -48,5 +57,15 @@ class AssetRenderedOptions extends FieldDisplayerOptions
             }
         }
         return null;
+    }
+
+    /**
+     * Get view modes available, based on this displayer's field volumes
+     * 
+     * @return array
+     */
+    public function getViewModes(): array
+    {
+        return ViewModesHelper::getVolumesViewModes($this->displayer->field->craftField, $this->displayer->getTheme());
     }
 }

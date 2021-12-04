@@ -23,4 +23,13 @@ interface MatrixInterface extends FieldInterface
      * @return array
      */
     public function getVisibleFields(MatrixBlock $block): array;
+
+    /**
+     * Get a field by Craft field handle
+     * 
+     * @param  MatrixBlock $block
+     * @param  string      $handle
+     * @return ?FieldInterface
+     */
+    public function getFieldByHandle(MatrixBlock $block, string $handle): ?FieldInterface;
 }

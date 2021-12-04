@@ -350,7 +350,8 @@ class Themes extends \craft\base\Plugin
                         'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/view-modes',
                         'themes/ajax/view-modes/<theme:[\w-]+>/<type:[\w]+>' => 'themes/cp-view-modes-ajax/view-modes',
                         'themes/ajax/view-modes/save' => 'themes/cp-view-modes-ajax/save',
-                        'themes/ajax/view-modes' => 'themes/cp-view-modes-ajax/get'
+                        'themes/ajax/view-modes' => 'themes/cp-view-modes-ajax/get',
+                        'themes/ajax/view-modes/display-names/<uid:[\w-]+>' => 'themes/cp-view-modes-ajax/get-display-names'
                     ]);
                 }
             }

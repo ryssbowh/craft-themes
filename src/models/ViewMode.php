@@ -4,9 +4,11 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
+use Ryssbowh\CraftThemes\traits\HasDisplays;
 use craft\base\Model;
 
 /**
@@ -14,6 +16,8 @@ use craft\base\Model;
  */
 class ViewMode extends Model implements ViewModeInterface
 {
+    use HasDisplays;
+
     /**
      * @var int
      */
@@ -164,14 +168,9 @@ class ViewMode extends Model implements ViewModeInterface
     /**
      * @inheritDoc
      */
-    public function setDisplays(?array $displays)
+    public function getAllDisplays(): array
     {
-        if (is_array($displays)) {
-            foreach ($displays as $display) {
-                $display->viewMode = $this;
-            }
-        }
-        $this->_displays = $displays;
+        return Themes::$plugin->displays->getForViewMode($this, false);
     }
 
     /**
@@ -182,6 +181,19 @@ class ViewMode extends Model implements ViewModeInterface
         return array_filter($this->displays, function ($display) {
             return $display->group_id === null and $display->item->isVisible();
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDisplays(?array $displays)
+    {
+        if (is_array($displays)) {
+            foreach ($displays as $display) {
+                $display->viewMode = $this;
+            }
+        }
+        $this->_displays = $displays;
     }
 
     /**

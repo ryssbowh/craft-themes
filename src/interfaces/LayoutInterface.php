@@ -229,9 +229,9 @@ interface LayoutInterface
     /**
      * Render this layout for an element
      *
-     * @param  Element $element
-     * @param  string  $viewMode
+     * @param  Element                   $element
+     * @param  string|ViewModeInterface  $viewMode
      * @return string
      */
-    public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string;
+    public function render(Element $element, $viewMode = ViewModeService::DEFAULT_HANDLE): string;
 }

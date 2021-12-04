@@ -174,7 +174,7 @@ class ViewService extends Service
         }
         $this->blockCacheService()->startBlockCaching($block);
         $theme = $this->themesRegistry()->current;
-        $templates = $block->getTemplates($this->renderingLayout, $this->renderingRegion);
+        $templates = $block->getTemplates();
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getBlockClasses($block)),
             'attributes' => new AttributeBag($theme->preferences->getBlockAttributes($block)),
@@ -198,7 +198,7 @@ class ViewService extends Service
             return '';
         }
         $theme = $this->themesRegistry()->current;
-        $templates = $field->getFieldTemplates($this->renderingLayout, $this->renderingViewMode, $displayer);
+        $templates = $field->getFieldTemplates();
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getFieldClasses($field)),
             'attributes' => new AttributeBag($theme->preferences->getFieldAttributes($field)),
@@ -228,7 +228,7 @@ class ViewService extends Service
             return '';
         }
         $theme = $this->themesRegistry()->current;
-        $templates = $group->getTemplates($this->renderingLayout, $this->renderingViewMode);
+        $templates = $group->getTemplates();
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getGroupClasses($group)),
             'attributes' => new AttributeBag($theme->preferences->getGroupAttributes($group)),
@@ -255,7 +255,7 @@ class ViewService extends Service
             return '';
         }
         $theme = $this->themesRegistry()->current;
-        $templates = $field->getFileTemplates($this->renderingLayout, $this->renderingViewMode, $displayer);
+        $templates = $field->getFileTemplates($displayer);
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getFileClasses($asset, $field, $displayer)),
             'attributes' => new AttributeBag($theme->preferences->getFileAttributes($asset, $field, $displayer)),
@@ -269,15 +269,17 @@ class ViewService extends Service
     /**
      * Renders a layout for a view mode and an element
      * 
-     * @param  LayoutInterface $layout
-     * @param  string          $viewMode
-     * @param  ?Element        $element
-     * @param  string          $mode
+     * @param  LayoutInterface          $layout
+     * @param  string|ViewModeInterface $viewMode
+     * @param  ?Element                 $element
+     * @param  string                   $mode
      * @return string
      */
-    public function renderLayout(LayoutInterface $layout, string $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): string
+    public function renderLayout(LayoutInterface $layout, $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): string
     {
-        $viewMode = $layout->getViewMode($viewMode);
+        if (is_string($viewMode)) {
+            $viewMode = $layout->getViewMode($viewMode);
+        }
         if ($this->eagerLoad and $element) {
             $layout->eagerLoadFields($element, $viewMode);
         }

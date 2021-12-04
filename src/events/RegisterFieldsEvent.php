@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\File;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\models\fields\MatrixField;
+use Ryssbowh\CraftThemes\models\fields\PostDate;
 use Ryssbowh\CraftThemes\models\fields\Table;
 use Ryssbowh\CraftThemes\models\fields\TableField;
 use Ryssbowh\CraftThemes\models\fields\TagTitle;
@@ -36,6 +37,7 @@ class RegisterFieldsEvent extends Event
         $this->add(File::class);
         $this->add(UserInfo::class);
         $this->add(TagTitle::class);
+        $this->add(PostDate::class);
     }
 
     /**

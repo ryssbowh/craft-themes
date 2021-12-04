@@ -10,16 +10,33 @@ trait ViewModesOptions
     /**
      * @return array
      */
+    public function defineViewModesDefaultValues(): array
+    {
+        $viewModes = $this->getViewModes();
+        $options = [];
+        foreach ($viewModes as $id => $array) {
+            $keys = array_keys($array['viewModes'] ?? []);
+            $options['viewMode-' . $id] = $keys[0] ?? null;
+        }
+        return $options;
+    }
+
+    /**
+     * @return array
+     */
     public function defineViewModesOptions(): array
     {
-        $viewModes = $this->displayer->getViewModes();
-        return [
-            'viewModes' => [
-                'field' => 'viewmodes',
-                'options' => $viewModes,
-                'warning' => sizeof($viewModes) == 0 ? \Craft::t('themes', "It seems this field doesn't have any valid source") : null
-            ]
-        ];
+        $viewModes = $this->getViewModes();
+        $options = [];
+        foreach ($viewModes as $id => $array) {
+            $options['viewMode-' . $id] = [
+                'field' => 'select',
+                'required' => true,
+                'label' => \Craft::t('themes', 'View mode for {type}', ['type'=> $array['label']]),
+                'options' => $array['viewModes']
+            ];
+        }
+        return $options;
     }
 
     /**
@@ -27,31 +44,13 @@ trait ViewModesOptions
      */
     public function defineViewModesRules(): array
     {
-        return [
-            ['viewModes', 'validateViewModes', 'skipOnEmpty' => false]
-        ];
-    }
-
-    /**
-     * View modes setter
-     * 
-     * @param array $viewModes
-     */
-    public function setViewModes(array $viewModes)
-    {
-        $this->_viewModes = $viewModes;
-    }
-
-    /**
-     * Validate view modes
-     */
-    public function validateViewModes()
-    {
-        $validViewModes = $this->displayer->getViewModes();
-        foreach ($this->viewModes as $uid => $viewModeUid) {
-            if (!isset($validViewModes[$uid]['viewModes'][$viewModeUid])) {
-                $this->addError('viewModes', [$uid => \Craft::t('themes', 'View mode is invalid')]);
-            }
+        $viewModes = $this->getViewModes();
+        $rules = [];
+        foreach ($viewModes as $id => $array) {
+            $viewMode = 'viewMode-' . $id;
+            $rules[] = [$viewMode, 'required', 'message' => \Craft::t('themes', 'View mode cannot be blank')];
+            $rules[] = [$viewMode, 'in', 'range' => array_keys($this->definitions[$viewMode]['options']), 'message' => \Craft::t('themes', 'View mode is invalid')];
         }
+        return $rules;
     }
 }

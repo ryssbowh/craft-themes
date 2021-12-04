@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\traits\ViewModesOptions;
@@ -28,17 +29,34 @@ class EntryRenderedOptions extends FieldDisplayerOptions
     }
 
     /**
-     * Get the view mode for an entry
+     * Get the view mode for an asset
      * 
-     * @param  Entry $entry
-     * @return ?ViewModeInterface $entry
+     * @param  Asset  $asset
+     * @return ?ViewModeInterface
      */
-    public function getEntryViewMode(Entry $entry): ?ViewModeInterface
+    public function getViewMode(Entry $entry): ?ViewModeInterface
     {
-        $uid = $this->_viewModes[$entry->type->uid] ?? false;
-        if ($uid) {
-            return Themes::$plugin->viewModes->getByUid($uid);
+        $type = $entry->type;
+        if ($type) {
+            $viewModeUid = $this->getValue('viewMode-' . $type->uid);
+            if ($viewModeUid) {
+                try {
+                    return Themes::$plugin->viewModes->getByUid($viewModeUid);
+                } catch (ViewModeException $e) {
+                    return null;
+                }
+            }
         }
         return null;
+    }
+
+    /**
+     * Get view modes available, based on this displayer's field entry sections
+     * 
+     * @return array
+     */
+    public function getViewModes(): array
+    {
+        return ViewModesHelper::getSectionsViewModes($this->displayer->field->craftField, $this->displayer->getTheme());
     }
 }

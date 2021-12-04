@@ -276,6 +276,49 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
+     * Fetch a field by handle, only returns visible items
+     * 
+     * @param  MatrixBlock $block
+     * @param  string      $handle
+     * @return FieldInterface
+     */
+    public function getFieldByHandle(MatrixBlock $block, string $handle): ?FieldInterface
+    {
+        if (!isset($this->types[$block->type->handle])) {
+            return null;
+        }
+        $type = $this->types[$block->type->handle];
+        foreach ($type->fields as $field) {
+            if ($field->isVisible() and $field->craftField->handle == $handle) {
+                return $field;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Fetch fields by handles
+     * 
+     * @param  MatrixBlock $block
+     * @param  array       $handles
+     * @return array
+     */
+    public function getFieldsByHandles(MatrixBlock $block, array $handles): array
+    {
+        if (!isset($this->types[$block->type->handle])) {
+            return [];
+        }
+        $type = $this->types[$block->type->handle];
+        $fields = [];
+        foreach ($type->fields as $field) {
+            if ($field->isVisible() and in_array($field->craftField->handle, $handles)) {
+                $fields[] = $field;
+            }
+        }
+        return $fields;
+    }
+
+    /**
      * Types setter
      * 
      * @param array $types

@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
+use Ryssbowh\CraftThemes\traits\HasDisplays;
 use craft\base\Element;
 
 /**
@@ -13,6 +14,8 @@ use craft\base\Element;
  */
 class Group extends DisplayItem implements GroupInterface
 {
+    use HasDisplays;
+
     /**
      * @var string
      */
@@ -27,6 +30,22 @@ class Group extends DisplayItem implements GroupInterface
      * @var array
      */
     protected $_displays;
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHandle(): string
+    {
+        return $this->handle;
+    }
 
     /**
      * @inheritDoc
@@ -107,13 +126,9 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
-    public function eagerLoad(): array
+    public function getAllDisplays(): array
     {
-        $fields = [];
-        foreach ($this->getVisibleDisplays() as $display) {
-            $fields = array_merge($fields, $display->item->eagerLoad());
-        }
-        return $fields;
+        return $this->displays;
     }
 
     /**
@@ -124,6 +139,18 @@ class Group extends DisplayItem implements GroupInterface
         return array_filter($this->displays, function ($display) {
             return $display->item->isVisible();
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eagerLoad(): array
+    {
+        $fields = [];
+        foreach ($this->getVisibleDisplays() as $display) {
+            $fields = array_merge($fields, $display->item->eagerLoad());
+        }
+        return $fields;
     }
 
     /**
@@ -171,11 +198,11 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
-    public function getTemplates(LayoutInterface $layout, ViewModeInterface $viewMode): array
+    public function getTemplates(): array
     {
-        $type = $layout->type;
-        $key = $layout->getTemplatingKey();
-        $viewMode = $viewMode->handle;
+        $type = $this->layout->type;
+        $key = $this->layout->templatingKey;
+        $viewMode = $this->viewMode->handle;
         return [
             'groups/' . $type . '/' . $key . '/' . $viewMode . '/group-' . $this->handle,
             'groups/' . $type . '/' . $key . '/' . $viewMode . '/group',

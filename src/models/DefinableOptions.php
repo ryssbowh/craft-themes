@@ -78,7 +78,7 @@ abstract class DefinableOptions extends Model
      */
     public function getValues(): array
     {
-        return $this->_values;
+        return array_merge($this->defaultValues, $this->_values);
     }
 
     /**
@@ -88,8 +88,7 @@ abstract class DefinableOptions extends Model
      */
     public function setValues($values)
     {
-        $values = array_merge($this->defaultValues, (array)$values);
-        foreach ($values as $name => $value) {
+        foreach ((array)$values as $name => $value) {
             $this->setValue($name, $value);
         }
     }
@@ -102,10 +101,7 @@ abstract class DefinableOptions extends Model
      */
     public function getValue(string $name)
     {
-        if (isset($this->definitions[$name])) {
-            return $this->_values[$name] ?? $this->defaultValues[$name] ?? null;
-        }
-        return null;
+        return $this->_values[$name] ?? $this->defaultValues[$name] ?? null;
     }
 
     /**
@@ -116,9 +112,7 @@ abstract class DefinableOptions extends Model
      */
     public function setValue(string $name, $value)
     {
-        if (isset($this->definitions[$name])) {
-            $this->_values[$name] = $value;
-        }
+        $this->_values[$name] = $value;
     }
 
     /**

@@ -370,12 +370,13 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function getTemplates(LayoutInterface $layout, RegionInterface $region): array
+    public function getTemplates(): array
     {
-        $type = $layout->type;
+        $type = $this->layout->type;
+        $key = $this->layout->templatingKey;
         return [
-            'blocks/' . $type . '/' . $layout->getTemplatingKey() . '/' . $region->handle . '/' . $this->machineName,
-            'blocks/' . $type . '/' . $layout->getTemplatingKey() . '/' . $this->machineName,
+            'blocks/' . $type . '/' . $key . '/' . $this->region . '/' . $this->machineName,
+            'blocks/' . $type . '/' . $key . '/' . $this->machineName,
             'blocks/' . $type . '/' . $this->machineName,
             'blocks/' . $this->machineName, 
             'blocks/block'

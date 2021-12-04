@@ -431,7 +431,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function render(Element $element, string $viewMode = ViewModeService::DEFAULT_HANDLE): string
+    public function render(Element $element, $viewMode = ViewModeService::DEFAULT_HANDLE): string
     {
         return Themes::$plugin->view->renderLayout($this, $viewMode, $element);
     }

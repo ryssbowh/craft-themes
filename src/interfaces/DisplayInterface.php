@@ -16,6 +16,20 @@ interface DisplayInterface
     public function getConfig(): array;
 
     /**
+     * Get the display's item handle
+     * 
+     * @return string
+     */
+    public function getHandle(): string;
+
+    /**
+     * Get the display's item name
+     * 
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
      * Layout getter
      * 
      * @return LayoutInterface
@@ -73,8 +87,9 @@ interface DisplayInterface
 
     /**
      * Render this display
-     * 
+     *
+     * @param  array $params Parameters forwarded to display's item render method
      * @return string
      */
-    public function render(): string;
+    public function render(array $params = []): string;
 }

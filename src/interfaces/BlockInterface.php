@@ -125,11 +125,9 @@ interface BlockInterface
     /**
      * Get available templates
      * 
-     * @param  LayoutInterface $layout
-     * @param  RegionInterface $region
      * @return array
      */
-    public function getTemplates(LayoutInterface $layout, RegionInterface $region): array;
+    public function getTemplates(): array;
 
     /**
      * Get extra cache dependencies tags

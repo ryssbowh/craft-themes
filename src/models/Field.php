@@ -332,12 +332,12 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getFieldTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FieldDisplayerInterface $displayer): array
+    public function getFieldTemplates(): array
     {
-        $type = $layout->type;
-        $viewMode = $viewMode->handle;
-        $key = $layout->getTemplatingKey();
-        $displayer = $displayer->handle;
+        $type = $this->layout->type;
+        $viewMode = $this->viewMode->handle;
+        $key = $this->layout->templatingKey;
+        $displayer = $this->displayer->handle;
         return [
             'fields/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer . '-' . $this->handle,
             'fields/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer,
@@ -353,19 +353,19 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getFileTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FileDisplayerInterface $displayer): array
+    public function getFileTemplates(FileDisplayerInterface $displayer): array
     {
-        $type = $layout->type;
-        $viewMode = $viewMode->handle;
-        $key = $layout->getTemplatingKey();
+        $type = $this->layout->type;
+        $viewMode = $this->viewMode->handle;
+        $key = $this->layout->templatingKey;
         $displayer = $displayer->handle;
         return [
             'files/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer . '-' . $this->handle,
-            'files/' . $type . '/' . $key . '/' . $viewMode . '/' . $this->handle,
+            'files/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer,
             'files/' . $type . '/' . $key . '/' . $displayer . '-' . $this->handle,
-            'files/' . $type . '/' . $key . '/' . $this->handle,
+            'files/' . $type . '/' . $key . '/' . $displayer,
             'files/' . $type . '/' . $displayer . '-' . $this->handle,
-            'files/' . $type . '/' . $this->handle,
+            'files/' . $type . '/' . $displayer,
             'files/' . $displayer . '-' . $this->handle,
             'files/' . $displayer
         ];

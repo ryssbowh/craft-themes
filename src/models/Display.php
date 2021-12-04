@@ -128,6 +128,22 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
+    public function getName(): string
+    {
+        return $this->getItem()->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHandle(): string
+    {
+        return $this->getItem()->handle;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['item']);
@@ -220,8 +236,8 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function render(): string
+    public function render(array $params = []): string
     {
-        return $this->item->render();
+        return $this->item->render(...$params);
     }
 }

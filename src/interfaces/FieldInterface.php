@@ -10,20 +10,6 @@ use craft\base\Field as BaseField;
 interface FieldInterface
 {
     /**
-     * Handle getter
-     * 
-     * @return string
-     */
-    public function getHandle(): string;
-
-    /**
-     * Name getter
-     * 
-     * @return string
-     */
-    public function getName(): string;
-
-    /**
      * For which craft field class this field should be used
      * 
      * @return string
@@ -140,22 +126,17 @@ interface FieldInterface
     /**
      * Get available field templates
      * 
-     * @param  LayoutInterface         $layout
-     * @param  ViewModeInterface       $viewMode
-     * @param  FieldDisplayerInterface $displayer
      * @return array
      */
-    public function getFieldTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FieldDisplayerInterface $displayer): array;
+    public function getFieldTemplates(): array;
 
     /**
      * Get available file templates
      * 
-     * @param  LayoutInterface         $layout
-     * @param  ViewModeInterface       $viewMode
      * @param  FileDisplayerInterface $displayer
      * @return array
      */
-    public function getFileTemplates(LayoutInterface $layout, ViewModeInterface $viewMode, FileDisplayerInterface $displayer): array;
+    public function getFileTemplates(FileDisplayerInterface $displayer): array;
 
     /**
      * Render this item.

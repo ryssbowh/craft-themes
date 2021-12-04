@@ -9,10 +9,10 @@ import Textarea from './forms/Textarea.vue';
 import MultiSelect from './forms/MultiSelect.vue';
 import Checkboxes from './forms/Checkboxes.vue';
 import Radio from './forms/Radio.vue';
-import ViewModes from './forms/ViewModes.vue';
 import FileDisplayers from './forms/FileDisplayers.vue';
 import FetchViewMode from './forms/FetchViewMode.vue';
 import Elements from './forms/Elements.vue';
+import DisplaysCheckboxes from './forms/DisplaysCheckboxes.vue';
 
 let fields = {
     lightswitch: Lightswitch,
@@ -26,10 +26,10 @@ let fields = {
     multiselect: MultiSelect,
     checkboxes: Checkboxes,
     radio: Radio,
-    viewmodes: ViewModes,
     filedisplayers: FileDisplayers,
     fetchviewmode: FetchViewMode,
-    elements: Elements
+    elements: Elements,
+    displayscheckboxes: DisplaysCheckboxes
 };
 
 let event = new CustomEvent("register-form-fields-components", {detail: {}});

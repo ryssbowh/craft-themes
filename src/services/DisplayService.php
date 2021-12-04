@@ -389,15 +389,17 @@ class DisplayService extends Service
      * Get all displays for a view mode
      * 
      * @param  ViewModeInterface $viewMode
+     * @param  bool              $onlyRoots Fetch only the root displays (that aren't in groups)
      * @return array
      */
-    public function getForViewMode(ViewModeInterface $viewMode): array
+    public function getForViewMode(ViewModeInterface $viewMode, bool $onlyRoots = true): array
     {
-        return $this->all()
-            ->where('viewMode_id', $viewMode->id)
-            ->where('group_id', null)
-            ->values()
-            ->all();
+        $query = $this->all()
+            ->where('viewMode_id', $viewMode->id);
+        if ($onlyRoots) {
+            $query = $query->where('group_id', null);
+        }
+        return $query->values()->all();
     }
 
     /**

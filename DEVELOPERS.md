@@ -182,13 +182,14 @@ Themes::$plugin->blocks->save($block);
 
 There are 10 types of fields defined by this plugin.
 
-5 "themes" fields, created by this plugin, which can have their own displayers :
+6 "themes" fields, created by this plugin, which can have their own displayers :
 
 - Author : handles the author of an entry
 - File : handles the file of an asset
 - TagTitle : handles the title for a tag
 - Title : handles the title of an entry/category
 - UserInfo : handles the user info for user layouts
+- PostDate : handles the postDate attribute for all elements
 
 And 5 that handle Craft fields, those can't have their own displayers. Their displayers will display the Craft field associated with them :
 
@@ -287,7 +288,7 @@ These are the allowed field types that must be referenced in the `field` attribu
 - elements : select an element (user, entry, category or asset) through a modal, and a view mode for each
 - fetchviewmode : fetch view modes for a layout type and current theme and an optional element. Displays a select
 - filedisplayers : File displayers options for each asset kind
-- viewmodes : multiple grouped selects to choose a view mode for different elements
+- displayscheckboxes : Select display uids with checkboxes for a view mode
 
 You can add/remove/change options by responding to the options definitions event :
 

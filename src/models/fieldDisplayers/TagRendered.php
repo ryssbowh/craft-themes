@@ -1,14 +1,9 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TagRenderedOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\base\Model;
-use craft\fields\Tags;
-use craft\models\TagGroup;
 
 /**
  * Renders a tag field as rendered using a view mode
@@ -51,45 +46,11 @@ class TagRendered extends FieldDisplayer
      */
     public function getTagLayout(): ?LayoutInterface
     {
-        if ($group = $this->getTagGroup()) {
+        $elems = explode(':', $this->field->craftField->source);
+        $group = \Craft::$app->tags->getTagGroupByUid($elems[1]);
+        if ($group) {
             return $group->getLayout($this->theme);
         }
         return null;
-    }
-
-    /**
-     * Get view modes associated to this displayer field's category group
-     * 
-     * @return array
-     */
-    public function getViewModes(): array
-    {
-        $viewModes = [];
-        if ($group = $this->getTagGroup()) {
-            $layout = $group->getLayout($this->theme);
-            foreach ($layout->getViewModes() as $viewMode) {
-                $viewModes[$viewMode->uid] = $viewMode->name;
-            }
-        }
-        return $viewModes;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['viewModes']);
-    }
-
-    /**
-     * get the category group defined on this displayer's field
-     * 
-     * @return CategoryGroup
-     */
-    protected function getTagGroup(): ?TagGroup
-    {
-        $elems = explode(':', $this->field->craftField->source);
-        return \Craft::$app->tags->getTagGroupByUid($elems[1]);
     }
 }

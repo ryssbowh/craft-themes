@@ -52,44 +52,11 @@ class CategoryRendered extends FieldDisplayer
      */
     public function getGroupLayout(): ?LayoutInterface
     {
-        if ($group = $this->getCategoryGroup()) {
+        $elems = explode(':', $this->field->craftField->source);
+        $group = \Craft::$app->categories->getGroupByUid($elems[1]);
+        if ($group) {
             return $group->getLayout();
         }
         return null;
-    }
-
-    /**
-     * Get view modes associated to this displayer field's category group
-     * 
-     * @return array
-     */
-    public function getViewModes(): array
-    {
-        $viewModes = [];
-        if ($group = $this->getCategoryGroup()) {
-            foreach ($group->getLayout($this->getTheme())->viewModes as $viewMode) {
-                $viewModes[$viewMode->uid] = $viewMode->name;
-            }
-        }
-        return $viewModes;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), ['viewModes']);
-    }
-
-    /**
-     * get the category group defined on this displayer's field
-     * 
-     * @return CategoryGroup
-     */
-    protected function getCategoryGroup(): ?CategoryGroup
-    {
-        $elems = explode(':', $this->field->craftField->source);
-        return \Craft::$app->categories->getGroupByUid($elems[1]);
     }
 }

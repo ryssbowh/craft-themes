@@ -1,11 +1,13 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+
 /**
  * A view mode has displays associated to it, it's associated to a layout.
  * One layout can have several view modes.
  */
-interface ViewModeInterface
+interface ViewModeInterface extends HasDisplaysInterface
 {
     /**
      * Get project config 
@@ -13,27 +15,6 @@ interface ViewModeInterface
      * @return array
      */
     public function getConfig(): array;
-
-    /**
-     * Displays getter
-     * 
-     * @return array
-     */
-    public function getDisplays(): array;
-
-    /**
-     * Display setter
-     * 
-     * @param ?array $displays
-     */
-    public function setDisplays(?array $displays);
-
-    /**
-     * Get all visible displays 
-     * 
-     * @return array
-     */
-    public function getVisibleDisplays(): array;
 
     /**
      * Add a display to this view mode

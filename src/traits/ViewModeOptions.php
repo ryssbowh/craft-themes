@@ -19,7 +19,7 @@ trait ViewModeOptions
      */
     public function defineViewModeDefaultValues(): array
     {
-        $viewModes = array_keys($this->getDisplayer()->getViewModes());
+        $viewModes = array_keys($this->getViewModes());
         return [
             'viewModeUid' => $viewModes[0] ?? null
         ];
@@ -57,7 +57,7 @@ trait ViewModeOptions
      */
     public function defineViewModeOptions(): array
     {
-        $viewModes = $this->getDisplayer()->getViewModes();
+        $viewModes = $this->getViewModes();
         return [
             'viewModeUid' => [
                 'field' => 'select',
@@ -74,7 +74,7 @@ trait ViewModeOptions
      */
     public function validateViewMode()
     {
-        if (!isset($this->displayer->getViewModes()[$this->viewModeUid])) {
+        if (!isset($this->getViewModes()[$this->viewModeUid])) {
             $this->addError('viewModeUid', \Craft::t('themes', 'View mode is invalid'));
         }
     }

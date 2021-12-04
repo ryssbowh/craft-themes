@@ -10,6 +10,20 @@ use craft\base\Element;
 interface DisplayItemInterface
 {
     /**
+     * Handle getter
+     * 
+     * @return string
+     */
+    public function getHandle(): string;
+    
+    /**
+     * Name getter
+     * 
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
      * Type getter
      * 
      * @return string

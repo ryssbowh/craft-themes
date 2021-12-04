@@ -6,7 +6,7 @@
     <div class="slick-carousel" data-slick="{{ options.getAttributes(null, ['viewModes'])|json_encode }}">
         {% for entry in value %}
             {% set layout = entry.type.layout %}
-            {% set viewMode = options.getEntryViewMode(entry) %}
+            {% set viewMode = options.getViewMode(entry) %}
             {% if viewMode and layout %}
                 {{ layout.render(entry, viewMode.handle)|raw }}
             {% endif %}

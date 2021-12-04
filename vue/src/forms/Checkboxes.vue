@@ -30,11 +30,6 @@ export default {
         errors: Array,
         name: String
     },
-    watch: {
-        value: function () {
-            this.$emit('change', this.value);
-        }
-    },
     data: function () {
         return {
             id: null
@@ -44,15 +39,14 @@ export default {
         this.id = Math.floor(Math.random() * 1000000);
     },
     mounted() {
-        let _this = this;
         $(this.$el).find('[type=checkbox]').on('change', () => {
             let val = [];
             $.each($(this.$el).find('[type=checkbox]'), function (i, elem) {
                 if ($(elem).is(':checked')) {
                     val.push($(elem).val());
                 }
-                _this.$emit('change', val);
             });
+            this.$emit('change', val);
         });
     },
     components: {
