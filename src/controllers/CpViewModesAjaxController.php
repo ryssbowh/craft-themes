@@ -48,20 +48,14 @@ class CpViewModesAjaxController extends Controller
     }
 
     /**
-     * Get view modes for a layout
+     * Get displays for a view mode
      * 
      * @return array
-     */
-    public function actionGetDisplayNames(string $uid)
+    */
+    public function actionGetDisplays(string $uid)
     {
-        $onlyRoots = $this->request->getParam('onlyRoots', true);
-        $viewMode = Themes::$plugin->viewModes->getByUid($uid);
-        $displays = [];
-        foreach ($viewMode->visibleDisplays as $display) {
-            $displays[$display->uid] = $display->name;
-        }
         return [
-            'names' => $displays
+            'displays' => Themes::$plugin->viewModes->getByUid($uid)->displays
         ];
     }
 
