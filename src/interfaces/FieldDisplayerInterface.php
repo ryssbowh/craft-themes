@@ -32,6 +32,13 @@ interface FieldDisplayerInterface
     public static function isDefault(string $fieldClass): bool;
 
     /**
+     * Description/helper shown in CP
+     * 
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
      * Field setter
      * 
      * @param FieldInterface $field

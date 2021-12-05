@@ -43,6 +43,14 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function hasErrors($attribute = null)
     {
         return $this->options->hasErrors($attribute);
@@ -136,7 +144,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions']);
+        return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions', 'description']);
     }
 
     /**

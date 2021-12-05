@@ -19,6 +19,6 @@
     {% elseif elapsedMinutes > 1 %}
         {{ ('{number} minute' ~ (elapsedMinutes != 1 ? 's' : '') ~ ' ago')|t('site', {number: elapsedMinutes}) }}
     {% else %}
-        {{ ('{number} second' ~ (elapsedSeconds != 1 ? 's' : '') ~ ' ago')|t('site', {number: elapsedSeconds}) }}
+        {{ 'Just now'|t('site') }}
     {% endif %}
 {% endblock %}

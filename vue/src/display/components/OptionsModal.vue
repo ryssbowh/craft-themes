@@ -3,6 +3,8 @@
         <div class="header">
             <h3>{{ t('Edit displayer options') }}</h3>
         </div>
+        <div class="header description" v-if="displayer.description" v-html="displayer.description">
+        </div>
         <div class="body">
             <div class="content">
                 <form class="main" @submit.prevent="save">
@@ -98,6 +100,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@import '~craftcms-sass/_mixins';
+
 .options-modal {
     padding-bottom: 62px;
     min-width: 300px;
@@ -107,5 +111,10 @@ export default {
     .body {
         height: calc(100% - 65px);
     }
+}
+.header.description {
+    border-radius: 0;
+    padding: 10px 24px;
+    background: $grey050;
 }
 </style>

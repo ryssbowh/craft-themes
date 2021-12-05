@@ -5,7 +5,6 @@ use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserDefaultOptions;
 use Ryssbowh\CraftThemes\models\fields\Author;
 use Ryssbowh\CraftThemes\models\fields\UserInfo;
-use craft\base\Model;
 use craft\fields\Users;
 
 /**

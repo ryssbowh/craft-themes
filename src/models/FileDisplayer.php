@@ -33,6 +33,14 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     /**
      * @inheritDoc
      */
+    public function getDescription(): string
+    {
+        return 'Hello';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getHandle(): string 
     {
         return $this::$handle;
@@ -91,7 +99,7 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions']);
+        return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions', 'description']);
     }
 
     /**

@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\RadioButtonsLabelOptions;
-use craft\base\Model;
 use craft\fields\RadioButtons;
 
 /**

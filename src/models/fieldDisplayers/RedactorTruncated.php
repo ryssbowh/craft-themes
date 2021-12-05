@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\RedactorTruncatedOptions;
-use craft\base\Model;
 use craft\redactor\Field;
 
 /**
@@ -15,6 +14,14 @@ class RedactorTruncated extends FieldDisplayer
      * @inheritDoc
      */
     public static $handle = 'redactor_truncated';
+
+    /**
+     * @inheritDoc
+     */
+    public function getDescription(): string
+    {
+        return '<span class="with-icon warning"></span>' . \Craft::t('themes', 'Truncating content will always strip Html tags');
+    }
 
     /**
      * @inheritDoc

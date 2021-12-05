@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetSlickOptions;
 use Ryssbowh\CraftThemes\traits\SlickRenderer;
-use craft\base\Model;
 use craft\fields\Assets;
 
 /**

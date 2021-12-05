@@ -1,10 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetRenderFileOptions;
-use craft\base\Model;
 use craft\fields\Assets;
 use craft\helpers\Assets as AssetsHelper;
 

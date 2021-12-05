@@ -1,12 +1,10 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\FileFileOptions;
 use Ryssbowh\CraftThemes\models\fields\File;
-use craft\base\Model;
 use craft\helpers\Assets;
 
 /**

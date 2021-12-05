@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\CategoryLabelOptions;
-use craft\base\Model;
 use craft\fields\Categories;
 
 /**

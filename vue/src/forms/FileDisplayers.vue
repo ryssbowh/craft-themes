@@ -29,9 +29,6 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="warning with-icon" v-if="realValue[handle].displayer == 'raw'">
-                                    {{ t("This could be used to run potentially dangerous code on your site, do you trust the data you're going to display ?") }}
-                                </div>
                             </div>
                             <component v-for="definition, name in getDisplayer(handle).options.definitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="realValue[handle].options[name] ?? null" :errors="getErrors(handle)[name] ?? []" @change="updateOption(handle, name, $event)" :key="name"></component>
                         </div>

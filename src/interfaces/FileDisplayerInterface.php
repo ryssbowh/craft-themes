@@ -29,6 +29,13 @@ interface FileDisplayerInterface
     public static function isDefault(string $kind): bool;
 
     /**
+     * Description/helper shown in CP
+     * 
+     * @return string
+     */
+    public function getDescription(): string;
+
+    /**
      * Get options model
      * 
      * @return Model

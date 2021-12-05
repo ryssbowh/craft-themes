@@ -4,7 +4,6 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TitleTitleOptions;
 use Ryssbowh\CraftThemes\models\fields\Title;
-use craft\base\Model;
 
 /**
  * Renders a title field

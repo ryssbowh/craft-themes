@@ -16,11 +16,6 @@ class MatrixField extends CraftField
     protected $_matrix;
 
     /**
-     * @var boolean
-     */
-    public $labelHidden = true;
-
-    /**
      * @inheritDoc
      */
     public static function getType(): string

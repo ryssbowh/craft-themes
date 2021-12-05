@@ -1,15 +1,10 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\CategoryRenderedOptions;
-use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\base\Model;
-use craft\elements\Category;
 use craft\fields\Categories;
-use craft\models\CategoryGroup;
 
 /**
  * Renders a category field as rendered using a view mode
