@@ -1,8 +1,6 @@
 {% extends "fields/_field" %}
 {% import "_includes/macros" as macros %}
 
-{% set show_field = value|length > 0 %}
-
 {% block content %}
     {{ macros.truncateChars(value, options.truncated) }}
     {% if options.ellipsis %}

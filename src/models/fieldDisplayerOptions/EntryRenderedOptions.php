@@ -2,7 +2,6 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use Ryssbowh\CraftThemes\traits\ViewModesOptions;
@@ -48,15 +47,5 @@ class EntryRenderedOptions extends FieldDisplayerOptions
             }
         }
         return null;
-    }
-
-    /**
-     * Get view modes available, based on this displayer's field entry sections
-     * 
-     * @return array
-     */
-    public function getViewModes(): array
-    {
-        return ViewModesHelper::getSectionsViewModes($this->displayer->field->craftField, $this->displayer->getTheme());
     }
 }

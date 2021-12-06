@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EmailEmailOptions;
+use Ryssbowh\CraftThemes\models\fields\UserEmail;
 use craft\fields\Email;
 
 /**
@@ -36,7 +37,7 @@ class EmailEmail extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Email::class];
+        return [Email::class, UserEmail::class];
     }
 
     /**

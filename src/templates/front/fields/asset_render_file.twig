@@ -1,14 +1,14 @@
 {% extends "fields/_field" %}
 
 {% macro render(asset, field, options) %}
-    {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind))|raw }}
+    {% if asset %}
+        {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind))|raw }}
+    {% endif %}
 {% endmacro %}
 
-{% set show_field = value|length > 0 %}
-
 {% block content %}
-    {% if craftField.limit == '1' %}
-        {{ _self.render(value.0, field, options) }}
+    {% if displayer.limit == 1 %}
+        {{ _self.render(value.0 ?? null, field, options) }}
     {% else %}
         <ul class="asset-files">
             {% for asset in value %}

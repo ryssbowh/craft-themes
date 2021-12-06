@@ -4,7 +4,6 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserDefaultOptions;
 use Ryssbowh\CraftThemes\models\fields\Author;
-use Ryssbowh\CraftThemes\models\fields\UserInfo;
 use craft\fields\Users;
 
 /**
@@ -38,7 +37,7 @@ class UserDefault extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Author::class, UserInfo::class, Users::class];
+        return [Author::class, Users::class];
     }
 
     /**
@@ -47,5 +46,16 @@ class UserDefault extends FieldDisplayer
     public function getOptionsModel(): string
     {
         return UserDefaultOptions::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(&$value): bool
+    {
+        if ($this->field instanceof Author and !empty($value)) {
+            $value = [$value];
+        }
+        return parent::beforeRender($value);
     }
 }

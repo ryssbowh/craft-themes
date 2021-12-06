@@ -1,14 +1,13 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\models\FieldDisplayer;
+use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EntryRenderedOptions;
-use craft\fields\Entries;
 
 /**
  * Renders an entry field as rendered using a view mode
  */
-class EntryRendered extends FieldDisplayer
+class EntryRendered extends EntryLink
 {
     /**
      * @inheritDoc
@@ -26,9 +25,9 @@ class EntryRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTargets(): array
+    public static function isDefault(string $fieldClass): bool
     {
-        return [Entries::class];
+        return false;
     }
 
     /**
@@ -37,5 +36,15 @@ class EntryRendered extends FieldDisplayer
     public function getOptionsModel(): string
     {
         return EntryRenderedOptions::class;
+    }
+
+    /**
+     * Get view modes available, based on the field entry sections
+     * 
+     * @return array
+     */
+    public function getViewModes(): array
+    {
+        return ViewModesHelper::getSectionsViewModes($this->field->craftField, $this->getTheme());
     }
 }

@@ -38,6 +38,28 @@ class ViewModesHelper
     }
 
     /**
+     * Get view modes for the user photo volume
+     * 
+     * @param  ThemeInterface $theme
+     * @return array
+     */
+    public static function getUserPhotoViewModes(ThemeInterface $theme): array
+    {
+        $volumeUid = \Craft::$app->getProjectConfig()->get('users.photoVolumeUid');
+        $volume = \Craft::$app->volumes->getVolumeByUid($volumeUid);
+        $viewModes = [$volume->uid => [
+            'label' => $volume->name,
+            'viewModes' => []
+        ]];
+        if ($layout = $volume->getLayout($theme)) {
+            foreach ($layout->viewModes as $viewMode) {
+                $viewModes[$volume->uid]['viewModes'][$viewMode->uid] = $viewMode->name;
+            }
+        }
+        return $viewModes;
+    }
+
+    /**
      * Get view modes available for an Assets field and a theme
      * 
      * @param  Assets         $field

@@ -25,7 +25,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixSlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\NumberDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextFull;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextPlain;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextTruncated;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorFull;
@@ -93,7 +93,7 @@ class FieldDisplayerEvent extends Event
             MatrixSlick::class,
             MultiSelectLabel::class,
             NumberDefault::class,
-            PlainTextFull::class,
+            PlainTextPlain::class,
             PlainTextTruncated::class,
             RadioButtonsLabel::class,
             RedactorFull::class,

@@ -1,15 +1,15 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetRenderFileOptions;
+use Ryssbowh\CraftThemes\models\fields\UserPhoto;
 use craft\fields\Assets;
 use craft\helpers\Assets as AssetsHelper;
 
 /**
  * Renders the file of an asset field
  */
-class AssetRenderFile extends FieldDisplayer
+class AssetRenderFile extends AssetLink
 {
     /**
      * @inheritDoc
@@ -19,17 +19,17 @@ class AssetRenderFile extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public static function isDefault(string $fieldClass): bool
     {
-        return \Craft::t('themes', 'Render file');
+        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public static function getFieldTargets(): array
+    public function getName(): string
     {
-        return [Assets::class];
+        return \Craft::t('themes', 'Render file');
     }
 
     /**
@@ -48,6 +48,9 @@ class AssetRenderFile extends FieldDisplayer
     public function getAllowedFileKinds(): array
     {
         $kinds = AssetsHelper::getFileKinds();
+        if ($this->field instanceof UserPhoto) {
+            return ['image' => $kinds['image']];
+        }
         if ($this->field->craftField->restrictFiles) {
             $allowed = $this->field->craftField->allowedKinds;
             $kinds = array_filter($kinds, function ($key) use ($allowed) {

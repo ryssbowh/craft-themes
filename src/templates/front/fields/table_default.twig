@@ -1,6 +1,6 @@
 {% extends "fields/_field" %}
 
-{% set show_field = value|length > 0 and field.visibleFields|length > 0 %}
+{% set show_field = field.visibleFields|length > 0 %}
 
 {% block content %}
     <table>

@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
@@ -150,8 +151,8 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function beforeRender($value): bool
+    public function beforeRender(&$value): bool
     {
-        return true;
+        return !(empty($value) and Themes::$plugin->settings->hideEmptyFields);
     }
 }

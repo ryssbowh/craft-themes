@@ -12,7 +12,6 @@ import Radio from './forms/Radio.vue';
 import FileDisplayers from './forms/FileDisplayers.vue';
 import FetchViewMode from './forms/FetchViewMode.vue';
 import Elements from './forms/Elements.vue';
-import DisplaysCheckboxes from './forms/DisplaysCheckboxes.vue';
 
 let fields = {
     lightswitch: Lightswitch,
@@ -28,8 +27,7 @@ let fields = {
     radio: Radio,
     filedisplayers: FileDisplayers,
     fetchviewmode: FetchViewMode,
-    elements: Elements,
-    displayscheckboxes: DisplaysCheckboxes
+    elements: Elements
 };
 
 let event = new CustomEvent("register-form-fields-components", {detail: {}});

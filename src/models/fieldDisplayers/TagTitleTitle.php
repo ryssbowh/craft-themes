@@ -42,14 +42,6 @@ class TagTitleTitle extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function eagerLoad(): array
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getOptionsModel(): string
     {
         return TagTitleTitleOptions::class;

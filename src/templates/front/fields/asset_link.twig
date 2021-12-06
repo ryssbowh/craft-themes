@@ -1,10 +1,8 @@
 {% extends "fields/_field" %}
 {% import "_includes/macros" as macros %}
 
-{% set show_field = value|length > 0 %}
-
 {% block content %}
-    {% if craftField.limit == '1' %}
+    {% if displayer.limit == 1 %}
         {{ macros.assetLink(value.0, options) }}
     {% else %}
         <ul class="asset-list">

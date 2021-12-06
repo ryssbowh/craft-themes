@@ -3,17 +3,20 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\PlainTextFullOptions;
+use Ryssbowh\CraftThemes\models\fields\UserFirstName;
+use Ryssbowh\CraftThemes\models\fields\UserLastName;
+use Ryssbowh\CraftThemes\models\fields\UserUsername;
 use craft\fields\PlainText;
 
 /**
  * Renders a plain text field
  */
-class PlainTextFull extends FieldDisplayer
+class PlainTextPlain extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'plain_text_full';
+    public static $handle = 'plain_text_plain';
 
     /**
      * @inheritDoc
@@ -28,7 +31,7 @@ class PlainTextFull extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Full');
+        return \Craft::t('themes', 'Plain');
     }
 
     /**
@@ -36,7 +39,7 @@ class PlainTextFull extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [PlainText::class];
+        return [PlainText::class, UserFirstName::class, UserLastName::class, UserUsername::class];
     }
 
     /**

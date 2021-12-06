@@ -28,6 +28,14 @@ class AssetSlick extends AssetRendered
     /**
      * @inheritDoc
      */
+    public static function getFieldTargets(): array
+    {
+        return [Assets::class];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getOptionsModel(): string
     {
         return AssetSlickOptions::class;

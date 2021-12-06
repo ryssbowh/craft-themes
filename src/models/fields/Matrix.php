@@ -276,7 +276,7 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
-     * Fetch a field by handle, only returns visible items
+     * Get a field by handle
      * 
      * @param  MatrixBlock $block
      * @param  string      $handle
@@ -289,7 +289,7 @@ class Matrix extends CraftField implements MatrixInterface
         }
         $type = $this->types[$block->type->handle];
         foreach ($type->fields as $field) {
-            if ($field->isVisible() and $field->craftField->handle == $handle) {
+            if ($field->craftField->handle == $handle) {
                 return $field;
             }
         }
@@ -297,7 +297,7 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
-     * Fetch fields by handles
+     * Get fields by handles
      * 
      * @param  MatrixBlock $block
      * @param  array       $handles
@@ -311,7 +311,50 @@ class Matrix extends CraftField implements MatrixInterface
         $type = $this->types[$block->type->handle];
         $fields = [];
         foreach ($type->fields as $field) {
-            if ($field->isVisible() and in_array($field->craftField->handle, $handles)) {
+            if (in_array($field->craftField->handle, $handles)) {
+                $fields[] = $field;
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Get a field by uid
+     * 
+     * @param  MatrixBlock $block
+     * @param  string      $uid
+     * @return FieldInterface
+     */
+    public function getFieldByUid(MatrixBlock $block, string $uid): ?FieldInterface
+    {
+        if (!isset($this->types[$block->type->handle])) {
+            return null;
+        }
+        $type = $this->types[$block->type->handle];
+        foreach ($type->fields as $field) {
+            if ($field->uid == $uid) {
+                return $field;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get fields by uids
+     * 
+     * @param  MatrixBlock $block
+     * @param  array       $uids
+     * @return array
+     */
+    public function getFieldsByUids(MatrixBlock $block, array $uids): array
+    {
+        if (!isset($this->types[$block->type->handle])) {
+            return [];
+        }
+        $type = $this->types[$block->type->handle];
+        $fields = [];
+        foreach ($type->fields as $field) {
+            if (in_array($field->uid, $uids)) {
                 $fields[] = $field;
             }
         }

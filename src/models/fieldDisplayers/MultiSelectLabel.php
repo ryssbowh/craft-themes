@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\MultiSelectLabelOptions;
 use craft\base\Model;
@@ -46,5 +47,16 @@ class MultiSelectLabel extends FieldDisplayer
     public function getOptionsModel(): string
     {
         return MultiSelectLabelOptions::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(&$value): bool
+    {
+        $selected = array_filter($value->getOptions(), function ($option) {
+            return $option->selected;
+        });
+        return !(empty($selected) and Themes::$plugin->settings->hideEmptyFields);
     }
 }

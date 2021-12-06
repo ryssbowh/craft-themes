@@ -14,7 +14,11 @@ use Ryssbowh\CraftThemes\models\fields\Table;
 use Ryssbowh\CraftThemes\models\fields\TableField;
 use Ryssbowh\CraftThemes\models\fields\TagTitle;
 use Ryssbowh\CraftThemes\models\fields\Title;
-use Ryssbowh\CraftThemes\models\fields\UserInfo;
+use Ryssbowh\CraftThemes\models\fields\UserEmail;
+use Ryssbowh\CraftThemes\models\fields\UserFirstName;
+use Ryssbowh\CraftThemes\models\fields\UserLastName;
+use Ryssbowh\CraftThemes\models\fields\UserPhoto;
+use Ryssbowh\CraftThemes\models\fields\UserUsername;
 use yii\base\Event;
 
 class RegisterFieldsEvent extends Event
@@ -38,12 +42,16 @@ class RegisterFieldsEvent extends Event
         $this->add(Title::class);
         $this->add(Author::class);
         $this->add(File::class);
-        $this->add(UserInfo::class);
         $this->add(TagTitle::class);
         $this->add(PostDate::class);
         $this->add(DateUpdated::class);
         $this->add(DateCreated::class);
         $this->add(LastLoginDate::class);
+        $this->add(UserFirstName::class);
+        $this->add(UserLastName::class);
+        $this->add(UserUsername::class);
+        $this->add(UserPhoto::class);
+        $this->add(UserEmail::class);
     }
 
     /**

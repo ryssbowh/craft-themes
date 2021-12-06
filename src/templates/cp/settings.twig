@@ -29,6 +29,14 @@
             instructions: 'Show layouts/blocks edition shortcuts when on elements edit pages (entries, users, assets, globals, categories)'|t('themes')
         }) 
     }}
+    {{ 
+        forms.lightswitchField({
+            label: 'Hide empty fields'|t('themes'),
+            name: 'hideEmptyFields',
+            on: settings.hideEmptyFields,
+            instructions: "Hide fields that don't have a value"|t('themes')
+        }) 
+    }}
     <h2>{{ 'Re-install'|t('themes') }}</h2>
     <p>{{ 'Re-install themes data. This can be useful to fix broken states, it will create missing layouts/fields/displays and remove orphans'|t('themes') }}</p>
     <button href="{{ url('themes/ajax/install') }}" class="btn submit install">{{ 'Re-install'|t('themes') }}</button>

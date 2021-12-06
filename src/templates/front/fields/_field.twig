@@ -3,7 +3,7 @@
         {% block label %}
             {% if not field.labelHidden %}
                 <label class="{{ labelClasses|raw }}"{% if labelAttributes.size() %} {{ labelAttributes|raw }}{% endif %}>
-                    {{ field.name }}
+                    {{ label }}
                 </label>
             {% endif %}
         {% endblock %}

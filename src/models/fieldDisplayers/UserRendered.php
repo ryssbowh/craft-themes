@@ -2,18 +2,15 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
-use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UserRenderedOptions;
-use Ryssbowh\CraftThemes\models\fields\Author;
-use Ryssbowh\CraftThemes\models\fields\UserInfo;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\fields\Users;
 
 /**
  * Renders a user field as rendered using a view mode
  */
-class UserRendered extends FieldDisplayer
+class UserRendered extends UserDefault
 {
     /**
      * @inheritDoc
@@ -31,9 +28,9 @@ class UserRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static function getFieldTargets(): array
+    public static function isDefault(string $fieldClass): bool
     {
-        return [Author::class, UserInfo::class, Users::class];
+        return false;
     }
 
     /**
@@ -52,5 +49,15 @@ class UserRendered extends FieldDisplayer
     public function getUserLayout(): LayoutInterface
     {
         return Themes::$plugin->layouts->get($this->getTheme(), LayoutService::USER_HANDLE);
+    }
+
+    /**
+     * Get view modes available, based on the field users
+     * 
+     * @return array
+     */
+    public function getViewModes(): array
+    {
+        return ViewModesHelper::getUserViewModes($this->getTheme());
     }
 }

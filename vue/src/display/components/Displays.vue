@@ -138,7 +138,7 @@ export default {
     }
     .line {
         display: grid;
-        grid-template-columns: 5% 24% 12% 17% 17% 19% 6%;
+        grid-template-columns: 5% 20% 16% 17% 17% 19% 6%;
         align-items: center;
         margin: 0 0 7px 0;
     }

@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TagRenderedOptions;
@@ -53,5 +54,15 @@ class TagRendered extends FieldDisplayer
             return $group->getLayout($this->theme);
         }
         return null;
+    }
+
+    /**
+     * Get view modes available, based on the field tag
+     * 
+     * @return array
+     */
+    public function getViewModes(): array
+    {
+        return ViewModesHelper::getTagGroupViewModes($this->field->craftField, $this->getTheme());
     }
 }

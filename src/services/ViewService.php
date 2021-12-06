@@ -210,6 +210,7 @@ class ViewService extends Service
             'displayer' => $displayer,
             'options' => $displayer->getOptions(),
             'value' => $value,
+            'label' => $field->name,
             'craftField' => ($field instanceof CraftFieldInterface ? $field->craftField : null)
         ]);
         return $this->render(self::BEFORE_RENDERING_FIELD, $templates, $variables);

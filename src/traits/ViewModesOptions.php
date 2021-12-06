@@ -12,7 +12,7 @@ trait ViewModesOptions
      */
     public function defineViewModesDefaultValues(): array
     {
-        $viewModes = $this->getViewModes();
+        $viewModes = $this->displayer->getViewModes();
         $options = [];
         foreach ($viewModes as $id => $array) {
             $keys = array_keys($array['viewModes'] ?? []);
@@ -26,7 +26,7 @@ trait ViewModesOptions
      */
     public function defineViewModesOptions(): array
     {
-        $viewModes = $this->getViewModes();
+        $viewModes = $this->displayer->getViewModes();
         $options = [];
         foreach ($viewModes as $id => $array) {
             $options['viewMode-' . $id] = [
@@ -44,7 +44,7 @@ trait ViewModesOptions
      */
     public function defineViewModesRules(): array
     {
-        $viewModes = $this->getViewModes();
+        $viewModes = $this->displayer->getViewModes();
         $rules = [];
         foreach ($viewModes as $id => $array) {
             $viewMode = 'viewMode-' . $id;

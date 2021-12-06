@@ -1,6 +1,6 @@
 {% extends "fields/_field" %}
 
-{% set show_field = value|length > 0 and options.viewMode %}
+{% set show_field = options.viewMode is not null %}
 
 {% block content %}
     <div class="slick-carousel" data-slick="{{ options.getAttributes(null, ['viewModeUid'])|json_encode }}">

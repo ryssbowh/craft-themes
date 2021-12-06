@@ -5,19 +5,18 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\UserLayout;
-use craft\base\Element;
 
 /**
- * Display information about a user (user layouts only)
+ * Handles the username of user layouts
  */
-class UserInfo extends Field
-{
+class UserPhoto extends Field
+{       
     /**
      * @inheritDoc
      */
     public static function getType(): string
     {
-        return 'user-info';
+        return 'user-photo';
     }
 
     /**
@@ -25,7 +24,7 @@ class UserInfo extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        return $layout instanceof UserLayout;
+        return get_class($layout) == UserLayout::class;
     }
 
     /**
@@ -33,7 +32,7 @@ class UserInfo extends Field
      */
     public function getHandle(): string
     {
-        return 'author';
+        return 'photo';
     }
 
     /**
@@ -41,7 +40,7 @@ class UserInfo extends Field
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'User Info');
+        return \Craft::t('themes', 'Photo');
     }
 
     /**
@@ -49,7 +48,7 @@ class UserInfo extends Field
      */
     public function render($value = null): string
     {
-        $value = Themes::$plugin->view->renderingElement;
+        $value = Themes::$plugin->view->renderingElement->photo;
         return Themes::$plugin->view->renderField($this, $value);
     }
 }

@@ -48,6 +48,11 @@ class Settings extends Model
     /**
      * @var boolean
      */
+    public $hideEmptyFields = true;
+
+    /**
+     * @var boolean
+     */
     public $blockCache;
 
     /**
@@ -92,7 +97,7 @@ class Settings extends Model
     public function defineRules(): array
     {
         return [
-            ['showCpShortcuts', 'boolean'],
+            [['showCpShortcuts', 'hideEmptyFields'], 'boolean'],
             [['redirectTo', 'menuItemName'], 'string']
         ];
     }
