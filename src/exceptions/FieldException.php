@@ -17,4 +17,9 @@ class FieldException extends \Exception
     {
         return new static("Matrix type with uid $uid is not defined");
     }
+
+    public static function alreadyDefined(string $fieldClass)
+    {
+        return new static("Field $fieldClass can't be registered, its type ({$fieldClass::getType()} is already defined");
+    }
 }

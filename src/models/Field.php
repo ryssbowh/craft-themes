@@ -68,6 +68,14 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function getTargetClass(): string
+    {
+        return get_class($this);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function hasErrors($attribute = null)
     {
         if ($attribute !== null) {
@@ -305,7 +313,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function getAvailableDisplayers(): array
     {
-        $displayers = Themes::$plugin->fieldDisplayers->getForField(get_class($this));
+        $displayers = Themes::$plugin->fieldDisplayers->getAvailable($this);
         $_this = $this;
         array_walk($displayers, function ($displayer) use ($_this) {
             $displayer->field = $_this;

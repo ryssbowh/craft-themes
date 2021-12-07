@@ -122,10 +122,10 @@ Blocks are provided by a block provider, each provider can define several blocks
 
 ### Registering a new provider
 
-Listen to the `REGISTER_BLOCK_PROVIDERS` event of the `BlockProvidersService` class :
+Listen to the `EVENT_REGISTER_BLOCK_PROVIDERS` event of the `BlockProvidersService` class :
 
 ```
-Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProvidersEvent $event) {
+Event::on(BlockProvidersService::class, BlockProvidersService::EVENT_REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProvidersEvent $event) {
     $event->add(new SystemBlockProvider);
 });
 ```
@@ -139,7 +139,7 @@ An exception will be thrown if you register a provider which handle is already r
 You can modify blocks provided by a provider by responding to an event :
 
 ```
-Event::on(SystemBlockProvider::class, BlockProviderInterface::REGISTER_BLOCKS, function (RegisterBlockProviderBlocks $event) {
+Event::on(SystemBlockProvider::class, BlockProviderInterface::EVENT_REGISTER_BLOCKS, function (RegisterBlockProviderBlocks $event) {
     $event->blocks[] = MyBlock::class;
 });
 ```
@@ -149,9 +149,11 @@ An exception will be thrown if you register 2 blocks with the same handle within
 ### Defining new blocks
 
 New block classes must implements `BlockInterface`, the model `Block` should be used to extend from.  
-You can override the `getOptionsModel` method to define more options. Or use the [configurable options](#configurable-options) system to modify an existing block's options.
+You can override the `getOptionsModel` method to define more options.
 
 Validating your options and saving them will be handled automatically, as long as you have defined rules in your block options class.
+
+Blocks use [configurable options](#configurable-options).
 
 ### Creating/Deleting blocks programmatically
 
@@ -180,9 +182,9 @@ Themes::$plugin->blocks->save($block);
 
 ## Fields (Pro)
 
-There are 18 types of fields defined by this plugin.
+There are 19 types of fields defined by this plugin.
 
-13 "themes" fields, created by this plugin, which can have their own displayers :
+14 custom fields, created by this plugin, which can have their own displayers :
 
 - Author : handles the author of an entry
 - File : handles the file of an asset
@@ -197,6 +199,7 @@ There are 18 types of fields defined by this plugin.
 - UserUsername : For users only
 - UserPhoto : For users only
 - UserEmail : For users only
+- ElementUrl : handles the url for entries/categories
 
 And 5 that handle Craft fields, those can't have their own displayers. Their displayers will display the Craft field associated with them :
 
@@ -204,7 +207,7 @@ And 5 that handle Craft fields, those can't have their own displayers. Their dis
 - Matrix : handles Craft matrix fields
 - MatrixField : handles the fields within a matrix
 - Table : handles Craft table fields
-- TableField : handles the fields within a table field
+- TableField : handles the fields within a table field. This transform table fields columns in proper fields
 
 A field displayer defines how a field is rendered on the front end, each field displayer will handle one type of field. This is controlled by the method `getFieldTarget(): string` which will return either the class of the Craft field this displayer can handle, or the class of the themes field (like `Title`, `Author` etc).
 
@@ -213,14 +216,18 @@ A field displayer defines how a field is rendered on the front end, each field d
 Register your php field class (implementing `FieldInterface`) by responding to the event :
 
 ```
-Event::on(FieldsService::class, FieldsService::REGISTER_FIELDS, function (RegisterFieldsEvent $event) {
-    $event->add(MyField::class);
+Event::on(FieldsService::class, FieldsService::EVENT_REGISTER_FIELDS, function (RegisterFieldsEvent $event) {
+    $event->register(MyField::class);
 });
 ```
+Custom fields (any field that doesn't extend from `CraftField`) can be created automatically on layouts if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. By default this method returns false.  
+This method won't have any effect for fields that extends `CraftField`, as they will be created automatically (assuming a Craft field exists on the category group/entry type).
+
+If your field is "complex" (has sub fields for example), you may need a bespoke Vue component to render it in CP :
 
 To hook in the backend Vue system, register a js file with a bundle :
 ```
-Event::on(CpDisplayController::class, CpDisplayController::REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
+Event::on(CpDisplayController::class, CpDisplayController::EVENT_REGISTER_ASSET_BUNDLES, function (RegisterBundles $event) {
     $event->bundles[] = MyBundle::class;
 });
 ```  
@@ -228,27 +235,44 @@ Your javascript must respond to the event `register-fields-components` and add y
 
 Examples [here](vue/src/fields/main.js)
 
-"themes" fields (any field that doesn't extend from `CraftField`) can be created automatically on layouts if you return true to the method `shouldExistOnLayout(LayoutInterface $layout)`. By default this method returns false.  
-This method won't have any effect for fields that extends `CraftField`, as they will be created automatically (assuming a Craft field exists on the category group/entry type).
+You may also need to modify displayers so that they can handle your field :
+
+```
+Event::on(UrlLink::class, FieldDisplayerService::EVENT_REGISTER_FIELD_TARGETS, function (RegisterDisplayerTargetsEvent $event) {
+    $event->targets[] = MyField::class;
+});
+```
+
+## Field displayers (Pro)
 
 ### Define a new displayer
 
-Register your displayer by listening to the `REGISTER_DISPLAYERS` event of the `FieldDisplayerService` class :
+Register your displayer by listening to the event :
 
 ```
-Event::on(FieldDisplayerService::class, FieldDisplayerService::REGISTER_DISPLAYERS, function (FieldDisplayerEvent $event) {
+Event::on(FieldDisplayerService::class, FieldDisplayerService::EVENT_REGISTER_DISPLAYERS, function (RegisterFieldDisplayerEvent $event) {
     $event->register(MyFieldDisplayer::class);
 });
 ```
 
-Your field displayer class must implements `FieldDisplayerInterface` class (`FieldDisplayer` model should be used to extend from) and define the field it can handle in its `getFieldTarget` method. 
-:warning: Registering a field displayer with a handle already existing will **replace** the current displayer.
+Your field displayer class must implements `FieldDisplayerInterface` class (`FieldDisplayer` model should be used to extend from) and define the field it can handle in its `getFieldTargets` method. 
 
 Displayers use [configurable options](#configurable-options).
 
+## Modify default displayer
+
+Set the default displayer for a field
+
+```
+Event::on(Title::class, FieldDisplayerService::EVENT_DEFAULT_DISPLAYER, function (RegisterFieldDefaultDisplayerEvent $event) {
+    $event->default = 'displayer-handle';
+});
+```
+Note that this won't have any effect on fields already installed.
+
 ### Date/Time displayers
 
-This plugin works with the intl for all displayers handling date/time. All formats are expected to be in [icu](https://unicode-org.github.io/icu/userguide/format_parse/datetime/).
+This plugin works with the intl extension for all displayers handling date/time. All formats are expected to be in [icu](https://unicode-org.github.io/icu/userguide/format_parse/datetime/).
 
 When outputing a date value in templates, you can use the `format_datetime` filter :
 
@@ -262,25 +286,39 @@ A file displayer defines how an asset file is rendered on the front end. Each di
 
 ### Define a new displayer
 
-Register your displayer by listening to the `REGISTER_DISPLAYERS` event of the `FileDisplayerService` class :
+Register your displayer by listening to the `EVENT_REGISTER_DISPLAYERS` event of the `FileDisplayerService` class :
 
 ```
-Event::on(FileDisplayerService::class, FileDisplayerService::REGISTER_DISPLAYERS, function (FileDisplayerEvent $event) {
+Event::on(FileDisplayerService::class, FileDisplayerService::EVENT_REGISTER_DISPLAYERS, function (RegisterFileDisplayerEvent $event) {
     $event->register(MyFileDisplayer::class);
 });
 ```
 
 Your file displayer class must extend the `FileDisplayerInterface` class (`FileDisplayer` model should be used to extend from) and define one or several asset kinds in the `getKindTargets` method. The '\*' can be used to indicate this displayer can handle all asset kinds.  
-:warning: Registering a file displayer with a handle already existing will **replace** the current displayer.
 
 Displayers use [configurable options](#configurable-options).
+
+### Modify kind targets
+
+You can change which kinds a displayer can handle :
+```
+Event::on(Code::class, FileDisplayerService::EVENT_KIND_TARGETS, function (RegisterDisplayerTargetsEvent $e) {
+    $e->targets[] = 'audio';
+});
+```
+And modify default displayers :
+```
+Event::on(FileDisplayerService::class, FileDisplayerService::EVENT_DEFAULT_DISPLAYERS, function (RegisterFileDefaultDisplayerEvent $e) {
+    $e->defaults['audio'] = 'my-displayer-handle';
+});
+```
 
 ## Configurable options
 
 Many classes (field/file displayers, blocks, cache strategies) use configurable options, a class that allow modifications of options and how they are rendered in CP by other modules.  
 A configurable options class must define `defineOptions(): array` and `defineDefaultValues(): array`.
 
-These are the allowed field types that must be referenced in the `field` attribute of an option definition :
+These are the allowed field types that must be referenced in the `field` attribute of an option definition, they control how the option is rendered in CP :
 - checkboxes
 - color
 - date
@@ -296,10 +334,12 @@ These are the allowed field types that must be referenced in the `field` attribu
 - fetchviewmode : fetch view modes for a layout type and current theme and an optional element. Displays a select
 - filedisplayers : File displayers options for each asset kind
 
+They all have different options, see [here](vue/src/forms)
+
 You can add/remove/change options by responding to the options definitions event :
 
 ```
-Event::on(AssetLinkOptions::class, AssetLinkOptions::EVENT_OPTIONS_DEFINITIONS, function (FieldDisplayerOptionsDefinitions $e)) {
+Event::on(AssetLinkOptions::class, AssetLinkOptions::EVENT_OPTIONS_DEFINITIONS, function (DefinableOptionsDefinitions $e)) {
     $e->definitions['newOption'] = [
         'field' => 'text',
         'label' => 'My new option',
@@ -318,6 +358,9 @@ Event::on(AssetLinkOptions::class, AssetLinkOptions::EVENT_DEFINE_RULES, functio
     $e->rules[] = ['newOption', 'double'];
 }
 ```
+:warning: Options definitions must not fetch layouts/displays/view modes from database, or the installation may fail.  
+:warning: Changing options may break the displayer and its rendering
+
 ### New Vue component
 
 If you need to define a new Vue form field component, register an asset bundle :
@@ -340,7 +383,7 @@ document.addEventListener("register-form-fields-components", function(e) {
 ```
 You can now use `my-field` as a value for the `field` argument of any field definition. Your component will receive these 4 props :
 ```
-value: Array
+value
 definition: Object
 errors: Array
 name: String
@@ -537,7 +580,9 @@ Available variables :
 `craft.themes.viewModes` : View mode service  
 `craft.themes.registry` : Theme registry  
 `craft.themes.view` : Theme view service  
-`craft.themes.current` : Current theme 
+`craft.themes.current` : Current theme
+
+Array test : `{% if variable is array %}`
 
 ## Aliases
 
@@ -549,8 +594,8 @@ And 4 that are not used by the system, but could be useful if you're using a too
 
 `@themesWebPath` : Web directory for themes, equivalent to `@root/web/themes`  
 `@themesWeb` : Web url for themes, equivalent to `@web/themes`  
-`@themeWebPath` : Web url for current theme. This is not set if no theme is set.  
-`@themeWeb` : Base web url for the current theme. This is not set if no theme is set.
+`@themeWebPath` : Web directory for current theme. This is not set if no theme is set.  
+`@themeWeb` : Web url for the current theme. This is not set if no theme is set.
 
 ## Reinstall data (Pro)
 
@@ -560,7 +605,7 @@ If something looks off in the displays, you can always reinstall the themes data
 
 ### Rules cache  (Pro)
 
-Theme resolution rules will be cached by default on environments where devMode is disabled. If you change rules on a production environment, clear the cache : `./craft clear-caches/themes-rules-cache`
+Theme resolution rules will be cached by default on environments where devMode is disabled. If you change rules and deploy to a production environment, clear the cache : `./craft clear-caches/themes-rules-cache`
 
 It can be overriden by creating the `config/themes.php` file :
 
@@ -574,7 +619,7 @@ return [
 
 ### Template cache
 
-Template resolution will be cached by default on environments where devMode is disabled. So it's a good idea to clear these cache when deploying to a production environment : `./craft clear-caches/themes-template-cache`
+Template resolution will be cached by default on environments where devMode is disabled. If you create new templates and deploy to a production environment, clear the cache : `./craft clear-caches/themes-template-cache`
 
 It can be overriden by creating the `config/themes.php` file :
 

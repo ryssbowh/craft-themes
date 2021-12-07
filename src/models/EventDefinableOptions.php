@@ -1,11 +1,11 @@
 <?php
 namespace Ryssbowh\CraftThemes\models;
 
-use Ryssbowh\CraftThemes\events\FieldDisplayerOptionsDefinitions;
-use Ryssbowh\CraftThemes\exceptions\FileDisplayerException;
+use Ryssbowh\CraftThemes\events\DefinableOptionsDefinitions;
+use Ryssbowh\CraftThemes\exceptions\DefinableOptionsException;
 
 /**
- * Base class for a set of options that have definitions and can be modified through an event
+ * Base class for a set of options that have definitions that can be modified through an event
  */
 abstract class EventDefinableOptions extends DefinableOptions
 {
@@ -16,7 +16,7 @@ abstract class EventDefinableOptions extends DefinableOptions
      */
     protected function register()
     {
-        $event = new FieldDisplayerOptionsDefinitions([
+        $event = new DefinableOptionsDefinitions([
             'definitions' => $this->defineOptions(),
             'defaultValues' => $this->defineDefaultValues()
         ]);
@@ -26,7 +26,7 @@ abstract class EventDefinableOptions extends DefinableOptions
             $this->reservedWords()
         );
         if (sizeof($reserved) > 0) {
-            throw FileDisplayerException::reserved(get_class($this), $reserved);
+            throw DefinableOptionsException::reserved(get_class($this), $reserved);
         }
         $this->_definitions = $event->definitions;
         $this->_defaultValues = $event->defaultValues;

@@ -44,25 +44,13 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\UserRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserSlick;
 use yii\base\Event;
 
-class FieldDisplayerEvent extends Event
+class RegisterFieldDisplayerEvent extends Event
 {
     /**
      * List of registered displayers
      * @var array
      */
-    protected $displayers = [];
-
-    /**
-     * List of default displayers
-     * @var array
-     */
-    protected $defaults = [];
-
-    /**
-     * Displayer mapping ['fieldClass' => [displayerHandle]]
-     * @var array
-     */
-    protected $mapping = [];
+    protected $_displayers = [];
 
     /**
      * @inheritDoc
@@ -114,33 +102,13 @@ class FieldDisplayerEvent extends Event
     }
 
     /**
-     * Default getter
-     * 
-     * @return array
-     */
-    public function getDefaults(): array
-    {
-        return $this->defaults;
-    }
-
-    /**
      * Displayers getter
      * 
      * @return array
      */
     public function getDisplayers(): array
     {
-        return $this->displayers;
-    }
-
-    /**
-     * Mapping getter
-     * 
-     * @return array
-     */
-    public function getMapping(): array
-    {
-        return $this->mapping;
+        return $this->_displayers;
     }
 
     /**
@@ -152,21 +120,10 @@ class FieldDisplayerEvent extends Event
      */
     public function register(string $class, bool $replaceIfExisting = false)
     {
-        if (!$replaceIfExisting and isset($this->displayers[$class::$handle])) {
+        if (!$replaceIfExisting and isset($this->_displayers[$class::$handle])) {
             throw FieldDisplayerException::alreadyDefined($class);
         }
-        $this->displayers[$class::$handle] = $class;
-        foreach ($class::getFieldTargets() as $fieldTarget) {
-            if (!isset($this->mapping[$fieldTarget])) {
-                $this->mapping[$fieldTarget] = [];
-            }
-            if (!in_array($class::$handle, $this->mapping[$fieldTarget])) {
-                $this->mapping[$fieldTarget][] = $class::$handle;
-            }
-            if ($class::isDefault($fieldTarget)) {
-                $this->defaults[$fieldTarget] = $class::$handle;
-            }
-        }
+        $this->_displayers[$class::$handle] = $class;
     }
 
     /**

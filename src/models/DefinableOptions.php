@@ -1,7 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models;
 
-use Ryssbowh\CraftThemes\exceptions\FileDisplayerException;
+use Ryssbowh\CraftThemes\exceptions\DefinableOptionsException;
 use craft\base\Model;
 
 /**
@@ -201,7 +201,7 @@ abstract class DefinableOptions extends Model
             $this->reservedWords()
         );
         if (sizeof($reserved) > 0) {
-            throw FileDisplayerException::reserved(get_class($this), $reserved);
+            throw DefinableOptionsException::reserved(get_class($this), $reserved);
         }
         $this->_definitions = $definitions;
         $this->_defaultValues = $this->defineDefaultValues();

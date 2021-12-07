@@ -8,7 +8,16 @@ use craft\base\Field as BaseField;
  * A field is a type of item, it can handle a Craft field or a theme field (title, author etc)
  */
 interface FieldInterface
-{
+{   
+    /**
+     * The class used by displayer for their field targets
+     * Will be the field class for custom fields
+     * and the craft field class for craft fields
+     * 
+     * @return string
+     */
+    public function getTargetClass(): string;
+
     /**
      * For which craft field class this field should be used
      * 
@@ -140,6 +149,8 @@ interface FieldInterface
 
     /**
      * Render this item.
+     * Custom field must override this to pull the correct value from 
+     * the element being rendered which can be pulled from the View service.
      *
      * @param  mixed $value
      * @return string

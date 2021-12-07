@@ -26,7 +26,7 @@ class ImageTransform extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public static function getKindTargets()
+    public static function getKindTargets(): array
     {
         return ['image'];
     }

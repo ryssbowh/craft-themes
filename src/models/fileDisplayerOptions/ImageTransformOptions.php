@@ -24,7 +24,7 @@ class ImageTransformOptions extends FileDisplayerOptions
             'sizes' => [
                 'field' => 'text',
                 'instructions' => \Craft::t('themes', 'Enter a json list of options to generate different sizes (srcset), example: ["1.5x", "2x", "3x"]'),
-                'label' => \Craft::t('themes', 'Sizes')
+                'label' => \Craft::t('themes', 'Custom sizes')
             ]
         ];
     }

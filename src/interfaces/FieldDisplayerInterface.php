@@ -10,7 +10,8 @@ use craft\base\Model;
 interface FieldDisplayerInterface 
 {
     /**
-     * Field classes this displayer can handle
+     * Field classes this displayer can handle.
+     * Developers should use FieldDisplayerService::getFieldTargets($displayerHandle) instead.
      * 
      * @return array
      */

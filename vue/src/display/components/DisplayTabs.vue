@@ -12,7 +12,7 @@
                     <span class="error" data-icon="alert" aria-label="Error" v-if="mode.hasErrors"></span>
                     <span v-if="mode.hasErrors">&nbsp;</span>
                     <span @click.prevent="setViewMode2(mode)">{{ mode.name }}</span>
-                    <span class="icon edit" @click.prevent="editViewMode(mode)" :title="t('Edit View Mode')" v-if="viewMode.handle === mode.handle"></span>
+                    <span class="icon edit" @click.prevent="editViewMode(mode)" :title="t('Edit view mode')" v-if="viewMode.handle === mode.handle"></span>
                     <span v-if="mode.handle != 'default' && viewMode.handle === mode.handle" class="icon delete" @click.prevent="confirmAndDeleteViewMode(mode)"></span>
                 </a>
             </li>

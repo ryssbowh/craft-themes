@@ -50,6 +50,14 @@ class TableField extends Field
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getTargetClass(): string
+    {
+        return $this->craft_field_class;
+    }
+
+    /**
      * Table getter
      * 
      * @return ?Table
@@ -94,19 +102,6 @@ class TableField extends Field
     public function getDisplayName(): string
     {
         return $this->craft_field_class::displayName();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAvailableDisplayers(): array
-    {
-        $displayers = Themes::$plugin->fieldDisplayers->getForField($this->craft_field_class);
-        $_this = $this;
-        array_walk($displayers, function ($displayer) use ($_this) {
-            $displayer->field = $_this;
-        });
-        return $displayers;
     }
 
     /**

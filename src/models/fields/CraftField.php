@@ -14,7 +14,15 @@ use craft\fieldlayoutelements\CustomField;
  * Handles all Craft fields apart from Matrix and Table
  */
 class CraftField extends Field implements CraftFieldInterface
-{   
+{  
+    /**
+     * @inheritDoc
+     */
+    public function getTargetClass(): string
+    {
+        return get_class($this->craftField);
+    }
+
     /**
      * @inheritDoc
      */
@@ -113,19 +121,6 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
-    public function getAvailableDisplayers(): array
-    {
-        $displayers = Themes::$plugin->fieldDisplayers->getForField(get_class($this->craftField));
-        $_this = $this;
-        array_walk($displayers, function ($displayer) use ($_this) {
-            $displayer->field = $_this;
-        });
-        return $displayers;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getDisplayName(): string
     {
         return $this->craftField::displayName();
@@ -140,7 +135,7 @@ class CraftField extends Field implements CraftFieldInterface
         return [
             'type' => get_called_class()::getType(),
             'craft_field_id' => $craftField->id,
-            'craft_field_class' => get_class($craftField),
+            'craft_field_class' => $class,
             'displayerHandle' => Themes::$plugin->fieldDisplayers->getDefaultHandle($class) ?? ''
         ];
     }

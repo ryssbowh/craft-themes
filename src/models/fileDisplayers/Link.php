@@ -34,9 +34,9 @@ class Link extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public static function getKindTargets()
+    public static function getKindTargets(): array
     {
-        return '*';
+        return ['*'];
     }
 
     /**

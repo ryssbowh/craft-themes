@@ -1,59 +1,38 @@
 <?php
 namespace Ryssbowh\CraftThemes\services;
 
-use Ryssbowh\CraftThemes\events\FieldDisplayerEvent;
+use Ryssbowh\CraftThemes\events\RegisterFieldDisplayerEvent;
+use Ryssbowh\CraftThemes\events\RegisterDisplayerTargetsEvent;
+use Ryssbowh\CraftThemes\events\RegisterFieldDefaultDisplayerEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
+use Ryssbowh\CraftThemes\interfaces\CraftFieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use Ryssbowh\CraftThemes\models\Field;
-use Ryssbowh\CraftThemes\models\fields\CraftField;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use yii\base\Event;
 
 class FieldDisplayerService extends Service
 {
-    const REGISTER_DISPLAYERS = 'register_displayer';
+    const EVENT_REGISTER_DISPLAYERS = 'register_displayers';
+    const EVENT_FIELD_TARGETS = 'field_targets';
+    const EVENT_DEFAULT_DISPLAYER = 'default_dsplayer';
 
     /**
-     * Defaults displayers, indexed by field class
-     * @var array
-     */
-    protected $_defaults;
-
-    /**
-     * All displayers, indexed by handle
+     * All displayers classes, indexed by handle
      * @var array
      */
     protected $_displayers;
 
     /**
-     * displayer/fields mapping
+     * Defaults displayers, indexed by field class
      * @var array
      */
-    protected $_mapping;
+    protected $_defaults = [];
 
     /**
-     * Defaults getter
-     * 
-     * @return array
+     * Field targets, indexed by displayer handle
+     * @var array
      */
-    public function getDefaults(): array
-    {
-        if (is_null($this->_defaults)) {
-            $this->register();
-        }
-        return $this->_defaults;
-    }
-
-    /**
-     * Mapping getter
-     * 
-     * @return array
-     */
-    public function getMapping(): array
-    {
-        if (is_null($this->_mapping)) {
-            $this->register();
-        }
-        return $this->_mapping;
-    }
+    protected $_fieldTargets = [];
 
     /**
      * Displayers getter
@@ -109,31 +88,47 @@ class FieldDisplayerService extends Service
      * Ensure a displayer handle is valid for a field class
      * 
      * @param  string $displayerHandle
-     * @param  Field  $field
+     * @param  string $fieldClass
      * @throws FieldDisplayerException
      */
-    public function ensureDisplayerIsValidForField(string $displayerHandle, Field $field)
+    public function ensureDisplayerIsValidForField(string $displayerHandle, string $fieldClass)
     {
         $this->ensureDisplayerIsDefined($displayerHandle);
-        $fieldClass = get_class($field);
-        if ($field instanceof CraftField) {
-            //The field target for a craft field is the craft field itself
-            $fieldClass = get_class($field->craftField);
-        }
-        if (!in_array($displayerHandle, $this->getMapping()[$fieldClass] ?? [])) {
+        $targets = $this->getFieldTargets($displayerHandle);
+        if (!in_array($fieldClass, $targets)) {
             throw FieldDisplayerException::notValid($displayerHandle, $fieldClass);
         }
     }
 
     /**
-     * Get displayers for a field
+     * Get the field targets for a displayer handle
      * 
-     * @param  string $classFor
+     * @param  string $displayerHandle
      * @return array
      */
-    public function getForField(string $classFor): array
+    public function getFieldTargets(string $displayerHandle): array
     {
-        return $this->getByHandles($this->getMapping()[$classFor] ?? []);
+        if (!isset($this->_fieldTargets[$displayerHandle])) {
+            $this->registerTargets($displayerHandle);
+        }
+        return $this->_fieldTargets[$displayerHandle];
+    }
+
+    /**
+     * Get available displayers for a field
+     * 
+     * @param  FieldInterface $fieldClass
+     * @return array
+     */
+    public function getAvailable(FieldInterface $field): array
+    {
+        $available = [];
+        foreach ($this->all() as $handle => $class) {
+            if (in_array($field->getTargetClass(), $this->getFieldTargets($handle))) {
+                $available[] = $handle;
+            }
+        }
+        return $this->getByHandles($available);
     }
 
     /**
@@ -144,23 +139,10 @@ class FieldDisplayerService extends Service
      */
     public function getDefaultHandle(string $classFor): ?string
     {
-        return $this->getDefaults()[$classFor] ?? null;
-    }
-
-    /**
-     * Get all displayers indexed by the field target (either the craft field class or the field class)
-     *
-     * @return array
-     */
-    public function getAllByFieldTarget(): array
-    {
-        $displayers = [];
-        foreach ($this->all() as $displayer) {
-            foreach ($displayer::getFieldTargets() as $fieldTarget) {
-                $displayers[$fieldTarget][] = new $displayer;
-            }
+        if (!isset($this->_defaults[$classFor])) {
+            $this->registerDefault($classFor);
         }
-        return $displayers;
+        return $this->_defaults[$classFor] ?: null;
     }
 
     /**
@@ -200,10 +182,54 @@ class FieldDisplayerService extends Service
      */
     protected function register()
     {
-        $event = new FieldDisplayerEvent;
-        $this->triggerEvent(self::REGISTER_DISPLAYERS, $event);
-        $this->_defaults = $event->getDefaults();
+        $event = new RegisterFieldDisplayerEvent;
+        $this->triggerEvent(self::EVENT_REGISTER_DISPLAYERS, $event);
         $this->_displayers = $event->getDisplayers();
-        $this->_mapping = $event->getMapping();
+    }
+
+    /**
+     * Register field targets for a displayer handle
+     * 
+     * @param string $displayerHandle
+     */
+    protected function registerTargets(string $displayerHandle)
+    {
+        $displayerClass = $this->getClassByHandle($displayerHandle);
+        $event = new RegisterDisplayerTargetsEvent([
+            'targets' => $displayerClass::getFieldTargets()
+        ]);
+        //Give plugins opportunity to register field targets
+        Event::trigger($displayerClass, self::EVENT_FIELD_TARGETS, $event);
+        $this->_fieldTargets[$displayerHandle] = array_unique($event->targets);
+    }
+
+    /**
+     * Register default displayer handle for a field class
+     * 
+     * @param string $fieldClass
+     */
+    protected function registerDefault(string $fieldClass)
+    {
+        //figure out the default as defined by displayer classes :
+        $default = '';
+        foreach ($this->all() as $handle => $class) {
+            foreach ($this->getKindTargets($handle) as $target) {
+                if ($target == $fieldClass and $class::isDefault($fieldClass)) {
+                    $default = $handle;
+                    break;
+                }
+            }
+        }
+        //Give plugins opportunity to override default :
+        $event = new RegisterFieldDefaultDisplayerEvent([
+            'default' => $default
+        ]);
+        Event::trigger($fieldClass, self::EVENT_DEFAULT_DISPLAYER, $event);
+        try {
+            $this->ensureDisplayerIsValidForField($event->default, $fieldClass);
+            $this->_defaults[$fieldClass] = $event->default;
+        } catch (FieldDisplayerException $e) {
+            $this->_defaults[$fieldClass] = $default;
+        }
     }
 }

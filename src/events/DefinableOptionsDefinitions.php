@@ -3,7 +3,7 @@ namespace Ryssbowh\CraftThemes\events;
 
 use yii\base\Event;
 
-class FieldDisplayerOptionsDefinitions extends Event
+class DefinableOptionsDefinitions extends Event
 {
     /**
      * @var array

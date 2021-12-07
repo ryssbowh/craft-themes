@@ -26,7 +26,7 @@ class Code extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public static function getKindTargets()
+    public static function getKindTargets(): array
     {
         return ['javascript', 'html', 'php', 'text', 'xml', 'json'];
     }

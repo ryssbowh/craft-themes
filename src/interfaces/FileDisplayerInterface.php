@@ -12,13 +12,13 @@ interface FileDisplayerInterface
 {
     /**
      * Which file kind this displayer can handle.
+     * Developers should use FileDisplayerService::getKindTargets(string $displayerHandle) instead
      * 
-     * array[string] or
-     * '*' for all asset kinds
+     * '*' is a valid kind and will be resolved to all asset kinds
      * 
-     * @return array|string
+     * @return array
      */
-    public static function getKindTargets();
+    public static function getKindTargets(): array;
 
     /**
      * Is this displayer the default for an asset kind
