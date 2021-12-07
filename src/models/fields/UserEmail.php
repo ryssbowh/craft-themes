@@ -42,13 +42,4 @@ class UserEmail extends Field
     {
         return \Craft::t('themes', 'Email');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render($value = null): string
-    {
-        $value = Themes::$plugin->view->renderingElement->email;
-        return Themes::$plugin->view->renderField($this, $value);
-    }
 }

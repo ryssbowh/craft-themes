@@ -47,13 +47,4 @@ class LastLoginDate extends Field
     {
         return \Craft::t('themes', 'Last login date');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render($value = null): string
-    {
-        $value = Themes::$plugin->view->renderingElement->lastLoginDate;
-        return Themes::$plugin->view->renderField($this, $value);
-    }
 }

@@ -46,13 +46,4 @@ class DateUpdated extends Field
     {
         return \Craft::t('themes', 'Date updated');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render($value = null): string
-    {
-        $value = Themes::$plugin->view->renderingElement->dateUpdated;
-        return Themes::$plugin->view->renderField($this, $value);
-    }
 }

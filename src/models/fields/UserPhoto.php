@@ -42,13 +42,4 @@ class UserPhoto extends Field
     {
         return \Craft::t('themes', 'Photo');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render($value = null): string
-    {
-        $value = Themes::$plugin->view->renderingElement->photo;
-        return Themes::$plugin->view->renderField($this, $value);
-    }
 }

@@ -42,13 +42,4 @@ class UserFirstName extends Field
     {
         return \Craft::t('themes', 'First Name');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render($value = null): string
-    {
-        $value = Themes::$plugin->view->renderingElement->firstName;
-        return Themes::$plugin->view->renderField($this, $value);
-    }
 }

@@ -47,13 +47,4 @@ class PostDate extends Field
     {
         return \Craft::t('themes', 'Date posted');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render($value = null): string
-    {
-        $value = Themes::$plugin->view->renderingElement->postDate;
-        return Themes::$plugin->view->renderField($this, $value);
-    }
 }

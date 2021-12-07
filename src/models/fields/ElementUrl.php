@@ -53,13 +53,4 @@ class ElementUrl extends Field
     {
         return \Craft::t('themes', 'Element url');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render($value = null): string
-    {
-        $value = Themes::$plugin->view->renderingElement->url;
-        return Themes::$plugin->view->renderField($this, $value);
-    }
 }

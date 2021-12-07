@@ -67,7 +67,8 @@ class ContentBlock extends Block
             } catch (\Exception $e) {
             }
             if ($displayer) {
-                $displayer->beforeRender(null);
+                $value = $display->item->renderingValue;
+                $displayer->beforeRender($value);
             }
         }
         return true;

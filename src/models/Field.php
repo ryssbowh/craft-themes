@@ -382,10 +382,18 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function getRenderingValue()
+    {
+        return Themes::$plugin->view->renderingElement->{$this->handle};
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function render($value = null): string
     {
         if ($value === null) {
-            $value = Themes::$plugin->view->renderingElement->{$this->handle};
+            $value = $this->renderingValue;
         }
         return Themes::$plugin->view->renderField($this, $value);
     }

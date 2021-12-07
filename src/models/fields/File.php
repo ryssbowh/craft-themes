@@ -47,9 +47,8 @@ class File extends Field
     /**
      * @inheritDoc
      */
-    public function render($value = null): string
+    public function getRenderingValue()
     {
-        $value = Themes::$plugin->view->renderingElement;
-        return Themes::$plugin->view->renderField($this, $value);
+        return Themes::$plugin->view->renderingElement;
     }
 }
