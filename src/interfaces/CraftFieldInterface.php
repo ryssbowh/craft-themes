@@ -1,7 +1,6 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\models\fields\CraftField;
 use craft\base\Field as BaseField;
 
 /**
@@ -27,7 +26,7 @@ interface CraftFieldInterface extends FieldInterface
     /**
      * Callback when the associated Craft field is changed
      * 
-     * @param  CraftField $field
+     * @param  BaseField $field
      * @return bool should the associated display be resaved
      */
     public function onCraftFieldChanged(BaseField $field): bool;

@@ -28,7 +28,7 @@ class BlockProvidersTest extends Unit
     public function testExceptionIsThrownWhenSameProviderIsRegistered()
     {
         $providers = $this->providers;
-        Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProviders $event) {
+        Event::on(BlockProvidersService::class, BlockProvidersService::EVENT_REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProviders $event) {
             $event->add(new TestBlockProvider);
             $event->add(new TestBlockProvider);
         });
@@ -40,10 +40,10 @@ class BlockProvidersTest extends Unit
     public function testProvidersAreRegistered()
     {
         $providers = $this->providers;
-        Event::on(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProviders $event) {
+        Event::on(BlockProvidersService::class, BlockProvidersService::EVENT_REGISTER_BLOCK_PROVIDERS, function (RegisterBlockProviders $event) {
             $event->add(new TestBlockProvider);
         });
-        $this->tester->expectEvent(BlockProvidersService::class, BlockProvidersService::REGISTER_BLOCK_PROVIDERS, function () use ($providers) {
+        $this->tester->expectEvent(BlockProvidersService::class, BlockProvidersService::EVENT_REGISTER_BLOCK_PROVIDERS, function () use ($providers) {
             $providers->all();
         });
         $this->assertCount(3, $providers->all());
@@ -55,7 +55,7 @@ class BlockProvidersTest extends Unit
     public function testTestBlockProviderHasBlocks()
     {
         $systemProvider = $this->providers->getByHandle('system');
-        $this->tester->expectEvent(SystemBlockProvider::class, BlockProviderInterface::REGISTER_BLOCKS, function () use ($systemProvider) {
+        $this->tester->expectEvent(SystemBlockProvider::class, BlockProviderInterface::EVENT_REGISTER_BLOCKS, function () use ($systemProvider) {
             $systemProvider->getBlocks();
         });
         $this->assertCount(11, $systemProvider->getBlocks());

@@ -19,7 +19,7 @@ use craft\helpers\StringHelper;
 class FieldsService extends Service
 {
     const CONFIG_KEY = 'themes.fields';
-    const REGISTER_FIELDS = 'registerFields';
+    const EVENT_REGISTER_FIELDS = 'registerFields';
 
     /**
      * @var Collection
@@ -271,7 +271,7 @@ class FieldsService extends Service
     protected function register()
     {
         $event = new RegisterFieldsEvent;
-        $this->triggerEvent(self::REGISTER_FIELDS, $event);
+        $this->triggerEvent(self::EVENT_REGISTER_FIELDS, $event);
         $this->_registered = $event->fields;
     }
 

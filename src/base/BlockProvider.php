@@ -62,8 +62,8 @@ abstract class BlockProvider extends Component implements BlockProviderInterface
                 'blocks' => $this->_definedBlocks,
                 'provider' => $this
             ]);
-            if ($this->hasEventHandlers(BlockProviderInterface::REGISTER_BLOCKS)) {
-                $this->trigger(BlockProviderInterface::REGISTER_BLOCKS, $event);    
+            if ($this->hasEventHandlers(BlockProviderInterface::EVENT_REGISTER_BLOCKS)) {
+                $this->trigger(BlockProviderInterface::EVENT_REGISTER_BLOCKS, $event);    
             }
             $blocks = [];
             foreach ($event->blocks as $class) {

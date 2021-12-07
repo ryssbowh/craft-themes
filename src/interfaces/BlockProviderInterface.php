@@ -6,7 +6,7 @@ namespace Ryssbowh\CraftThemes\interfaces;
  */
 interface BlockProviderInterface 
 {
-    const REGISTER_BLOCKS = 'register_blocks';
+    const EVENT_REGISTER_BLOCKS = 'register_blocks';
 
     /**
      * Handle getter

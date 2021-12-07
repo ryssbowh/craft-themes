@@ -10,7 +10,6 @@ use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
-use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\CustomLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;

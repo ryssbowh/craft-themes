@@ -11,7 +11,7 @@ use Ryssbowh\CraftThemes\models\layouts\Layout;
  */
 class CpBlocksController extends Controller
 {
-    const REGISTER_ASSET_BUNDLES = 'register_asset_bundles';
+    const EVENT_REGISTER_ASSET_BUNDLES = 'register_asset_bundles';
 
     /**
      * Blocks index
@@ -45,9 +45,9 @@ class CpBlocksController extends Controller
             $layout = $this->layouts->getById($layout);
         }
         
-        if ($this->hasEventHandlers(self::REGISTER_ASSET_BUNDLES)) {
+        if ($this->hasEventHandlers(self::EVENT_REGISTER_ASSET_BUNDLES)) {
             $event = new RegisterBundles;
-            $this->trigger(self::REGISTER_ASSET_BUNDLES, $event);
+            $this->trigger(self::EVENT_REGISTER_ASSET_BUNDLES, $event);
             foreach ($event->bundles as $class) {
                 $this->view->registerAssetBundle($class);
             }

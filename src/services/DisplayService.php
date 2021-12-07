@@ -10,7 +10,6 @@ use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Display;
-use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;

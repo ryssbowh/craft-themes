@@ -12,7 +12,7 @@ class BlockProvidersService extends Component
      * Register block providers event key
      * @var string
      */
-    const REGISTER_BLOCK_PROVIDERS = 'block_providers';
+    const EVENT_REGISTER_BLOCK_PROVIDERS = 'block_providers';
 
     /**
      * @var array
@@ -78,7 +78,7 @@ class BlockProvidersService extends Component
     protected function register()
     {
         $e = new RegisterBlockProviders();
-        $this->trigger(self::REGISTER_BLOCK_PROVIDERS, $e);
+        $this->trigger(self::EVENT_REGISTER_BLOCK_PROVIDERS, $e);
         $this->_providers = $e->getProviders();
     }
 }
