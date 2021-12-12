@@ -37,13 +37,13 @@ export default {
         name: String
     },
     created() {
-        if (this.definition.element) {
+        if (this.definition.element ?? null) {
             this.element = this.definition.element;
         }
         this.realValue = this.value;
     },
     mounted() {
-        if (this.definition.element.startsWith('from:')) {
+        if ((this.definition.element ?? null) && this.definition.element.startsWith('from:')) {
             let elems = this.definition.element.split(':');
             let $elem = $(elems[1]).find(elems[2]);
             this.element = $elem.val();
