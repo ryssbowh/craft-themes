@@ -213,7 +213,7 @@ class FieldDisplayerService extends Service
         //figure out the default as defined by displayer classes :
         $default = '';
         foreach ($this->all() as $handle => $class) {
-            foreach ($this->getKindTargets($handle) as $target) {
+            foreach ($this->getFieldTargets($handle) as $target) {
                 if ($target == $fieldClass and $class::isDefault($fieldClass)) {
                     $default = $handle;
                     break;

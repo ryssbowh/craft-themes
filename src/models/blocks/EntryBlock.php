@@ -61,7 +61,8 @@ class EntryBlock extends Block
                 } catch (ViewModeException $e) {
                     continue;
                 }
-                $entry = Entry::find()->id($array['id'])->one();
+                $eagerLoadable = Themes::$plugin->displayerCache->getEagerLoadable($viewMode);
+                $entry = Entry::find()->id($array['id'])->with($eagerLoadable)->one();
                 if ($entry) {
                     $this->_entries[] = [
                         'entry' => $entry,

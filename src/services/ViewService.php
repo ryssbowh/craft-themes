@@ -127,12 +127,6 @@ class ViewService extends Service
         }
         \Craft::info('Found layout "' . $layout->description . '" (id: ' . $layout->id . ')', __METHOD__);
         $this->_renderingElement = $element;
-        if ($this->eagerLoad) {
-            $viewMode = $layout->getViewMode(ViewModeService::DEFAULT_HANDLE);
-            $with = Themes::$plugin->displayerCache->eagerLoadViewMode($viewMode);
-            \Craft::info('Eager load fields ' . json_encode($with), __METHOD__);
-            \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
-        }
         $this->pageVariables = $event->variables;
         $event->variables = array_merge($event->variables, [
             'layout' => $layout,
@@ -283,10 +277,18 @@ class ViewService extends Service
      * @param  string                   $mode
      * @return string
      */
-    public function renderLayout(LayoutInterface $layout, $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): string
+    public function renderLayout(LayoutInterface $layout, $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS, bool $eagerLoad = false): string
     {
         if (is_string($viewMode)) {
             $viewMode = $layout->getViewMode($viewMode);
+        }
+        if (!$element) {
+            $element = $this->_renderingElement;
+        }
+        if ($this->eagerLoad and $eagerLoad) {
+            $with = Themes::$plugin->displayerCache->getEagerLoadable($viewMode);
+            \Craft::info('Eager load fields ' . json_encode($with), __METHOD__);
+            \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
         }
         $theme = $this->themesRegistry()->current;
         $oldLayout = $this->renderingLayout;

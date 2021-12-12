@@ -36,8 +36,8 @@ class ImageTransformOptions extends FileDisplayerOptions
     {
         return [
             'transform' => null,
-            'custom' => '',
-            'sizes' => '',
+            'custom' => '{}',
+            'sizes' => '[]',
         ];
     }
 

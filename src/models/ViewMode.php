@@ -94,7 +94,7 @@ class ViewMode extends Model implements ViewModeInterface
     public function eagerLoad(string $prefix = '', int $level = 0): array
     {
         $with = [];
-        foreach ($this->getVisibleDisplays() as $display) {
+        foreach ($this->displays as $display) {
             $with = array_merge($with, $display->item->eagerLoad($prefix, $level));
         }
         return $with;

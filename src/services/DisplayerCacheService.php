@@ -27,6 +27,12 @@ class DisplayerCacheService extends Service
     public $cache;
 
     /**
+     * Keep track of eager loaded view modes to avoid repetition
+     * @var array
+     */
+    protected $eagerLoadables = [];
+
+    /**
      * Start displayer caching
      * 
      * @param DisplayerInterface $displayer
@@ -74,10 +80,15 @@ class DisplayerCacheService extends Service
      * @param  ViewModeInterface $viewMode
      * @return string[]
      */
-    public function eagerLoadViewMode(ViewModeInterface $viewMode): array
+    public function getEagerLoadable(ViewModeInterface $viewMode): array
     {
+        if (isset($this->eagerLoadables[$viewMode->id])) {
+            return $this->eagerLoadables[$viewMode->id];
+        }
         if (!$this->cacheEnabled) {
-            return $viewMode->eagerLoad();
+            $eagerLoad =  $viewMode->eagerLoad();
+            $this->eagerLoadables[$viewMode->id] = $eagerLoad;
+            return $eagerLoad;
         }
         $key = self::EAGERLOAD_CACHE_TAG . '::' . $viewMode->id;
         $cached = $this->cache->get($key);
@@ -91,6 +102,7 @@ class DisplayerCacheService extends Service
             ]);
             $this->cache->set($key, $cached, null, $dep);
         }
+        $this->eagerLoadables[$viewMode->id] = $cached;
         return $cached;
     }
 
@@ -115,6 +127,7 @@ class DisplayerCacheService extends Service
      */
     public function flush()
     {
+        $this->eagerLoadedViewModes = [];
         TagDependency::invalidate($this->cache, self::DISPLAYER_CACHE_TAG);
     }
 

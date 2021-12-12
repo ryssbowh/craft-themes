@@ -430,7 +430,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function renderRegions(): string
     {
-        return Themes::$plugin->view->renderLayout($this, ViewModeService::DEFAULT_HANDLE, null, LayoutInterface::RENDER_MODE_REGIONS);
+        return Themes::$plugin->view->renderLayout($this, ViewModeService::DEFAULT_HANDLE, null, LayoutInterface::RENDER_MODE_REGIONS, true);
     }
 
     /**

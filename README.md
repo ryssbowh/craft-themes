@@ -266,6 +266,10 @@ PHP Intl extension
 This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php 7.3, 7.4 and 8.0.  
 One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue](https://github.com/yiisoft/yii2/issues/18406)
 
+## Known issues
+
+- When adding fields for the first time to the user layout, it needs to be saved twice for the themes fields to be created. The following times work normally.
+
 ## Documentation
 
 - [Class reference](https://ryssbowh.github.io/craft-themes/namespaces/ryssbowh-craftthemes.html) (from 3.0.0 only)

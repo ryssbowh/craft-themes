@@ -57,14 +57,15 @@ class File extends Field
      */
     public function eagerLoad(string $prefix = '', int $level = 0): array
     {
-        if (!$this->displayer) {
+        //Prefix can't be null here as this must be called from another field
+        if (!$this->displayer or !$prefix) {
             return [];
         }
         if ($level >= Themes::$plugin->settings->maxEagerLoadLevel) {
             \Craft::info("Maximum eager loaging level (" . Themes::$plugin->settings->maxEagerLoadLevel . ') reached', __METHOD__);
             return [];
         }
-        $with = substr($prefix, 0, -1);
+        $with = $prefix ? substr($prefix, 0, -1) : $prefix;
         return $this->displayer->eagerLoad([$with], $with . '.', $level);
     }
 }

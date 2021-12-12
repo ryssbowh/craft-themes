@@ -560,7 +560,7 @@ To override the preferences for your theme, override the method `getPreferencesM
 
 ## Eager loading (Pro)
 
-When a view mode is rendered the eager load map will be built to eager load every visible field. The map will also contain nested view modes fields (displayers that render other layout/view mode) and assets transforms. This map will be stored in cache.  
+When a view mode is rendered the eager load map will be built to eager load every possible field. The map will also contain nested view modes fields (displayers that render other layout/view mode) and assets transforms. This map will be stored in cache.  
 
 This cache will be cleared when clearing displayer caches : `./craft clear-caches/themes-displayer-cache`
 
