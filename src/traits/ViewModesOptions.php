@@ -29,6 +29,9 @@ trait ViewModesOptions
         $viewModes = $this->displayer->getViewModes();
         $options = [];
         foreach ($viewModes as $id => $array) {
+            $array['viewModes'] = [
+                '' => 'None (skip display)'
+            ] + $array['viewModes'];
             $options['viewMode-' . $id] = [
                 'field' => 'select',
                 'required' => true,
@@ -48,8 +51,12 @@ trait ViewModesOptions
         $rules = [];
         foreach ($viewModes as $id => $array) {
             $viewMode = 'viewMode-' . $id;
-            $rules[] = [$viewMode, 'required', 'message' => \Craft::t('themes', 'View mode cannot be blank')];
             $rules[] = [$viewMode, 'in', 'range' => array_keys($this->definitions[$viewMode]['options']), 'message' => \Craft::t('themes', 'View mode is invalid')];
+            $rules[] = [$viewMode, function () use ($viewMode) {
+                if ($this->displayer->field->viewMode->uid == $this->$viewMode) {
+                    $this->addError($viewMode, \Craft::t('themes', 'View modes can\'t reference themselves'));
+                }
+            }];
         }
         return $rules;
     }

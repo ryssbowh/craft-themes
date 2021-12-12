@@ -61,7 +61,9 @@ trait ViewModeOptions
         return [
             'viewModeUid' => [
                 'field' => 'select',
-                'options' => $viewModes,
+                'options' => [
+                    '' => 'None (skip display)'
+                ] + $viewModes,
                 'label' => \Craft::t('themes', 'View mode'),
                 'required' => true,
                 'warning' => sizeof($viewModes) == 0 ? \Craft::t('themes', "It seems this field doesn't have any valid source") : null
@@ -74,8 +76,11 @@ trait ViewModeOptions
      */
     public function validateViewMode()
     {
-        if (!isset($this->displayer->getViewModes()[$this->viewModeUid])) {
+        if ($this->viewModeUid and !isset($this->displayer->getViewModes()[$this->viewModeUid])) {
             $this->addError('viewModeUid', \Craft::t('themes', 'View mode is invalid'));
+        }
+        if ($this->viewModeUid == $this->displayer->field->viewMode->uid) {
+            $this->addError('viewModeUid', \Craft::t('themes', 'View modes can\'t reference themselves'));   
         }
     }
 }
