@@ -43,9 +43,10 @@ class UserDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return UserDefaultOptions::class;
+        $eagerLoad[] = $prefix . 'photo';
+        return $eagerLoad;
     }
 
     /**
@@ -57,5 +58,13 @@ class UserDefault extends FieldDisplayer
             $value = [$value];
         }
         return parent::beforeRender($value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return UserDefaultOptions::class;
     }
 }

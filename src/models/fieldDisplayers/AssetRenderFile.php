@@ -35,9 +35,14 @@ class AssetRenderFile extends AssetLink
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return AssetRenderFileOptions::class;
+        foreach ($this->options->displayers as $kind => $options) {
+            if ($displayer = $this->options->getDisplayerForKind($kind)) {
+                $eagerLoad = $displayer->eagerLoad($eagerLoad, $prefix, $level);
+            }
+        }
+        return $eagerLoad;
     }
 
     /**
@@ -58,5 +63,21 @@ class AssetRenderFile extends AssetLink
             }, ARRAY_FILTER_USE_KEY);
         }
         return $kinds;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCanBeCached(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return AssetRenderFileOptions::class;
     }
 }

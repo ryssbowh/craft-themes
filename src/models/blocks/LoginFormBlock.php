@@ -33,7 +33,7 @@ class LoginFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         if ($this->options->onlyIfNotAuthenticated and \Craft::$app->user->getIdentity()) {
             return false;
@@ -44,7 +44,7 @@ class LoginFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return LoginFormBlockOptions::class;
     }

@@ -36,9 +36,16 @@ class UserRendered extends UserDefault
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return UserRenderedOptions::class;
+        foreach ($this->getViewModes() as $uid => $label) {
+            $viewMode = Themes::$plugin->viewModes->getByUid($uid);
+            //Avoid infinite loops for self referencing view modes :
+            if ($viewMode->id != $this->field->viewMode->id) {
+                $eagerLoad = array_merge($eagerLoad, $viewMode->eagerLoad($prefix, $level));
+            }
+        }
+        return $eagerLoad;
     }
 
     /**
@@ -59,5 +66,13 @@ class UserRendered extends UserDefault
     public function getViewModes(): array
     {
         return ViewModesHelper::getUserViewModes($this->getTheme());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return UserRenderedOptions::class;
     }
 }

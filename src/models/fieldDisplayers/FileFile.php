@@ -49,20 +49,14 @@ class FileFile extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return FileFileOptions::class;
-    }
-
-    /**
-     * Get the displayer defined for an asset kind
-     * 
-     * @param  string $kind
-     * @return ?FileDisplayerInterface
-     */
-    public function getDisplayerForKind(string $kind): ?FileDisplayerInterface
-    {
-        return $this->options->getDisplayerForKind($kind);
+        foreach ($this->options->displayers as $kind => $options) {
+            if ($displayer = $this->options->getDisplayerForKind($kind)) {
+                $eagerLoad = $displayer->eagerLoad($eagerLoad, $prefix, $level);
+            }
+        }
+        return $eagerLoad;
     }
 
     /**
@@ -73,5 +67,21 @@ class FileFile extends FieldDisplayer
     public function getAllowedFileKinds(): array
     {
         return Assets::getFileKinds();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCanBeCached(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return FileFileOptions::class;
     }
 }

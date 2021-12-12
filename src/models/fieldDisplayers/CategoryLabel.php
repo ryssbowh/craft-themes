@@ -42,7 +42,7 @@ class CategoryLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return CategoryLabelOptions::class;
     }

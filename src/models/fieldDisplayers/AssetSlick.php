@@ -36,7 +36,7 @@ class AssetSlick extends AssetRendered
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return AssetSlickOptions::class;
     }

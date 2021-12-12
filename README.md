@@ -126,6 +126,8 @@ You can choose a cache strategy for each block which defines how the block is ca
 Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user or their view ports (mobile, tablet or desktop).  
 Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
 
+The content block caching controls the caching of the displayers, it really shouldn't use the "Global" strategy, or all your pages will display the same content.
+
 ## Displays (Pro)
 
 ![Displays](images/displays.png)
@@ -275,5 +277,4 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 - Themes preferences not related to project config
 - Restricted version of blocks page for envs where admin changes are disabled
-- SCSS compiler
-- is migration Install migrated after upgrading
+- Improve displayer cache by not saving the ones that didn't change

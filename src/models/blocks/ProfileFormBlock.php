@@ -33,7 +33,7 @@ class ProfileFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return \Craft::$app->user->getIdentity() != null;
     }
@@ -41,7 +41,7 @@ class ProfileFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return ProfileFormBlockOptions::class;
     }

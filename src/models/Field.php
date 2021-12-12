@@ -68,6 +68,14 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function eagerLoad(string $prefix = '', int $level = 0): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getTargetClass(): string
     {
         return get_class($this);
@@ -223,17 +231,6 @@ abstract class Field extends DisplayItem implements FieldInterface
             return false;
         }
         return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function eagerLoad(): array
-    {
-        if ($this->displayer) {
-            return $this->displayer->eagerLoad();
-        }
-        return [];
     }
 
     /**
@@ -396,6 +393,14 @@ abstract class Field extends DisplayItem implements FieldInterface
             $value = $this->renderingValue;
         }
         return Themes::$plugin->view->renderField($this, $value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCanBeCached(): bool
+    {
+        return true;
     }
 
     /**

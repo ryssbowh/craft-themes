@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\CategoryRenderedOptions;
@@ -35,17 +36,24 @@ class CategoryRendered extends CategoryLabel
     /**
      * @inheritDoc
      */
-    public static function getFieldTargets(): array
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return [Categories::class];
+        foreach ($this->getViewModes() as $uid => $label) {
+            $viewMode = Themes::$plugin->viewModes->getByUid($uid);
+            //Avoid infinite loops for self referencing view modes :
+            if ($viewMode->id != $this->field->viewMode->id) {
+                $eagerLoad = array_merge($eagerLoad, $viewMode->eagerLoad($prefix, $level));
+            }
+        }
+        return $eagerLoad;
     }
 
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public static function getFieldTargets(): array
     {
-        return CategoryRenderedOptions::class;
+        return [Categories::class];
     }
 
     /**
@@ -59,17 +67,10 @@ class CategoryRendered extends CategoryLabel
     }
 
     /**
-     * Get the layout associated to this displayer field's category group
-     * 
-     * @return LayoutInterface
+     * @inheritDoc
      */
-    public function getGroupLayout(): ?LayoutInterface
+    protected function getOptionsModel(): string
     {
-        $elems = explode(':', $this->field->craftField->source);
-        $group = \Craft::$app->categories->getGroupByUid($elems[1]);
-        if ($group) {
-            return $group->getLayout();
-        }
-        return null;
+        return CategoryRenderedOptions::class;
     }
 }

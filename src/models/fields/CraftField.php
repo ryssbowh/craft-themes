@@ -9,6 +9,8 @@ use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use craft\base\Field as BaseField;
 use craft\fieldlayoutelements\CustomField;
+use craft\fields\BaseRelationField;
+use craft\fields\Entries;
 
 /**
  * Handles all Craft fields apart from Matrix and Table
@@ -34,6 +36,25 @@ class CraftField extends Field implements CraftFieldInterface
         $data['craft_field_class'] = get_class($craftField);
         $field->setAttributes($data, false);
         $field->save(false);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eagerLoad(string $prefix = '', int $level = 0): array
+    {
+        if (!$this->displayer) {
+            return [];
+        }
+        if ($level >= Themes::$plugin->settings->maxEagerLoadLevel) {
+            \Craft::info("Maximum eager loaging level (" . Themes::$plugin->settings->maxEagerLoadLevel . ') reached', __METHOD__);
+            return [];
+        }
+        if ($this->craftField instanceof BaseRelationField) {
+            $with = $prefix  . $this->craftField->handle;
+            return $this->displayer->eagerLoad([$with], $with . '.', $level + 1);
+        }
+        return [];
     }
     
     /**

@@ -10,7 +10,7 @@ use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
@@ -398,6 +398,11 @@ class Themes extends \craft\base\Plugin
                 'cache' => \Craft::$app->cache,
                 'cacheEnabled' => $this->getSettings()->blockCacheEnabled
             ],
+            'displayerCache' => [
+                'class' => DisplayerCacheService::class,
+                'cache' => \Craft::$app->cache,
+                'cacheEnabled' => $this->getSettings()->displayerCacheEnabled
+            ],
             'displays' => DisplayService::class,
             'fields' => FieldsService::class,
             'matrix' => MatrixService::class,
@@ -430,9 +435,16 @@ class Themes extends \craft\base\Plugin
                 ];
                 $event->options[] = [
                     'key' => 'themes-block-cache',
-                    'label' => Craft::t('themes', 'Themes blocks'),
+                    'label' => Craft::t('themes', 'Themes block cache'),
                     'action' => function() {
                         Themes::$plugin->blockCache->flush();
+                    }
+                ];
+                $event->options[] = [
+                    'key' => 'themes-displayer-cache',
+                    'label' => Craft::t('themes', 'Themes displayer cache'),
+                    'action' => function() {
+                        Themes::$plugin->displayerCache->flush();
                     }
                 ];
             }

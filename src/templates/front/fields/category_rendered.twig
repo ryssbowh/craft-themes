@@ -2,10 +2,9 @@
 
 {% block content %}
     {% set viewMode = options.viewMode %}
-    {% set layout = displayer.groupLayout %}
-    {% if viewMode and layout %}
+    {% if viewMode %}
         {% for category in value %}
-            {{ layout.render(category, viewMode)|raw }}
+            {{ category.group.layout.render(category, viewMode)|raw }}
         {% endfor %}
     {% endif %}
 {% endblock %}

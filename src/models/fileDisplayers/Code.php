@@ -34,7 +34,7 @@ class Code extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return CodeOptions::class;
     }

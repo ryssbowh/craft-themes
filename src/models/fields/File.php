@@ -51,4 +51,20 @@ class File extends Field
     {
         return Themes::$plugin->view->renderingElement;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function eagerLoad(string $prefix = '', int $level = 0): array
+    {
+        if (!$this->displayer) {
+            return [];
+        }
+        if ($level >= Themes::$plugin->settings->maxEagerLoadLevel) {
+            \Craft::info("Maximum eager loaging level (" . Themes::$plugin->settings->maxEagerLoadLevel . ') reached', __METHOD__);
+            return [];
+        }
+        $with = substr($prefix, 0, -1);
+        return $this->displayer->eagerLoad([$with], $with . '.', $level);
+    }
 }

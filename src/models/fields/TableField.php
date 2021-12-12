@@ -147,6 +147,14 @@ class TableField extends Field
     /**
      * @inheritDoc
      */
+    public function getCanBeCached(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected static function buildConfig($column): array
     {
         switch ($column['type']) {

@@ -7,8 +7,13 @@ use craft\base\Model;
 /**
  * A displayer renders one and one only type of field, it can have options.
  */
-interface FieldDisplayerInterface 
+interface FieldDisplayerInterface extends DisplayerInterface
 {
+    /**
+     * Prefix used when caching this type of displayers
+     */
+    const CACHE_PREFIX = 'field';
+    
     /**
      * Field classes this displayer can handle.
      * Developers should use FieldDisplayerService::getFieldTargets($displayerHandle) instead.
@@ -16,13 +21,6 @@ interface FieldDisplayerInterface
      * @return array
      */
     public static function getFieldTargets(): array;
-
-    /**
-     * Get handle
-     * 
-     * @return string
-     */
-    public static function getHandle(): string;
 
     /**
      * Is this displayer the default for a field class
@@ -33,32 +31,11 @@ interface FieldDisplayerInterface
     public static function isDefault(string $fieldClass): bool;
 
     /**
-     * Description/helper shown in CP
-     * 
-     * @return string
-     */
-    public function getDescription(): string;
-
-    /**
      * Field setter
      * 
      * @param FieldInterface $field
      */
     public function setField(FieldInterface $field);
-
-    /**
-     * Field getter
-     * 
-     * @return FieldInterface
-     */
-    public function getField(): FieldInterface;
-
-    /**
-     * Get options model class
-     * 
-     * @return string
-     */
-    public function getOptionsModel(): string;
 
     /**
      * Get options
@@ -75,32 +52,11 @@ interface FieldDisplayerInterface
     public function setOptions(array $options);
 
     /**
-     * Does this displayer define options
-     * 
-     * @return bool
-     */
-    public function getHasOptions(): bool;
-
-    /**
      * Theme getter
      * 
      * @return ThemeInterface
      */
     public function getTheme(): ThemeInterface;
-
-    /**
-     * Get name
-     * 
-     * @return string
-     */
-    public function getName(): string;
-
-    /**
-     * Eager load fields
-     * 
-     * @return array
-     */
-    public function eagerLoad(): array;
 
     /**
      * Callback before rendering, returning false will skip the field rendering.

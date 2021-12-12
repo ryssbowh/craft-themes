@@ -46,14 +46,6 @@ class QueryBlockCache extends BlockCacheStrategy
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockStrategyOptions
-    {
-        return new GlobalOptions;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getDescription(): string
     {
         return \Craft::t('themes', 'Block will be cached differently for each url');
@@ -62,9 +54,20 @@ class QueryBlockCache extends BlockCacheStrategy
     /**
      * @inheritDoc
      */
-    protected function getKey(BlockInterface $block): string
+    public function getDuration(): ?int
     {
-        $key = [\Craft::$app->request->getFullPath() . '?' . \Craft::$app->request->getQueryStringWithoutPath()];
+        if ($this->options->duration === 0) {
+            return null;
+        }
+        return $this->options->duration * 60;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buildKey(BlockInterface $block): array
+    {
+        $key = [self::CACHE_TAG, \Craft::$app->request->getFullPath() . '?' . \Craft::$app->request->getQueryStringWithoutPath()];
         if ($this->options->cachePerAuthenticated) {
             $key[] = \Craft::$app->user ? 'auth' : 'noauth';
         }
@@ -74,34 +77,7 @@ class QueryBlockCache extends BlockCacheStrategy
         if ($this->options->cachePerUser and $user = \Craft::$app->user) {
             $key[] = $user->getIdentity()->id;
         }
-        return implode('-', $key);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getKeyPrefix(): string
-    {
-        return self::CACHE_TAG;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getTag(): string
-    {
-        return self::CACHE_TAG;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getDuration(): ?int
-    {
-        if ($this->options->duration === 0) {
-            return null;
-        }
-        return $this->options->duration * 60;
+        return $key;
     }
 
     /**
@@ -118,5 +94,13 @@ class QueryBlockCache extends BlockCacheStrategy
             return 'tablet';
         }
         return 'desktop';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return GlobalOptions::class;
     }
 }

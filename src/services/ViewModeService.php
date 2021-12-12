@@ -27,11 +27,6 @@ class ViewModeService extends Service
     const DEFAULT_HANDLE = 'default';
 
     /**
-     * @var boolean
-     */
-    protected $collectingCacheTags = false;
-
-    /**
      * @var array
      */
     protected $cacheTags = [];
@@ -154,8 +149,7 @@ class ViewModeService extends Service
             Themes::$plugin->displays->save($display);
         }
         Themes::$plugin->displays->cleanUp($allDisplays, $viewMode);
-
-        TagDependency::invalidate(\Craft::$app->cache, 'themes::viewModes::' . $viewMode->id);
+        TagDependency::invalidate(\Craft::$app->cache, DisplayerCacheService::VIEWMODE_CACHE_TAG . '::' . $viewMode->id);
 
         return true;
     }
@@ -199,8 +193,6 @@ class ViewModeService extends Service
 
         $this->_viewModes = $this->all()->where('id', '!=', $viewMode->id);
         $viewMode->layout->viewModes = null;
-
-        TagDependency::invalidate(\Craft::$app->cache, 'themes::viewModes::' . $viewMode->id);
 
         return true;
     }
@@ -275,29 +267,6 @@ class ViewModeService extends Service
         foreach ($this->all() as $viewMode) {
             $e->config[$parts[0]][$parts[1]][$viewMode->uid] = $viewMode->getConfig();
         }
-    }
-
-    /**
-     * Start collecting cache tags
-     */
-    public function startCollectingCacheTags()
-    {
-        $this->collectingCacheTags = true;
-        $this->cacheTags = [];
-    }
-
-    /**
-     * Stop collecting cache tags and return collected tags
-     * 
-     * @return array
-     */
-    public function stopCollectingCacheTags(): array
-    {
-        $this->collectingCacheTags = false;
-        if (sizeof($this->cacheTags) > 0) {
-            array_unshift($this->cacheTags, 'themes::viewModes');
-        }
-        return $this->cacheTags;
     }
 
     /**
@@ -455,8 +424,6 @@ class ViewModeService extends Service
     protected function collectCacheTag(ViewModeInterface $viewMode)
     {
         $tag = 'themes::viewModes::' . $viewMode->id;
-        if ($this->collectingCacheTags and !in_array($tag, $this->cacheTags)) {
-            $this->cacheTags[] = $tag;
-        }
+        \Craft::$app->elements->collectCacheTags([$tag]);
     }
 }

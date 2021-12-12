@@ -47,14 +47,6 @@ class EntryBlock extends Block
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return EntryBlockOptions::class;
-    }
-
-    /**
      * Get entries/view modes as defined in options
      * 
      * @return array
@@ -84,8 +76,16 @@ class EntryBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return sizeof($this->entries) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return EntryBlockOptions::class;
     }
 }

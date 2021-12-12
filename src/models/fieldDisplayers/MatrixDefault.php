@@ -43,23 +43,7 @@ class MatrixDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function eagerLoad(): array
-    {
-        $eagerLoad = [$this->field->craftField->handle];
-        foreach ($this->field->getTypes() as $type) {
-            foreach ($type->fields as $field) {
-                if ($field->craftField instanceof BaseRelationField) {
-                    $eagerLoad[] = $this->field->craftField->handle . '.' . $type->type->handle . ':' . $field->craftField->handle;
-                }
-            }
-        }
-        return $eagerLoad;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return MatrixDefaultOptions::class;
     }

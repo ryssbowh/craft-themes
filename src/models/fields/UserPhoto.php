@@ -42,4 +42,12 @@ class UserPhoto extends Field
     {
         return \Craft::t('themes', 'Photo');
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function eagerLoad(string $prefix = '', int $level = 0): array
+    {
+        return [$prefix . 'photo'];
+    }
 }

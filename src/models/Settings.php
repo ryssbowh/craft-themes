@@ -48,12 +48,22 @@ class Settings extends Model
     /**
      * @var boolean
      */
+    public $maxEagerLoadLevel = 5;
+
+    /**
+     * @var boolean
+     */
     public $hideEmptyFields = true;
 
     /**
      * @var boolean
      */
     public $blockCache;
+
+    /**
+     * @var boolean
+     */
+    public $displayerCache;
 
     /**
      * @var boolean
@@ -129,6 +139,19 @@ class Settings extends Model
     {
         if (!is_null($this->blockCache)) {
             return $this->blockCache;
+        }
+        return !\Craft::$app->getConfig()->getGeneral()->devMode;
+    }
+
+    /**
+     * field cache enabled getter
+     * 
+     * @return bool
+     */
+    public function getDisplayerCacheEnabled(): bool
+    {
+        if (!is_null($this->displayerCache)) {
+            return $this->displayerCache;
         }
         return !\Craft::$app->getConfig()->getGeneral()->devMode;
     }

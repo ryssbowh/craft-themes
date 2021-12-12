@@ -8,8 +8,13 @@ use craft\elements\Asset;
 /**
  * A file displayer renders an asset. It can handle several file kinds
  */
-interface FileDisplayerInterface
+interface FileDisplayerInterface extends DisplayerInterface
 {
+    /**
+     * Prefix used when caching this type of displayers
+     */
+    const CACHE_PREFIX = 'file';
+
     /**
      * Which file kind this displayer can handle.
      * Developers should use FileDisplayerService::getKindTargets(string $displayerHandle) instead
@@ -29,46 +34,11 @@ interface FileDisplayerInterface
     public static function isDefault(string $kind): bool;
 
     /**
-     * Description/helper shown in CP
-     * 
-     * @return string
-     */
-    public function getDescription(): string;
-
-    /**
-     * Get options model
-     * 
-     * @return Model
-     */
-    public function getOptionsModel(): string;
-
-    /**
      * Get options
      * 
      * @return Model
      */
     public function getOptions(): FileDisplayerOptions;
-
-    /**
-     * Does this displayer define options
-     * 
-     * @return bool
-     */
-    public function getHasOptions(): bool;
-
-    /**
-     * Get name
-     * 
-     * @return string
-     */
-    public function getName(): string;
-
-    /**
-     * Get handle
-     * 
-     * @return string
-     */
-    public function getHandle(): string;
 
     /**
      * Displayer setter

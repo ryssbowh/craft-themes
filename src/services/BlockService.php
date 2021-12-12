@@ -19,6 +19,7 @@ use craft\db\ActiveRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
+use yii\caching\TagDependency;
 
 class BlockService extends Service
 {
@@ -121,6 +122,8 @@ class BlockService extends Service
             $this->add($block);
             $block->layout->getRegion($block->region)->blocks = null;
         }
+
+        TagDependency::invalidate(\Craft::$app->cache, BlockCacheService::BLOCK_CACHE_TAG . '::' . $block->id);
 
         return true;
     }

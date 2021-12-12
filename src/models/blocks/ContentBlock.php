@@ -43,45 +43,16 @@ class ContentBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function getCanBeCached(): bool
     {
-        return ContentBlockOptions::class;
-    }
-
-    /**
-     * Calls each field displayer beforeRender() in case the block is cached
-     * to make sure every field displayer gets a chance of initializing themselves
-     * 
-     * @param  bool $fromCache
-     * @return bool
-     */
-    public function beforeRender(bool $fromCache): bool
-    {
-        if (!$fromCache) {
-            return true;
-        }
-        $viewMode = Themes::$plugin->view->renderingViewMode;
-        foreach ($viewMode->visibleDisplays as $display) {
-            try {
-                $displayer = $display->item->displayer;
-            } catch (\Exception $e) {
-            }
-            if ($displayer) {
-                $value = $display->item->renderingValue;
-                $displayer->beforeRender($value);
-            }
-        }
-        return true;
+        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function getCacheTags(): array
+    protected function getOptionsModel(): string
     {
-        $element = Themes::$plugin->view->renderingElement;
-        $tags = $element->getCacheTags();
-        $tags[] = 'element::' . get_class($element) . '::' . $element->id;
-        return $tags;
+        return ContentBlockOptions::class;
     }
 }

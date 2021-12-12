@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\NumberDefaultOptions;
 use craft\fields\Number;
@@ -42,7 +43,15 @@ class NumberDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function beforeRender(&$value): bool
+    {
+        return !($value === null and Themes::$plugin->settings->hideEmptyFields);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
     {
         return NumberDefaultOptions::class;
     }

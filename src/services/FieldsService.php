@@ -15,6 +15,7 @@ use craft\base\Field as BaseField;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
+use yii\caching\TagDependency;
 
 class FieldsService extends Service
 {
@@ -127,6 +128,8 @@ class FieldsService extends Service
         if ($isNew) {
             $this->add($field);
         }
+
+        TagDependency::invalidate(\Craft::$app->cache, DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $field->id);
 
         return true;
     }

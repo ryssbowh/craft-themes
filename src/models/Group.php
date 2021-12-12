@@ -76,13 +76,13 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
-    public function eagerLoad(): array
+    public function eagerLoad(string $prefix = '', int $level = 0): array
     {
-        $fields = [];
+        $with = [];
         foreach ($this->visibleDisplays as $display) {
-            $fields = array_merge($fields, $display->item->eagerLoad());
+            $with = array_merge($with, $display->item->eagerLoad($prefix, $level));
         }
-        return $fields;
+        return $with;
     }
 
     /**

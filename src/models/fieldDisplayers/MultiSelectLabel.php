@@ -44,19 +44,19 @@ class MultiSelectLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
-    {
-        return MultiSelectLabelOptions::class;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function beforeRender(&$value): bool
     {
         $selected = array_filter($value->getOptions(), function ($option) {
             return $option->selected;
         });
         return !(empty($selected) and Themes::$plugin->settings->hideEmptyFields);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return MultiSelectLabelOptions::class;
     }
 }

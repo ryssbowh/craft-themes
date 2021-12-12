@@ -33,7 +33,7 @@ class SearchFormBlock extends Block
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return SearchFormBlockOptions::class;
     }

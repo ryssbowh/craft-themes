@@ -36,7 +36,7 @@ class UserSlick extends UserRendered
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return UserSlickOptions::class;
     }

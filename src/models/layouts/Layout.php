@@ -188,18 +188,6 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function eagerLoadFields(Element $element, ViewModeInterface $viewMode)
-    {
-        $with = [];
-        foreach ($viewMode->getVisibleDisplays() as $display) {
-            $with = array_merge($with, $display->item->eagerLoad());
-        }
-        \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function canHaveBlocks(): bool
     {
         return true;

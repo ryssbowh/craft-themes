@@ -6,7 +6,7 @@
         <div class="body" v-if="editedBlock">
             <formfield-lightswitch :value="active ? true : false" :definition="{label: t('Active', {}, 'app')}" @change="active = $event" :name="'active'">
             </formfield-lightswitch>
-            <div class="field">
+            <div class="field" v-if="editedBlock.canBeCached || isContentBlock">
                 <div class="heading">
                     <label>{{ t('Caching') }}</label>                                    
                 </div>
@@ -20,7 +20,7 @@
                     </div>
                 </div>
             </div>
-            <component v-for="definition, name in strategyFieldsDefinitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="cacheStrategy.options[name] ?? null" :errors="getCacheStrategyErrors(name)" @change="updateStrategyOption(name, $event)" :key="name"></component>
+            <component v-if="editedBlock.canBeCached|| isContentBlock" v-for="definition, name in strategyFieldsDefinitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="cacheStrategy.options[name] ?? null" :errors="getCacheStrategyErrors(name)" @change="updateStrategyOption(name, $event)" :key="name"></component>
             <component v-for="definition, name in editedBlock.optionsDefinitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="options[name] ?? null" :errors="getOptionErrors(name)" @change="updateOption(name, $event)" :key="name"></component>
         </div>
         <div class="footer">
@@ -38,6 +38,12 @@ import { merge } from 'lodash';
 
 export default {
     computed: {
+        machineName: function () {
+            return this.editedBlock.provider + '_' + this.editedBlock.handle;
+        },
+        isContentBlock: function () {
+            return this.machineName == 'system_content';
+        },
         strategyDescription: function () {
             let strategy = this.getStrategy(this.cacheStrategy.handle);
             if (!strategy) {

@@ -269,7 +269,7 @@ abstract class Block extends Model implements BlockInterface
      */
     public function fields()
     {
-        return array_merge(parent::fields(), ['name', 'handle', 'options', 'errors', 'smallDescription', 'longDescription']);
+        return array_merge(parent::fields(), ['name', 'handle', 'options', 'errors', 'smallDescription', 'longDescription', 'canBeCached']);
     }
 
     /**
@@ -316,6 +316,14 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
+    public function getCanBeCached(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setCacheStrategy($strategy)
     {
         if (is_string($strategy)) {
@@ -340,14 +348,6 @@ abstract class Block extends Model implements BlockInterface
             }
         }
         return $this->_cacheStrategy ?: null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCacheTags(): array
-    {
-        return [];
     }
 
     /**
@@ -386,7 +386,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return true;
     }
@@ -398,4 +398,11 @@ abstract class Block extends Model implements BlockInterface
     {
         return Themes::$plugin->view->renderBlock($this);
     }
+
+    /**
+     * Model class that defines this block's options 
+     * 
+     * @return string
+     */
+    abstract protected function getOptionsModel(): string;
 }

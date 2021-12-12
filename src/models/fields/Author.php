@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fields;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
@@ -43,5 +44,21 @@ class Author extends Field
     public function getName(): string
     {
         return \Craft::t('themes', 'Author');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eagerLoad(string $prefix = '', int $level = 0): array
+    {
+        if (!$this->displayer) {
+            return [];
+        }
+        if ($level >= Themes::$plugin->settings->maxEagerLoadLevel) {
+            \Craft::info("Maximum eager loaging level (" . Themes::$plugin->settings->maxEagerLoadLevel . ') reached', __METHOD__);
+            return [];
+        }
+        $with = $prefix . 'author';
+        return $this->displayer->eagerLoad([$with], $with . '.', $level + 1);
     }
 }

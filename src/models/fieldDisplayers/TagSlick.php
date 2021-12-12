@@ -27,7 +27,7 @@ class TagSlick extends TagRendered
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return TagSlickOptions::class;
     }

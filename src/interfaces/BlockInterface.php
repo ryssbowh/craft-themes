@@ -59,6 +59,13 @@ interface BlockInterface
     public function setOptions($options);
 
     /**
+     * Can this block be cached
+     * 
+     * @return bool
+     */
+    public function getCanBeCached(): bool;
+
+    /**
      * Set the cache strategy, $strategy should be an array : 
      * [
      *     'handle' => 'strategyHandle',
@@ -81,13 +88,6 @@ interface BlockInterface
      * @return string
      */
     public function getMachineName(): string;
-
-    /**
-     * Model that defines this block's options 
-     * 
-     * @return string
-     */
-    public function getOptionsModel(): string;
 
     /**
      * Get layout object
@@ -130,19 +130,11 @@ interface BlockInterface
     public function getTemplates(): array;
 
     /**
-     * Get extra cache dependencies tags
-     * 
-     * @return array
-     */
-    public function getCacheTags(): array;
-
-    /**
      * Callback before rendering, returning false will skip the block rendering.
      *
-     * @param  bool $fromCache whether the block is rendered from cache or not
      * @return bool
      */
-    public function beforeRender(bool $fromCache): bool;
+    public function beforeRender(): bool;
 
     /**
      * Render this block

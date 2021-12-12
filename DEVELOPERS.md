@@ -560,8 +560,13 @@ To override the preferences for your theme, override the method `getPreferencesM
 
 ## Eager loading (Pro)
 
-By default, when a layout is rendered it will eager load every field it contains.  
-This could be changed by creating the `config/themes.php` file :
+When a view mode is rendered the eager load map will be built to eager load every visible field. The map will also contain nested view modes fields (displayers that render other layout/view mode) and assets transforms. This map will be stored in cache.  
+
+This cache will be cleared when clearing displayer caches : `./craft clear-caches/themes-displayer-cache`
+
+Eager loading cache is enabled when displayer cache is enabled and will be flushed when view modes are saved.
+
+Eager loading could be changed by creating the `config/themes.php` file :
 
 ```
 <?php 
@@ -571,6 +576,23 @@ return [
 ];
 ```
 :warning: All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
+
+Eager loading will nest until 5 levels, after that it will stop, this can be changed in `config/themes.php` :
+
+```
+<?php 
+
+return [
+    'maxEagerLoadLevel' => 10
+];
+```
+Example :
+- View mode 'default' :
+    - field entries pointing to view mode 'small' : level 1
+- View mode 'small'
+    - Field categories pointing to view mode 'featured' : Level 2
+- View mode 'featured' :
+    - Field assets : Level 3
 
 ## Twig
 
@@ -601,13 +623,42 @@ And 4 that are not used by the system, but could be useful if you're using a too
 
 If something looks off in the displays, you can always reinstall the themes data in the plugin settings. This will create missing fields/displayers for all themes and elements (entry types, category groups etc), and delete the orphans.
 
-## Caching (Pro)
+## Caching
+
+### Displayer cache (Pro)
+
+Displayers are cached with the service `DisplayerCacheService`, .  
+The caching parameters are controlled by the content block caching strategy. That strategy can define duration and different caching keys depending on user authentication, url and others.
+
+Cache is enabled by default when devMode is disabled, this be changed by creating the `config/themes.php` file :
+
+```
+<?php 
+
+return [
+    'displayerCache' => false
+];
+```
+
+Displayer caching use Craft internal caching dependencies, saving an entry for example will clear all the displayer caches that use this entry.
+
+If something changes in your code (templates, theme preferences class, render events) and you're pushing to a production environment, clear the caches : `./craft clear-caches/themes-displayer-cache`.
+
+Field displayers are cached in the template `fields/_field` with the token `{% fielddisplayercache %}`, if you override a field template that does not extend this template, you would need to add that token or caching will be skipped.  
+Same idea for file displayers which use the token `{% filedisplayercache %}`.
+
+Each displayer method `beforeRender()` will be called, even for cached displayers, that can be used if you need to register asset bundles or other things.
+
+The cache can be disabled at field or displayer level by overriding the `FieldInterface::getCanBeCached(): bool` method. Cache is currently disabled on :
+- MatrixField : Cache happens at the Matrix level
+- TableField : Cache happens at the Table level
+- FileFile and AssetRenderFile : Cache happens at file displayer level
+
+Generally, any displayer that handle Assets (file displayers) should have its cache disabled, it's the file displayer themselves who should be responsible for caching. Caching such a field displayer will result in the `beforeRender` of file displayers to not be called.
 
 ### Rules cache  (Pro)
 
-Theme resolution rules will be cached by default on environments where devMode is disabled. If you change rules and deploy to a production environment, clear the cache : `./craft clear-caches/themes-rules-cache`
-
-It can be overriden by creating the `config/themes.php` file :
+Theme resolution rules will be cached by default on environments where devMode is disabled, this can be changed by creating the `config/themes.php` file :
 
 ```
 <?php 
@@ -616,12 +667,11 @@ return [
     'rulesCache' => false
 ];
 ```
+If you change rules and deploy to a production environment, clear the cache : `./craft clear-caches/themes-rules-cache`.
 
 ### Template cache
 
-Template resolution will be cached by default on environments where devMode is disabled. If you create new templates and deploy to a production environment, clear the cache : `./craft clear-caches/themes-template-cache`
-
-It can be overriden by creating the `config/themes.php` file :
+Template resolution will be cached by default on environments where devMode is disabled, this can be changed by creating the `config/themes.php` file :
 
 ```
 <?php 
@@ -630,12 +680,11 @@ return [
     'templateCache' => false
 ];
 ```
+If you create new templates and deploy to a production environment, clear the cache : `./craft clear-caches/themes-template-cache`
 
 ### Block cache
 
-Block cache will be enabled by default on environments where devMode is disabled.
-
-It can be overriden by creating the `config/themes.php` file :
+Block cache will be enabled by default on environments where devMode is disabled, this can be changed by creating the `config/themes.php` file :
 
 ```
 <?php 
@@ -653,4 +702,6 @@ Event::on(BlockCacheService::class, BlockCacheService::REGISTER_STRATEGIES, func
 });
 ```
 Strategy classes must implement `BlockCacheStrategyInterface` and their options extend `BlockStrategyOptions` which is a [configurable options](#configurable-options) class (but is not modifiable through events).
+
+Each block can disable caching entirely by overriding the method `getCanBeCached(): bool`. The content block is non cacheable, but still has a caching strategy which will define displayers caching.
 

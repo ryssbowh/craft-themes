@@ -47,14 +47,6 @@ class UserBlock extends Block
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return UserBlockOptions::class;
-    }
-
-    /**
      * Get users/view modes as defined in options
      * 
      * @return array
@@ -84,8 +76,16 @@ class UserBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return sizeof($this->users) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return UserBlockOptions::class;
     }
 }

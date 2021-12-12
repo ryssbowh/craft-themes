@@ -36,4 +36,13 @@ interface ViewModeInterface extends HasDisplaysInterface
      * @param LayoutInterface $layout
      */
     public function setLayout(LayoutInterface $layout);
+
+    /**
+     * Eager load fields
+     *
+     * @param  string $prefix
+     * @param  int    $level
+     * @return array
+     */
+    public function eagerLoad(string $prefix = '', int $level = 0): array;
 }

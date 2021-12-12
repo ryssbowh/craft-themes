@@ -8,7 +8,6 @@ use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use craft\base\Model;
-use craft\fields\BaseRelationField;
 
 /**
  * Base class for all field displayers
@@ -77,6 +76,14 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
+    {
+        return $eagerLoad;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setField(FieldInterface $field)
     {
         $this->_field = $field;
@@ -132,17 +139,6 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function eagerLoad(): array
-    {
-        if ($this->field instanceof CraftField and $this->field->craftField instanceof BaseRelationField) {
-            return [$this->field->craftField->handle];
-        }
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function fields()
     {
         return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions', 'description']);
@@ -155,4 +151,19 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
     {
         return !(empty($value) and Themes::$plugin->settings->hideEmptyFields);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCanBeCached(): bool
+    {
+        return $this->field->canBeCached;
+    }
+
+    /**
+     * Get options model class
+     * 
+     * @return string
+     */
+    abstract protected function getOptionsModel(): string;
 }

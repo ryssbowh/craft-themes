@@ -80,6 +80,28 @@ class Matrix extends CraftField implements MatrixInterface
         return CraftMatrix::class;
     }
 
+        /**
+     * @inheritDoc
+     */
+    public function eagerLoad(string $prefix = '', int $level = 0): array
+    {
+        if (!$this->displayer) {
+            return [];
+        }
+        if ($level >= Themes::$plugin->settings->maxEagerLoadLevel) {
+            \Craft::info("Maximum eager loaging level (" . Themes::$plugin->settings->maxEagerLoadLevel . ') reached', __METHOD__);
+            return [];
+        }
+        $with = [$prefix . $this->craftField->handle];
+        foreach ($this->getTypes() as $type) {
+            $typePrefix = $prefix . $this->craftField->handle . '.' . $type->type->handle . '::';
+            foreach ($type->fields as $field) {
+                $with = array_merge($with, $field->eagerLoad($typePrefix, $level + 1));
+            }
+        }
+        return $with;
+    }
+
     /**
      * @inheritDoc
      */

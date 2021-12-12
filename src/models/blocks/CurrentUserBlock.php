@@ -34,14 +34,6 @@ class CurrentUserBlock extends Block
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return CurrentUserBlockOptions::class;
-    }
-
-    /**
      * Get layout associated to user defined in options
      * 
      * @return LayoutInterface
@@ -68,8 +60,16 @@ class CurrentUserBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return \Craft::$app->user->getIdentity() != null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return CurrentUserBlockOptions::class;
     }
 }

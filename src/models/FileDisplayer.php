@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use craft\base\Model;
 use craft\elements\Asset;
@@ -11,7 +12,6 @@ use craft\elements\Asset;
  */
 abstract class FileDisplayer extends Model implements FileDisplayerInterface
 {
-
     /**
      * @var FieldDisplayerInterface
      */
@@ -41,9 +41,17 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function getHandle(): string 
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return $this::$handle;
+        return $eagerLoad;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getHandle(): string 
+    {
+        return static::$handle;
     }
 
     /**
@@ -60,6 +68,14 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     public function getDisplayer(): FieldDisplayerInterface
     {
         return $this->_displayer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getField(): FieldInterface
+    {
+        return $this->displayer->field;
     }
 
     /**
@@ -109,4 +125,19 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     {
         return true;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCanBeCached(): bool
+    {
+        return $this->displayer->canBeCached;
+    }
+
+    /**
+     * Get options model class
+     * 
+     * @return string
+     */
+    abstract protected function getOptionsModel(): string;
 }

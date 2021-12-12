@@ -54,17 +54,20 @@ class GlobalBlockCache extends BlockCacheStrategy
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): BlockStrategyOptions
+    public function getDuration(): ?int
     {
-        return new GlobalOptions;
+        if ($this->options->duration === 0) {
+            return null;
+        }
+        return $this->options->duration * 60;
     }
 
     /**
      * @inheritDoc
      */
-    protected function getKey(BlockInterface $block): string
+    public function buildKey(BlockInterface $block): array
     {
-        $key = [];
+        $key = [self::CACHE_TAG];
         if ($this->options->cachePerAuthenticated) {
             $key[] = \Craft::$app->user ? 'auth' : 'noauth';
         }
@@ -74,34 +77,7 @@ class GlobalBlockCache extends BlockCacheStrategy
         if ($this->options->cachePerUser and $user = \Craft::$app->user) {
             $key[] = $user->getIdentity()->id;
         }
-        return implode('-', $key);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getKeyPrefix(): string
-    {
-        return self::CACHE_TAG;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getTag(): string
-    {
-        return self::CACHE_TAG;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getDuration(): ?int
-    {
-        if ($this->options->duration === 0) {
-            return null;
-        }
-        return $this->options->duration * 60;
+        return $key;
     }
 
     /**
@@ -118,5 +94,13 @@ class GlobalBlockCache extends BlockCacheStrategy
             return 'tablet';
         }
         return 'desktop';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return GlobalOptions::class;
     }
 }

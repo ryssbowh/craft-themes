@@ -34,9 +34,15 @@ class ImageTransform extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return ImageTransformOptions::class;
+        if ($this->options->transform == '_custom') {
+            $custom = [json_decode($this->options['custom'], true), ...json_decode($this->options->sizes, true)];
+            $eagerLoad = [[$eagerLoad[0], ['withTransforms' => $custom]]];
+        } else if ($this->options->transform) {
+            $eagerLoad = [[$eagerLoad[0], ['withTransforms' => [$this->options['transform']]]]];
+        }
+        return $eagerLoad;
     }
 
     /**
@@ -59,5 +65,13 @@ class ImageTransform extends FileDisplayer
     public function fields()
     {
         return array_merge(parent::fields(), ['imageTransforms']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return ImageTransformOptions::class;
     }
 }

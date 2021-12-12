@@ -42,7 +42,7 @@ class RadioButtonsLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return RadioButtonsLabelOptions::class;
     }

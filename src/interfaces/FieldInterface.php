@@ -156,4 +156,11 @@ interface FieldInterface
      * @return string
      */
     public function render($value = null): string;
+
+    /**
+     * Can this field be cached
+     * 
+     * @return bool
+     */
+    public function getCanBeCached(): bool;
 }

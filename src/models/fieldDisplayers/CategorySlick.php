@@ -27,7 +27,7 @@ class CategorySlick extends CategoryRendered
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return CategorySlickOptions::class;
     }

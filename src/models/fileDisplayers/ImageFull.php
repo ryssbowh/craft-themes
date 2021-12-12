@@ -42,7 +42,7 @@ class ImageFull extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    protected function getOptionsModel(): string
     {
         return ImageFullOptions::class;
     }

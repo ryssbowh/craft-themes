@@ -49,11 +49,6 @@ interface BlockCacheStrategyInterface
     public function setCache(BlockInterface $block, string $data, TagDependency $dep);
 
     /**
-     * Flush cache
-     */
-    public function flush();
-
-    /**
      * Get options model (populated)
      * 
      * @return BlockStrategyOptions
@@ -61,9 +56,17 @@ interface BlockCacheStrategyInterface
     public function getOptions(): BlockStrategyOptions;
 
     /**
-     * Get options model
+     * Get the cache key elements specific to this strategy
      * 
-     * @return BlockStrategyOptions
+     * @param  BlockInterface $block
+     * @return array
      */
-    public function getOptionsModel(): BlockStrategyOptions;
+    public function buildKey(BlockInterface $block): array;
+
+    /**
+     * Get cache duration (seconds)
+     * 
+     * @return ?int
+     */
+    public function getDuration(): ?int;
 }

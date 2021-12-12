@@ -1,17 +1,19 @@
 {% if show_field ?? true %}
-    <div class="{{ containerClasses|raw }}"{% if containerAttributes.size() %} {{ containerAttributes|raw }}{% endif %}>
-        {% block label %}
-            {% if not field.labelHidden %}
-                <label class="{{ labelClasses|raw }}"{% if labelAttributes.size() %} {{ labelAttributes|raw }}{% endif %}>
-                    {{ label }}
-                </label>
-            {% endif %}
-        {% endblock %}
-
-        <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
-            {% block content %}
-                {{ value }}
+    {% fielddisplayercache %}
+        <div class="{{ containerClasses|raw }}"{% if containerAttributes.size() %} {{ containerAttributes|raw }}{% endif %}>
+            {% block label %}
+                {% if not field.labelHidden %}
+                    <label class="{{ labelClasses|raw }}"{% if labelAttributes.size() %} {{ labelAttributes|raw }}{% endif %}>
+                        {{ label }}
+                    </label>
+                {% endif %}
             {% endblock %}
+
+            <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
+                {% block content %}
+                    {{ value }}
+                {% endblock %}
+            </div>
         </div>
-    </div>
+    {% endfielddisplayercache %}
 {% endif %}

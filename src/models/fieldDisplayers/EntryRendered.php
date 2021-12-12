@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EntryRenderedOptions;
 
@@ -33,9 +34,18 @@ class EntryRendered extends EntryLink
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
+    public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
-        return EntryRenderedOptions::class;
+        foreach ($this->getViewModes() as $uid => $array) {
+            foreach ($array['viewModes'] as $uid => $label) {
+                $viewMode = Themes::$plugin->viewModes->getByUid($uid);
+                //Avoid infinite loops for self referencing view modes :
+                if ($viewMode->id != $this->field->viewMode->id) {
+                    $eagerLoad = array_merge($eagerLoad, $viewMode->eagerLoad($prefix, $level));
+                }
+            }
+        }
+        return $eagerLoad;
     }
 
     /**
@@ -46,5 +56,13 @@ class EntryRendered extends EntryLink
     public function getViewModes(): array
     {
         return ViewModesHelper::getSectionsViewModes($this->field->craftField, $this->getTheme());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return EntryRenderedOptions::class;
     }
 }

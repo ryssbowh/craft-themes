@@ -73,10 +73,24 @@ class MatrixField extends CraftField
     }
 
     /**
-     * @inheritDoc
+     * The value is required here, it must come from a MatrixBlock
+     * 
+     * @param  mixed $value
+     * @return string
      */
     public function render($value = null): string
     {
+        if ($value === null) {
+            return '';
+        }
         return Themes::$plugin->view->renderField($this, $value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCanBeCached(): bool
+    {
+        return false;
     }
 }

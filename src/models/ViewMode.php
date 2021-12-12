@@ -91,6 +91,18 @@ class ViewMode extends Model implements ViewModeInterface
     /**
      * @inheritDoc
      */
+    public function eagerLoad(string $prefix = '', int $level = 0): array
+    {
+        $with = [];
+        foreach ($this->getVisibleDisplays() as $display) {
+            $with = array_merge($with, $display->item->eagerLoad($prefix, $level));
+        }
+        return $with;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function addDisplay(DisplayInterface $display)
     {
         if ($display->type != DisplayService::TYPE_GROUP) {

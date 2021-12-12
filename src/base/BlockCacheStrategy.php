@@ -38,7 +38,8 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
      */
     public function getCache(BlockInterface $block): ?string
     {
-        $cache = \Craft::$app->cache->get($this->buildKey($block));
+        $key = \Craft::$app->cache->buildKey($this->buildKey($block));
+        $cache = \Craft::$app->cache->get($key);
         return $cache ?: null;
     }
 
@@ -47,17 +48,9 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
      */
     public function setCache(BlockInterface $block, string $data, TagDependency $dep)
     {
-        $dep->tags[] = $this->getTag();
-        \Craft::$app->cache->set($this->buildKey($block), $data, $this->getDuration(), $dep);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function flush()
-    {
-        \Craft::$app->cache->delete($this->getTag());
-        TagDependency::invalidate(\Craft::$app->cache, $this->getTag());
+        $elems = $this->buildKey($block);
+        $elems[] = $block->id;
+        \Craft::$app->cache->set(\Craft::$app->cache->buildKey($elems), $data, $this->getDuration(), $dep);
     }
 
     /**
@@ -73,50 +66,9 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): BlockStrategyOptions
-    {
-        return new BlockStrategyOptions;
-    }
-
-    /**
-     * Builds a cache key for a block
+     * Get options model
      * 
-     * @param  BlockInterface $block
-     * @return string
+     * @return BlockStrategyOptions
      */
-    protected function buildKey(BlockInterface $block): string
-    {
-        return \Craft::$app->cache->buildKey([$this->getKeyPrefix(), $block->id, $this->getKey($block)]);
-    }
-
-    /**
-     * Get the cache key specific to this strategy
-     * 
-     * @param  BlockInterface $block
-     * @return string
-     */
-    abstract protected function getKey(BlockInterface $block): string;
-
-    /**
-     * Get the cache key prefix specific to this strategy
-     * 
-     * @return string
-     */
-    abstract protected function getKeyPrefix(): string;
-
-    /**
-     * Get this strategy cache dependency tag
-     * 
-     * @return string
-     */
-    abstract protected function getTag(): string;
-
-    /**
-     * Get cache duration in seconds. Null for forever
-     * 
-     * @return ?int
-     */
-    abstract protected function getDuration(): ?int;
+    abstract protected function getOptionsModel(): string;
 }

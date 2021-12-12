@@ -24,14 +24,6 @@ interface LayoutInterface
     public function getType(): string;
 
     /**
-     * Eager load layout fields
-     * 
-     * @param Element            $element
-     * @param ViewModeInterface  $viewMode
-     */
-    public function eagerLoadFields(Element $element, ViewModeInterface $viewMode);
-
-    /**
      * Can this layout be assigned blocks
      * 
      * @return bool

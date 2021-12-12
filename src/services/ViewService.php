@@ -83,6 +83,12 @@ class ViewService extends Service
     protected $_renderingMode;
 
     /**
+     * Rendering layout mode
+     * @var ?string
+     */
+    protected $_renderingBlock;
+
+    /**
      * Variables originally passed to the page
      * @var array
      */
@@ -122,7 +128,10 @@ class ViewService extends Service
         \Craft::info('Found layout "' . $layout->description . '" (id: ' . $layout->id . ')', __METHOD__);
         $this->_renderingElement = $element;
         if ($this->eagerLoad) {
-            $layout->eagerLoadFields($element, $layout->getViewMode(ViewModeService::DEFAULT_HANDLE));
+            $viewMode = $layout->getViewMode(ViewModeService::DEFAULT_HANDLE);
+            $with = Themes::$plugin->displayerCache->eagerLoadViewMode($viewMode);
+            \Craft::info('Eager load fields ' . json_encode($with), __METHOD__);
+            \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
         }
         $this->pageVariables = $event->variables;
         $event->variables = array_merge($event->variables, [
@@ -165,14 +174,11 @@ class ViewService extends Service
      */
     public function renderBlock(BlockInterface $block): string
     {
-        $cache = $this->blockCacheService()->getBlockCache($block);
-        if (!$block->beforeRender($cache !== null)) {
+        if (!$block->beforeRender()) {
             return '';
         }
-        if ($cache !== null) {
-            return $cache;
-        }
-        $this->blockCacheService()->startBlockCaching($block);
+        $oldBlock = $this->renderingBlock;
+        $this->_renderingBlock = $block;
         $theme = $this->themesRegistry()->current;
         $templates = $block->getTemplates();
         $variables = $this->getPageVariables([
@@ -181,7 +187,7 @@ class ViewService extends Service
             'block' => $block,
         ]);
         $html = $this->render(self::BEFORE_RENDERING_BLOCK, $templates, $variables);
-        $this->blockCacheService()->stopBlockCaching($block, $html);
+        $this->_renderingBlock = $oldBlock;
         return $html;
     }
 
@@ -261,6 +267,7 @@ class ViewService extends Service
             'classes' => new ClassBag($theme->preferences->getFileClasses($asset, $field, $displayer)),
             'attributes' => new AttributeBag($theme->preferences->getFileAttributes($asset, $field, $displayer)),
             'asset' => $asset,
+            'field' => $field,
             'displayer' => $displayer,
             'options' => $displayer->options
         ]);
@@ -280,9 +287,6 @@ class ViewService extends Service
     {
         if (is_string($viewMode)) {
             $viewMode = $layout->getViewMode($viewMode);
-        }
-        if ($this->eagerLoad and $element) {
-            $layout->eagerLoadFields($element, $viewMode);
         }
         $theme = $this->themesRegistry()->current;
         $oldLayout = $this->renderingLayout;
@@ -328,6 +332,16 @@ class ViewService extends Service
     public function getRenderingViewMode(): ?ViewModeInterface
     {
         return $this->_renderingViewMode;
+    }
+
+    /**
+     * Get the current rendering block
+     * 
+     * @return ?ViewModeInterface
+     */
+    public function getRenderingBlock(): ?BlockInterface
+    {
+        return $this->_renderingBlock;
     }
 
     /**

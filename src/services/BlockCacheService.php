@@ -13,7 +13,7 @@ class BlockCacheService extends Service
 {
     const REGISTER_STRATEGIES = 'register_strategies';
 
-    const BLOCK_CACHE_TAG = 'themes.blocks';
+    const BLOCK_CACHE_TAG = 'themes::blocks';
 
     /**
      * @var array
@@ -44,34 +44,33 @@ class BlockCacheService extends Service
     }
 
     /**
-     * Start block cahing
+     * Start block caching
      * 
      * @param BlockInterface $block
      */
-    public function startBlockCaching(BlockInterface $block)
+    public function startCaching(BlockInterface $block)
     {
-        if ($this->shouldCacheBlock($block)) {
+        if ($this->shouldCache($block)) {
+            \Craft::info("Starting block cache for block {$block->machineName} ({$block->id})", __METHOD__);
             \Craft::$app->elements->startCollectingCacheTags();
-            Themes::$plugin->viewModes->startCollectingCacheTags();
         }
     }
 
     /**
-     * Stop block cahing
+     * Stop block caching
      * 
      * @param BlockInterface $block
      */
-    public function stopBlockCaching(BlockInterface $block, $data)
+    public function stopCaching(BlockInterface $block, $data)
     {
-        if ($this->shouldCacheBlock($block)) {
+        if ($this->shouldCache($block)) {
             $dep = \Craft::$app->elements->stopCollectingCacheTags();
             $dep->tags = array_merge(
                 $dep->tags,
-                Themes::$plugin->viewModes->stopCollectingCacheTags(),
-                $block->getCacheTags(),
-                [self::BLOCK_CACHE_TAG]
+                [self::BLOCK_CACHE_TAG, self::BLOCK_CACHE_TAG . '::' . $block->id]
             );
-            $this->setBlockCache($block, $data, $dep);
+            \Craft::info("Stopping block cache for block {$block->machineName} ({$block->id}), deps : " . json_encode($dep->tags), __METHOD__);
+            $this->setCache($block, $data, $dep);
         }
     }
 
@@ -107,9 +106,9 @@ class BlockCacheService extends Service
      * @param  BlockInterface $block
      * @return ?string
      */
-    public function getBlockCache(BlockInterface $block): ?string
+    public function getCache(BlockInterface $block): ?string
     {
-        if (!$this->shouldCacheBlock($block)) {
+        if (!$this->shouldCache($block)) {
             return null;
         }
         return $block->cacheStrategy->getCache($block);
@@ -129,9 +128,9 @@ class BlockCacheService extends Service
      * @param  BlockInterface $block
      * @return bool
      */
-    protected function shouldCacheBlock(BlockInterface $block): bool
+    protected function shouldCache(BlockInterface $block): bool
     {
-        return ($this->cacheEnabled and $block->cacheStrategy);
+        return ($this->cacheEnabled and $block->canBeCached and $block->cacheStrategy);
     }
 
     /**
@@ -150,9 +149,9 @@ class BlockCacheService extends Service
      * @param BlockInterface $block
      * @param string         $data
      */
-    protected function setBlockCache(BlockInterface $block, string $data, TagDependency $dep)
+    protected function setCache(BlockInterface $block, string $data, TagDependency $dep)
     {
-        if (!$this->shouldCacheBlock($block)) {
+        if (!$this->shouldCache($block)) {
             return;
         }
         $block->cacheStrategy->setCache($block, $data, $dep);

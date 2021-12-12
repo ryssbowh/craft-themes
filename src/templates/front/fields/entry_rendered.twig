@@ -1,11 +1,10 @@
 {% extends "fields/_field" %}
 
 {% block content %}
-    {% set layout = entry.type.layout %}
     {% for entry in value %}
         {% set viewMode = options.getViewMode(entry) %}
         {% if viewMode and layout %}
-            {{ layout.render(entry, viewMode.handle)|raw }}
+            {{ entry.type.layout.render(entry, viewMode)|raw }}
         {% endif %}
     {% endfor %}
 {% endblock %}

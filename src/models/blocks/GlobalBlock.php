@@ -50,14 +50,6 @@ class GlobalBlock extends Block
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return GlobalBlockOptions::class;
-    }
-
-    /**
      * Get global set as defined in options
      * 
      * @return ?GlobalSet
@@ -100,8 +92,16 @@ class GlobalBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return $this->globalSet != null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return GlobalBlockOptions::class;
     }
 }

@@ -49,14 +49,6 @@ class FlashMessagesBlock extends Block
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return FlashMessagesBlockOptions::class;
-    }
-
-    /**
      * Get notice from session
      * 
      * @return ?string
@@ -85,8 +77,16 @@ class FlashMessagesBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return ($this->flashNotice or $this->flashError);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return FlashMessagesBlockOptions::class;
     }
 }

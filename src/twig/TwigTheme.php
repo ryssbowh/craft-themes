@@ -2,6 +2,9 @@
 namespace Ryssbowh\CraftThemes\twig;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\twig\tokenparsers\BlockCacheTokenParser;
+use Ryssbowh\CraftThemes\twig\tokenparsers\FieldDisplayerCacheTokenParser;
+use Ryssbowh\CraftThemes\twig\tokenparsers\FileDisplayerCacheTokenParser;
 use Twig\Extension\AbstractExtension;
 
 class TwigTheme extends AbstractExtension
@@ -18,6 +21,18 @@ class TwigTheme extends AbstractExtension
             'themesRegistry' => $service,
             'theme' => $service->getCurrent()
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTokenParsers(): array
+    {
+        return [
+            new BlockCacheTokenParser(),
+            new FieldDisplayerCacheTokenParser(),
+            new FileDisplayerCacheTokenParser()
+        ];
     }
 
     /**

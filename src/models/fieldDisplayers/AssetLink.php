@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\interfaces\CraftFieldInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetLinkOptions;
 use Ryssbowh\CraftThemes\models\fields\UserPhoto;
@@ -23,8 +24,8 @@ class AssetLink extends FieldDisplayer
      */
     public function getLimit(): ?int
     {
-        if ($this->field instanceof Assets) {
-            return $this->field->craftField->limit;
+        if ($this->field instanceof CraftFieldInterface) {
+            return $this->field->craftField->limit ?: null;
         }
         return 1;
     }
@@ -56,19 +57,19 @@ class AssetLink extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public function getOptionsModel(): string
-    {
-        return AssetLinkOptions::class;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function beforeRender(&$value): bool
     {
         if ($this->field instanceof UserPhoto and !empty($value)) {
             $value = [$value];
         }
         return parent::beforeRender($value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return AssetLinkOptions::class;
     }
 }

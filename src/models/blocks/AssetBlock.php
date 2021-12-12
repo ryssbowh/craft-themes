@@ -47,14 +47,6 @@ class AssetBlock extends Block
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return AssetBlockOptions::class;
-    }
-
-    /**
      * Get asset as defined in options
      * 
      * @return array
@@ -84,8 +76,16 @@ class AssetBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return sizeof($this->assets) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return AssetBlockOptions::class;
     }
 }

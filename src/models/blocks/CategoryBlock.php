@@ -47,14 +47,6 @@ class CategoryBlock extends Block
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getOptionsModel(): string
-    {
-        return CategoryBlockOptions::class;
-    }
-
-    /**
      * Get category as defined in options
      * 
      * @return ?Category
@@ -84,8 +76,16 @@ class CategoryBlock extends Block
     /**
      * @inheritDoc
      */
-    public function beforeRender(bool $fromCache): bool
+    public function beforeRender(): bool
     {
         return sizeof($this->categories) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOptionsModel(): string
+    {
+        return CategoryBlockOptions::class;
     }
 }
