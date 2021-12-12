@@ -324,7 +324,7 @@ class DisplayService extends Service
      * Get all displays for a craft field id
      * 
      * @param  int    $fieldId
-     * @return array
+     * @return DisplayInterface[]
      */
     public function getAllForCraftField(int $fieldId): array
     {
@@ -354,7 +354,7 @@ class DisplayService extends Service
      * Get all displays for a layout
      * 
      * @param  LayoutInterface $layout
-     * @return array
+     * @return DisplayInterface[]
      */
     public function getForLayout(LayoutInterface $layout): array
     {
@@ -374,7 +374,7 @@ class DisplayService extends Service
      * Get all displays for a group
      * 
      * @param  int $groupId
-     * @return array
+     * @return DisplayInterface[]
      */
     public function getForGroup(int $groupId): array
     {
@@ -389,7 +389,7 @@ class DisplayService extends Service
      * 
      * @param  ViewModeInterface $viewMode
      * @param  bool              $onlyRoots Fetch only the root displays (that aren't in groups)
-     * @return array
+     * @return DisplayInterface[]
      */
     public function getForViewMode(ViewModeInterface $viewMode, bool $onlyRoots = true): array
     {
@@ -405,7 +405,7 @@ class DisplayService extends Service
      * Create all displays for a view mode
      * 
      * @param  ViewModeInterface $viewMode
-     * @return array
+     * @return DisplayInterface[]
      */
     public function createViewModeDisplays(ViewModeInterface $viewMode): array
     {

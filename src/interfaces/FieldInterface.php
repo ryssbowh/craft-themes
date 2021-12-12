@@ -70,7 +70,7 @@ interface FieldInterface
     /**
      * Populate this field from post data
      * 
-     * @param array  $data
+     * @param array $data
      */
     public function populateFromPost(array $data);
 
@@ -93,7 +93,7 @@ interface FieldInterface
     /**
      * Options setter
      * 
-     * @param array $options
+     * @param ?array $options
      */
     public function setOptions(?array $options);
 
@@ -121,7 +121,7 @@ interface FieldInterface
     /**
      * Get all the displayers that can display this field
      * 
-     * @return array
+     * @return FieldDisplayerInterface[]
      */
     public function getAvailableDisplayers(): array;
 
@@ -135,7 +135,7 @@ interface FieldInterface
     /**
      * Get available field templates
      * 
-     * @return array
+     * @return string[]
      */
     public function getFieldTemplates(): array;
 
@@ -143,7 +143,7 @@ interface FieldInterface
      * Get available file templates
      * 
      * @param  FileDisplayerInterface $displayer
-     * @return array
+     * @return string[]
      */
     public function getFileTemplates(FileDisplayerInterface $displayer): array;
 

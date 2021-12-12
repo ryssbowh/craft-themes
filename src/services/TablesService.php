@@ -30,6 +30,12 @@ class TablesService extends Service
         return $this->_pivots;
     }
 
+    /**
+     * Get all pivots for a table field
+     * 
+     * @param  Table  $table
+     * @return TablePivotRecord[]
+     */
     public function getForTable(Table $table): array
     {
         return array_map(function ($pivot) {
@@ -44,6 +50,14 @@ class TablesService extends Service
         );
     }
 
+    /**
+     * Get a pivot record for a table and a field ids.
+     * Creates new one if it doesn't exist
+     * 
+     * @param  int    $tableId
+     * @param  int    $fieldId
+     * @return TablePivotRecord
+     */
     public function getTablePivotRecord(int $tableId, int $fieldId): TablePivotRecord
     {
         return $this->allPivots()
@@ -55,6 +69,12 @@ class TablesService extends Service
             ]);
     }
 
+    /**
+     * Get parent table field for a field
+     * 
+     * @param  int    $fieldId
+     * @return ?Table
+     */
     public function getTableForField(int $fieldId): ?Table
     {
         $pivot = $this->allPivots()

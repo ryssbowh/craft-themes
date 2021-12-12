@@ -26,7 +26,7 @@ use yii\base\Event;
 class RegisterFieldsEvent extends Event
 {
     /**
-     * @var array
+     * @var string[]
      */
     protected $_fields = [];
 
@@ -74,7 +74,7 @@ class RegisterFieldsEvent extends Event
     /**
      * Get all fields
      * 
-     * @return array
+     * @return string[]
      */
     public function getFields(): array
     {

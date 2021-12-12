@@ -9,14 +9,14 @@ interface RegionInterface
     /**
      * Blocks getter
      * 
-     * @return array
+     * @return BlockInterface[]
      */
     public function getBlocks(): array;
 
     /**
      * Get visible blocks
      * 
-     * @return array
+     * @return BlockInterface[]
      */
     public function getVisibleBlocks(): array;
 
@@ -37,7 +37,7 @@ interface RegionInterface
     /**
      * Blocks setter
      * 
-     * @param array $blocks
+     * @param BlockInterface[]|null $blocks
      */
     public function setBlocks(?array $blocks);
 
@@ -59,7 +59,7 @@ interface RegionInterface
      * Get available templates
      * 
      * @param  LayoutInterface $layout
-     * @return array
+     * @return string[]
      */
     public function getTemplates(LayoutInterface $layout): array;
 

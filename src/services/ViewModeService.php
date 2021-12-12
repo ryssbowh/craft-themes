@@ -27,7 +27,7 @@ class ViewModeService extends Service
     const DEFAULT_HANDLE = 'default';
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $cacheTags = [];
 

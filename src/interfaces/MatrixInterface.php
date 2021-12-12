@@ -10,6 +10,13 @@ use craft\elements\MatrixBlock;
 interface MatrixInterface extends FieldInterface
 {   
     /**
+     * Types setter
+     * 
+     * @param DisplayMatrixType[] $types
+     */
+    public function setTypes(array $types);
+
+    /**
      * Get matrix types, indexed by matrix block type handles
      * 
      * @return DisplayMatrixType[]
@@ -20,7 +27,7 @@ interface MatrixInterface extends FieldInterface
      * Get all visible fields defined in a Matric block
      * 
      * @param  MatrixBlock $block
-     * @return array
+     * @return FieldInterface[]
      */
     public function getVisibleFields(MatrixBlock $block): array;
 
@@ -32,4 +39,31 @@ interface MatrixInterface extends FieldInterface
      * @return ?FieldInterface
      */
     public function getFieldByHandle(MatrixBlock $block, string $handle): ?FieldInterface;
+
+    /**
+     * Get fields by handles
+     * 
+     * @param  MatrixBlock $block
+     * @param  string[]    $handles
+     * @return FieldInterface[]
+     */
+    public function getFieldsByHandles(MatrixBlock $block, array $handles): array;
+
+    /**
+     * Get a field by uid
+     * 
+     * @param  MatrixBlock $block
+     * @param  string      $uid
+     * @return FieldInterface
+     */
+    public function getFieldByUid(MatrixBlock $block, string $uid): ?FieldInterface;
+
+    /**
+     * Get fields by uids
+     * 
+     * @param  MatrixBlock $block
+     * @param  string[]    $uids
+     * @return FieldInterface[]
+     */
+    public function getFieldsByUids(MatrixBlock $block, array $uids): array;
 }

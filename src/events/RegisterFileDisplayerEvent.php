@@ -17,9 +17,9 @@ class RegisterFileDisplayerEvent extends Event
 {
     /**
      * List of displayers
-     * @var array
+     * @var string[]
      */
-    protected $displayers = [];
+    protected $_displayers = [];
 
     /**
      * @inheritDoc
@@ -41,11 +41,11 @@ class RegisterFileDisplayerEvent extends Event
     /**
      * Displayers getter
      * 
-     * @return array
+     * @return string[]
      */
     public function getDisplayers(): array
     {
-        return $this->displayers;
+        return $this->_displayers;
     }
 
     /**
@@ -57,17 +57,17 @@ class RegisterFileDisplayerEvent extends Event
      */
     public function register(string $class, bool $replaceIfExisting = false)
     {
-        if (!$replaceIfExisting and isset($this->displayers[$class::$handle])) {
+        if (!$replaceIfExisting and isset($this->_displayers[$class::$handle])) {
             throw FileDisplayerException::alreadyDefined($class);
         }
-        $this->displayers[$class::$handle] = $class;
+        $this->_displayers[$class::$handle] = $class;
     }
 
     /**
      * Register many displayer classes
      * 
-     * @param  array  $displayers
-     * @param  bool   $replaceIfExisting
+     * @param  string[] $displayers
+     * @param  bool     $replaceIfExisting
      * @throws FileDisplayerException
      */
     public function registerMany(array $displayers, bool $replaceIfExisting = false)

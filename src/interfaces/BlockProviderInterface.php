@@ -33,14 +33,14 @@ interface BlockProviderInterface
     /**
      * Get all defined blocks as objects
      * 
-     * @return array
+     * @return BlockInterface[]
      */
     public function getBlocks(): array;
 
     /**
-     * Get all defined blocks
+     * Get all defined blocks classes
      * 
-     * @return array
+     * @return string[]
      */
     public function getDefinedBlocks(): array;
 }

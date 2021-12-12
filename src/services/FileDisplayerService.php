@@ -16,7 +16,7 @@ class FileDisplayerService extends Service
     const EVENT_DEFAULT_DISPLAYERS = 'default_displayer';
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $_displayers;
 
@@ -26,7 +26,7 @@ class FileDisplayerService extends Service
     protected $_kindTargets = [];
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $_defaults;
 
@@ -46,7 +46,7 @@ class FileDisplayerService extends Service
     /**
      * Get default displayers, indexed by kind
      * 
-     * @return array
+     * @return string[]
      */
     public function getDefaults(): array
     {
@@ -60,7 +60,7 @@ class FileDisplayerService extends Service
      * Get the kind targets for an displayer handle
      * 
      * @param  string $displayerHandle
-     * @return array
+     * @return string[]
      */
     public function getKindTargets(string $displayerHandle): array
     {
@@ -101,7 +101,7 @@ class FileDisplayerService extends Service
      * Get displayers for an asset kind
      * 
      * @param  string $kind
-     * @return array
+     * @return FileDisplayerInterface[]
      */
     public function getForKind(string $kind): array
     {
@@ -117,8 +117,8 @@ class FileDisplayerService extends Service
     /**
      * Get displayers by handles
      * 
-     * @param  array  $handles
-     * @return array
+     * @param  array $handles
+     * @return FileDisplayerInterface[]
      */
     protected function getByHandles(array $handles): array
     {

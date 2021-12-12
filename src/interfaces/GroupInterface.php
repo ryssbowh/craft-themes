@@ -9,7 +9,7 @@ interface GroupInterface extends HasDisplaysInterface
     /**
      * Get available templates
      * 
-     * @return array
+     * @return string[]
      */
     public function getTemplates(): array;
 

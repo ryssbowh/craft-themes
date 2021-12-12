@@ -107,7 +107,7 @@ class LayoutService extends Service
     /**
      * Get all layouts that have displays
      * 
-     * @return array
+     * @return LayoutInterface[]
      */
     public function withDisplays(): array
     {
@@ -122,7 +122,7 @@ class LayoutService extends Service
      * @param  string|ThemeInterface $theme theme instance or theme handle
      * @param  bool|null $withHasDisplays
      * @param  bool|null $withHasBlocks
-     * @return array
+     * @return LayoutInterface[]
      */
     public function getForTheme($theme, ?bool $withHasDisplays = null, ?bool $withHasBlocks = null): array
     {
@@ -144,7 +144,7 @@ class LayoutService extends Service
     /**
      * Get all layouts that can have blocks indexed by theme's handle
      * 
-     * @return array
+     * @return LayoutInterface[]
      */
     public function getBlockLayouts(): array
     {
@@ -164,7 +164,7 @@ class LayoutService extends Service
     /**
      * Get all layouts with displays indexed by theme's handle
      * 
-     * @return array
+     * @return LayoutInterface[]
      */
     public function getWithDisplays(): array
     {
@@ -285,7 +285,7 @@ class LayoutService extends Service
      * 
      * @param  string|ThemeInterface $theme theme instance or theme handle
      * @param  string                $type
-     * @return array
+     * @return LayoutInterface[]
      */
     public function getForType($theme, string $type): array
     {
@@ -675,7 +675,7 @@ class LayoutService extends Service
      * Get all available layouts
      *
      * @param  string $themeHandle
-     * @return array
+     * @return LayoutInterface[]
      */
     protected function getAvailable(string $themeHandle): array
     {
@@ -731,7 +731,7 @@ class LayoutService extends Service
      * Get all custom layouts for a theme
      * 
      * @param  string $themeHandle
-     * @return array
+     * @return LayoutInterface[]
      */
     protected function getCustomLayouts(string $themeHandle): array
     {
@@ -745,7 +745,7 @@ class LayoutService extends Service
      * Creates all categories layouts
      *
      * @param  string $themeHandle
-     * @return array
+     * @return LayoutInterface[]
      */
     protected function createCategoryLayouts(string $themeHandle): array
     {
@@ -765,7 +765,7 @@ class LayoutService extends Service
      * Creates all entries layouts
      *
      * @param  string $themeHandle
-     * @return array
+     * @return LayoutInterface[]
      */
     protected function createEntryLayouts(string $themeHandle): array
     {
@@ -787,7 +787,7 @@ class LayoutService extends Service
      * Creates all volumes layouts
      *
      * @param  string $themeHandle
-     * @return array
+     * @return LayoutInterface[]
      */
     protected function createVolumesLayouts(string $themeHandle): array
     {
@@ -807,7 +807,7 @@ class LayoutService extends Service
      * Creates all globals layouts
      *
      * @param  string $themeHandle
-     * @return array
+     * @return LayoutInterface[]
      */
     protected function createGlobalsLayouts(string $themeHandle): array
     {
@@ -827,7 +827,7 @@ class LayoutService extends Service
      * Creates all tags layouts
      *
      * @param  string $themeHandle
-     * @return array
+     * @return LayoutInterface[]
      */
     protected function createTagsLayouts(string $themeHandle): array
     {

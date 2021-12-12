@@ -6,7 +6,7 @@ use yii\base\Event;
 class RegisterFileDefaultDisplayerEvent extends Event
 {
     /**
-     * @var array
+     * @var string[]
      */
     public $defaults = [];
 }

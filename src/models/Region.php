@@ -35,7 +35,7 @@ class Region extends Model implements RegionInterface
     public $layout;
 
     /**
-     * @var array
+     * @var BlockInterface[]
      */
     protected $_blocks;
 

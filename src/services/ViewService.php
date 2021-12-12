@@ -395,9 +395,9 @@ class ViewService extends Service
     /**
      * Renders an array of templates
      *
-     * @param  string $eventType
-     * @param  array  $templates
-     * @param  array  $variables
+     * @param  string   $eventType
+     * @param  string[] $templates
+     * @param  array    $variables
      * @return string
      */
     protected function render(string $eventType, array $templates, array $variables): string
@@ -415,9 +415,9 @@ class ViewService extends Service
     /**
      * Triggers an event
      * 
-     * @param  string $eventType
-     * @param  array  $templates
-     * @param  array  $variables
+     * @param  string   $eventType
+     * @param  string[] $templates
+     * @param  array    $variables
      * @return Event
      */
     protected function triggerRenderingEvent(string $eventType, array $templates, array $variables): Event
@@ -433,7 +433,7 @@ class ViewService extends Service
     /**
      * Resolves a template from cache
      * 
-     * @param  array  $templates
+     * @param  string[] $templates
      * @return string
      */
     protected function resolveTemplateFromCache(array $templates): string
@@ -457,7 +457,7 @@ class ViewService extends Service
     /**
      * Resolves a template from an array of templates
      * 
-     * @param  array $templates
+     * @param  string[] $templates
      * @return string
      */
     protected function resolveTemplate(array $templates): string
@@ -469,9 +469,9 @@ class ViewService extends Service
     /**
      * Get the dev mode html
      * 
-     * @param  array  $templates
-     * @param  string $currentTemplate
-     * @param  array  $variables
+     * @param  string[] $templates
+     * @param  string   $currentTemplate
+     * @param  array    $variables
      * @return string
      */
     protected function getDevModeHtml(array $templates, string $currentTemplate, array $variables): string

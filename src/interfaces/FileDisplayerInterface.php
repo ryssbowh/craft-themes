@@ -21,7 +21,7 @@ interface FileDisplayerInterface extends DisplayerInterface
      * 
      * '*' is a valid kind and will be resolved to all asset kinds
      * 
-     * @return array
+     * @return string[]
      */
     public static function getKindTargets(): array;
 

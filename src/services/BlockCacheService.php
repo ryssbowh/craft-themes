@@ -16,7 +16,7 @@ class BlockCacheService extends Service
     const BLOCK_CACHE_TAG = 'themes::blocks';
 
     /**
-     * @var array
+     * @var BlockCacheStrategyInterface[]
      */
     protected $_strategies;
 
@@ -33,7 +33,7 @@ class BlockCacheService extends Service
     /**
      * Get all strategies
      * 
-     * @return array
+     * @return BlockCacheStrategyInterface[]
      */
     public function getStrategies(): array
     {

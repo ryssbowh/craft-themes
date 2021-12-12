@@ -18,7 +18,7 @@ class FieldDisplayerService extends Service
 
     /**
      * All displayers classes, indexed by handle
-     * @var array
+     * @var string[]
      */
     protected $_displayers;
 
@@ -37,7 +37,7 @@ class FieldDisplayerService extends Service
     /**
      * Displayers getter
      * 
-     * @return array
+     * @return string[]
      */
     public function all(): array
     {
@@ -104,7 +104,7 @@ class FieldDisplayerService extends Service
      * Get the field targets for a displayer handle
      * 
      * @param  string $displayerHandle
-     * @return array
+     * @return string[]
      */
     public function getFieldTargets(string $displayerHandle): array
     {
@@ -118,7 +118,7 @@ class FieldDisplayerService extends Service
      * Get available displayers for a field
      * 
      * @param  FieldInterface $fieldClass
-     * @return array
+     * @return FieldDisplayerInterface[]
      */
     public function getAvailable(FieldInterface $field): array
     {
@@ -149,7 +149,7 @@ class FieldDisplayerService extends Service
      * Get many displayers, by handle
      * 
      * @param  array $handles
-     * @return array
+     * @return FieldDisplayerInterface[]
      */
     protected function getByHandles(array $handles): array
     {

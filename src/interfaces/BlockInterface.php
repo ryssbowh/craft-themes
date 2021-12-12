@@ -125,7 +125,7 @@ interface BlockInterface
     /**
      * Get available templates
      * 
-     * @return array
+     * @return string[]
      */
     public function getTemplates(): array;
 

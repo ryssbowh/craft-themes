@@ -298,11 +298,7 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
-     * Get a field by handle
-     * 
-     * @param  MatrixBlock $block
-     * @param  string      $handle
-     * @return FieldInterface
+     * @inheritDoc
      */
     public function getFieldByHandle(MatrixBlock $block, string $handle): ?FieldInterface
     {
@@ -319,11 +315,7 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
-     * Get fields by handles
-     * 
-     * @param  MatrixBlock $block
-     * @param  array       $handles
-     * @return array
+     * @inheritDoc
      */
     public function getFieldsByHandles(MatrixBlock $block, array $handles): array
     {
@@ -341,11 +333,7 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
-     * Get a field by uid
-     * 
-     * @param  MatrixBlock $block
-     * @param  string      $uid
-     * @return FieldInterface
+     * @inheritDoc
      */
     public function getFieldByUid(MatrixBlock $block, string $uid): ?FieldInterface
     {
@@ -362,11 +350,7 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
-     * Get fields by uids
-     * 
-     * @param  MatrixBlock $block
-     * @param  array       $uids
-     * @return array
+     * @inheritDoc
      */
     public function getFieldsByUids(MatrixBlock $block, array $uids): array
     {
@@ -384,9 +368,7 @@ class Matrix extends CraftField implements MatrixInterface
     }
 
     /**
-     * Types setter
-     * 
-     * @param array $types
+     * @inheritDoc
      */
     public function setTypes(array $types)
     {

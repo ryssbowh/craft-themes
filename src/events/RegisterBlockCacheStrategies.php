@@ -10,10 +10,13 @@ use yii\base\Event;
 class RegisterBlockCacheStrategies extends Event
 {
     /**
-     * @var array
+     * @var BlockCacheStrategyInterface[]
      */
     protected $_strategies;
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -35,7 +38,7 @@ class RegisterBlockCacheStrategies extends Event
     /**
      * Get all strategies
      * 
-     * @return array
+     * @return BlockCacheStrategyInterface[]
      */
     public function getStrategies(): array
     {

@@ -48,7 +48,7 @@ class RegisterFieldDisplayerEvent extends Event
 {
     /**
      * List of registered displayers
-     * @var array
+     * @var string[]
      */
     protected $_displayers = [];
 
@@ -104,7 +104,7 @@ class RegisterFieldDisplayerEvent extends Event
     /**
      * Displayers getter
      * 
-     * @return array
+     * @return string[]
      */
     public function getDisplayers(): array
     {

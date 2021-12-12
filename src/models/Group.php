@@ -27,7 +27,7 @@ class Group extends DisplayItem implements GroupInterface
     public $handle;
 
     /**
-     * @var array
+     * @var DisplayInterface[]
      */
     protected $_displays;
 

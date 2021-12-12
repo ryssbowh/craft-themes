@@ -11,6 +11,9 @@ use Ryssbowh\CraftThemes\services\LayoutService;
  */
 class GlobalBlockOptions extends BlockOptions
 {
+    /**
+     * @inheritDoc
+     */
     public function defineOptions(): array
     {
         return [

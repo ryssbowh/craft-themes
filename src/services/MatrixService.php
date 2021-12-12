@@ -38,7 +38,7 @@ class MatrixService extends Service
      * 
      * @param  MatrixBlockType $type
      * @param  Matrix          $matrix
-     * @return array
+     * @return FieldInterface[]
      */
     public function getForMatrixType(MatrixBlockType $type, Matrix $matrix): array
     {
@@ -106,7 +106,7 @@ class MatrixService extends Service
      * 
      * @param  MatrixBlockType $type
      * @param  Matrix          $matrix
-     * @return array
+     * @return MatrixPivotRecord[]
      */
     protected function getMatrixPivotRecords(MatrixBlockType $type, Matrix $matrix): array
     {

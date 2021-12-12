@@ -26,7 +26,7 @@ interface ThemeInterface
     /**
      * Absolute template paths, including those of the parent(s)
      * 
-     * @return array
+     * @return string[]
      */
     public function getTemplatePaths(): array;
 
@@ -61,7 +61,7 @@ interface ThemeInterface
     public function getAssetUrl(string $path): string;
 
     /**
-     * Get theme's regions
+     * Get theme's regions definitions
      * 
      * @return array
      */

@@ -9,28 +9,28 @@ interface HasDisplaysInterface
     /**
      * Displays getter, will only fetch the root displays (that aren't in groups)
      * 
-     * @return array
+     * @return DisplayInterface[]
      */
     public function getDisplays(): array;
 
     /**
      * Display setter
      * 
-     * @param ?array $displays
+     * @param null|DisplayInterface[] $displays
      */
     public function setDisplays(?array $displays);
 
     /**
      * Get all visible displays 
      * 
-     * @return array
+     * @return DisplayInterface[]
      */
     public function getVisibleDisplays(): array;
 
     /**
      * Returns all displays, in groups or not
      * 
-     * @return array
+     * @return DisplayInterface[]
      */
     public function getAllDisplays(): array;
 
@@ -59,20 +59,20 @@ interface HasDisplaysInterface
     /**
      * Fetch displays by handles
      * 
-     * @param  array  $handles
-     * @param  bool   $onlyRoots Only look at root displays (not in groups)
-     * @param  bool   $onlyVisibles Only look at visible displays
-     * @return array
+     * @param  string[] $handles
+     * @param  bool     $onlyRoots Only look at root displays (not in groups)
+     * @param  bool     $onlyVisibles Only look at visible displays
+     * @return DisplayInterface[]
      */
     public function getDisplaysByHandles(array $handles, bool $onlyRoots = true, bool $onlyVisibles = true): array;
 
     /**
      * Fetch displays by uids
      * 
-     * @param  array  $uids
-     * @param  bool   $onlyRoots Only look at root displays (not in groups)
-     * @param  bool   $onlyVisibles Only look at visible displays
-     * @return array
+     * @param  string[] $uids
+     * @param  bool      $onlyRoots Only look at root displays (not in groups)
+     * @param  bool      $onlyVisibles Only look at visible displays
+     * @return DisplayInterface[]
      */
     public function getDisplaysByUids(array $uids, bool $onlyRoots = true, bool $onlyVisibles = true): array;
 }

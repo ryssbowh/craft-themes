@@ -1,9 +1,9 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use Ryssbowh\CraftThemes\models\Region;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
+use craft\base\Field;
 use craft\models\FieldLayout;
 
 /**
@@ -48,7 +48,7 @@ interface LayoutInterface
     /**
      * Get layout regions
      * 
-     * @return array
+     * @return RegionInterface[]
      */
     public function getRegions(): array;
 
@@ -83,7 +83,7 @@ interface LayoutInterface
     /**
      * Get view modes defined for that layout
      * 
-     * @return array
+     * @return ViewModeInterface[]
      */
     public function getViewModes(): array;
 
@@ -98,7 +98,7 @@ interface LayoutInterface
     /**
      * View modes setter
      * 
-     * @param  array $viewModes
+     * @param  null|ViewModeInterface[] $viewModes
      * @return LayoutInterface
      */
     public function setViewModes(?array $viewModes): LayoutInterface;
@@ -129,14 +129,14 @@ interface LayoutInterface
     /**
      * Blocks getter
      * 
-     * @return array
+     * @return BlockInterface[]
      */
     public function getBlocks(): array;
 
     /**
      * Blocks setter
      * 
-     * @param  array $blocks
+     * @param  BlockInterface[] $blocks
      * @return LayoutInterface
      */
     public function setBlocks(array $blocks): LayoutInterface;
@@ -167,7 +167,7 @@ interface LayoutInterface
      * @param  bool         $checkLoaded
      * @return Region
      */
-    public function getRegion(string $handle): Region;
+    public function getRegion(string $handle): RegionInterface;
 
     /**
      * Is a region defined
@@ -180,7 +180,7 @@ interface LayoutInterface
     /**
      * Get all craft fields defined on this layout's element
      * 
-     * @return array
+     * @return Field[]
      */
     public function getCraftFields(): array;
 
@@ -205,7 +205,6 @@ interface LayoutInterface
      * Get the url to edit blocks.
      * Returns the blocks url for the default layout if this layout doesn't have blocks
      * 
-     * @param  ThemeInterface|string|null    $theme
      * @return string
      */
     public function getEditBlocksUrl(): string;

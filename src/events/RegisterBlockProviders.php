@@ -10,7 +10,7 @@ use yii\base\Event;
 class RegisterBlockProviders extends Event
 {
     /**
-     * @var array
+     * @var BlockProviderInterface[]
      */
     protected $providers = [];
 
@@ -40,7 +40,7 @@ class RegisterBlockProviders extends Event
     /**
      * Get all providers
      * 
-     * @return array
+     * @return BlockProviderInterface[]
      */
     public function getProviders(): array
     {

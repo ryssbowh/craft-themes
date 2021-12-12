@@ -21,7 +21,7 @@ class ThemesRegistry extends Service
     const THEMES_WEBROOT = '@webroot/themes/';
 
     /**
-     * @var ?array
+     * @var ThemeInterface[]
      */
     protected $themes;
 
@@ -104,7 +104,7 @@ class ThemesRegistry extends Service
     /**
      * Get all themes
      * 
-     * @return array
+     * @return ThemeInterface[]
      */
     public function all(): array
     {
@@ -117,7 +117,7 @@ class ThemesRegistry extends Service
     /**
      * Get all themes as names
      * 
-     * @return array
+     * @return string[]
      */
     public function getAsNames(): array
     {
@@ -131,7 +131,7 @@ class ThemesRegistry extends Service
      * 
      * @param  boolean $asNames
      * @param  boolean $asArrays
-     * @return array
+     * @return ThemeInterface[]
      */
     public function getNonPartials(bool $asNames = false, bool $asArrays = false): array
     {
@@ -154,7 +154,7 @@ class ThemesRegistry extends Service
      * Get all themes that depends on a theme
      * 
      * @param  ThemeInterface $theme
-     * @return array
+     * @return ThemeInterface[]
      */
     public function getDependencies(ThemeInterface $theme): array
     {

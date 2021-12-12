@@ -35,7 +35,7 @@ interface BlockCacheStrategyInterface
      * Returns null if cache is not set.
      * 
      * @param  BlockInterface $block
-     * @return string|null
+     * @return ?string
      */
     public function getCache(BlockInterface $block): ?string;
 

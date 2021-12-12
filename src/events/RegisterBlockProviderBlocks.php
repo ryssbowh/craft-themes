@@ -7,7 +7,7 @@ use yii\base\Event;
 class RegisterBlockProviderBlocks extends Event
 {
     /**
-     * @var array
+     * @var string[]
      */
     public $blocks;
 

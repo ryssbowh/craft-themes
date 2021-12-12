@@ -42,7 +42,7 @@ interface ViewModeInterface extends HasDisplaysInterface
      *
      * @param  string $prefix
      * @param  int    $level
-     * @return array
+     * @return string[]
      */
     public function eagerLoad(string $prefix = '', int $level = 0): array;
 }

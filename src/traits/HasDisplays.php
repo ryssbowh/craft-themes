@@ -9,7 +9,7 @@ use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 trait HasDisplays
 {
     /**
-     * @var array
+     * @var DisplayInterface[]
      */
     protected $_displays;
 

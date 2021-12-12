@@ -51,10 +51,10 @@ interface DisplayerInterface
     /**
      * Modify eager load map
      *
-     * @param  array  $eagerLoad
-     * @param  string $prefix
-     * @param  int    $level
-     * @return array
+     * @param  string[] $eagerLoad
+     * @param  string   $prefix
+     * @param  int      $level
+     * @return string[]
      */
     public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array;
 }

@@ -15,7 +15,7 @@ use Ryssbowh\CraftThemes\models\blocks\SetPasswordFormBlock;
 class FormsBlockProvider extends BlockProvider
 {
     /**
-     * @var array
+     * @inheritDoc
      */
     protected $_definedBlocks = [
         LoginFormBlock::class,

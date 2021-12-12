@@ -20,7 +20,7 @@ use Ryssbowh\CraftThemes\models\blocks\UserBlock;
 class SystemBlockProvider extends BlockProvider
 {
     /**
-     * @var array
+     * @inheritDoc
      */
     protected $_definedBlocks = [
         TemplateBlock::class,

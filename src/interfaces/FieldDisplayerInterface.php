@@ -18,7 +18,7 @@ interface FieldDisplayerInterface extends DisplayerInterface
      * Field classes this displayer can handle.
      * Developers should use FieldDisplayerService::getFieldTargets($displayerHandle) instead.
      * 
-     * @return array
+     * @return string[]
      */
     public static function getFieldTargets(): array;
 

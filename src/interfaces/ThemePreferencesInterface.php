@@ -11,11 +11,11 @@ use craft\elements\Asset;
 interface ThemePreferencesInterface 
 {
     /**
-     * Layout classes getter
+     * Get layout classes
      * 
      * @param  LayoutInterface   $layout
      * @param  boolean           $root true if we're rendering a page template
-     * @return array
+     * @return string[]
      */
     public function getLayoutClasses(LayoutInterface $layout, bool $root = false): array;
 
@@ -24,7 +24,7 @@ interface ThemePreferencesInterface
      * 
      * @param  LayoutInterface   $layout
      * @param  boolean           $root true if we're rendering a page template
-     * @return array
+     * @return string[]
      */
     public function getLayoutAttributes(LayoutInterface $layout, bool $root = false): array;
 
@@ -32,7 +32,7 @@ interface ThemePreferencesInterface
      * Get block classes
      * 
      * @param  BlockInterface $block
-     * @return array
+     * @return string[]
      */
     public function getBlockClasses(BlockInterface $block): array;
 
@@ -40,7 +40,7 @@ interface ThemePreferencesInterface
      * Get block attributes
      * 
      * @param  BlockInterface $block
-     * @return array
+     * @return string[]
      */
     public function getBlockAttributes(BlockInterface $block): array;
 
@@ -48,7 +48,7 @@ interface ThemePreferencesInterface
      * Get region classes
      * 
      * @param  RegionInterface $region
-     * @return array
+     * @return string[]
      */
     public function getRegionClasses(RegionInterface $region): array;
 
@@ -56,7 +56,7 @@ interface ThemePreferencesInterface
      * Get region attributes
      * 
      * @param  RegionInterface $region
-     * @return array
+     * @return string[]
      */
     public function getRegionAttributes(RegionInterface $region): array;
 
@@ -64,7 +64,7 @@ interface ThemePreferencesInterface
      * Get field classes
      * 
      * @param  FieldInterface $field
-     * @return array
+     * @return string[]
      */
     public function getFieldClasses(FieldInterface $field): array;
 
@@ -72,7 +72,7 @@ interface ThemePreferencesInterface
      * Get field attributes
      * 
      * @param  FieldInterface $field
-     * @return array
+     * @return string[]
      */
     public function getFieldAttributes(FieldInterface $field): array;
 
@@ -80,7 +80,7 @@ interface ThemePreferencesInterface
      * Get field container classes
      * 
      * @param  FieldInterface $field
-     * @return array
+     * @return string[]
      */
     public function getFieldContainerClasses(FieldInterface $field): array;
 
@@ -88,7 +88,7 @@ interface ThemePreferencesInterface
      * Get field container attributes
      * 
      * @param  FieldInterface $field
-     * @return array
+     * @return string[]
      */
     public function getFieldContainerAttributes(FieldInterface $field): array;
 
@@ -96,7 +96,7 @@ interface ThemePreferencesInterface
      * Get field label classes
      * 
      * @param  FieldInterface $field
-     * @return array
+     * @return string[]
      */
     public function getFieldLabelClasses(FieldInterface $field): array;
 
@@ -104,7 +104,7 @@ interface ThemePreferencesInterface
      * Get field label attributes
      * 
      * @param  FieldInterface $field
-     * @return array
+     * @return string[]
      */
     public function getFieldLabelAttributes(FieldInterface $field): array;
 
@@ -112,7 +112,7 @@ interface ThemePreferencesInterface
      * Get group classes
      * 
      * @param  GroupInterface $group
-     * @return array
+     * @return string[]
      */
     public function getGroupClasses(GroupInterface $group): array;
 
@@ -120,7 +120,7 @@ interface ThemePreferencesInterface
      * Get group attributes
      * 
      * @param  GroupInterface $group
-     * @return array
+     * @return string[]
      */
     public function getGroupAttributes(GroupInterface $group): array;
 
@@ -128,7 +128,7 @@ interface ThemePreferencesInterface
      * Get group container classes
      * 
      * @param  GroupInterface $group
-     * @return array
+     * @return string[]
      */
     public function getGroupContainerClasses(GroupInterface $group): array;
 
@@ -136,7 +136,7 @@ interface ThemePreferencesInterface
      * Get group container attributes
      * 
      * @param  GroupInterface $group
-     * @return array
+     * @return string[]
      */
     public function getGroupContainerAttributes(GroupInterface $group): array;
 
@@ -144,7 +144,7 @@ interface ThemePreferencesInterface
      * Get group label classes
      * 
      * @param  GroupInterface $group
-     * @return array
+     * @return string[]
      */
     public function getGroupLabelClasses(GroupInterface $group): array;
 
@@ -152,7 +152,7 @@ interface ThemePreferencesInterface
      * Get group container classes
      * 
      * @param  GroupInterface $group
-     * @return array
+     * @return string[]
      */
     public function getGroupLabelAttributes(GroupInterface $group): array;
 
@@ -162,7 +162,7 @@ interface ThemePreferencesInterface
      * @param  Asset                  $asset
      * @param  FieldInterface         $field
      * @param  FileDisplayerInterface $displayer
-     * @return array
+     * @return string[]
      */
     public function getFileClasses(Asset $asset, FieldInterface $field, FileDisplayerInterface $displayer): array;
 
@@ -172,7 +172,7 @@ interface ThemePreferencesInterface
      * @param  Asset                  $asset
      * @param  FieldInterface         $field
      * @param  FileDisplayerInterface $displayer
-     * @return array
+     * @return string[]
      */
     public function getFileAttributes(Asset $asset, FieldInterface $field, FileDisplayerInterface $displayer): array;
 }

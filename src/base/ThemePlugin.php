@@ -24,7 +24,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     
     /**
      * array of all the template paths (including those of the parents)
-     * @var array
+     * @var string[]
      */
     protected $templatesPaths;
 
@@ -267,7 +267,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      * Get bundle assets for a url path
      * 
      * @param  string $urlPath
-     * @return array
+     * @return string[]
      */
     protected function getAssetBundles(string $urlPath): array
     {

@@ -15,7 +15,7 @@ class BlockProvidersService extends Component
     const EVENT_REGISTER_BLOCK_PROVIDERS = 'block_providers';
 
     /**
-     * @var array
+     * @var BlockProviderInterface[]
      */
     protected $_providers;
 
@@ -23,7 +23,7 @@ class BlockProvidersService extends Component
      * Get all block providers
      * 
      * @param  bool $asArrays
-     * @return array
+     * @return BlockProviderInterface[]
      */
     public function all(bool $asArrays = false): array
     {

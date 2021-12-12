@@ -77,7 +77,7 @@ interface DisplayItemInterface
      *
      * @param  string $prefix
      * @param  int    $level
-     * @return array
+     * @return string[]
      */
     public function eagerLoad(string $prefix = '', int $level = 0): array;
 }

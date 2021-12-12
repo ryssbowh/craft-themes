@@ -6,7 +6,7 @@ use yii\base\Event;
 class RenderEvent extends Event
 {
     /**
-     * @var array
+     * @var string[]
      */
     public $templates;
 

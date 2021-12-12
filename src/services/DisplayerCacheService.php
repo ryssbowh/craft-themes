@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\DisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
+use yii\caching\CacheInterface;
 use yii\caching\TagDependency;
 
 class DisplayerCacheService extends Service
@@ -71,7 +72,7 @@ class DisplayerCacheService extends Service
      * Returns all the fields that can be eager loaded on a view mode and stores it in cache
      * 
      * @param  ViewModeInterface $viewMode
-     * @return array
+     * @return string[]
      */
     public function eagerLoadViewMode(ViewModeInterface $viewMode): array
     {

@@ -29,7 +29,7 @@ class FieldsService extends Service
 
     /**
      * List of registered fields, indexed by their types
-     * @var array
+     * @var string[]
      */
     private $_registered;
 
@@ -53,7 +53,7 @@ class FieldsService extends Service
     /**
      * Get all registered fields
      * 
-     * @return array
+     * @return string[]
      */
     public function getRegisteredFields(): array
     {
@@ -66,7 +66,7 @@ class FieldsService extends Service
     /**
      * Get all valid field types
      * 
-     * @return array
+     * @return string[]
      */
     public function getValidTypes(): array
     {

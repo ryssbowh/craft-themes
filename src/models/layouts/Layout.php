@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Region;
@@ -68,12 +69,12 @@ class Layout extends Model implements LayoutInterface
     protected $_element;
 
     /**
-     * @var array
+     * @var ViewModeInterface[]
      */
     protected $_viewModes;
 
     /**
-     * @var array
+     * @var RegionInterface[]
      */
     protected $_regions;
 

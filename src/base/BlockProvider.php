@@ -14,13 +14,13 @@ abstract class BlockProvider extends Component implements BlockProviderInterface
 {
     /**
      * block classes defined by this provider
-     * @var array
+     * @var string[]
      */
     protected $_definedBlocks = [];
 
     /**
      * block classes defined by this provider, indexed by blocks handles
-     * @var array
+     * @var string[]
      */
     protected $_allDefinedBlocks;
 
