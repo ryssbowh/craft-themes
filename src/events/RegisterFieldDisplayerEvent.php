@@ -34,7 +34,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\TableDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagSlick;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitleTitle;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\TagTitle;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\Time;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TimeAgo;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TitleTitle;
@@ -88,7 +88,7 @@ class RegisterFieldDisplayerEvent extends Event
             RedactorTruncated::class,
             TableDefault::class,
             TagLabel::class,
-            TagTitleTitle::class,
+            TagTitle::class,
             TagRendered::class,
             TagSlick::class,
             Time::class,

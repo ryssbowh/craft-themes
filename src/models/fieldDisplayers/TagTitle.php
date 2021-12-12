@@ -8,12 +8,12 @@ use Ryssbowh\CraftThemes\models\fields\TagTitle;
 /**
  * Renders a tag title field
  */
-class TagTitleTitle extends FieldDisplayer
+class TagTitle extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'tag-title_title';
+    public static $handle = 'tag_title';
 
     /**
      * @inheritDoc
