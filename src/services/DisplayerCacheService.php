@@ -154,7 +154,6 @@ class DisplayerCacheService extends Service
      */
     protected function buildKey(DisplayerInterface $displayer, $cachePrefix): string
     {
-        $element = Themes::$plugin->view->renderingElement;
         $key = array_merge(
             $this->contentBlock->cacheStrategy->buildKey($this->contentBlock),
             [$displayer::CACHE_PREFIX . '-' .$cachePrefix]

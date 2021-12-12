@@ -23,6 +23,10 @@ class GlobalOptions extends BlockStrategyOptions
                 'instructions' => \Craft::t('themes', '0 means forever'),
                 'size' => 5
             ],
+            'cachePerSite' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Cache depends on site')
+            ],
             'cachePerAuthenticated' => [
                 'field' => 'lightswitch',
                 'label' => \Craft::t('themes', 'Cache depends on user authentication')
@@ -44,6 +48,7 @@ class GlobalOptions extends BlockStrategyOptions
     public function defineDefaultValues(): array
     {
         return [
+            'cachePerSite' => true,
             'cachePerAuthenticated' => false,
             'cachePerUser' => false,
             'cachePerViewport' => false,
@@ -57,7 +62,7 @@ class GlobalOptions extends BlockStrategyOptions
     public function defineRules(): array
     {
         return [
-            [['cachePerAuthenticated', 'cachePerUser', 'cachePerViewport'], 'boolean', 'trueValue' => true, 'falseValue' => false],
+            [['cachePerAuthenticated', 'cachePerUser', 'cachePerViewport', 'cachePerSite'], 'boolean', 'trueValue' => true, 'falseValue' => false],
             ['duration', 'integer'],
             ['duration', 'required']
         ];

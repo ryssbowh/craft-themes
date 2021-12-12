@@ -72,10 +72,14 @@ class GlobalBlockCache extends BlockCacheStrategy
             $key[] = \Craft::$app->user ? 'auth' : 'noauth';
         }
         if ($this->options->cachePerViewport) {
-            $key[] = $this->getViewPort();
+            $key[] = 'view-port-' . $this->getViewPort();
         }
         if ($this->options->cachePerUser and $user = \Craft::$app->user) {
-            $key[] = $user->getIdentity()->id;
+            $key[] = 'user-id-' . $user->getIdentity()->id;
+        }
+        if ($this->options->cachePerSite) {
+            $site = \Craft::$app->sites->getCurrentSite();
+            $key[] = 'site-' . $site->id;
         }
         return $key;
     }
