@@ -3,7 +3,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\TagTitleTitleOptions;
-use Ryssbowh\CraftThemes\models\fields\TagTitle;
+use Ryssbowh\CraftThemes\models\fields\TagTitle as TagTitleField;
 
 /**
  * Renders a tag title field
@@ -36,7 +36,7 @@ class TagTitle extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [TagTitle::class];
+        return [TagTitleField::class];
     }
 
     /**
