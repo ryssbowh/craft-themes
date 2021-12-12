@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\UrlLinkOptions;
-use Ryssbowh\CraftThemes\models\fields\ElementUrl;
 use craft\fields\Url;
 
 /**
@@ -37,7 +36,7 @@ class UrlLink extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Url::class, ElementUrl::class];
+        return [Url::class];
     }
 
     /**

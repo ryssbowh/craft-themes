@@ -3,12 +3,14 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
+use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EntryRenderedOptions;
+use craft\fields\Entries;
 
 /**
  * Renders an entry field as rendered using a view mode
  */
-class EntryRendered extends EntryLink
+class EntryRendered extends FieldDisplayer
 {
     /**
      * @inheritDoc
@@ -46,6 +48,14 @@ class EntryRendered extends EntryLink
             }
         }
         return $eagerLoad;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getFieldTargets(): array
+    {
+        return [Entries::class];
     }
 
     /**

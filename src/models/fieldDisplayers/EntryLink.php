@@ -1,8 +1,10 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EntryLinkOptions;
+use Ryssbowh\CraftThemes\models\fields\ElementUrl;
 use craft\fields\Entries;
 
 /**
@@ -32,11 +34,35 @@ class EntryLink extends FieldDisplayer
     }
 
     /**
+     * Get field limit
+     * 
+     * @return int
+     */
+    public function getLimit(): ?int
+    {
+        if ($this->field instanceof ElementUrl) {
+            return 1;
+        }
+        return $this->field->craftField->limit;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(&$value): bool
+    {
+        if ($this->field instanceof ElementUrl) {
+            $value = [Themes::$plugin->view->renderingElement];
+        }
+        return true;
+    }
+
+    /**
      * @inheritDoc
      */
     public static function getFieldTargets(): array
     {
-        return [Entries::class];
+        return [Entries::class, ElementUrl::class];
     }
 
     /**

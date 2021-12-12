@@ -11,12 +11,12 @@
 {% endmacro %}
 
 {% block content %}
-    {% if craftField.limit == 1 %}
+    {% if displayer.limit == 1 %}
         {{ _self.entryLink(value.0, options) }}
     {% else %}
         {% for entry in value %}
-            <ul class="category-list">
-                <li class="category-list-item">
+            <ul class="entry-list">
+                <li class="entry-list-item">
                     {{ _self.entryLink(entry, options) }}
                 </li>
             </ul>
