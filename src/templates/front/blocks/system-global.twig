@@ -3,8 +3,7 @@
 {% block content %}
     {% set viewMode = block.viewMode %}
     {% set globalSet = block.globalSet %}
-    {% set layout = block.globalSetLayout %}
-    {% if viewMode and layout and globalSet %}
-        {{ craft.themes.view.renderLayout(layout, viewMode.handle, globalSet)|raw }}
+    {% if viewMode and globalSet %}
+        {{ globalSet.layout.render(globalSet, viewMode)|raw }}
     {% endif %}
 {% endblock %}

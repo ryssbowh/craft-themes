@@ -2,7 +2,9 @@
 namespace Ryssbowh\CraftThemes\models\blocks;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
+use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Block;
 use Ryssbowh\CraftThemes\models\blockOptions\CurrentUserBlockOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -12,6 +14,11 @@ use Ryssbowh\CraftThemes\services\LayoutService;
  */
 class CurrentUserBlock extends Block
 {
+    /**
+     * @var ViewModeInterface
+     */
+    protected $_viewMode = false;
+
     /**
      * @var string
      */
@@ -55,6 +62,28 @@ class CurrentUserBlock extends Block
             $viewModes[$viewMode->uid] = $viewMode->name;
         }
         return $viewModes;
+    }
+
+    /**
+     * Get view mode for current user and eager load it
+     * 
+     * @return ?ViewModeInterface
+     */
+    public function getViewMode(): ?ViewModeInterface
+    {
+        if ($this->_viewMode === false) {
+            try {
+                $user = \Craft::$app->user->getIdentity();
+                if ($user) {
+                    $this->_viewMode = Themes::$plugin->viewModes->getByUid($this->options->viewMode);
+                    $eagerLoadable = Themes::$plugin->eagerLoading->getEagerLoadable($this->_viewMode);
+                    \Craft::$app->elements->eagerLoadElements(get_class($user), [$user], $eagerLoadable);
+                }
+            } catch (ViewModeException $e) {
+                return null;
+            }
+        }
+        return $this->_viewMode;
     }
 
     /**

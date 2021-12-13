@@ -13,8 +13,6 @@ use yii\caching\TagDependency;
 class DisplayerCacheService extends Service
 {
     const DISPLAYER_CACHE_TAG = 'themes::displayers';
-    const EAGERLOAD_CACHE_TAG = 'themes::eagerLoad';
-    const VIEWMODE_CACHE_TAG = 'themes::viewMode';
 
     /**
      * @var boolean
@@ -25,12 +23,6 @@ class DisplayerCacheService extends Service
      * @var CacheInterface
      */
     public $cache;
-
-    /**
-     * Keep track of eager loaded view modes to avoid repetition
-     * @var array
-     */
-    protected $eagerLoadables = [];
 
     /**
      * Start displayer caching
@@ -56,7 +48,7 @@ class DisplayerCacheService extends Service
     {
         if ($this->shouldCache($displayer)) {
             $dep = \Craft::$app->elements->stopCollectingCacheTags();
-            $element = Themes::$plugin->view->renderingElement;
+            $element = $this->viewService()->renderingElement;
             $dep->tags = array_unique(array_merge(
                 $dep->tags,
                 $element->getCacheTags(),
@@ -66,44 +58,12 @@ class DisplayerCacheService extends Service
                     'element::' . get_class($element) . '::' . $element->id, 
                     self::DISPLAYER_CACHE_TAG,
                     self::DISPLAYER_CACHE_TAG . '::' . $displayer->field->id,
-                    self::VIEWMODE_CACHE_TAG . '::' . $displayer->field->viewMode->id
+                    ViewModeService::VIEWMODE_CACHE_TAG . '::' . $displayer->field->viewMode->id
                 ]
             ));
             \Craft::info("Stopping displayer cache for displayer {$displayer->handle}, deps : " . json_encode($dep->tags), __METHOD__);
             $this->setCache($displayer, $data, $dep, $cachePrefix);
         }
-    }
-
-    /**
-     * Returns all the fields that can be eager loaded on a view mode and stores it in cache
-     * 
-     * @param  ViewModeInterface $viewMode
-     * @return string[]
-     */
-    public function getEagerLoadable(ViewModeInterface $viewMode): array
-    {
-        if (isset($this->eagerLoadables[$viewMode->id])) {
-            return $this->eagerLoadables[$viewMode->id];
-        }
-        if (!$this->cacheEnabled) {
-            $eagerLoad =  $viewMode->eagerLoad();
-            $this->eagerLoadables[$viewMode->id] = $eagerLoad;
-            return $eagerLoad;
-        }
-        $key = self::EAGERLOAD_CACHE_TAG . '::' . $viewMode->id;
-        $cached = $this->cache->get($key);
-        if ($cached === false) {
-            $cached = $viewMode->eagerLoad();
-            $dep = new TagDependency([
-                'tags' => [
-                    self::VIEWMODE_CACHE_TAG . '::' . $viewMode->id,
-                    self::DISPLAYER_CACHE_TAG
-                ]
-            ]);
-            $this->cache->set($key, $cached, null, $dep);
-        }
-        $this->eagerLoadables[$viewMode->id] = $cached;
-        return $cached;
     }
 
     /**
@@ -127,7 +87,6 @@ class DisplayerCacheService extends Service
      */
     public function flush()
     {
-        $this->eagerLoadedViewModes = [];
         TagDependency::invalidate($this->cache, self::DISPLAYER_CACHE_TAG);
     }
 
@@ -181,6 +140,6 @@ class DisplayerCacheService extends Service
      */
     protected function getContentBlock(): BlockInterface
     {
-        return Themes::$plugin->view->renderingBlock;
+        return $this->viewService()->renderingBlock;
     }
 }

@@ -4,7 +4,7 @@
     {% for item in block.categories %}
         {% if item.viewMode and item.category %}
             {% set layout = item.category.group.layout %}
-            {{ craft.themes.view.renderLayout(layout, item.viewMode.handle, item.category)|raw }}
+            {{ item.category.group.layout.render(item.category, item.viewMode)|raw }}
         {% endif %}
     {% endfor %}
 {% endblock %}

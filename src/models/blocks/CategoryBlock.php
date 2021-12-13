@@ -61,7 +61,7 @@ class CategoryBlock extends Block
                 } catch (ViewModeException $e) {
                     continue;
                 }
-                $eagerLoadable = Themes::$plugin->displayerCache->getEagerLoadable($viewMode);
+                $eagerLoadable = Themes::$plugin->eagerLoading->getEagerLoadable($viewMode);
                 $category = Category::find()->id($array['id'])->with($eagerLoadable)->one();
                 if ($category) {
                     $this->_categories[] = [

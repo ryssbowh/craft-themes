@@ -11,6 +11,7 @@ use Ryssbowh\CraftThemes\models\DisplayMatrixType;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\MatrixPivotRecord;
+use Ryssbowh\CraftThemes\services\DisplayerCacheService;
 use craft\base\Field as BaseField;
 use craft\elements\MatrixBlock;
 use craft\fields\Matrix as CraftMatrix;
@@ -83,7 +84,7 @@ class Matrix extends CraftField implements MatrixInterface
         /**
      * @inheritDoc
      */
-    public function eagerLoad(string $prefix = '', int $level = 0): array
+    public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array
     {
         if (!$this->displayer) {
             return [];
@@ -96,6 +97,7 @@ class Matrix extends CraftField implements MatrixInterface
         foreach ($this->getTypes() as $type) {
             $typePrefix = $prefix . $this->craftField->handle . '.' . $type->type->handle . '::';
             foreach ($type->fields as $field) {
+                $dependencies[] = DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $field->id;
                 $with = array_merge($with, $field->eagerLoad($typePrefix, $level + 1));
             }
         }

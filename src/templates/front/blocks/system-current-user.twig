@@ -1,8 +1,6 @@
 {% extends "blocks/block" %}
 
 {% block content %}
-    {% if currentUser %}
-        {% set viewMode = craft.themes.viewModes.getByUid(block.options.viewMode) %}
-        {{ craft.themes.view.renderLayout(block.userLayout, viewMode.handle, currentUser)|raw }}
-    {% endif %}
+    {% set viewMode = block.viewMode %}
+    {{ craft.themes.view.renderLayout(block.userLayout, viewMode, currentUser)|raw }}
 {% endblock %}

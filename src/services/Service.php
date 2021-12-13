@@ -49,6 +49,16 @@ abstract class Service extends Component
     }
 
     /**
+     * Get the view service
+     * 
+     * @return ViewService
+     */
+    protected function viewService(): ViewService
+    {
+        return Themes::$plugin->view;
+    }
+
+    /**
      * Get the layout service
      * 
      * @return LayoutService
@@ -126,6 +136,16 @@ abstract class Service extends Component
     protected function fileDisplayerService(): FileDisplayerService
     {
         return Themes::$plugin->fileDisplayers;
+    }
+
+    /**
+     * Get the eager loading service
+     * 
+     * @return EagerLoadingService
+     */
+    protected function eagerLoadingService(): EagerLoadingService
+    {
+        return Themes::$plugin->eagerLoading;
     }
 
     /**

@@ -11,7 +11,7 @@ use yii\caching\TagDependency;
 
 class RulesService extends Service
 {
-    const CACHE_TAG = 'themes.rules';
+    const RULES_CACHE_TAG = 'themes::rules';
 
     /**
      * @var array
@@ -106,7 +106,7 @@ class RulesService extends Service
      */
     public function flushCache()
     {
-        TagDependency::invalidate($this->cache, self::CACHE_TAG);
+        TagDependency::invalidate($this->cache, self::RULES_CACHE_TAG);
     }
 
     /**
@@ -120,7 +120,7 @@ class RulesService extends Service
         if (!$this->cacheEnabled) {
             return false;
         }
-        $key = $this->cache->buildKey([self::CACHE_TAG, $url, $viewPort]);
+        $key = $this->cache->buildKey([self::RULES_CACHE_TAG, $url, $viewPort]);
         return $this->cache->get($key);
     }
 
@@ -136,9 +136,9 @@ class RulesService extends Service
         if (!$this->cacheEnabled) {
             return;
         }
-        $key = $this->cache->buildKey([self::CACHE_TAG, $url, $viewPort]);
+        $key = $this->cache->buildKey([self::RULES_CACHE_TAG, $url, $viewPort]);
         $dep = new TagDependency([
-            'tags' => [self::CACHE_TAG]
+            'tags' => [self::RULES_CACHE_TAG]
         ]);
         $this->cache->set($key, $themeName, null, $dep);
     }

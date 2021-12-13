@@ -5,6 +5,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\UserLayout;
+use Ryssbowh\CraftThemes\services\DisplayerCacheService;
 
 /**
  * Handles the username of user layouts
@@ -46,8 +47,9 @@ class UserPhoto extends Field
     /**
      * @inheritDoc
      */
-    public function eagerLoad(string $prefix = '', int $level = 0): array
+    public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array
     {
+        $dependencies[] = DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $this->id;
         return [$prefix . 'photo'];
     }
 }

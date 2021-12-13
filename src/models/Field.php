@@ -68,7 +68,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function eagerLoad(string $prefix = '', int $level = 0): array
+    public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array
     {
         return [];
     }

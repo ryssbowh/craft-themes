@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
+use Ryssbowh\CraftThemes\services\DisplayerCacheService;
 use craft\base\Field as BaseField;
 use craft\fieldlayoutelements\CustomField;
 use craft\fields\BaseRelationField;
@@ -41,7 +42,7 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
-    public function eagerLoad(string $prefix = '', int $level = 0): array
+    public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array
     {
         if (!$this->displayer) {
             return [];
@@ -51,6 +52,7 @@ class CraftField extends Field implements CraftFieldInterface
             return [];
         }
         if ($this->craftField instanceof BaseRelationField) {
+            $dependencies[] = DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $this->id;
             $with = $prefix  . $this->craftField->handle;
             return $this->displayer->eagerLoad([$with], $with . '.', $level + 1);
         }

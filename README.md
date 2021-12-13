@@ -268,7 +268,7 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 ## Known issues
 
-- When adding fields for the first time to the user layout, it needs to be saved twice for the themes fields to be created. The following times work normally.
+- When adding fields for the first time to the user layout, it needs to be saved twice for the themes fields to be created. The following times work normally. [Github issue](https://github.com/craftcms/cms/issues/10237)
 
 ## Documentation
 

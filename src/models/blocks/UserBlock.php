@@ -61,7 +61,7 @@ class UserBlock extends Block
                 } catch (ViewModeException $e) {
                     continue;
                 }
-                $eagerLoadable = Themes::$plugin->displayerCache->getEagerLoadable($viewMode);
+                $eagerLoadable = Themes::$plugin->eagerLoading->getEagerLoadable($viewMode);
                 $user = User::find()->id($array['id'])->with($eagerLoadable)->one();
                 if ($user) {
                     $this->_users[] = [

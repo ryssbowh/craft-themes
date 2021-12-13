@@ -55,7 +55,7 @@ class File extends Field
     /**
      * @inheritDoc
      */
-    public function eagerLoad(string $prefix = '', int $level = 0): array
+    public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array
     {
         //Prefix can't be null here as this must be called from another field
         if (!$this->displayer or !$prefix) {
@@ -65,6 +65,8 @@ class File extends Field
             \Craft::info("Maximum eager loaging level (" . Themes::$plugin->settings->maxEagerLoadLevel . ') reached', __METHOD__);
             return [];
         }
+        //This is a edge case as this field isn't defined on the asset, so we don't have a field name.
+        //The field name will be whatever prefix we were given, just need to remove the dot
         $with = $prefix ? substr($prefix, 0, -1) : $prefix;
         return $this->displayer->eagerLoad([$with], $with . '.', $level);
     }

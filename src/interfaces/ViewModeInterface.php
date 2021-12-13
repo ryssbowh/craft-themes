@@ -40,9 +40,10 @@ interface ViewModeInterface extends HasDisplaysInterface
     /**
      * Eager load fields
      *
-     * @param  string $prefix
-     * @param  int    $level
+     * @param  string   $prefix
+     * @param  int      $level
+     * @param  string[] $dependencies cache tags
      * @return string[]
      */
-    public function eagerLoad(string $prefix = '', int $level = 0): array;
+    public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array;
 }

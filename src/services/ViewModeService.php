@@ -25,6 +25,7 @@ class ViewModeService extends Service
     const EVENT_BEFORE_DELETE = 'before_delete';
     const CONFIG_KEY = 'themes.viewModes';
     const DEFAULT_HANDLE = 'default';
+    const VIEWMODE_CACHE_TAG = 'themes::viewMode';
 
     /**
      * @var string[]
@@ -149,7 +150,7 @@ class ViewModeService extends Service
             Themes::$plugin->displays->save($display);
         }
         Themes::$plugin->displays->cleanUp($allDisplays, $viewMode);
-        TagDependency::invalidate(\Craft::$app->cache, DisplayerCacheService::VIEWMODE_CACHE_TAG . '::' . $viewMode->id);
+        TagDependency::invalidate(\Craft::$app->cache, self::VIEWMODE_CACHE_TAG . '::' . $viewMode->id);
 
         return true;
     }

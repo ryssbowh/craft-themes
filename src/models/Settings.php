@@ -76,6 +76,11 @@ class Settings extends Model
     public $rulesCache;
 
     /**
+     * @var boolean
+     */
+    public $eagerLoadingCache;
+
+    /**
      * @var string
      */
     public $redirectTo = 'list';
@@ -178,6 +183,19 @@ class Settings extends Model
     {
         if (!is_null($this->rulesCache)) {
             return $this->rulesCache;
+        }
+        return !\Craft::$app->getConfig()->getGeneral()->devMode;
+    }
+
+    /**
+     * Eager loading cache enabled getter
+     * 
+     * @return bool
+     */
+    public function getEagerLoadingCacheEnabled(): bool
+    {
+        if (!is_null($this->eagerLoadingCache)) {
+            return $this->eagerLoadingCache;
         }
         return !\Craft::$app->getConfig()->getGeneral()->devMode;
     }

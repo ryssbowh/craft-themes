@@ -23,7 +23,7 @@ use yii\caching\TagDependency;
 
 class ViewService extends Service
 {
-    const TEMPLATE_CACHE_TAG = 'themes.templates';
+    const TEMPLATE_CACHE_TAG = 'themes::templates';
 
     const BEFORE_RENDERING_LAYOUT = 'before_rendering_layout';
     const BEFORE_RENDERING_FILE = 'before_rendering_file';
@@ -121,11 +121,16 @@ class ViewService extends Service
             //No matched element for that request
             return;
         }
-        if (!$layout = Themes::$plugin->layouts->resolveForRequest($theme, $element)) {
+        if (!$layout = $this->layoutService()->resolveForRequest($theme, $element)) {
             //No layout has been found for that request
             return;
         }
         \Craft::info('Found layout "' . $layout->description . '" (id: ' . $layout->id . ')', __METHOD__);
+        if ($this->eagerLoad) {
+            $with = $this->eagerLoadingService()->getEagerLoadable($layout->defaultViewMode);
+            \Craft::info('Eager loaded fields : ' . json_encode($with), __METHOD__);
+            \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
+        }
         $this->_renderingElement = $element;
         $this->pageVariables = $event->variables;
         $event->variables = array_merge($event->variables, [
@@ -277,18 +282,10 @@ class ViewService extends Service
      * @param  string                   $mode
      * @return string
      */
-    public function renderLayout(LayoutInterface $layout, $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS, bool $eagerLoad = false): string
+    public function renderLayout(LayoutInterface $layout, $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): string
     {
         if (is_string($viewMode)) {
             $viewMode = $layout->getViewMode($viewMode);
-        }
-        if (!$element) {
-            $element = $this->_renderingElement;
-        }
-        if ($this->eagerLoad and $eagerLoad) {
-            $with = Themes::$plugin->displayerCache->getEagerLoadable($viewMode);
-            \Craft::info('Eager load fields ' . json_encode($with), __METHOD__);
-            \Craft::$app->elements->eagerLoadElements(get_class($element), [$element], $with);
         }
         $theme = $this->themesRegistry()->current;
         $oldLayout = $this->renderingLayout;

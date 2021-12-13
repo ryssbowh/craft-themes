@@ -10,7 +10,7 @@ use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
@@ -19,9 +19,7 @@ use craft\base\PluginInterface;
 use craft\base\Volume;
 use craft\elements\GlobalSet;
 use craft\elements\User;
-use craft\events\DefineBehaviorsEvent;
-use craft\events\ElementEvent;
-use craft\events\{CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
+use craft\events\{ElementEvent, DefineBehaviorsEvent, CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
 use craft\helpers\Queue;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
@@ -367,14 +365,14 @@ class Themes extends \craft\base\Plugin
             'registry' => ThemesRegistry::class,
             'rules' => [
                 'class' => RulesService::class,
-                'rules' => $this->getSettings()->themesRules,
-                'default' => $this->getSettings()->default,
+                'rules' => $this->settings->themesRules,
+                'default' => $this->settings->default,
                 'cache' => \Craft::$app->cache,
-                'cacheEnabled' => $this->getSettings()->rulesCacheEnabled,
-                'console' => $this->getSettings()->console,
-                'setConsole' => $this->getSettings()->setConsole,
-                'cp' => $this->getSettings()->cp,
-                'setCp' => $this->getSettings()->setCp,
+                'cacheEnabled' => $this->settings->rulesCacheEnabled,
+                'console' => $this->settings->console,
+                'setConsole' => $this->settings->setConsole,
+                'cp' => $this->settings->cp,
+                'setCp' => $this->settings->setCp,
                 'mobileDetect' => new MobileDetect(),
             ],
             'shortcuts' => [
@@ -389,19 +387,24 @@ class Themes extends \craft\base\Plugin
             'view' => [
                 'class' => ViewService::class,
                 'cache' => \Craft::$app->cache,
-                'eagerLoad' => $this->getSettings()->eagerLoad,
+                'eagerLoad' => $this->settings->eagerLoad,
                 'devMode' => $user ? $user->getPreference('themesDevMode', false) : false,
-                'templateCacheEnabled' => $this->getSettings()->templateCacheEnabled
+                'templateCacheEnabled' => $this->settings->templateCacheEnabled
             ],
             'blockCache' => [
                 'class' => BlockCacheService::class,
                 'cache' => \Craft::$app->cache,
-                'cacheEnabled' => $this->getSettings()->blockCacheEnabled
+                'cacheEnabled' => $this->settings->blockCacheEnabled
             ],
             'displayerCache' => [
                 'class' => DisplayerCacheService::class,
                 'cache' => \Craft::$app->cache,
-                'cacheEnabled' => $this->getSettings()->displayerCacheEnabled
+                'cacheEnabled' => $this->settings->displayerCacheEnabled
+            ],
+            'eagerLoading' => [
+                'class' => EagerLoadingService::class,
+                'cache' => \Craft::$app->cache,
+                'cacheEnabled' => $this->settings->eagerLoadingCacheEnabled
             ],
             'displays' => DisplayService::class,
             'fields' => FieldsService::class,
@@ -417,35 +420,27 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerClearCacheEvent()
     {
-        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS, function (RegisterCacheOptionsEvent $event) {
+        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_TAG_OPTIONS, function (RegisterCacheOptionsEvent $event) {
             $event->options[] = [
-                'key' => 'themes-rules-cache',
-                'label' => Craft::t('themes', 'Themes rules'),
-                'action' => function() {
-                    Themes::$plugin->rules->flushCache();
-                }
+                'tag' => RulesService::RULES_CACHE_TAG,
+                'label' => Craft::t('themes', 'Themes rules')
             ];
             if ($this->is($this::EDITION_PRO)) {
                 $event->options[] = [
-                    'key' => 'themes-template-cache',
-                    'label' => Craft::t('themes', 'Themes templates'),
-                    'action' => function() {
-                        Themes::$plugin->view->flushTemplateCache();
-                    }
+                    'tag' => ViewService::TEMPLATE_CACHE_TAG,
+                    'label' => Craft::t('themes', 'Themes templates resolution')
                 ];
                 $event->options[] = [
-                    'key' => 'themes-block-cache',
-                    'label' => Craft::t('themes', 'Themes block cache'),
-                    'action' => function() {
-                        Themes::$plugin->blockCache->flush();
-                    }
+                    'tag' => BlockCacheService::BLOCK_CACHE_TAG,
+                    'label' => Craft::t('themes', 'Themes blocks')
                 ];
                 $event->options[] = [
-                    'key' => 'themes-displayer-cache',
-                    'label' => Craft::t('themes', 'Themes displayer cache'),
-                    'action' => function() {
-                        Themes::$plugin->displayerCache->flush();
-                    }
+                    'tag' => DisplayerCacheService::DISPLAYER_CACHE_TAG,
+                    'label' => Craft::t('themes', 'Themes displayers')
+                ];
+                $event->options[] = [
+                    'tag' => EagerLoadingService::EAGERLOAD_CACHE_TAG,
+                    'label' => Craft::t('themes', 'Themes view modes eager loading')
                 ];
             }
         });

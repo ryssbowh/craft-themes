@@ -560,32 +560,11 @@ To override the preferences for your theme, override the method `getPreferencesM
 
 ## Eager loading (Pro)
 
-When a view mode is rendered the eager load map will be built to eager load every possible field. The map will also contain nested view modes fields (displayers that render other layout/view mode) and assets transforms. This map will be stored in cache.  
+When a view mode is rendered the eager load map will be built to eager load every possible field on that view mode. The map will also contain nested view modes fields (displayers that render other layout/view mode) and assets transforms. This map will be stored in cache.  
 
-This cache will be cleared when clearing displayer caches : `./craft clear-caches/themes-displayer-cache`
+The cache can be cleared with the following command : `./craft invalidate-tags/themes::eagerLoad`, it will be automatically cleared for the relevant view modes when anything is changed in them.
 
-Eager loading cache is enabled when displayer cache is enabled and will be flushed when view modes are saved.
-
-Eager loading could be changed by creating the `config/themes.php` file :
-
-```
-<?php 
-
-return [
-    'eagerLoad' => false
-];
-```
-:warning: All the default templates defined by this plugin expect fields to be eager loaded, if you switch off that feature you need to make sure every template is overriden.
-
-Eager loading will nest until 5 levels, after that it will stop, this can be changed in `config/themes.php` :
-
-```
-<?php 
-
-return [
-    'maxEagerLoadLevel' => 10
-];
-```
+Eager loading will nest until 5 levels, after that it will stop.  
 Example :
 - View mode 'default' :
     - field entries pointing to view mode 'small' : level 1
@@ -593,6 +572,19 @@ Example :
     - Field categories pointing to view mode 'featured' : Level 2
 - View mode 'featured' :
     - Field assets : Level 3
+
+Settings can be controlled by creating the `config/themes.php` file :
+
+```
+<?php 
+
+return [
+    'eagerLoad' => false,
+    'eagerLoadingCache' => false,
+    'maxEagerLoadLevel' => 10
+];
+```
+:warning: All the default templates defined by this plugin expect fields to be eager loaded, switching off that feature could result in lots of extra queries (especially if your displayer cache is off).
 
 ## Twig
 
@@ -642,7 +634,7 @@ return [
 
 Displayer caching use Craft internal caching dependencies, saving an entry for example will clear all the displayer caches that use this entry.
 
-If something changes in your code (templates, theme preferences class, render events) and you're pushing to a production environment, clear the caches : `./craft clear-caches/themes-displayer-cache`.
+If something changes in your code (templates, theme preferences class, render events) and you're pushing to a production environment, clear the caches : `./craft invalidate-tags/themes::displayers`.
 
 Field displayers are cached in the template `fields/_field` with the token `{% fielddisplayercache %}`, if you override a field template that does not extend this template, you would need to add that token or caching will be skipped.  
 Same idea for file displayers which use the token `{% filedisplayercache %}`.
@@ -667,7 +659,7 @@ return [
     'rulesCache' => false
 ];
 ```
-If you change rules and deploy to a production environment, clear the cache : `./craft clear-caches/themes-rules-cache`.
+If you change rules and deploy to a production environment, clear the cache : `./craft invalidate-tags/themes::rules`.
 
 ### Template cache
 
@@ -680,7 +672,7 @@ return [
     'templateCache' => false
 ];
 ```
-If you create new templates and deploy to a production environment, clear the cache : `./craft clear-caches/themes-template-cache`
+If you create new templates and deploy to a production environment, clear the cache : `./craft invalidate-tags/themes::templates`
 
 ### Block cache
 
@@ -705,3 +697,4 @@ Strategy classes must implement `BlockCacheStrategyInterface` and their options 
 
 Each block can disable caching entirely by overriding the method `getCanBeCached(): bool`. The content block is non cacheable, but still has a caching strategy which will define displayers caching.
 
+Block cache can be clear with the following command : `./craft invalidate-tags/themes::blocks`

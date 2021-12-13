@@ -57,7 +57,11 @@ class GlobalBlock extends Block
     public function getGlobalSet(): ?GlobalSet
     {
         if ($this->_global === false) {
-            $this->_global = GlobalSet::find()->uid($this->options->set)->one();
+            $this->_global = null;
+            if ($this->viewMode) {
+                $eagerLoadable = Themes::$plugin->eagerLoading->getEagerLoadable($this->viewMode);
+                $this->_global = GlobalSet::find()->uid($this->options->set)->with($eagerLoadable)->one();;
+            }
         }
         return $this->_global;
     }
@@ -74,19 +78,6 @@ class GlobalBlock extends Block
         } catch (ViewModeException $e) {
             return null;
         }
-    }
-
-    /**
-     * Get layout associated to global set defined in options
-     * 
-     * @return ?LayoutInterface
-     */
-    public function getGlobalSetLayout(): ?LayoutInterface
-    {
-        if (!$this->globalSet) {
-            return null;
-        }
-        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::GLOBAL_HANDLE, $this->globalSet->uid);
     }
 
     /**
