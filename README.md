@@ -1,6 +1,4 @@
-# Craft themes
-
-### This is the 3.x documentation
+# Craft themes (v3.x)
 
 Version 3 has brought the pro version which is a big change from the v2 version. You can always use the v3 lite version which is very similar to v2 (make sure you check the breaking changes in the [developers readme](DEVELOPERS.md)) with a few other small changes.
 
@@ -17,12 +15,12 @@ The Pro version will allow you to :
 - Define regions in your themes
 - Assign blocks to the themes regions
 - Define your own blocks
-- Cache your blocks
 - Define your own view modes for each entry types/category groups/global sets/tag groups/volumes/users layouts
 - Choose how your fields and assets are displayed on the front end depending on their view modes and options
 - Define your own fields and assets displayers
 - Use a templating cascading system that allows bespoke rendering
-- eager load fields automatically
+- Eager load fields automatically
+- Use several caching layers for faster rendering
 
 What it doesn't allow you to do :
 - Change the backend look and feel
@@ -114,19 +112,6 @@ This plugins comes with the following type of blocks :
 ### Project config
 
 Blocks will be included in the project config, but for the blocks that reference an element the information will not be saved in the project config (because elements are different from an environment to another), those are : Entry, Category and User. Those blocks will need to be resaved in the new environment they are deployed to, to reference the correct element.
-
-### Caching
-
-You can choose a cache strategy for each block which defines how the block is cached. This plugin comes with 3 strategies :
-
-- Global : Will cache the same block for all urls
-- Url path : Will cache separately or each url path
-- Url path (with query) : Same as above but will also look at the query string
-
-Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user or their view ports (mobile, tablet or desktop).  
-Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
-
-The content block caching controls the caching of the displayers, it really shouldn't use the "Global" strategy, or all your pages will display the same content.
 
 ## Displays (Pro)
 
@@ -229,6 +214,33 @@ If enabled in the settings (enabled by default) you will see some shortcuts (dis
 `craft clear-caches/themes-rules-cache` : Clears rules cache  
 `craft clear-caches/themes-template-cache` : Clears templates resolution cache  
 `craft themes/install` : Reinstall all themes data (layouts etc)
+
+## Caching
+
+There are several layers of caching in this plugin, which should all be enabled on production environments for faster execution :
+- Template resolution cache, helps loading the correct templates faster.
+- Eager loading cache, keep in cache view mode eager loading maps, enabled by default.
+
+Plus :
+
+### Displayer cache
+
+Displayers html output can be stored in cache for faster execution.
+
+The content block caching strategy controls the displayer cache, it really shouldn't use the "Global" strategy, or all your pages will display the same content.  
+Setting no cache strategy to the content block will effectively disable the displayer cache.  
+Displayer caching uses Craft internal cache tagging system so cache will be automatically invalidated when displayers/fields/view modes are changed.
+
+### Block cache
+
+You can choose a cache strategy for each block which defines how the block is cached. This plugin comes with 3 strategies :
+
+- Global : Will cache the same block for all urls
+- Url path : Will cache separately or each url path
+- Url path (with query) : Same as above but will also look at the query string
+
+Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user or their view ports (mobile, tablet or desktop).  
+Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
 
 ## Installation
 

@@ -267,7 +267,7 @@ class Themes extends \craft\base\Plugin
         Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin->handle == 'themes') {
-                    Themes::$app->registry->disableAll();
+                    Themes::$plugin->registry->disableAll();
                 }
                 if ($event->plugin instanceof ThemeInterface) {
                     $deps = Themes::$plugin->registry->getDependencies($event->plugin);
