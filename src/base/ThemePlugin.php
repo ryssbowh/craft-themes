@@ -152,14 +152,6 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
-    public function getPreferencesModel(): ThemePreferencesInterface
-    {
-        return new ThemePreferences;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function fields()
     {
         return ['name', 'handle', 'regions'];
@@ -251,6 +243,16 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     public function getRegionsTemplate(): string
     {
         return 'regions';
+    }
+
+    /**
+     * Get theme preferences model
+     * 
+     * @return ThemePreferencesInterface
+     */
+    protected function getPreferencesModel(): ThemePreferencesInterface
+    {
+        return new ThemePreferences;
     }
 
     /**

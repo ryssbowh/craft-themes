@@ -562,7 +562,7 @@ To override the preferences for your theme, override the method `getPreferencesM
 
 When a view mode is rendered the eager load map will be built to eager load every possible field on that view mode. The map will also contain nested view modes fields (displayers that render other layout/view mode) and assets transforms. This map will be stored in cache.  
 
-The cache can be cleared with the following command : `./craft invalidate-tags/themes::eagerLoad`, it will be automatically cleared for the relevant view modes when anything is changed in them.
+The cache is enabled when devMode is off and can be cleared with the following command : `./craft invalidate-tags/themes::eagerLoad`, it will be automatically cleared for the relevant view modes when anything is changed in them.
 
 Eager loading will nest until 5 levels, after that it will stop.  
 Example :
@@ -584,7 +584,7 @@ return [
     'maxEagerLoadLevel' => 10
 ];
 ```
-:warning: All the default templates defined by this plugin expect fields to be eager loaded, switching off that feature could result in lots of extra queries (especially if your displayer cache is off).
+:warning: All the templates defined by this plugin expect fields to be eager loaded, switching off that feature could result in lots of extra n+1 queries (especially if your displayer cache is off).
 
 ## Twig
 
