@@ -24,7 +24,7 @@ import { mapMutations, mapState } from 'vuex';
 export default {
     computed: {
         fullName: function () {
-            return this.block.provider + '_' + this.block.handle
+            return this.block.provider + '-' + this.block.handle
         },
         hasErrors: function () {
             return Object.keys(this.block.errors).length > 0;

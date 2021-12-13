@@ -2,6 +2,10 @@
   <div class="region" :style="'width:'+(region.width ? region.width : '100%')">
     <div class="region-heading">
         <h5 class="region-title">{{ region.name }}</h5>
+        <span class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="showFieldHandles" @click="copyValue">
+          <input type="text" :value="region.handle" readonly="" :size="region.handle.length">
+          <span data-icon="clipboard" aria-hidden="true"></span>
+        </span>
     </div>
     <draggable
       item-key="index"
@@ -34,7 +38,7 @@ export default {
         return this.region.handle == block.region;
       }), 'order');
     },
-    ...mapState(['blocks']),
+    ...mapState(['blocks', 'showFieldHandles']),
   },
   props: {
     region: Object
@@ -77,6 +81,13 @@ export default {
         this.updateBlock(block);
       }
     },
+    copyValue: function(e) {
+      let input = e.target;
+      input.select();
+      document.execCommand('copy');
+      Craft.cp.displayNotice(this.t('Copied to clipboard.', 'app'));
+      input.setSelectionRange(0, 0);
+    },
     ...mapMutations(['addBlock', 'removeBlock', 'updateBlock']),
     ...mapActions([])
   },
@@ -94,6 +105,7 @@ export default {
   .region-title {
     font-weight: bold;
     font-size: 16px;
+    margin-right: 10px;
   }
   .region-blocks {
     min-height: 50px;
@@ -102,6 +114,14 @@ export default {
     border-radius: 3px;
     &.drop-active {
       padding-bottom: 58px;
+    }
+  }
+  .region-heading {
+    display: flex;
+    align-items: center;
+    .copytextbtn:hover {
+      margin-left: 0;
+      margin-right: -16px;
     }
   }
 </style>
