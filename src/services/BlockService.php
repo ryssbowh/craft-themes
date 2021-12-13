@@ -50,7 +50,7 @@ class BlockService extends Service
                 try {
                     $this->_blocks->push($this->create($record));
                 } catch (BlockProviderException $e) {
-                    \Craft::error('themes', 'Couldn\'t create block record ' . $record->id . ', it has been skipped');
+                    \Craft::error('Couldn\'t create block record ' . $record->id . ', it has been skipped', __METHOD__);
                 }
             }
         }
