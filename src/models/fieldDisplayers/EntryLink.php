@@ -43,7 +43,7 @@ class EntryLink extends FieldDisplayer
         if ($this->field instanceof ElementUrl) {
             return 1;
         }
-        return $this->field->craftField->limit;
+        return $this->field->craftField->limit ?: null;
     }
 
     /**
