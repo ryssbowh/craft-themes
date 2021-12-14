@@ -38,9 +38,10 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
      */
     public function getCache(BlockInterface $block): ?string
     {
-        $key = \Craft::$app->cache->buildKey($this->buildKey($block));
-        $cache = \Craft::$app->cache->get($key);
-        return $cache ?: null;
+        $elems = $this->buildKey($block);
+        $elems[] = 'block-' . $block->id;
+        $cache = \Craft::$app->cache->get(\Craft::$app->cache->buildKey($elems));
+        return $cache === false ? null : $cache;
     }
 
     /**
@@ -49,7 +50,7 @@ abstract class BlockCacheStrategy extends Component implements BlockCacheStrateg
     public function setCache(BlockInterface $block, string $data, TagDependency $dep)
     {
         $elems = $this->buildKey($block);
-        $elems[] = $block->id;
+        $elems[] = 'block-' . $block->id;
         \Craft::$app->cache->set(\Craft::$app->cache->buildKey($elems), $data, $this->getDuration(), $dep);
     }
 
