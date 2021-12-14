@@ -35,7 +35,6 @@ class FieldDisplayerCacheNode extends Node
         $n = self::$_cacheCount++;
 
         $compiler
-            ->write('echo "<!-- cacheprefix $cachePrefix -->";')
             ->write("\$displayer = \$context['displayer'];\n")
             ->write('$cacheService = ' . Themes::class . "::\$plugin->displayerCache;\n")
             ->write('$request = ' . Craft::class . "::\$app->getRequest();\n")
