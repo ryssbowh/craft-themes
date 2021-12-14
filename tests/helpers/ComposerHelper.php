@@ -38,8 +38,7 @@ class ComposerHelper
         }
         $composer->setLocker($locker);
         $installer = Installer::create($io, $composer);
-        $installer->setIgnorePlatformRequirements(true)
-            ->setDevMode(true)
+        $installer->setDevMode(true)
             ->setOptimizeAutoloader(true)
             ->setWriteLock(false);
         $installer->setUpdate(true)->setUpdateAllowList(['ryssbowh/child-theme' => '*']);

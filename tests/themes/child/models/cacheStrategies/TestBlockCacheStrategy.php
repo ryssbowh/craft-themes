@@ -16,18 +16,18 @@ class TestBlockCacheStrategy extends BlockCacheStrategy
         return 'Test';
     }
 
-    protected function getKey(BlockInterface $block): string
+    public function buildKey(BlockInterface $block): array
     {
-        return 'test-' . $block->id;
+        return ['test-' . $block->id];
     }
 
-    protected function getKeyPrefix(): string
+    public function getDuration(): ?int
     {
-        return 'test';
+        return null;
     }
 
-    protected function getTag(): string
+    protected function getOptionsModel(): string
     {
-        return 'test';
+        return TestBlockCacheStrategyOptions::class;
     }
 }

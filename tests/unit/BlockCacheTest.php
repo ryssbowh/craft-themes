@@ -39,6 +39,8 @@ class BlockCacheTest extends Unit
         $this->assertCount(4, $blockCache->strategies);
         $this->assertInstanceOf(BlockCacheStrategyInterface::class, $blockCache->getStrategy('test'));
         $this->assertInstanceOf(BlockCacheStrategyInterface::class, $blockCache->getStrategy('global'));
+        $this->assertInstanceOf(BlockCacheStrategyInterface::class, $blockCache->getStrategy('query'));
+        $this->assertInstanceOf(BlockCacheStrategyInterface::class, $blockCache->getStrategy('path'));
     }
 
     public function testBlockIsCached()
@@ -46,14 +48,14 @@ class BlockCacheTest extends Unit
         $defaultLayout = $this->layouts->getDefault('child-theme');
         $block = $this->blocks->create([
             'provider' => 'system',
-            'handle' => 'content',
-            'options' => ['cacheStrategy' => 'global']
+            'handle' => 'sitename',
+            'cacheStrategy' => [
+                'handle' => 'global'
+            ]
         ]);
-        $strategy = $this->blockCache->getStrategy('global');
         $defaultLayout->addBlock($block, 'content');
-        $this->blockCache->startBlockCaching($block);
-        $this->blockCache->stopBlockCaching($block, 'this is the content block');
-        $this->assertEquals('this is the content block', $this->blockCache->getBlockCache($block));
-        $this->assertEquals('this is the content block', $strategy->getCache($block));
+        $this->blockCache->startCaching($block);
+        $this->blockCache->stopCaching($block, 'this is the site name block');
+        $this->assertEquals('this is the site name block', $this->blockCache->getCache($block));
     }
 }

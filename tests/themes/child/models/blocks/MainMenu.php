@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace Ryssbowh\CraftThemesTests\themes\child\models\blocks;
 
 use Ryssbowh\CraftThemes\models\Block;

@@ -43,105 +43,116 @@ class DisplaysTest extends Unit
         \Craft::$app->plugins->installPlugin('child-theme');
         $this->displays = Themes::getInstance()->displays;
         $this->layouts = Themes::getInstance()->layouts;
+        $this->viewModes = Themes::getInstance()->viewModes;
         $this->fieldDisplayers = Themes::getInstance()->fieldDisplayers;
         $this->fileDisplayers = Themes::getInstance()->fileDisplayers;
     }
 
     /**
-     * There is 19 fields per section, plus the title. 3 sections : 20 * 3 : 60
-     * User user info field : 1
-     * Channel & Structure author field : 2
-     * Category title field : 1
-     * Global asset field : 1
-     * Tag layout title field : 1
-     * Volume title and file fields : 2
+     * There are 3 sections : Channel, Structure, Single.
      *
-     * Total : 68
+     * Single : 24
+     *     - 19 fields
+     *     - date updated/created/posted
+     *     - url
+     *     - title
+     * Channel : 25
+     *     - 19 fields
+     *     - date updated/created/posted
+     *     - author
+     *     - url
+     *     - title
+     * Structure : 25
+     *     - 19 fields
+     *     - date updated/created/posted
+     *     - author
+     *     - url
+     *     - title
+     * User : 8
+     *     - username
+     *     - first name
+     *     - last name
+     *     - photo
+     *     - email
+     *     - date updated/created/last login
+     * Global : 3
+     *     - date updated/created
+     *     - asset field
+     * Category : 4
+     *     - title
+     *     - date updated/created
+     *     - url
+     * Tag : 3
+     *     - date updated/created
+     *     - title
+     * Volume : 4
+     *     - title
+     *     - file
+     *     - date updated/created
      *
-     * 2 non-partial themes 68*2 = 136 displays in total
+     * Total : 96
+     *
+     * 2 non-partial themes 96*2 = 192 displays in total
      *
      * There's 8 file displayers defined by the system
-     * There's 33 field displayers defined by the system
+     * There's 39 field displayers defined by the system
      * 
      */
     public function testDisplaysAreInstalled()
     {
         $this->assertCount(8, $this->fileDisplayers->all());
-        $this->assertCount(33, $this->fieldDisplayers->all());
-        $this->assertCount(136, $this->displays->all());
+        $this->assertCount(39, $this->fieldDisplayers->all());
+        $this->assertCount(192, $this->displays->all());
 
         //User layouts
         $layout = $this->layouts->get('child-theme', LayoutService::USER_HANDLE);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(1, $displays);
-        $this->assertInstanceOf(UserInfo::class, $displays[0]->item);
-        $displayer = $displays[0]->item->displayer;
-        $this->assertInstanceOf(UserInfoDefault::class, $displayer);
-        $this->assertFalse($displayer->options->email);
+        $this->assertCount(8, $displays);
 
         //category groups layouts
         $group = \Craft::$app->categories->getGroupByHandle('category');
         $layout = $this->layouts->get('child-theme', LayoutService::CATEGORY_HANDLE, $group->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(1, $displays);
-        $this->assertInstanceOf(Title::class, $displays[0]->item);
-        $displayer = $displays[0]->item->displayer;
-        $this->assertInstanceOf(TitleDefault::class, $displayer);
-        $this->assertEquals('h1', $displayer->options->tag);
+        $this->assertCount(4, $displays);
 
         //sections layouts
         $section = \Craft::$app->sections->getSectionByHandle('channel');
         $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(21, $displays);
-        $this->assertInstanceOf(Title::class, $displays[0]->item);
-        $this->assertInstanceOf(Author::class, $displays[1]->item);
-        $this->assertInstanceOf(AuthorDefault::class, $displays[1]->item->displayer);
+        $this->assertCount(25, $displays);
 
         $section = \Craft::$app->sections->getSectionByHandle('structure');
         $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(21, $displays);
-        $this->assertInstanceOf(Title::class, $displays[0]->item);
-        $this->assertInstanceOf(TitleDefault::class, $displays[0]->item->displayer);
-        $this->assertInstanceOf(Author::class, $displays[1]->item);
-        $this->assertInstanceOf(AuthorDefault::class, $displays[1]->item->displayer);
+        $this->assertCount(25, $displays);
 
         $section = \Craft::$app->sections->getSectionByHandle('single');
         $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(20, $displays);
-        $this->assertInstanceOf(Title::class, $displays[0]->item);
-        $this->assertInstanceOf(TitleDefault::class, $displays[0]->item->displayer);
+        $this->assertCount(24, $displays);
 
         //globals layouts
         $global = \Craft::$app->globals->getSetByHandle('global');
         $layout = $this->layouts->get('child-theme', LayoutService::GLOBAL_HANDLE, $global->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(1, $displays);
-        $this->assertInstanceOf(AssetLink::class, $displays[0]->item->displayer);
+        $this->assertCount(3, $displays);
 
         //Tags layouts
         $group = \Craft::$app->tags->getTagGroupByHandle('tag');
         $layout = $this->layouts->get('child-theme', LayoutService::TAG_HANDLE, $group->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(1, $displays);
-        $this->assertInstanceOf(TagTitle::class, $displays[0]->item);
-        $this->assertInstanceOf(TagTitleDefault::class, $displays[0]->item->displayer);
+        $this->assertCount(3, $displays);
 
         //volumes layouts
         $volume = \Craft::$app->volumes->getVolumeByHandle('public');
         $layout = $this->layouts->get('child-theme', LayoutService::VOLUME_HANDLE, $volume->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(2, $displays);
-        $this->assertInstanceOf(Title::class, $displays[0]->item);
-        $this->assertInstanceOf(File::class, $displays[1]->item);
-        $this->assertInstanceOf(FileDefault::class, $displays[1]->item->displayer);
+        $this->assertCount(4, $displays);
 
     }
 
-    public function testAddingFieldToEntryType()
-    {
+    // public function testAddingFieldToEntryType()
+    // {
         // $sectionsFixture = $this->tester->grabFixture('sections');
         // $fieldsFixture = $this->tester->grabFixture('fields');
         // $section = $sectionsFixture->getSection(0);
@@ -155,5 +166,5 @@ class DisplaysTest extends Unit
         // dd(\Craft::$app->sections->getEntryTypeById($entryType->id)->fieldLayout);
         // $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $type->uid);
         // $this->assertCount(3, $this->displays->getForLayout($layout));
-    }
+    // }
 }

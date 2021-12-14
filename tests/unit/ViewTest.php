@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemesTests\fixtures\EntriesFixture;
 use Ryssbowh\CraftThemesTests\fixtures\InstallThemeFixture;
 use Ryssbowh\CraftThemesTests\fixtures\SectionsFixture;
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use UnitTester;
@@ -33,6 +34,20 @@ class ViewTest extends Unit
         \Craft::$app->view->setTemplateMode('site');
     }
 
+    public function testEagerLoading()
+    {
+        $section = \Craft::$app->sections->getSectionByHandle('channel');
+        $entryTypes = $section->getEntryTypes();
+        $entryType = reset($entryTypes);
+        $entry = $this->createEntry($section, $entryType);
+
+        $layout = $this->layouts->get('child-theme', 'entry', $entryType->uid);
+        $this->assertInstanceOf(LayoutInterface::class, $layout);
+        $viewMode = $layout->getDefaultViewMode();
+        $with = $viewMode->eagerLoad();
+        $this->assertEquals(['author', 'author.photo', 'assets', 'category', 'users', 'users.photo', 'entries', 'image', 'tag'], $with);
+    }
+
     public function testRendering()
     {
         $section = \Craft::$app->sections->getSectionByHandle('channel');
@@ -41,14 +56,19 @@ class ViewTest extends Unit
         $entry = $this->createEntry($section, $entryType);
 
         $layout = $this->layouts->get('child-theme', 'entry', $entryType->uid);
-        $html = $this->view->renderLayout($layout, 'default', $entry);
+        $this->assertInstanceOf(LayoutInterface::class, $layout);
+        $viewMode = $layout->getDefaultViewMode();
+        $with = $viewMode->eagerLoad();
+        \Craft::$app->elements->eagerLoadElements(get_class($entry), [$entry], $with);
+        $html = $this->view->renderLayout($layout, $viewMode, $entry);
         $this->assertStringContainsString('<div class="layout" data-viewmode="default" data-handle="'.$section->handle."-".$entryType->handle.'" data-type="entry">', $html);
-        $this->assertStringContainsString("<h1>
-                    My Entry
-            </h1>", $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="title_default" data-field="title">', $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="author_default" data-field="author">', $html);
-
+        $this->assertStringContainsString("My Entry", $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="title_title" data-field="title">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="user_default" data-field="author">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="checkboxes_label" data-field="checkboxes">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="dropdown_label" data-field="dropdown">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="entry_link" data-field="entries">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="radio_buttons_label" data-field="radioButtons">', $html);
     }
 
     protected function createEntry($section, $entryType)
