@@ -56,9 +56,6 @@ class GlobalBlockCache extends BlockCacheStrategy
      */
     public function getDuration(): ?int
     {
-        if ($this->options->duration === 0) {
-            return null;
-        }
         return $this->options->duration * 60;
     }
 

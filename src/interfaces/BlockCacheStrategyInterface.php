@@ -64,7 +64,9 @@ interface BlockCacheStrategyInterface
     public function buildKey(BlockInterface $block): array;
 
     /**
-     * Get cache duration (seconds)
+     * Get cache duration (seconds).
+     * Returning null will use Yii default caching duration.
+     * 0 means infinity.
      * 
      * @return ?int
      */
