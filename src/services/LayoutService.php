@@ -718,8 +718,10 @@ class LayoutService extends Service
             ]);
             $layout->addViewMode($viewMode);
         }
-        foreach ($layout->viewModes as $viewMode) {
-            $viewMode->displays = $this->displayService()->createViewModeDisplays($viewMode);
+        if ($layout->type != self::DEFAULT_HANDLE) {
+            foreach ($layout->viewModes as $viewMode) {
+                $viewMode->displays = $this->displayService()->createViewModeDisplays($viewMode);
+            }
         }
         if (!$this->save($layout)) {
             throw LayoutException::cantSave($layout);
