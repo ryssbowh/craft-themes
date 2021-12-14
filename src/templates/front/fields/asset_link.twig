@@ -1,13 +1,25 @@
 {% extends "fields/_field" %}
-{% import "_includes/macros" as macros %}
+
+{% macro assetLink(asset, options) %}
+    <a href="{{ asset.url }}"{% if options.newTab ?? false %} target="_blank"{% endif %}{% if options.download ?? false %} download{% endif %}>
+        {% set label = options.label ?? 'title' %}
+        {% if label == 'title' %}
+            {{ asset.title }}
+        {% elseif options.label == 'filename' %}
+            {{ asset.filename }}
+        {% else %}
+            {{ options.custom ?? 'no label' }}
+        {% endif %}
+    </a>
+{% endmacro %}
 
 {% block content %}
     {% if displayer.limit == 1 %}
-        {{ macros.assetLink(value.0, options) }}
+        {{ _self.assetLink(value.0, options) }}
     {% else %}
         <ul class="asset-list">
             {% for asset in value %}
-                <li class="asset-list-item">{{ macros.assetLink(asset, options) }}</li>
+                <li class="asset-list-item">{{ _self.assetLink(asset, options) }}</li>
             {% endfor %}
         </ul>
     {% endif %}

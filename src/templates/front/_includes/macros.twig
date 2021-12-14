@@ -13,16 +13,3 @@
     {% endautoescape %}
     {% endspaceless %}
 {% endmacro %}
-
-{% macro assetLink(asset, options) %}
-    <a href="{{ asset.url }}"{% if options.newTab ?? false %} target="_blank"{% endif %}{% if options.download ?? false %} download{% endif %}>
-        {% set label = options.label ?? 'title' %}
-        {% if label == 'title' %}
-            {{ asset.title }}
-        {% elseif options.label == 'filename' %}
-            {{ asset.filename }}
-        {% else %}
-            {{ options.custom ?? 'no label' }}
-        {% endif %}
-    </a>
-{% endmacro %}
