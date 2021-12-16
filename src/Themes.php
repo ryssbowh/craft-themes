@@ -10,7 +10,7 @@ use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
@@ -74,6 +74,10 @@ class Themes extends \craft\base\Plugin
         \Craft::setAlias('@themesWebPath', '@webroot/themes');
         \Craft::setAlias('@themesWeb', '@web/themes');
 
+        if (\Craft::$app->request->getIsConsoleRequest()) {
+            $this->controllerNamespace = 'Ryssbowh\\CraftThemes\\console';
+        }
+
         $this->registerServices();
         $this->registerPermissions();
         $this->registerClearCacheEvent();
@@ -97,10 +101,6 @@ class Themes extends \craft\base\Plugin
             View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
             [$this->registry, 'registerCurrentThemeTemplates']
         );
-
-        if (\Craft::$app->request->getIsConsoleRequest()) {
-            $this->controllerNamespace = 'Ryssbowh\\CraftThemes\\console';
-        }
 
         if (Craft::$app->request->getIsCpRequest()) {
             $this->registerCpRoutes();
@@ -412,6 +412,7 @@ class Themes extends \craft\base\Plugin
             'tables' => TablesService::class,
             'fileDisplayers' => FileDisplayerService::class,
             'groups' => GroupsService::class,
+            'creator' => CreatorService::class,
         ]);
     }
 

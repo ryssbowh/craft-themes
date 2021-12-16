@@ -210,10 +210,19 @@ If enabled in the settings (enabled by default) you will see some shortcuts (dis
 
 ## Console commands
 
-`craft clear-caches/themes-block-cache` : Clears all block cache  
-`craft clear-caches/themes-rules-cache` : Clears rules cache  
-`craft clear-caches/themes-template-cache` : Clears templates resolution cache  
+`craft invalidate-tags/themes::blocks` : Clears all block cache  
+`craft invalidate-tags/themes::rules` : Clears rules cache  
+`craft invalidate-tags/themes::displayers` : Clears displayers cache  
+`craft invalidate-tags/themes::eagerLoad` : Clears eager loading maps cache  
+`craft invalidate-tags/themes::templates` : Clears templates resolution cache  
 `craft themes/install` : Reinstall all themes data (layouts etc)
+
+Classes creation :  
+`craft themes/create/theme` : Creates a new theme  
+`craft themes/create/block` : Creates a new block for a theme  
+`craft themes/create/block-provider` : Creates a new block provider class for a theme  
+`craft themes/create/field-displayer` : Creates a new field displayer for a theme  
+`craft themes/create/file-displayer` : Creates a new file displayer for a theme  
 
 ## Caching
 
