@@ -111,12 +111,6 @@ class DisplayService extends Service
 
         $record = $this->getRecordByUid($uid);
         $display->setAttributes($record->getAttributes());
-        
-        if ($isNew) {
-            //Sorting internal caches
-            $this->add($display);
-            $display->viewMode->displays = null;
-        }
 
         $display->item->display = $display;
         if ($display->type == self::TYPE_FIELD) {
@@ -125,6 +119,11 @@ class DisplayService extends Service
             $this->groupsService()->save($display->item);
         } else {
             throw DisplayException::invalidType($display->type);
+        }
+
+        if ($isNew) {
+            $this->add($display);
+            $display->viewMode->displays = null;
         }
 
         return true;
@@ -148,7 +147,8 @@ class DisplayService extends Service
             } else {
                 $this->groupsService()->delete($display->item);
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
 
@@ -283,18 +283,25 @@ class DisplayService extends Service
      */
     public function populateFromPost(array $data): DisplayInterface
     {
-        $display = $this->getById($data['id']);
         $itemData = $data['item'];
-        $type = $data['type'];
         unset($data['item']);
-        unset($data['type']);
-        $display->setAttributes($data);
-        $itemData['display'] = $display;
-        if ($type == self::TYPE_FIELD) {
-            Themes::$plugin->fields->populateFromPost($itemData, $display);
+        if ($data['id'] ?? null) {
+            $display = $this->getById($data['id']);
+            $attributes = $display->safeAttributes();
+            $data = array_intersect_key($data, array_flip($attributes));
+            $display->setAttributes($data);
         } else {
-            Themes::$plugin->groups->populateFromPost($itemData, $display);
+            $display = $this->create($data);
         }
+        if ($data['type'] == self::TYPE_FIELD) {
+            $item = Themes::$plugin->fields->populateFromPost($itemData);
+        } elseif ($data['type'] == self::TYPE_GROUP) {
+            $item = Themes::$plugin->groups->populateFromPost($itemData);
+        } else {
+            throw DisplayException::invalidType($type);
+        }
+        $item->display = $display;
+        $display->item = $item;
         return $display;
     }
 
@@ -486,6 +493,7 @@ class DisplayService extends Service
         $toDelete = $this->all()
             ->whereNotIn('id', $toKeep)
             ->where('viewMode_id', $viewMode->id)
+            ->values()
             ->all();
         foreach ($toDelete as $display) {
             $this->delete($display);

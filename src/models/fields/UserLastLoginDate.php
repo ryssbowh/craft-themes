@@ -9,7 +9,7 @@ use Ryssbowh\CraftThemes\models\layouts\UserLayout;
 /**
  * Handles the lastLoginDate value of users
  */
-class LastLoginDate extends Field
+class UserLastLoginDate extends Field
 {
     /**
      * @var boolean
@@ -21,7 +21,7 @@ class LastLoginDate extends Field
      */
     public static function getType(): string
     {
-        return 'date-lastlogindate';
+        return 'user-lastlogindate';
     }
 
     /**

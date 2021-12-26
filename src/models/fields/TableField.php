@@ -46,7 +46,7 @@ class TableField extends Field
      */
     public static function getType(): string
     {
-        return 'table_field';
+        return 'table-field';
     }
 
     /**

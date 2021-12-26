@@ -128,13 +128,14 @@ class GroupsService extends Service
 
         $record = $this->getRecordByUid($uid);
         $group->setAttributes($record->getAttributes());
-        
-        if ($isNew) {
-            $this->add($group);
-        }
 
         foreach ($group->displays as $display) {
+            $display->group_id = $group->id;
             Themes::$plugin->displays->save($display);
+        }
+
+        if ($isNew) {
+            $this->add($group);
         }
 
         return true;
@@ -155,7 +156,7 @@ class GroupsService extends Service
             Themes::$plugin->displays->save($display);
         }
 
-        \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $group->uid);
+        \Craft::$app->projectConfig->remove(self::CONFIG_KEY . '.' . $group->uid);
 
         $this->_groups = $this->all()->where('id', '!=', $group->id);
 
@@ -205,7 +206,6 @@ class GroupsService extends Service
     public function handleDeleted(ConfigEvent $event)
     {
         $uid = $event->tokenMatches[0];
-
         \Craft::$app->getDb()->createCommand()
             ->delete(GroupRecord::tableName(), ['uid' => $uid])
             ->execute();
@@ -228,28 +228,23 @@ class GroupsService extends Service
      * Populates a group from post
      * 
      * @param  array $data
-     * @param  DisplayInterface $display
      * @return GroupInterface
      */
-    public function populateFromPost(array $data, DisplayInterface $display): GroupInterface
+    public function populateFromPost(array $data): GroupInterface
     {
         $displaysData = $data['displays'] ?? [];
         unset($data['displays']);
-        if (!$data['id'] ?? null) {
-            $group = $this->create($data);
-        } else {
+        if ($data['id'] ?? null) {
             $group = $this->getById($data['id']);
             $attributes = $group->safeAttributes();
             $data = array_intersect_key($data, array_flip($attributes));
             $group->setAttributes($data);
+        } else {
+            $group = $this->create($data);
         }
-        $displays = [];
-        foreach ($displaysData as $displayData) {
-            $display2 = Themes::$plugin->displays->populateFromPost($displayData);
-            $display2->group = $group;
-            $displays[] = $display2;
-        }
-        $group->displays = $displays;
+        $group->displays = array_map(function ($data) {
+            return Themes::$plugin->displays->populateFromPost($data);
+        }, $displaysData);
         return $group;
     }
 

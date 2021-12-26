@@ -130,27 +130,18 @@ class ViewModeService extends Service
             $viewMode->layout->viewModes = null;
         }
 
-        //Saving displays, groups first
-        $groups = [];
-        $displays = [];
         $allDisplays = $viewMode->displays;
         foreach ($allDisplays as $display) {
+            Themes::$plugin->displays->save($display);
             if ($display->type == DisplayService::TYPE_GROUP) {
-                $groups[] = $display;
-            } else {
-                $displays[] = $display;
+                //Adding all group displays in the list so they are not deleted by the cleanup
+                $allDisplays = array_merge($allDisplays, $display->item->displays);
             }
         }
-        foreach ($groups as $display) {
-            Themes::$plugin->displays->save($display);
-            //Adding all group displays in the list so they are not deleted by the cleanup
-            $allDisplays = array_merge($allDisplays, $display->item->displays);
-        }
-        foreach ($displays as $display) {
-            Themes::$plugin->displays->save($display);
-        }
+
         Themes::$plugin->displays->cleanUp($allDisplays, $viewMode);
         TagDependency::invalidate(\Craft::$app->cache, self::VIEWMODE_CACHE_TAG . '::' . $viewMode->id);
+        $viewMode->displays = null;
 
         return true;
     }
@@ -284,11 +275,7 @@ class ViewModeService extends Service
         $viewMode->setAttributes($data);
         $displays = [];
         foreach ($displaysData as $data) {
-            if ($data['id'] ?? null) {
-                $displays[] = Themes::$plugin->displays->populateFromPost($data);
-            } else {
-                $displays[] = Themes::$plugin->displays->create($data);
-            }
+            $displays[] = Themes::$plugin->displays->populateFromPost($data);
         }
         $viewMode->displays = $displays;
         return $viewMode;

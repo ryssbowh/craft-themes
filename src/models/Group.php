@@ -10,7 +10,7 @@ use Ryssbowh\CraftThemes\traits\HasDisplays;
 use craft\base\Element;
 
 /**
- * Class for a group of items
+ * Class for a group of displays
  */
 class Group extends DisplayItem implements GroupInterface
 {

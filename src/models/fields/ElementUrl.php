@@ -27,7 +27,7 @@ class ElementUrl extends Field
      */
     public static function getType(): string
     {
-        return 'element_url';
+        return 'element-url';
     }
 
     /**

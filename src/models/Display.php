@@ -220,8 +220,9 @@ class Display extends Model implements DisplayInterface
     public function setGroup(?GroupInterface $group)
     {
         $this->_group = $group;
-        if (is_null($group)) {
-            $this->group_id = null;
+        $this->group_id = null;
+        if ($group and $group->id) {
+            $this->group_id = $group->id;
         }
     }
 

@@ -89,15 +89,16 @@ class RulesService extends Service
         $currentUrl = $currentSite->getBaseUrl().$path;
         $viewPort = $this->getViewPort();
         $cached = $this->getCache($currentUrl, $viewPort);
-        if ($cached === null) {
-            $theme = null;
-        } elseif (is_string($cached)) {
+        $theme = null;
+        if (is_string($cached)) {
             $theme = $this->themesRegistry()->hasTheme($cached) ? $cached : null;
         } else {
-            $theme = $this->resolveRules($path, $currentSite, $viewPort);
-            $this->setCache($currentUrl, $viewPort, $theme);
+            $resolved = $this->resolveRules($path, $currentSite, $viewPort);
+            if ($this->themesRegistry()->hasTheme($resolved)) {
+                $this->setCache($currentUrl, $viewPort, $resolved);
+                $theme = $resolved;
+            }
         }
-
         return $this->themesRegistry()->setCurrent($theme);
     }
 

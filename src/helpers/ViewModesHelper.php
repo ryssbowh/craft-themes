@@ -46,6 +46,9 @@ class ViewModesHelper
     public static function getUserPhotoViewModes(ThemeInterface $theme): array
     {
         $volumeUid = \Craft::$app->getProjectConfig()->get('users.photoVolumeUid');
+        if (!$volumeUid) {
+            return [];
+        }
         $volume = \Craft::$app->volumes->getVolumeByUid($volumeUid);
         $viewModes = [$volume->uid => [
             'label' => $volume->name,

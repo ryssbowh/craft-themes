@@ -20,7 +20,7 @@ class MatrixField extends CraftField
      */
     public static function getType(): string
     {
-        return 'matrix_field';
+        return 'matrix-field';
     }
 
     /**

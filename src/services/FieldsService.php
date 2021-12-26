@@ -208,10 +208,9 @@ class FieldsService extends Service
      * Populates a field from post
      * 
      * @param  array            $data
-     * @param  DisplayInterface $display
      * @return FieldInterface
      */
-    public function populateFromPost(array $data, DisplayInterface $display): FieldInterface
+    public function populateFromPost(array $data): FieldInterface
     {
         $field = $this->getById($data['id']);
         $field->populateFromPost($data);
