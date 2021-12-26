@@ -206,7 +206,7 @@ export default {
 @import '~craftcms-sass/_mixins';
 
 .delete {
-    margin-left: 5px;
+    margin-left: 3px;
 }
 .group {
     position: relative;

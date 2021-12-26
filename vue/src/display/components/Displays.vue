@@ -164,6 +164,9 @@ export default {
             padding-bottom: 4px;
         }
     }
+    .col.options {
+        display: flex;
+    }
     .col.move {
         padding-left: 5px;
         display:flex;
