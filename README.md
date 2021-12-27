@@ -134,11 +134,12 @@ Here is a list of available displayers for each type of field :
 | Field type    | displayer                  | Options                                          |
 |---------------|----------------------------|--------------------------------------------------|
 | Title         | Title                      | html tag, linked to element                      |
-| Assets        | Link to asset              | Label, new tab, download                         |
+| Assets        | Links                      | Label, new tab, download                         |
 | Assets        | Rendered (volume layout)   | View mode                                        |
 | Assets        | Render file                | Various options for each kind of file, see below |
 | Assets        | Slick Carousel             | View mode, most of slick options                 |
-| Category      | List                       | Output as links                                  |
+| Category      | Label                      |                                                  |
+| Category      | Links                      | Label, new tab                                   |
 | Category      | Rendered (category layout) | View mode                                        |
 | Category      | Slick Carousel             | View mode, most of slick options                 |
 | Checkboxes    | Label                      |                                                  |
@@ -148,7 +149,7 @@ Here is a list of available displayers for each type of field :
 | Date          | Time ago                   |                                                  |
 | Dropdown      | Label                      |                                                  |
 | Email         | Email                      | Output as link                                   |
-| Entries       | Link to entry              | Label, new tab                                   |
+| Entries       | Links                      | Label, new tab                                   |
 | Entries       | Rendered (entry layout)    | View mode                                        |
 | Entries       | Slick Carousel             | View mode, most of slick options                 |
 | Matrix        | Default                    |                                                  |
