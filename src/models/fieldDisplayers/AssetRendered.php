@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
+use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetRenderedOptions;
 use Ryssbowh\CraftThemes\models\fields\UserPhoto;
 use craft\fields\Assets;
@@ -10,7 +11,7 @@ use craft\fields\Assets;
 /**
  * Renders an asset field as rendered using a view mode
  */
-class AssetRendered extends AssetLink
+class AssetRendered extends FieldDisplayer
 {
     /**
      * @inheritDoc
@@ -20,17 +21,17 @@ class AssetRendered extends AssetLink
     /**
      * @inheritDoc
      */
-    public static function isDefault(string $fieldClass): bool
+    public function getName(): string
     {
-        return false;
+        return \Craft::t('themes', 'Rendered as view mode');
     }
 
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public static function getFieldTargets(): array
     {
-        return \Craft::t('themes', 'Rendered as view mode');
+        return [Assets::class];
     }
 
     /**

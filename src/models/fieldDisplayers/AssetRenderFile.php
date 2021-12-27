@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetRenderFileOptions;
 use Ryssbowh\CraftThemes\models\fields\UserPhoto;
 use craft\fields\Assets;
@@ -9,7 +10,7 @@ use craft\helpers\Assets as AssetsHelper;
 /**
  * Renders the file of an asset field
  */
-class AssetRenderFile extends AssetLink
+class AssetRenderFile extends FieldDisplayer
 {
     /**
      * @inheritDoc
@@ -19,17 +20,17 @@ class AssetRenderFile extends AssetLink
     /**
      * @inheritDoc
      */
-    public static function isDefault(string $fieldClass): bool
+    public function getName(): string
     {
-        return false;
+        return \Craft::t('themes', 'Render file');
     }
 
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public static function getFieldTargets(): array
     {
-        return \Craft::t('themes', 'Render file');
+        return [Assets::class];
     }
 
     /**

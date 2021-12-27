@@ -2,23 +2,22 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
+use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 
-class AssetLinkOptions extends FieldDisplayerOptions
+class ElementLinkOptions extends FieldDisplayerOptions
 {
     /**
      * @inheritDoc
      */
     public function defineOptions(): array
     {
-        return [
+        $options = [
             'label' => [
                 'field' => 'select',
                 'options' => [
-                    'title' => \Craft::t('themes', 'Asset title'),
-                    'filename' => \Craft::t('themes', 'File name'),
+                    'title' => \Craft::t('themes', 'Element title'),
                     'custom' => \Craft::t('themes', 'Custom'),
                 ],
-                'required' => true,
                 'label' => \Craft::t('app', 'Label')
             ],
             'custom' => [
@@ -28,12 +27,16 @@ class AssetLinkOptions extends FieldDisplayerOptions
             'newTab' => [
                 'field' => 'lightswitch',
                 'label' => \Craft::t('themes', 'Open in new tab')
-            ],
-            'download' => [
-                'field' => 'lightswitch',
-                'label' => \Craft::t('themes', 'Download link')
             ]
         ];
+        if ($this->displayer->field->layout instanceof VolumeLayout) {
+            $options['download'] = [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Download link')
+            ];
+            $options['label']['options']['filename'] = \Craft::t('themes', 'Filename');
+        }
+        return $options;
     }
 
     /**
@@ -54,13 +57,17 @@ class AssetLinkOptions extends FieldDisplayerOptions
      */
     public function defineRules(): array
     {
-        return [
+        $rules = [
             [['label', 'custom'], 'string'],
-            [['newTab', 'download'], 'boolean', 'trueValue' => true, 'falseValue' => false],
+            ['newTab', 'boolean', 'trueValue' => true, 'falseValue' => false],
+            ['label', 'in', 'range' => array_keys($this->definitions['label']['options'])],
             ['custom', 'required', 'when' => function ($model) {
                 return $model->label == 'custom';
             }],
-            ['label', 'in', 'range' => array_keys($this->definitions['label']['options'])]
         ];
+        if ($this->displayer->field->layout instanceof VolumeLayout) {
+            $rules[] = ['download', 'boolean', 'trueValue' => true, 'falseValue' => false];
+        }
+        return $rules;
     }
 }

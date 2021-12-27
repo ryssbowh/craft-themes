@@ -3,19 +3,21 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\EntryLinkOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\ElementLinksOptions;
 use Ryssbowh\CraftThemes\models\fields\ElementUrl;
+use craft\fields\Assets;
+use craft\fields\Categories;
 use craft\fields\Entries;
 
 /**
- * Renders an entry field as links
+ * Renders some elements as links
  */
-class EntryLink extends FieldDisplayer
+class ElementLinks extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'entry_link';
+    public static $handle = 'element_links';
 
     /**
      * @inheritDoc
@@ -30,7 +32,7 @@ class EntryLink extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Link to entry');
+        return \Craft::t('themes', 'Links');
     }
 
     /**
@@ -40,21 +42,7 @@ class EntryLink extends FieldDisplayer
      */
     public function getLimit(): ?int
     {
-        if ($this->field instanceof ElementUrl) {
-            return 1;
-        }
         return $this->field->craftField->limit ?: null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function beforeRender(&$value): bool
-    {
-        if ($this->field instanceof ElementUrl) {
-            $value = [Themes::$plugin->view->renderingElement];
-        }
-        return true;
     }
 
     /**
@@ -62,7 +50,7 @@ class EntryLink extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Entries::class, ElementUrl::class];
+        return [Entries::class, Categories::class, Assets::class];
     }
 
     /**
@@ -70,6 +58,6 @@ class EntryLink extends FieldDisplayer
      */
     protected function getOptionsModel(): string
     {
-        return EntryLinkOptions::class;
+        return ElementLinksOptions::class;
     }
 }

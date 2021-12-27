@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRenderFile;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetSlick;
@@ -15,8 +14,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\ColourDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\Date;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DateTime;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DropdownLabel;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\ElementLink;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\ElementLinks;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EmailEmail;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntrySlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\FileFile;
@@ -59,7 +59,6 @@ class RegisterFieldDisplayerEvent extends Event
     {
         parent::init();
         $this->registerMany([
-            AssetLink::class,
             AssetSlick::class,
             AssetRendered::class,
             AssetRenderFile::class,
@@ -72,7 +71,8 @@ class RegisterFieldDisplayerEvent extends Event
             DateTime::class,
             DropdownLabel::class,
             EmailEmail::class,
-            EntryLink::class,
+            ElementLink::class,
+            ElementLinks::class,
             EntryRendered::class,
             EntrySlick::class,
             FileFile::class,
