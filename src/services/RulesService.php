@@ -94,7 +94,7 @@ class RulesService extends Service
             $theme = $this->themesRegistry()->hasTheme($cached) ? $cached : null;
         } else {
             $resolved = $this->resolveRules($path, $currentSite, $viewPort);
-            if ($this->themesRegistry()->hasTheme($resolved)) {
+            if ($resolved and $this->themesRegistry()->hasTheme($resolved)) {
                 $this->setCache($currentUrl, $viewPort, $resolved);
                 $theme = $resolved;
             }
