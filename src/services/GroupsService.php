@@ -132,6 +132,7 @@ class GroupsService extends Service
         foreach ($group->displays as $display) {
             $display->group_id = $group->id;
             Themes::$plugin->displays->save($display);
+            $display->group = $group;
         }
 
         if ($isNew) {

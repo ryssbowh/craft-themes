@@ -170,8 +170,7 @@ Here is a list of available displayers for each type of field :
 | Users         | Rendered (user layout)     | View mode                                        |
 | Users         | Slick Carousel             | View mode, most of slick options                 |
 
-And a list of available file displayers :  
-Every file type will also have the displayer "Link to asset" available, with options label, new tab and download.
+And a list of available file displayers, those will be chosen when editing a field that handles assets :
 
 | File type  | displayer       | Options                                       |
 |------------|-----------------|-----------------------------------------------|
@@ -192,6 +191,10 @@ Every file type will also have the displayer "Link to asset" available, with opt
 | Video      | HTML Video      | Width, height, show controls, muted, autoplay |
 | XML        | Raw             |                                               |
 | XML        | Code            |                                               |
+
+![Displays](images/files.png)
+
+Every file type will also have the displayer "Link to asset" available, with options label, new tab and download.
 
 ## Partial themes
 
@@ -237,8 +240,9 @@ Plus :
 
 Displayers html output can be stored in cache for faster execution.
 
-The content block caching strategy controls the displayer cache, it really shouldn't use the "Global" strategy, or all your pages will display the same content.  
-Setting no cache strategy to the content block will effectively disable the displayer cache.  
+The content block caching strategy controls the displayer cache, it really shouldn't use the "Global" strategy, or the fields on the same pages will display the same content.  
+Setting no cache strategy to the content block will effectively disable the displayer cache.
+
 Displayer caching uses Craft internal cache tagging system so cache will be automatically invalidated when displayers/fields/view modes are changed.
 
 ### Block cache
@@ -275,7 +279,7 @@ Disabling this plugin will disable all themes.
 Installing a theme that extends another will automatically install that other theme.  
 Installing a theme will automatically install this plugin.  
 Disabling a theme will disable all theme that extend from it.  
-Uninstalling a theme will delete all its blocks/displays/layouts (Pro version only).
+Uninstalling a theme will permanently delete all its blocks/displays/layouts (Pro version only).
 
 ## Requirements
 
@@ -290,7 +294,7 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 
 ## Known issues
 
-- When adding fields for the first time to the user layout, it needs to be saved twice for the themes fields to be created. The following times work normally. [Github issue](https://github.com/craftcms/cms/issues/10237)
+- In Craft 3.5.x/3.6.x, when adding fields for the first time to the user layout, it needs to be saved twice for the themes fields to be created. The following times work normally. [Github issue](https://github.com/craftcms/cms/issues/10237)
 
 ## Documentation
 
