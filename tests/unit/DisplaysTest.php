@@ -85,14 +85,15 @@ class DisplaysTest extends Unit
      * Tag : 3
      *     - date updated/created
      *     - title
-     * Volume : 4
+     * Volume : 5
      *     - title
      *     - file
      *     - date updated/created
+     *     - url
      *
-     * Total : 96
+     * Total : 97
      *
-     * 2 non-partial themes 96*2 = 192 displays in total
+     * 2 non-partial themes 96*2 = 194 displays in total
      *
      * There's 8 file displayers defined by the system
      * There's 39 field displayers defined by the system
@@ -102,7 +103,7 @@ class DisplaysTest extends Unit
     {
         $this->assertCount(8, $this->fileDisplayers->all());
         $this->assertCount(39, $this->fieldDisplayers->all());
-        $this->assertCount(192, $this->displays->all());
+        $this->assertCount(194, $this->displays->all());
 
         //User layouts
         $layout = $this->layouts->get('child-theme', LayoutService::USER_HANDLE);
@@ -147,7 +148,7 @@ class DisplaysTest extends Unit
         $volume = \Craft::$app->volumes->getVolumeByHandle('public');
         $layout = $this->layouts->get('child-theme', LayoutService::VOLUME_HANDLE, $volume->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(4, $displays);
+        $this->assertCount(5, $displays);
 
     }
 

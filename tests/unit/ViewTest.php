@@ -67,7 +67,6 @@ class ViewTest extends Unit
         $this->assertStringContainsString('<div class="display field" data-displayer="user_default" data-field="author">', $html);
         $this->assertStringContainsString('<div class="display field" data-displayer="checkboxes_label" data-field="checkboxes">', $html);
         $this->assertStringContainsString('<div class="display field" data-displayer="dropdown_label" data-field="dropdown">', $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="entry_link" data-field="entries">', $html);
         $this->assertStringContainsString('<div class="display field" data-displayer="radio_buttons_label" data-field="radioButtons">', $html);
     }
 
