@@ -31,7 +31,7 @@ class AssetRendered extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Assets::class];
+        return [Assets::class, UserPhoto::class];
     }
 
     /**
