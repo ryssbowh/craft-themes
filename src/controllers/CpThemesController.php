@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\ListAssets;
+use Ryssbowh\CraftThemes\scss\Compiler;
 use craft\web\Response;
 
 /**

@@ -2,11 +2,16 @@
 namespace Ryssbowh\CraftThemes\base;
 
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\events\ScssCompilerEvent;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemePreferencesInterface;
+use Ryssbowh\CraftThemes\scss\ScssLogger;
+use Ryssbowh\CraftThemes\scss\plugins\ThemeFileLoader;
+use Ryssbowh\ScssPhp\Compiler;
+use Ryssbowh\ScssPhp\plugins\JsonManifest;
 use craft\base\Plugin;
 use yii\base\ArrayableTrait;
 
@@ -16,6 +21,13 @@ use yii\base\ArrayableTrait;
 abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
     use ArrayableTrait;
+
+    const DEFINE_SCSS_COMPILER = 'define_scss_compiler';
+
+    /**
+     * @var Compiler
+     */
+    protected $_compiler;
 
     /**
      * @var array
@@ -243,6 +255,71 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     public function getRegionsTemplate(): string
     {
         return 'regions';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getScssCompiler(): Compiler
+    {
+        if ($this->_compiler !== null) {
+            return $this->_compiler;
+        }
+        $devMode = \Craft::$app->getConfig()->getGeneral()->devMode;
+        $parent = $this->parent;
+        $importPaths = [];
+        while ($parent) {
+            $importPaths[] = $parent->basePath;
+            $parent = $parent->parent;
+        }
+        $compiler = new Compiler(
+            [
+                'publicFolder' => \Craft::getAlias('@themesWebPath/' . $this->handle),
+                'style' => $devMode ? 'expanded' : 'minified',
+                'sourcemaps' => $devMode ? 'inline' : 'none',
+                'aliases' => [
+                    '~' => 'node_modules'
+                ],
+                'importPaths' => $importPaths
+            ],
+            [
+                new JsonManifest,
+                new ThemeFileLoader([
+                    'test' => '/.+.(?:ico|jpg|jpeg|png|gif)([\?#].*)?$/',
+                    'theme' => $this
+                ]),
+                new ThemeFileLoader([
+                    'test' => '/.+.svg([\?#].*)?$/',
+                    'mimetype' => 'image/svg+xml',
+                    'theme' => $this
+                ]),
+                new ThemeFileLoader([
+                    'test' => '/.+.ttf([\?#].*)?$/',
+                    'mimetype' => 'application/octet-stream',
+                    'theme' => $this
+                ]),
+                new ThemeFileLoader([
+                    'test' => '/.+.woff([\?#].*)?$/',
+                    'mimetype' => 'application/font-woff',
+                    'theme' => $this
+                ]),
+                new ThemeFileLoader([
+                    'test' => '/.+.woff2([\?#].*)?$/',
+                    'mimetype' => 'application/font-woff',
+                    'theme' => $this
+                ]),
+                new ThemeFileLoader([
+                    'test' => '/.+.eot([\?#].*)?$/',
+                    'theme' => $this
+                ]),
+            ],
+            new ScssLogger
+        );
+        $this->trigger(self::DEFINE_SCSS_COMPILER, new ScssCompilerEvent([
+            'compiler' => $compiler
+        ]));
+        $this->_compiler = $compiler;
+        return $compiler;
     }
 
     /**
