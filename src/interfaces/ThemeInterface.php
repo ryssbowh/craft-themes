@@ -1,6 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Ryssbowh\ScssPhp\Compiler;
+
 /**
  * A theme is a regular plugin, it defines regions and can extend another theme.
  * They can be partials.
@@ -123,4 +125,11 @@ interface ThemeInterface
      * theme's data is not already installed to avoid project config syncing issues.
      */
     public function afterThemeInstall();
+
+    /**
+     * Get the scss compiler
+     * 
+     * @return Compiler
+     */
+    public function getScssCompiler(): Compiler;
 }

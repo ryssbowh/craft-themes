@@ -1,9 +1,25 @@
 # Developers documentation (v3.x)
 
+## Table of contents
+
+- [Update from 2.0 breaking changes](#update-from-20-breaking-changes-)
+- [Themes](#themes)
+- [Layouts (Pro)](#layouts-pro)
+- [Blocks (Pro)](#blocks-pro)
+- [Field displayers (Pro)](#field-displayers-pro)
+- [File displayers (Pro)](#file-displayers-pro)
+- [Configurable options](#configurable-options)
+- [Templating (Pro)](#templating-pro)
+- [Eager loading (Pro)](#eager-loading-pro)
+- [Aliases](#aliases)
+- [Caching](#caching)
+- [Scss compiling](#scss-compiling)
+
 ## Update from 2.0 breaking changes :
 
 - Main themes plugin class must inherit `Ryssbowh\CraftThemes\base\ThemePlugin`
-- Requires PHP 7.3 minimum
+- Requires Craft 3.7 (3.5 and 3.6 support is dropped due to issues that won't be fixed on those versions)
+- Requires PHP 7.3 or higher
 - Requires PHP Intl extension
 
 ### Deprecated
@@ -699,3 +715,140 @@ Strategy classes must implement `BlockCacheStrategyInterface` and their options 
 Each block can disable caching entirely by overriding the method `getCanBeCached(): bool`. The content block is non cacheable, but still has a caching strategy which will define displayers caching.
 
 Block cache can be clear with the following command : `./craft invalidate-tags/themes::blocks`
+
+## Scss compiling
+
+:warning: All scss features are considered unstable until the underlying compiler has a stable release.
+
+Your themes can, if you need to, compile scss files into css. The compiler itself has its own [package](https://github.com/ryssbowh/scss-php-compiler), please refer to it for documentation.
+
+Each of your theme can override its `getScssCompiler(): Compiler` method which must return an instance of `Ryssbowh\ScssPhp\Compiler`, that's where you'd define your compiler plugins, aliases, import paths etc.  
+The default compiler defines the following :
+- minified css on production
+- sourcemaps disabled on production
+- parent themes added as import paths. This means you can import scss files from a parent theme.
+- Theme file loader plugin for images and fonts. This means you can reference assets (in the `url()` function) from a parent theme and they will be extracted.
+- JSON Manifest plugin
+- Public path set to `@themesWebPath/theme-handle` which is equivalent to `@webroot/themes/theme-handle`. That's where the css files will be written
+
+Compiling can be done in two ways :
+
+### Scss bundle
+
+Define a bundle that extends `Ryssbowh\CraftThemes\scss\ScssAssetBundle` and reference some scss files to compile. The compiling by default will only happen if devMode is on (This can be changed in the bundle). If you're on devMode and use such a bundle, the scss will be compiled at each request.
+
+Example for a compilation that uses a manifest :
+```
+use Ryssbowh\CraftThemes\scss\ScssAssetBundle;
+
+class FrontCssAssets extends ScssAssetBundle
+{
+    public $baseUrl = 'themes/my-theme';
+
+    public $theme = 'my-theme';
+
+    public $scssFiles = [
+        'assets/src/scss/app.scss' => 'app.css'
+    ];
+
+    public $basePath = '@themeWebPath';
+
+    /**
+     * This is only needed if you use a manifest
+     */
+    public function registerAssetFiles($view)
+    {
+        $manifestFile = \Craft::getAlias('@themeWebPath/manifest.json');
+        if (file_exists($manifestFile)) {
+            $manifest = json_decode(file_get_contents($manifestFile), true);
+            $this->css[] = $manifest['app.css'];
+        }
+        parent::registerAssetFiles($view);
+    }
+
+    /**
+     * Enable/disable compilation here
+     */
+    protected function isCompilingEnabled(): bool
+    {
+        return parent::isCompilingEnabled();
+    }
+
+    /**
+     * Optionally change the compiler, the default one will be used otherwise
+     */
+    protected function getCompiler(): Compiler
+    {
+        return parent::getCompiler();
+    }
+}
+```
+
+### In templates
+
+### Raw scss
+
+Use the twig tag `scss` to compile scss at page load.
+
+Example :
+```
+{% scss %}
+    @import "../../scss/main.scss";
+    
+    h1 a::after { 
+      content: "";
+      background: center/contain no-repeat url(../../assets/images/favicon.png);
+    }
+{% endscss %}
+```
+The scss will be compiled once (and every time the scss is changed) and put in cache so your page load is not slowed down.
+
+Imports or urls path are relative to the folder where the template is.
+
+Caches can be cleared using the backend or the command `craft clear-caches/themes-scss-cache`
+
+### File
+
+You can also compile an existing file :
+
+```
+{% scss file "../../assets/src/scss/components/main.scss" %}
+```
+
+### Options
+
+Use the `force` option to force the compiling.
+
+```
+{% scss force %}
+    @import "../../scss/main.scss";
+    
+    h1 a::after { 
+      content: "";
+      background: center/contain no-repeat url(../../assets/images/favicon.png);
+    }
+{% endscss %}
+
+// Or
+
+{% scss file "../../assets/src/scss/components/main.scss" force %}
+```
+
+Use the `with options {}` to pass options to the compiler :
+
+```
+{% scss with options {style: 'expanded'} %}
+    @import "../../scss/main.scss";
+    
+    h1 a::after { 
+      content: "";
+      background: center/contain no-repeat url(../../assets/images/favicon.png);
+    }
+{% endscss %}
+
+// Or
+
+{% scss file "../../assets/src/scss/components/main.scss" with options {style: 'expanded'} %}
+```
+
+Note that the options `publicFolder` and `fileName` will have no effect as they will be overridden.

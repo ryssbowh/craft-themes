@@ -67,16 +67,10 @@ class ThemesRegistry extends Service
             \Craft::info("Theme has been unset", __METHOD__);
             return null;
         }
-
         \Yii::setAlias('@themePath', $theme->basePath);
         \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
         \Yii::setAlias('@themeWebPath', '@themesWebPath/' . $theme->handle);
         \Craft::$app->view->registerTwigExtension(new TwigTheme);
-        if (\Craft::$app->request->getIsSiteRequest()) {
-            $path = \Craft::$app->request->getPathInfo();
-            $path = $path === '' ? '/' : $path;
-            $this->currentTheme->registerAssetBundles($path);
-        }
         $this->currentTheme->afterSet();
         $this->triggerEvent(
             self::EVENT_THEME_SET, 
@@ -99,6 +93,19 @@ class ThemesRegistry extends Service
         }
         $event->roots[''][] = __DIR__ . '/../templates/front';
         $event->roots[''] = array_merge($this->currentTheme->getTemplatePaths(), $event->roots['']);
+    }
+
+    /**
+     * Register the asset bundles of the current theme
+     */
+    public function registerCurrentThemeBundles()
+    {
+        if (!$this->currentTheme or !\Craft::$app->request->getIsSiteRequest()) {
+            return;
+        }
+        $path = \Craft::$app->request->getPathInfo();
+        $path = $path === '' ? '/' : $path;
+        $this->currentTheme->registerAssetBundles($path);
     }
 
     /**

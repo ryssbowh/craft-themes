@@ -10,8 +10,7 @@ use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\scss\Compiler;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService, ScssService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
@@ -88,12 +87,6 @@ class Themes extends \craft\base\Plugin
         $this->registerBehaviors();
         $this->registerProjectConfig();
 
-        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_SITE_URL_RULES, function(RegisterUrlRulesEvent $event) {
-            $event->rules = array_merge($event->rules, [
-                'scss' => 'themes/cp-themes/scss',
-            ]);
-        });
-
         if ($this->is($this::EDITION_PRO)) {
             $this->initPro();
         }
@@ -102,6 +95,11 @@ class Themes extends \craft\base\Plugin
             Application::class, 
             Application::EVENT_BEFORE_REQUEST, 
             [$this->rules, 'resolveCurrentTheme']
+        );
+        Event::on(
+            View::class, 
+            View::EVENT_END_BODY, 
+            [$this->registry, 'registerCurrentThemeBundles']
         );
         Event::on(
             View::class, 
@@ -326,7 +324,7 @@ class Themes extends \craft\base\Plugin
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
                 'themes' => 'themes/cp-themes',
-                'themes/list' => 'themes/cp-themes/list',
+                'themes/list' => 'themes/cp-themes/list'
             ]);
             if (\Craft::$app->config->getGeneral()->allowAdminChanges) {
                 $event->rules = array_merge($event->rules, [
@@ -419,8 +417,8 @@ class Themes extends \craft\base\Plugin
             'tables' => TablesService::class,
             'fileDisplayers' => FileDisplayerService::class,
             'groups' => GroupsService::class,
-            'scssCompiler' => Compiler::class,
             'creator' => CreatorService::class,
+            'scss' => ScssService::class,
         ]);
     }
 
@@ -429,6 +427,15 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerClearCacheEvent()
     {
+        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS, function (RegisterCacheOptionsEvent $event) {
+            $event->options[] = [
+                'key' => 'themes-scss-cache',
+                'label' => \Craft::t('themes', 'Inline Scss cache'),
+                'action' => function () {
+                    Themes::$plugin->scss->clearCaches();
+                }
+            ];
+        });
         Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_TAG_OPTIONS, function (RegisterCacheOptionsEvent $event) {
             $event->options[] = [
                 'tag' => RulesService::RULES_CACHE_TAG,
@@ -461,7 +468,7 @@ class Themes extends \craft\base\Plugin
     protected function registerSwitchEdition()
     {
         $_this = $this;
-        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes', function (ConfigEvent $e) use ($_this) {
+        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) use ($_this) {
             $oldEdition = $e->oldValue['edition'] ?? null;
             $newEdition = $e->newValue['edition'] ?? null;
             if ($newEdition == Themes::EDITION_PRO and $oldEdition = Themes::EDITION_LITE) {

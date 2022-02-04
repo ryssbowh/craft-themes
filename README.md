@@ -256,6 +256,11 @@ You can choose a cache strategy for each block which defines how the block is ca
 Each of those strategies can be set to cache differently whether the user is logged in or out, or cache differently for each logged in user or their view ports (mobile, tablet or desktop).  
 Block caching uses Craft internal cache tagging system so cache will be automatically invalidated when elements used within a block are changed.
 
+## Scss
+
+This plugin has an integrated Php Scss compiler allowing you to define scss asset bundles or compile scss directly in your templates.  
+See the [Developers documentation](DEVELOPERS.md#scss-compiling) for usage.
+
 ## Installation
 
 - run `composer require ryssbowh/craft-themes:^3.0` and install plugin

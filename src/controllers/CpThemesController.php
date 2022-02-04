@@ -44,14 +44,4 @@ class CpThemesController extends Controller
             'isPro' => Themes::$plugin->is(Themes::EDITION_PRO)
         ]);
     }
-
-    public function actionScss()
-    {
-        $theme = Themes::$plugin->registry->getTheme('front-theme');
-        $compiler = new Compiler($theme, 'assets/src/front.scss', 'themes/front/front.css', [
-            'manifest' => true,
-            'fileName' => '[name]'
-        ]);
-        return $compiler->run();
-    }
 }

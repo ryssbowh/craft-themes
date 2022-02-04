@@ -5,6 +5,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\twig\tokenparsers\BlockCacheTokenParser;
 use Ryssbowh\CraftThemes\twig\tokenparsers\FieldDisplayerCacheTokenParser;
 use Ryssbowh\CraftThemes\twig\tokenparsers\FileDisplayerCacheTokenParser;
+use Ryssbowh\CraftThemes\twig\tokenparsers\ScssTokenParser;
 use Twig\Extension\AbstractExtension;
 
 class TwigTheme extends AbstractExtension
@@ -31,7 +32,8 @@ class TwigTheme extends AbstractExtension
         return [
             new BlockCacheTokenParser(),
             new FieldDisplayerCacheTokenParser(),
-            new FileDisplayerCacheTokenParser()
+            new FileDisplayerCacheTokenParser(),
+            new ScssTokenParser(),
         ];
     }
 
