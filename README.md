@@ -212,29 +212,14 @@ If enabled in the settings (enabled by default) you will see some shortcuts (dis
 
 ![CP shortcuts](images/cp-shortcuts.png)
 
-## Console commands
-
-`craft invalidate-tags/themes::blocks` : Clears all block cache  
-`craft invalidate-tags/themes::rules` : Clears rules cache  
-`craft invalidate-tags/themes::displayers` : Clears displayers cache  
-`craft invalidate-tags/themes::eagerLoad` : Clears eager loading maps cache  
-`craft invalidate-tags/themes::templates` : Clears templates resolution cache  
-`craft themes/install` : Reinstall all themes data (layouts etc)
-
-Classes creation :  
-`craft themes/create/theme` : Creates a new theme  
-`craft themes/create/block` : Creates a new block for a theme  
-`craft themes/create/block-provider` : Creates a new block provider class for a theme  
-`craft themes/create/field-displayer` : Creates a new field displayer for a theme  
-`craft themes/create/file-displayer` : Creates a new file displayer for a theme  
-
 ## Caching
 
 There are several layers of caching in this plugin, which should all be enabled on production environments for faster execution :
 - Template resolution cache, helps loading the correct templates faster.
-- Eager loading cache, keep in cache view mode eager loading maps, enabled by default.
-
-Plus :
+- Eager loading cache, keep in cache view mode eager loading maps.
+- Rules cache, keeps in cache which theme to use for which url
+- Displayer cache, see below
+- Block cache, see below
 
 ### Displayer cache
 
@@ -260,6 +245,26 @@ Block caching uses Craft internal cache tagging system so cache will be automati
 
 This plugin has an integrated Php Scss compiler allowing you to define scss asset bundles or compile scss directly in your templates.  
 See the [Developers documentation](DEVELOPERS.md#scss-compiling) for usage.
+
+## Console commands
+
+`craft invalidate-tags/themes::blocks` : Clears all block cache  
+`craft invalidate-tags/themes::rules` : Clears rules cache  
+`craft invalidate-tags/themes::displayers` : Clears displayers cache  
+`craft invalidate-tags/themes::eagerLoad` : Clears eager loading maps cache  
+`craft invalidate-tags/themes::templates` : Clears templates resolution cache  
+`craft themes/install` : Reinstall all themes data (layouts etc)
+
+Classes creation :  
+`craft themes/create/theme` : Creates a new theme  
+`craft themes/create/block` : Creates a new block for a theme  
+`craft themes/create/block-provider` : Creates a new block provider class for a theme  
+`craft themes/create/field-displayer` : Creates a new field displayer for a theme  
+`craft themes/create/file-displayer` : Creates a new file displayer for a theme  
+
+Scss :
+`craft clear-caches/themes-scss-cache` : Clear inline (templates) scss cache
+`craft themes/scss/compile theme-handle src-file dest-file` : Compile a scss file
 
 ## Installation
 
@@ -294,7 +299,7 @@ PHP Intl extension
 
 ## Testing
 
-This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php 7.3, 7.4 and 8.0.
+This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.7 and php 7.3, 7.4 and 8.0.
 
 ## Documentation
 

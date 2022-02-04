@@ -36,10 +36,7 @@ class ScssService extends Service
         if ($force or !$scssFileExists or !$cssFileExists or ($scssFileExists and filemtime($template) > filemtime($scssFile))) {
             FileHelper::createDirectory(dirname($scssFile));
             file_put_contents($scssFile, $scss);
-            $compiler = $theme->getScssCompiler();
-            foreach ($options as $name => $value) {
-                $compiler->$name = $value;
-            }
+            $compiler = $theme->getScssCompiler($options);
             $compiler->publicFolder = dirname($cssFile);
             $compiler->fileName = '[name]';
             $compiler->compile([$scssFile => self::DEST_FILE], $theme->basePath, $template);
@@ -67,10 +64,7 @@ class ScssService extends Service
             throw InlineScssException::noFile($path, $template);
         }
         if ($force or !$cssFileExists or filemtime($scssFile) > filemtime($cssFile)) {
-            $compiler = $theme->getScssCompiler();
-            foreach ($options as $name => $value) {
-                $compiler->$name = $value;
-            }
+            $compiler = $theme->getScssCompiler($options);
             $compiler->publicFolder = dirname($cssFile);
             $compiler->fileName = '[name]';
             $scssFile = StringHelper::replaceBeginning($scssFile, $theme->basePath . DIRECTORY_SEPARATOR, '');

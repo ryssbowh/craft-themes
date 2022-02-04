@@ -127,9 +127,12 @@ interface ThemeInterface
     public function afterThemeInstall();
 
     /**
-     * Get the scss compiler
-     * 
+     * Get the scss compiler.
+     * To ensure paths inheritance for parent themes is kept, compiler option importPaths must be set here.
+     * The compiler defined here will be used for asset bundle scss, inline scss and files, and command line compilations.
+     *
+     * @param  array $options Override compiler options here. Import paths will be prepended, aliases will be overridden
      * @return Compiler
      */
-    public function getScssCompiler(): Compiler;
+    public function getScssCompiler(array $options = []): Compiler;
 }

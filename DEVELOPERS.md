@@ -718,11 +718,10 @@ Block cache can be clear with the following command : `./craft invalidate-tags/t
 
 ## Scss compiling
 
-:warning: All scss features are considered unstable until the underlying compiler has a stable release.
-
 Your themes can, if you need to, compile scss files into css. The compiler itself has its own [package](https://github.com/ryssbowh/scss-php-compiler), please refer to it for documentation.
 
-Each of your theme can override its `getScssCompiler(): Compiler` method which must return an instance of `Ryssbowh\ScssPhp\Compiler`, that's where you'd define your compiler plugins, aliases, import paths etc.  
+:warning: All scss features are considered unstable until the underlying compiler has a stable release. It's likely future versions of this package will see breaking changes regarding scss compiling.
+
 The default compiler defines the following :
 - minified css on production
 - sourcemaps disabled on production
@@ -730,6 +729,8 @@ The default compiler defines the following :
 - Theme file loader plugin for images and fonts. This means you can reference assets (in the `url()` function) from a parent theme and they will be extracted.
 - JSON Manifest plugin
 - Public path set to `@themesWebPath/theme-handle` which is equivalent to `@webroot/themes/theme-handle`. That's where the css files will be written
+
+You can overridde your theme's method `getScssCompilerOptions()` to change the default options, or `getScssCompilerPlugins()` to change the default plugins.
 
 Compiling can be done in two ways :
 
@@ -753,8 +754,13 @@ class FrontCssAssets extends ScssAssetBundle
 
     public $basePath = '@themeWebPath';
 
+    //optional
+    public $compilerOptions = [
+        'style' => 'compressed'
+    ];
+
     /**
-     * This is only needed if you use a manifest
+     * Optional, only needed if you use a manifest
      */
     public function registerAssetFiles($view)
     {
@@ -834,10 +840,10 @@ Use the `force` option to force the compiling.
 {% scss file "../../assets/src/scss/components/main.scss" force %}
 ```
 
-Use the `with options {}` to pass options to the compiler :
+Use the `with options {}` to overridde some compiler options :
 
 ```
-{% scss with options {style: 'expanded'} %}
+{% scss with options {style: 'compressed'} %}
     @import "../../scss/main.scss";
     
     h1 a::after { 
@@ -851,4 +857,8 @@ Use the `with options {}` to pass options to the compiler :
 {% scss file "../../assets/src/scss/components/main.scss" with options {style: 'expanded'} %}
 ```
 
-Note that the options `publicFolder` and `fileName` will have no effect as they will be overridden.
+Note that the compiler options `publicFolder` and `fileName` will have no effect as they will be overridden.
+
+### Command line
+
+Use `craft themes/scss/compile theme-handle src-file dest-file` to compile a scss file.

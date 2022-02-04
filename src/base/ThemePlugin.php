@@ -260,66 +260,92 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
-    public function getScssCompiler(): Compiler
+    public function getScssCompiler(array $options = []): Compiler
     {
         if ($this->_compiler !== null) {
             return $this->_compiler;
         }
-        $devMode = \Craft::$app->getConfig()->getGeneral()->devMode;
+        $defaultOptions = $this->getScssCompilerOptions();
+        //Sorting import paths, start with the ones in the $options argument
+        //then add the default ones
+        //then add the parent themes to it to keep inheritance in imports
+        $importPaths = array_merge($options['importPaths'] ?? [], $defaultOptions['importPaths'] ?? []);
         $parent = $this->parent;
-        $importPaths = [];
         while ($parent) {
             $importPaths[] = $parent->basePath;
             $parent = $parent->parent;
         }
+        //Sorting aliases, the ones from the $options argument will overridde
+        $aliases = array_merge($defaultOptions['aliases'] ?? [], $options['aliases'] ?? []);
+        $options = array_merge($defaultOptions, $options, [
+            'aliases' => $aliases,
+            'importPaths' => $importPaths
+        ]);
         $compiler = new Compiler(
-            [
-                'publicFolder' => \Craft::getAlias('@themesWebPath/' . $this->handle),
-                'style' => $devMode ? 'expanded' : 'minified',
-                'sourcemaps' => $devMode ? 'inline' : 'none',
-                'aliases' => [
-                    '~' => 'node_modules'
-                ],
-                'importPaths' => $importPaths
-            ],
-            [
-                new JsonManifest,
-                new ThemeFileLoader([
-                    'test' => '/.+.(?:ico|jpg|jpeg|png|gif)([\?#].*)?$/',
-                    'theme' => $this
-                ]),
-                new ThemeFileLoader([
-                    'test' => '/.+.svg([\?#].*)?$/',
-                    'mimetype' => 'image/svg+xml',
-                    'theme' => $this
-                ]),
-                new ThemeFileLoader([
-                    'test' => '/.+.ttf([\?#].*)?$/',
-                    'mimetype' => 'application/octet-stream',
-                    'theme' => $this
-                ]),
-                new ThemeFileLoader([
-                    'test' => '/.+.woff([\?#].*)?$/',
-                    'mimetype' => 'application/font-woff',
-                    'theme' => $this
-                ]),
-                new ThemeFileLoader([
-                    'test' => '/.+.woff2([\?#].*)?$/',
-                    'mimetype' => 'application/font-woff',
-                    'theme' => $this
-                ]),
-                new ThemeFileLoader([
-                    'test' => '/.+.eot([\?#].*)?$/',
-                    'theme' => $this
-                ]),
-            ],
+            $options,
+            $this->getScssCompilerPlugins(),
             new ScssLogger
         );
         $this->trigger(self::DEFINE_SCSS_COMPILER, new ScssCompilerEvent([
             'compiler' => $compiler
         ]));
-        $this->_compiler = $compiler;
-        return $compiler;
+        return $this->_compiler = $compiler;
+    }
+
+    /**
+     * Get scss compiler default options
+     * 
+     * @return array
+     */
+    protected function getScssCompilerOptions(): array
+    {
+        $devMode = \Craft::$app->getConfig()->getGeneral()->devMode;
+        return [
+            'publicFolder' => \Craft::getAlias('@themesWebPath/' . $this->handle),
+            'style' => $devMode ? 'expanded' : 'minified',
+            'sourcemaps' => $devMode ? 'inline' : 'none',
+            'aliases' => ['~' => 'node_modules']
+        ];
+    }
+
+    /**
+     * Get the plugins for the scss compiler
+     * 
+     * @return array
+     */
+    protected function getScssCompilerPlugins(): array
+    {
+        return [
+            new JsonManifest,
+            new ThemeFileLoader([
+                'test' => '/.+.(?:ico|jpg|jpeg|png|gif)([\?#].*)?$/',
+                'theme' => $this
+            ]),
+            new ThemeFileLoader([
+                'test' => '/.+.svg([\?#].*)?$/',
+                'mimetype' => 'image/svg+xml',
+                'theme' => $this
+            ]),
+            new ThemeFileLoader([
+                'test' => '/.+.ttf([\?#].*)?$/',
+                'mimetype' => 'application/octet-stream',
+                'theme' => $this
+            ]),
+            new ThemeFileLoader([
+                'test' => '/.+.woff([\?#].*)?$/',
+                'mimetype' => 'application/font-woff',
+                'theme' => $this
+            ]),
+            new ThemeFileLoader([
+                'test' => '/.+.woff2([\?#].*)?$/',
+                'mimetype' => 'application/font-woff',
+                'theme' => $this
+            ]),
+            new ThemeFileLoader([
+                'test' => '/.+.eot([\?#].*)?$/',
+                'theme' => $this
+            ]),
+        ];
     }
 
     /**

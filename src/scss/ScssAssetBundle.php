@@ -23,6 +23,12 @@ abstract class ScssAssetBundle extends AssetBundle
     public $scssFiles = [];
 
     /**
+     * Overridde any compiler options here
+     * @var array
+     */
+    public $compilerOptions = [];
+
+    /**
      * @inheritDoc
      */
     public function init()
@@ -61,7 +67,7 @@ abstract class ScssAssetBundle extends AssetBundle
      */
     protected function getCompiler(): Compiler
     {
-        return $this->theme->scssCompiler;
+        return $this->theme->getScssCompiler($this->compilerOptions);
     }
 
     /**
