@@ -2,7 +2,6 @@
     "name": "ryssbowh/craft-themes",
     "description": "Themes engine",
     "type": "craft-plugin",
-    "version": "3.0",
     "keywords": [
         "cms",
         "craftcms",
@@ -18,10 +17,10 @@
     "require": {
         "php": ">=7.3",
         "ext-intl": "*",
-        "craftcms/cms": "3.5.* || 3.6.* || 3.7.*",
+        "craftcms/cms": "3.7.*",
         "illuminate/support": "^8.3",
-        "scssphp/scssphp": "^1.8"
         "mobiledetect/mobiledetectlib": "^2.8",
+        "ryssbowh/scss-php-compiler": "^0.1",
         "twig/intl-extra": "^3.3"
     },
     "require-dev": {

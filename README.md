@@ -288,18 +288,13 @@ Uninstalling a theme will permanently delete all its blocks/displays/layouts (Pr
 
 ## Requirements
 
-Craft 3.5 or over  
+Craft 3.7.*  
 PHP 7.3 or over
 PHP Intl extension
 
 ## Testing
 
-This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php 7.3, 7.4 and 8.0.  
-One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue](https://github.com/yiisoft/yii2/issues/18406)
-
-## Known issues
-
-- In Craft 3.5.x/3.6.x, when adding fields for the first time to the user layout, it needs to be saved twice for the themes fields to be created. The following times work normally. [Github issue](https://github.com/craftcms/cms/issues/10237)
+This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.5, 3.6, 3.7 and php 7.3, 7.4 and 8.0.
 
 ## Documentation
 
@@ -313,3 +308,4 @@ One exception : Mysql + PHP 8.0 + Craft 3.5 tests are failing due to this [issue
 - Themes preferences not related to project config
 - Restricted version of blocks page for envs where admin changes are disabled
 - Improve displayer cache by not saving the ones that didn't change
+- Add a Theme tab to the debug bar
