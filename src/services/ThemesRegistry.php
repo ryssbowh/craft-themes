@@ -213,6 +213,16 @@ class ThemesRegistry extends Service
     }
 
     /**
+     * Uninstall all theme's data
+     */
+    public function uninstallAll()
+    {
+        foreach ($this->all() as $theme) {
+            $this->uninstallThemeData($theme);
+        }
+    }
+
+    /**
      * Install a theme
      *
      * @param ThemeInterface $theme
