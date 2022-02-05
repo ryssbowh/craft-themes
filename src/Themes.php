@@ -468,12 +468,21 @@ class Themes extends \craft\base\Plugin
     protected function registerSwitchEdition()
     {
         $_this = $this;
-        Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) use ($_this) {
-            $oldEdition = $e->oldValue['edition'] ?? null;
-            $newEdition = $e->newValue['edition'] ?? null;
+        \Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY, function (ConfigEvent $e) use ($_this) {
+            $oldEdition = $e->oldValue['themes']['edition'] ?? null;
+            $newEdition = $e->newValue['themes']['edition'] ?? null;
+            //Let's defer those events in case the edition is changed at the same time as installing/uninstalling
+            //themes, which would result in an endless loop
             if ($newEdition == Themes::EDITION_PRO and $oldEdition = Themes::EDITION_LITE) {
-                $_this->initPro();
-                Themes::$plugin->registry->installAll(true);
+                \Craft::$app->projectConfig->defer($e, function ($e) use ($_this) {
+                    $_this->initPro();
+                    Themes::$plugin->registry->installAll(true);
+                });
+            }
+            if ($newEdition == Themes::EDITION_LITE) {
+                \Craft::$app->projectConfig->defer($e, function ($e) use ($_this) {
+                    Themes::$plugin->registry->uninstallAll();
+                });
             }
         });
     }
