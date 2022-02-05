@@ -155,9 +155,12 @@ class BlockService extends Service
      */
     public function handleChanged(ConfigEvent $event)
     {
-        ProjectConfigHelper::ensureAllLayoutsProcessed();
         $uid = $event->tokenMatches[0];
         $data = $event->newValue;
+        if ($data === null) {
+            return;
+        }
+        ProjectConfigHelper::ensureAllLayoutsProcessed();
         $transaction = \Craft::$app->getDb()->beginTransaction();
         try {
             $block = $this->getRecordByUid($uid);

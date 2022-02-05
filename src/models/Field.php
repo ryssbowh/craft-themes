@@ -60,6 +60,7 @@ abstract class Field extends DisplayItem implements FieldInterface
         return array_merge(parent::defineRules(), [
             [['displayerHandle', 'type'], 'string'],
             ['type', 'required'],
+            ['craft_field_id', 'integer'],
             ['options', 'safe'],
             ['type', 'in', 'range' => Themes::$plugin->fields->getValidTypes()]
         ]);

@@ -456,7 +456,7 @@ class LayoutService extends Service
      */
     public function onCraftElementDeleted(string $uid)
     {
-        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+        if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
             // If Craft is applying Yaml changes it means we have the fields defined
             // in config, and don't need to respond to these events as it would create duplicates
             return;
@@ -477,7 +477,7 @@ class LayoutService extends Service
      */
     public function onCraftElementSaved(string $type, string $uid = '')
     {
-        if (\Craft::$app->getProjectConfig()->getIsApplyingYamlChanges()) {
+        if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
             // If Craft is applying Yaml changes it means we have the layouts/displays defined
             // in config, and don't need to respond to these events as it would create duplicates
             return;
@@ -645,6 +645,7 @@ class LayoutService extends Service
         foreach ($layout->viewModes as $viewMode) {
             Themes::$plugin->viewModes->delete($viewMode, true);
         }
+
         //Deleting blocks
         if ($layout->hasBlocks) {
             foreach ($layout->blocks as $block) {

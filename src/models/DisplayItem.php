@@ -49,6 +49,16 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
     public $uid;
 
     /**
+     * @var DateTime
+     */
+    public $dateCreated;
+
+    /**
+     * @var DateTime
+     */
+    public $dateUpdated;
+
+    /**
      * @var DisplayInterface
      */
     protected $_display;
@@ -61,7 +71,7 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
         return [
             ['display_id', 'integer'],
             [['labelHidden', 'hidden', 'visuallyHidden', 'labelVisuallyHidden'], 'boolean', 'trueValue' => true, 'falseValue' => false],
-            [['uid', 'id'], 'safe']
+            [['uid', 'id', 'dateUpdated', 'dateCreated'], 'safe']
         ];
     }
 

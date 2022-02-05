@@ -44,6 +44,16 @@ class Display extends Model implements DisplayInterface
     public $uid;
 
     /**
+     * @var DateTime
+     */
+    public $dateCreated;
+
+    /**
+     * @var DateTime
+     */
+    public $dateUpdated;
+
+    /**
      * @var DisplayItemInterface
      */
     protected $_item;
@@ -67,7 +77,7 @@ class Display extends Model implements DisplayInterface
             [['order', 'type'], 'required'],
             [['order', 'group_id'], 'integer'],
             ['type', 'in', 'range' => DisplayService::TYPES],
-            [['uid', 'id', 'viewMode', 'viewMode_id'], 'safe'],
+            [['uid', 'id', 'viewMode', 'viewMode_id', 'dateCreated', 'dateUpdated'], 'safe'],
         ];
     }
 

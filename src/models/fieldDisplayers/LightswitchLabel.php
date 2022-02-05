@@ -46,4 +46,12 @@ class LightswitchLabel extends FieldDisplayer
     {
         return LightswitchLabelOptions::class;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeRender(&$value): bool
+    {
+        return !(is_null($value) and Themes::$plugin->settings->hideEmptyFields);
+    }
 }

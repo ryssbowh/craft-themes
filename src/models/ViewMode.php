@@ -44,6 +44,16 @@ class ViewMode extends Model implements ViewModeInterface
     public $uid;
 
     /**
+     * @var DateTime
+     */
+    public $dateCreated;
+
+    /**
+     * @var DateTime
+     */
+    public $dateUpdated;
+
+    /**
      * @var LayoutInterface
      */
     protected $_layout;
@@ -57,7 +67,7 @@ class ViewMode extends Model implements ViewModeInterface
             [['name', 'handle'], 'required'],
             [['name', 'handle'], 'string'],
             ['layout_id', 'integer'],
-            [['uid', 'id', 'displays'], 'safe'],
+            [['uid', 'id', 'displays', 'dateCreated', 'dateUpdated'], 'safe'],
             ['layout', function () {
                 if (!$this->layout) {
                     $this->addError('layout', \Craft::t('themes', 'Layout is required'));
