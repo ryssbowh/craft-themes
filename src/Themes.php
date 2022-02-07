@@ -494,7 +494,7 @@ class Themes extends \craft\base\Plugin
     {
         if (\Craft::$app->config->getGeneral()->allowAdminChanges and $this->settings->showCpShortcuts) {
             Craft::$app->view->hook('cp.users.edit.prefs', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/edituser', ['user' => $context['currentUser']]);
+                return \Craft::$app->view->renderTemplate('themes/cp/userprefs', ['user' => $context['currentUser']]);
             });
             Craft::$app->view->hook('cp.entries.edit.details', function (array &$context) {
                 return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['entryType']]);
