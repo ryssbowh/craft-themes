@@ -67,6 +67,19 @@ class AssetRenderFile extends FieldDisplayer
     }
 
     /**
+     * Get field limit
+     * 
+     * @return int
+     */
+    public function getLimit(): ?int
+    {
+        if ($this->field instanceof UserPhoto) {
+            return 1;
+        }
+        return $this->field->craftField->limit ?: null;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getCanBeCached(): bool

@@ -27,4 +27,3 @@ pnpm-debug.log*
 /composer.lock
 /cpresources
 /files
-/tests.sh

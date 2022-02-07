@@ -42,7 +42,7 @@ class ImageTransform extends FileDisplayer
                 $custom[] = $params;
             }
             if ($sizes = json_decode($this->options->sizes, true)) {
-                $custom = [...$custom, ...$sizes];
+                $custom = array_merge($custom, $sizes);
             }
             $eagerLoad = [[$eagerLoad[0], ['withTransforms' => $custom]]];
         } else if ($this->options->transform) {

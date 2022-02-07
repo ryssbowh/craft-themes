@@ -393,7 +393,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function getRegion(string $handle): Region
+    public function getRegion(string $handle): RegionInterface
     {
         if (isset($this->regions[$handle])) {
             return $this->regions[$handle];

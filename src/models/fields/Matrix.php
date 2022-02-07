@@ -81,7 +81,7 @@ class Matrix extends CraftField implements MatrixInterface
         return CraftMatrix::class;
     }
 
-        /**
+    /**
      * @inheritDoc
      */
     public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array
@@ -95,7 +95,7 @@ class Matrix extends CraftField implements MatrixInterface
         }
         $with = [$prefix . $this->craftField->handle];
         foreach ($this->getTypes() as $type) {
-            $typePrefix = $prefix . $this->craftField->handle . '.' . $type->type->handle . '::';
+            $typePrefix = $prefix . $this->craftField->handle . '.' . $type->type->handle . ':';
             foreach ($type->fields as $field) {
                 $dependencies[] = DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $field->id;
                 $with = array_merge($with, $field->eagerLoad($typePrefix, $level + 1));
