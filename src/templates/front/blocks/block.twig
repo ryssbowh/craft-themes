@@ -1,9 +1,9 @@
 {% blockcache %}
-   <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
-       {% block content %}
-         {% if craft.app.config.general.devMode %}
-            I'm the block {{ block.name }}, override my template 'blocks/{{ block.provider ~ '_' ~ block.handle }}.twig'
-         {% endif %}
-       {% endblock %}
-   </div>
+    <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
+        {% block content %}
+            {% if craft.app.config.general.devMode %}
+                I'm the block {{ block.name }}, override my template 'blocks/{{ block.machineName }}.twig'
+            {% endif %}
+        {% endblock %}
+    </div>
 {% endblockcache %}

@@ -462,7 +462,7 @@ class Layout extends Model implements LayoutInterface
             'blocks/' . $type . '_' . $key . '_' . $block->region . '_' . $name,
             'blocks/' . $type . '_' . $key . '_' . $name,
             'blocks/' . $type . '_' . $name,
-            'blocks/' . $block->name,
+            'blocks/' . $name,
             'blocks/block',
         ];
     }

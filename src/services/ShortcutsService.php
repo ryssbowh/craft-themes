@@ -98,13 +98,13 @@ class ShortcutsService extends Service
                     },";
                 }
             }
-            if ($renderingRegions and \Craft::$app->user->checkPermission('manageThemesBlocks')) {
+            if ($renderingRegions and \Craft::$app->user->checkPermission('manageThemesBlocks') and \Craft::$app->config->getGeneral()->allowAdminChanges) {
                 $js .= "{
                     url: '" . $layout->getEditBlocksUrl() . "',
                     label: '" . \Craft::t('themes', 'Edit Blocks') . "',
                 },";
             }
-            if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplays')) {
+            if ($layout->hasDisplays() and \Craft::$app->user->checkPermission('manageThemesDisplays') and \Craft::$app->config->getGeneral()->allowAdminChanges) {
                 $js .= "{
                     url: '" . $layout->getEditDisplaysUrl($viewMode) . "',
                     label: '" . \Craft::t('themes', 'Edit Displays') . "',

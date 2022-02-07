@@ -93,6 +93,7 @@ class ThemesRegistry extends Service
         }
         $event->roots[''][] = __DIR__ . '/../templates/front';
         $event->roots[''] = array_merge($this->currentTheme->getTemplatePaths(), $event->roots['']);
+        \Craft::info("Theme {$this->currentTheme->name}'s templates have been registered", __METHOD__);
     }
 
     /**

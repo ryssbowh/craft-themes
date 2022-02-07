@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\scss;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ScssBundleException;
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\ScssPhp\Compiler;
 use craft\web\AssetBundle;
 
@@ -37,7 +38,9 @@ abstract class ScssAssetBundle extends AssetBundle
         if (!$this->theme) {
             throw ScssBundleException::noTheme(get_class($this));
         }
-        $this->theme = Themes::$plugin->registry->getTheme($this->theme);
+        if (!Themes::$plugin->registry->hasTheme($this->theme)) {
+            throw ScssBundleException::themeUndefined(get_class($this), $this->theme);
+        }
     }
 
     /**
@@ -57,7 +60,7 @@ abstract class ScssAssetBundle extends AssetBundle
         if (!$this->isCompilingEnabled()) {
             return;
         }
-        $this->getCompiler()->compile($this->scssFiles, $this->theme->basePath);
+        $this->getCompiler()->compile($this->scssFiles, $this->getTheme()->basePath);
     }
 
     /**
@@ -67,7 +70,7 @@ abstract class ScssAssetBundle extends AssetBundle
      */
     protected function getCompiler(): Compiler
     {
-        return $this->theme->getScssCompiler($this->compilerOptions);
+        return $this->getTheme()->getScssCompiler($this->compilerOptions);
     }
 
     /**
@@ -78,5 +81,15 @@ abstract class ScssAssetBundle extends AssetBundle
     protected function isCompilingEnabled(): bool
     {
         return \Craft::$app->getConfig()->getGeneral()->devMode;
+    }
+
+    /**
+     * Get the theme plugin instance
+     * 
+     * @return ThemeInterface
+     */
+    protected function getTheme(): ThemeInterface
+    {
+        return Themes::$plugin->registry->getTheme($this->theme);
     }
 }
