@@ -17,7 +17,7 @@ class Date extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'date';
+    public static $handle = 'date-date';
 
     /**
      * @inheritDoc

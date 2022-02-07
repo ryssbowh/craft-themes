@@ -123,6 +123,9 @@ class RegisterFieldDisplayerEvent extends Event
         if (!$replaceIfExisting and isset($this->_displayers[$class::$handle])) {
             throw FieldDisplayerException::alreadyDefined($class);
         }
+        if (!preg_match('/^[a-zA-Z\-]+$/', $class::$handle)) {
+            throw FieldDisplayerException::handleInvalid($class);   
+        }
         $this->_displayers[$class::$handle] = $class;
     }
 

@@ -13,7 +13,7 @@ class LightswitchLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'lightswitch_label';
+    public static $handle = 'lightswitch-label';
 
     /**
      * @inheritDoc

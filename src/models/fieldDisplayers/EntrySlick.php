@@ -14,7 +14,7 @@ class EntrySlick extends EntryRendered
     /**
      * @inheritDoc
      */
-    public static $handle = 'entry_slick';
+    public static $handle = 'entry-slick';
 
     /**
      * @inheritDoc

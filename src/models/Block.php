@@ -11,6 +11,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
+use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Element;
 use craft\base\Model;
 
@@ -380,17 +381,9 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function getTemplates(): array
+    public function getTemplates(LayoutInterface $layout): array
     {
-        $type = $this->layout->type;
-        $key = $this->layout->templatingKey;
-        return [
-            'blocks/' . $type . '/' . $key . '/' . $this->region . '/' . $this->machineName,
-            'blocks/' . $type . '/' . $key . '/' . $this->machineName,
-            'blocks/' . $type . '/' . $this->machineName,
-            'blocks/' . $this->machineName, 
-            'blocks/block'
-        ];
+        return $layout->getBlockTemplates($this);
     }
 
     /**

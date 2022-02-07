@@ -13,7 +13,7 @@ class TagLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'tag_label';
+    public static $handle = 'tag-label';
 
     /**
      * @inheritDoc

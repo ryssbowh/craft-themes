@@ -15,7 +15,7 @@ class TagRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'tag_rendered';
+    public static $handle = 'tag-rendered';
 
     /**
      * @inheritDoc

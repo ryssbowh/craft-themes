@@ -11,7 +11,7 @@ class DateTime extends Date
     /**
      * @inheritDoc
      */
-    public static $handle = 'datetime';
+    public static $handle = 'date-datetime';
 
     /**
      * @inheritDoc

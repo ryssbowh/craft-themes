@@ -13,7 +13,7 @@ class UrlLink extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'url_link';
+    public static $handle = 'url-link';
 
     /**
      * @inheritDoc

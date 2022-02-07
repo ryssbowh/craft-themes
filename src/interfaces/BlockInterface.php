@@ -124,10 +124,11 @@ interface BlockInterface
 
     /**
      * Get available templates
-     * 
+     *
+     * @param  LayoutInterface
      * @return string[]
      */
-    public function getTemplates(): array;
+    public function getTemplates(LayoutInterface $layout): array;
 
     /**
      * Callback before rendering, returning false will skip the block rendering.

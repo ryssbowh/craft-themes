@@ -4,33 +4,35 @@
   "scripts": {
     "build": "BABEL_ENV=vue vue-cli-service build",
     "watch": "BABEL_ENV=vue vue-cli-service build --watch --mode=development",
-    "lint": "BABEL_ENV=vue vue-cli-service lint"
+    "lint": "BABEL_ENV=vue vue-cli-service lint",
+    "gulp": "gulp prod"
   },
   "devDependencies": {
-    "core-js": "^3.13.0",
-    "vue": "^3.0.11",
-    "vuedraggable": "^4.0.1",
-    "vuex": "^4.0.1",
     "@babel/core": "^7.14.3",
     "@babel/preset-env": "^7.14.2",
     "@babel/register": "^7.13.16",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-eslint": "^4.5.13",
-    "@vue/cli-service": "^4.5.13",
+    "@vue/cli-service": "^4.5.15",
     "@vue/compiler-sfc": "^3.0.11",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
+    "core-js": "^3.13.0",
     "craftcms-sass": "^3.5.7",
-    "eslint": "^6.7.2",
+    "eslint": "^6.8.0",
     "eslint-plugin-vue": "^7.9.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
-    "gulp-sass": "^4.1.0",
+    "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.2",
     "sass": "^1.34.0",
-    "sass-loader": "^10.2.0"
+    "sass-loader": "^10.2.0",
+    "uuid": "^8.3.2",
+    "vue": "^3.0.11",
+    "vuedraggable": "^4.0.1",
+    "vuex": "^4.0.1"
   },
   "eslintConfig": {
     "root": true,
@@ -50,8 +52,5 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ],
-  "dependencies": {
-    "uuid": "^8.3.2"
-  }
+  ]
 }

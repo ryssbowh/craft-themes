@@ -13,7 +13,7 @@ class RedactorTruncated extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'redactor_truncated';
+    public static $handle = 'redactor-truncated';
 
     /**
      * @inheritDoc

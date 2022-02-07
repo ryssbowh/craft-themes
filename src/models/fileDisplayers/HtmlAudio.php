@@ -13,7 +13,7 @@ class HtmlAudio extends FileDisplayer
     /**
      * @var string
      */
-    public static $handle = 'html_audio';
+    public static $handle = 'html-audio';
 
     /**
      * @inheritDoc

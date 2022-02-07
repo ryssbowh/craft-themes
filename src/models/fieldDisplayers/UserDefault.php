@@ -14,7 +14,7 @@ class UserDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'user_default';
+    public static $handle = 'user-default';
 
     /**
      * @inheritDoc

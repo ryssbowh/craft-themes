@@ -17,7 +17,7 @@ class ElementLinks extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'element_links';
+    public static $handle = 'element-links';
 
     /**
      * @inheritDoc

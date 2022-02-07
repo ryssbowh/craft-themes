@@ -16,7 +16,7 @@ class AssetRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'asset_rendered';
+    public static $handle = 'asset-rendered';
 
     /**
      * @inheritDoc

@@ -13,7 +13,7 @@ class CheckboxesLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'checkboxes_label';
+    public static $handle = 'checkboxes-label';
 
     /**
      * @inheritDoc

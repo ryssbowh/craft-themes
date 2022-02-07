@@ -2,7 +2,6 @@
 namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;

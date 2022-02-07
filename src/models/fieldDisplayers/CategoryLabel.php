@@ -13,7 +13,7 @@ class CategoryLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'category_label';
+    public static $handle = 'category-label';
 
     /**
      * @inheritDoc

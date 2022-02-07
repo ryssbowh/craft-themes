@@ -15,7 +15,7 @@ class FileFile extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'file_file';
+    public static $handle = 'file-file';
 
     /**
      * @var array

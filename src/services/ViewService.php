@@ -179,7 +179,7 @@ class ViewService extends Service
         $oldBlock = $this->renderingBlock;
         $this->_renderingBlock = $block;
         $theme = $this->themesRegistry()->current;
-        $templates = $block->getTemplates();
+        $templates = $block->getTemplates($this->renderingLayout);
         $variables = $this->getPageVariables([
             'classes' => new ClassBag($theme->preferences->getBlockClasses($block)),
             'attributes' => new AttributeBag($theme->preferences->getBlockAttributes($block)),

@@ -15,7 +15,7 @@ class MultiSelectLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'multiselect_label';
+    public static $handle = 'multiselect-label';
 
     /**
      * @inheritDoc

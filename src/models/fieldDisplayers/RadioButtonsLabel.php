@@ -13,7 +13,7 @@ class RadioButtonsLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'radio_buttons_label';
+    public static $handle = 'radiobuttons-label';
 
     /**
      * @inheritDoc

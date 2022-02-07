@@ -15,7 +15,7 @@ class UserRendered extends UserDefault
     /**
      * @inheritDoc
      */
-    public static $handle = 'user_rendered';
+    public static $handle = 'user-rendered';
 
     /**
      * @inheritDoc

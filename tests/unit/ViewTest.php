@@ -63,11 +63,11 @@ class ViewTest extends Unit
         $html = $this->view->renderLayout($layout, $viewMode, $entry);
         $this->assertStringContainsString('<div class="layout" data-viewmode="default" data-handle="'.$section->handle."-".$entryType->handle.'" data-type="entry">', $html);
         $this->assertStringContainsString("My Entry", $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="title_title" data-field="title">', $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="user_default" data-field="author">', $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="checkboxes_label" data-field="checkboxes">', $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="dropdown_label" data-field="dropdown">', $html);
-        $this->assertStringContainsString('<div class="display field" data-displayer="radio_buttons_label" data-field="radioButtons">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="title-title" data-field="title">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="user-default" data-field="author">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="checkboxes-label" data-field="checkboxes">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="dropdown-label" data-field="dropdown">', $html);
+        $this->assertStringContainsString('<div class="display field" data-displayer="radiobuttons-label" data-field="radioButtons">', $html);
     }
 
     protected function createEntry($section, $entryType)

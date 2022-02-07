@@ -280,7 +280,8 @@ abstract class Field extends DisplayItem implements FieldInterface
                 'field' => $this
             ]);
         } catch (FieldDisplayerException $e) {
-            //Field displayer is set but invalid (its handle has changed ?)          
+            //Field displayer is set but invalid (its handle has changed ?)
+            \Craft::$app->errorHandler->logException($e);
         }
         return $this->_displayer;
     }
@@ -340,6 +341,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function getFieldTemplates(): array
     {
+        return $this->layout->getFieldTemplates($this);
         $type = $this->layout->type;
         $viewMode = $this->viewMode->handle;
         $key = $this->layout->templatingKey;
@@ -361,20 +363,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function getFileTemplates(FileDisplayerInterface $displayer): array
     {
-        $type = $this->layout->type;
-        $viewMode = $this->viewMode->handle;
-        $key = $this->layout->templatingKey;
-        $displayer = $displayer->handle;
-        return [
-            'files/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer . '-' . $this->handle,
-            'files/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer,
-            'files/' . $type . '/' . $key . '/' . $displayer . '-' . $this->handle,
-            'files/' . $type . '/' . $key . '/' . $displayer,
-            'files/' . $type . '/' . $displayer . '-' . $this->handle,
-            'files/' . $type . '/' . $displayer,
-            'files/' . $displayer . '-' . $this->handle,
-            'files/' . $displayer
-        ];
+        return $this->layout->getFileTemplates($this, $displayer);
     }
 
     /**

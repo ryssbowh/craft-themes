@@ -152,7 +152,7 @@ export default {
 </script>
 <style lang="scss">
 .options-modal {
-    &.displayer-asset_render_file, &.displayer-file_file {
+    &.displayer-asset-renderfile, &.displayer-file-file {
         width: 50% !important;
         height: 80vh !important;
     }

@@ -14,7 +14,7 @@ class EmailEmail extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'email_email';
+    public static $handle = 'email-email';
 
     /**
      * @inheritDoc

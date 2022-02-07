@@ -12,4 +12,9 @@ class FileDisplayerException extends \Exception
     {
         return new static($class::$handle . " is already a registered file displayer");
     }
+
+    public static function handleInvalid(string $class)
+    {
+        return new static("$class 'handle' ({$class::$handle}) is invalid, it can only contain alphanumeric characters and hyphens");
+    }
 }

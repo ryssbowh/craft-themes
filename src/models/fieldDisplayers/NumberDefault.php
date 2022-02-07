@@ -14,7 +14,7 @@ class NumberDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'number_default';
+    public static $handle = 'number-default';
 
     /**
      * @inheritDoc

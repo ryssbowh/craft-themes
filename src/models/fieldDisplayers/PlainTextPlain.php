@@ -16,7 +16,7 @@ class PlainTextPlain extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'plain_text_plain';
+    public static $handle = 'plaintext-plain';
 
     /**
      * @inheritDoc

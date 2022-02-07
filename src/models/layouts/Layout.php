@@ -7,6 +7,8 @@ use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
+use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
+use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
@@ -344,7 +346,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function getTemplatingKey(): string
     {
-        return '';
+        return 'default';
     }
 
     /**
@@ -439,14 +441,112 @@ class Layout extends Model implements LayoutInterface
     public function getTemplates(ViewModeInterface $viewMode): array
     {
         $key = $this->getTemplatingKey();
-        if (!$key) {
-            return [];
-        }
+        $type = $this->type;
         return [
-            'layouts/' . $this->type . '/' . $key . '-' . $viewMode->handle,
-            'layouts/' . $this->type . '/' . $key,
-            'layouts/' . $this->type,
-            'layouts/layout'
+            'layouts/' . $type . '_' . $key . '_' . $viewMode->handle,
+            'layouts/' . $type . '_' . $key,
+            'layouts/' . $type,
+            'layouts/layout',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBlockTemplates(BlockInterface $block): array
+    {
+        $key = $this->getTemplatingKey();
+        $type = $this->type;
+        $name = $block->machineName;
+        return [
+            'blocks/' . $type . '_' . $key . '_' . $block->region . '_' . $name,
+            'blocks/' . $type . '_' . $key . '_' . $name,
+            'blocks/' . $type . '_' . $name,
+            'blocks/' . $block->name,
+            'blocks/block',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRegionTemplates(RegionInterface $region): array
+    {
+        $handle = $region->handle;
+        $type = $this->type;
+        $key = $this->getTemplatingKey();
+        return [
+            'regions/' . $type . '_' . $key . '_region-' . $handle,
+            'regions/' . $type . '_' . $key . '_region',
+            'regions/' . $type . '_region-' . $handle,
+            'regions/' . $type . '_region',
+            'regions/region-' . $handle,
+            'regions/region',
+        ];
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getFieldTemplates(FieldInterface $field): array
+    {
+        $type = $this->type;
+        $viewMode = $field->viewMode->handle;
+        $key = $this->templatingKey;
+        $displayer = $field->displayer->handle;
+        $handle = $field->handle;
+        return [
+            'fields/' . $type . '_' . $key . '_' . $viewMode . '_' . $displayer . '-' . $handle,
+            'fields/' . $type . '_' . $key . '_' . $viewMode . '_' . $displayer,
+            'fields/' . $type . '_' . $key . '_' . $displayer . '-' . $handle,
+            'fields/' . $type . '_' . $key . '_' . $displayer,
+            'fields/' . $type . '_' . $displayer . '-' . $handle,
+            'fields/' . $type . '_' . $displayer,
+            'fields/' . $displayer . '-' . $handle,
+            'fields/' . $displayer
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFileTemplates(FieldInterface $field, FileDisplayerInterface $displayer): array
+    {
+        $type = $this->type;
+        $viewMode = $field->viewMode->handle;
+        $key = $this->templatingKey;
+        $displayer = $displayer->handle;
+        $handle = $field->handle;
+        return [
+            'files/' . $type . '_' . $key . '_' . $viewMode . '_' . $displayer . '_' . $handle,
+            'files/' . $type . '_' . $key . '_' . $viewMode . '_' . $displayer,
+            'files/' . $type . '_' . $key . '_' . $displayer . '_' . $handle,
+            'files/' . $type . '_' . $key . '_' . $displayer,
+            'files/' . $type . '_' . $displayer . '_' . $handle,
+            'files/' . $type . '_' . $displayer,
+            'files/' . $displayer . '_' . $handle,
+            'files/' . $displayer
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGroupTemplates(GroupInterface $group): array
+    {
+        $type = $this->type;
+        $key = $this->templatingKey;
+        $viewMode = $group->viewMode->handle;
+        $handle = $group->handle;
+        return [
+            'groups/' . $type . '_' . $key . '_' . $viewMode . '_group-' . $handle,
+            'groups/' . $type . '_' . $key . '_' . $viewMode . '_group',
+            'groups/' . $type . '_' . $key . '_group-' . $handle,
+            'groups/' . $type . '_' . $key . '_group',
+            'groups/' . $type . '_group-' . $handle,
+            'groups/' . $type . '_group',
+            'groups/group-' . $handle,
+            'groups/group'
         ];
     }
 

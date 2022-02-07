@@ -230,6 +230,7 @@ class FieldDisplayerService extends Service
             $this->_defaults[$fieldClass] = $event->default;
         } catch (FieldDisplayerException $e) {
             $this->_defaults[$fieldClass] = $default;
+            \Craft::$app->errorHandler->logException($e);
         }
     }
 }

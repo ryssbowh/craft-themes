@@ -14,7 +14,7 @@ class TagSlick extends TagRendered
     /**
      * @inheritDoc
      */
-    public static $handle = 'tag_slick';
+    public static $handle = 'tag-slick';
 
     /**
      * @inheritDoc

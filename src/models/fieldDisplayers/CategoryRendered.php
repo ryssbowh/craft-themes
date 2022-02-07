@@ -15,7 +15,7 @@ class CategoryRendered extends CategoryLabel
     /**
      * @inheritDoc
      */
-    public static $handle = 'category_rendered';
+    public static $handle = 'category-rendered';
 
     /**
      * @inheritDoc

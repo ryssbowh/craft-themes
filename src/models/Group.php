@@ -132,19 +132,7 @@ class Group extends DisplayItem implements GroupInterface
      */
     public function getTemplates(): array
     {
-        $type = $this->layout->type;
-        $key = $this->layout->templatingKey;
-        $viewMode = $this->viewMode->handle;
-        return [
-            'groups/' . $type . '/' . $key . '/' . $viewMode . '/group-' . $this->handle,
-            'groups/' . $type . '/' . $key . '/' . $viewMode . '/group',
-            'groups/' . $type . '/' . $key . '/group-' . $this->handle,
-            'groups/' . $type . '/' . $key . '/group',
-            'groups/' . $type . '/group-' . $this->handle,
-            'groups/' . $type . '/group',
-            'groups/group-' . $this->handle,
-            'groups/group'
-        ];
+        return $this->layout->getGroupTemplates($this);
     }
 
     /**

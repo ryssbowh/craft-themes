@@ -13,7 +13,7 @@ class ImageFull extends FileDisplayer
     /**
      * @var string
      */
-    public static $handle = 'image_full';
+    public static $handle = 'image-full';
 
     /**
      * @inheritDoc

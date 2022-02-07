@@ -14,7 +14,7 @@ class MatrixDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'matrix_default';
+    public static $handle = 'matrix-default';
 
     /**
      * @inheritDoc

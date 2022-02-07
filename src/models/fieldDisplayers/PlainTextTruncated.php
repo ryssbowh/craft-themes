@@ -13,7 +13,7 @@ class PlainTextTruncated extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'plain_text_truncated';
+    public static $handle = 'plaintext-truncated';
 
     /**
      * @inheritDoc

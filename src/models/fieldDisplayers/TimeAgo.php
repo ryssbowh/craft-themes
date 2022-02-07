@@ -11,7 +11,7 @@ class TimeAgo extends Date
     /**
      * @inheritDoc
      */
-    public static $handle = 'time_ago';
+    public static $handle = 'time-ago';
 
     /**
      * @inheritDoc

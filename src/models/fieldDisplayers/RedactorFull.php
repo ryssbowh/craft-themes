@@ -13,7 +13,7 @@ class RedactorFull extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'redactor_full';
+    public static $handle = 'redactor-full';
 
     /**
      * @inheritDoc

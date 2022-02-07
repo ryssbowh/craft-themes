@@ -13,7 +13,7 @@ class DropdownLabel extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'dropdown_label';
+    public static $handle = 'dropdown-label';
 
     /**
      * @inheritDoc

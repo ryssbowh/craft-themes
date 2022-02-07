@@ -15,7 +15,7 @@ class EntryRendered extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'entry_rendered';
+    public static $handle = 'entry-rendered';
 
     /**
      * @inheritDoc

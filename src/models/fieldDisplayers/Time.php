@@ -12,7 +12,7 @@ class Time extends Date
     /**
      * @inheritDoc
      */
-    public static $handle = 'time';
+    public static $handle = 'time-time';
 
     /**
      * @inheritDoc

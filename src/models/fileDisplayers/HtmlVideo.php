@@ -13,7 +13,7 @@ class HtmlVideo extends FileDisplayer
     /**
      * @var string
      */
-    public static $handle = 'html_video';
+    public static $handle = 'html-video';
 
     /**
      * @inheritDoc

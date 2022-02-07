@@ -13,7 +13,7 @@ class ColourDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'colour_default';
+    public static $handle = 'colour-default';
 
     /**
      * @inheritDoc

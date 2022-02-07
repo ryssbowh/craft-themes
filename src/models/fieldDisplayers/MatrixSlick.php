@@ -14,7 +14,7 @@ class MatrixSlick extends MatrixDefault
     /**
      * @inheritDoc
      */
-    public static $handle = 'matrix_slick';
+    public static $handle = 'matrix-slick';
 
     /**
      * @inheritDoc

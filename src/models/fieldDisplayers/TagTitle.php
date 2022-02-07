@@ -13,7 +13,7 @@ class TagTitle extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'tag_title';
+    public static $handle = 'tag-title';
 
     /**
      * @inheritDoc

@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\interfaces\BlockInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+use Ryssbowh\CraftThemes\services\LayoutService;
 use craft\base\Element;
 use craft\base\Model;
 
@@ -122,15 +123,7 @@ class Region extends Model implements RegionInterface
      */
     public function getTemplates(LayoutInterface $layout): array
     {
-        $type = $layout->type;
-        return [
-            'regions/' . $type . '/' . $layout->getTemplatingKey() . '/region-' . $this->handle,
-            'regions/' . $type . '/' . $layout->getTemplatingKey() . '/region',
-            'regions/' . $type . '/region-' . $this->handle,
-            'regions/' . $type . '/region',
-            'regions/region-' . $this->handle, 
-            'regions/region'
-        ];
+        return $layout->getRegionTemplates($this);
     }
 
     /**

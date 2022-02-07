@@ -15,7 +15,7 @@ class UserSlick extends UserRendered
     /**
      * @inheritDoc
      */
-    public static $handle = 'user_slick';
+    public static $handle = 'user-slick';
 
     /**
      * @inheritDoc

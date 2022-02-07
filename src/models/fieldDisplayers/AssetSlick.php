@@ -15,7 +15,7 @@ class AssetSlick extends AssetRendered
     /**
      * @inheritDoc
      */
-    public static $handle = 'asset_slick';
+    public static $handle = 'asset-slick';
 
     /**
      * @inheritDoc

@@ -14,7 +14,7 @@ class CategorySlick extends CategoryRendered
     /**
      * @inheritDoc
      */
-    public static $handle = 'category_slick';
+    public static $handle = 'category-slick';
 
     /**
      * @inheritDoc

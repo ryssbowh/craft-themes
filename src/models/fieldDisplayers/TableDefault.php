@@ -13,7 +13,7 @@ class TableDefault extends FieldDisplayer
     /**
      * @inheritDoc
      */
-    public static $handle = 'table_default';
+    public static $handle = 'table-default';
 
     /**
      * @inheritDoc

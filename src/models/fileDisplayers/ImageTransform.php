@@ -13,7 +13,7 @@ class ImageTransform extends FileDisplayer
     /**
      * @var string
      */
-    public static $handle = 'image_transform';
+    public static $handle = 'image-transform';
 
     /**
      * @inheritDoc

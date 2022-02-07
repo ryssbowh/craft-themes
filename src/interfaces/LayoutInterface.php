@@ -218,6 +218,47 @@ interface LayoutInterface
     public function getTemplates(ViewModeInterface $viewMode): array;
 
     /**
+     * Get available templates for a block
+     * 
+     * @param  BlockInterface $block
+     * @return array
+     */
+    public function getBlockTemplates(BlockInterface $block): array;
+
+    /**
+     * Get available templates for a region
+     * 
+     * @param  RegionInterface $region
+     * @return array
+     */
+    public function getRegionTemplates(RegionInterface $region): array;
+
+    /**
+     * Get available templates for a field
+     * 
+     * @param  FieldInterface $field
+     * @return array
+     */
+    public function getFieldTemplates(FieldInterface $field): array;
+
+    /**
+     * Get available templates for a file
+     * 
+     * @param  FieldInterface         $field
+     * @param  FileDisplayerInterface $displayer
+     * @return array
+     */
+    public function getFileTemplates(FieldInterface $field, FileDisplayerInterface $displayer): array;
+
+    /**
+     * Get available templates for a group
+     * 
+     * @param  GroupInterface $group
+     * @return array
+     */
+    public function getGroupTemplates(GroupInterface $group): array;
+
+    /**
      * Render this layout for an element
      *
      * @param  Element                   $element

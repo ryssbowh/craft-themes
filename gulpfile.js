@@ -2,7 +2,9 @@ var babel = require('gulp-babel')
 var gulp = require('gulp')
 var uglify = require('gulp-uglify');
 var cleanCSS = require('gulp-clean-css');
-var sass = require('gulp-sass');
+var gulpSass = require('gulp-sass');
+var dartSass = require('sass');
+var sass = gulpSass(dartSass);
 var sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('js-prod', function() {
