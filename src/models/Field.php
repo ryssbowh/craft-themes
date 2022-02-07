@@ -342,20 +342,6 @@ abstract class Field extends DisplayItem implements FieldInterface
     public function getFieldTemplates(): array
     {
         return $this->layout->getFieldTemplates($this);
-        $type = $this->layout->type;
-        $viewMode = $this->viewMode->handle;
-        $key = $this->layout->templatingKey;
-        $displayer = $this->displayer->handle;
-        return [
-            'fields/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer . '-' . $this->handle,
-            'fields/' . $type . '/' . $key . '/' . $viewMode . '/' . $displayer,
-            'fields/' . $type . '/' . $key . '/' . $displayer . '-' . $this->handle,
-            'fields/' . $type . '/' . $key . '/' . $displayer,
-            'fields/' . $type . '/' . $displayer . '-' . $this->handle,
-            'fields/' . $type . '/' . $displayer,
-            'fields/' . $displayer . '-' . $this->handle,
-            'fields/' . $displayer
-        ];
     }
 
     /**
