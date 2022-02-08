@@ -8,14 +8,18 @@
 
 {% block content %}
     {% if displayer.limit == 1 %}
-        {{ _self.element_link(value.0, options) }}
+        {% if value.0.url ?? false %}
+            {{ _self.element_link(value.0, options) }}
+        {% endif %}
     {% else %}
         {% for element in value %}
-            <ul class="element-list">
-                <li class="element-list-item">
-                    {{ _self.element_link(element, options) }}
-                </li>
-            </ul>
+            {% if element.url %}
+                <ul class="element-list">
+                    <li class="element-list-item">
+                        {{ _self.element_link(element, options) }}
+                    </li>
+                </ul>
+            {% endif %}
         {% endfor %}
     {% endif %}
 {% endblock %}

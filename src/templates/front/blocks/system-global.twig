@@ -1,9 +1,6 @@
 {% extends "blocks/block" %}
+{% import "_includes/macros" as macros %}
 
 {% block content %}
-    {% set viewMode = block.viewMode %}
-    {% set globalSet = block.globalSet %}
-    {% if viewMode and globalSet %}
-        {{ globalSet.layout.render(globalSet, viewMode) }}
-    {% endif %}
+    {{ macros.renderLayout(block.globalSet.layout, block.viewMode, block.globalSet) }}
 {% endblock %}

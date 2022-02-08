@@ -13,3 +13,15 @@
     {% endautoescape %}
     {% endspaceless %}
 {% endmacro %}
+
+{% macro renderAsset(asset, field, options) %}
+    {% if asset %}
+        {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind)) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderLayout(layout, viewMode, element) %}
+    {% if layout and viewMode and element %}
+        {{ layout.render(element, viewMode) }}
+    {% endif %}
+{% endmacro %}

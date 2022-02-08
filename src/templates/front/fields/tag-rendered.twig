@@ -1,13 +1,10 @@
 {% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
 
 {% set show_field = options.viewMode is not null %}
 
 {% block content %}
-    {% set viewMode = options.viewMode %}
-    {% set layout = displayer.tagLayout %}
-    {% if viewMode and layout %}
-        {% for tag in value %}
-            {{ layout.render(tag, viewMode) }}
-        {% endfor %}
-    {% endif %}
+    {% for tag in value %}
+        {{ macros.renderLayout(displayer.tagLayout, options.viewMode, tag) }}
+    {% endfor %}
 {% endblock %}

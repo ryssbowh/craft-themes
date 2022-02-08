@@ -1,11 +1,8 @@
 {% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
 
 {% block content %}
-    {% set layout = displayer.userLayout %}
-    {% set viewMode = options.viewMode %}
-    {% if layout and viewMode %}
-        {% for user in value %}
-            {{ layout.render(user, viewMode) }}
-        {% endfor %}
-    {% endif %}
+    {% for user in value %}
+        {{ macros.renderLayout(displayer.userLayout, viewMode, user) }}
+    {% endfor %}
 {% endblock %}

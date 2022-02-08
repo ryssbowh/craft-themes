@@ -1,18 +1,13 @@
 {% extends "fields/_field" %}
-
-{% macro render(asset, field, options) %}
-    {% if asset %}
-        {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind)) }}
-    {% endif %}
-{% endmacro %}
+{% import "_includes/macros" as macros %}
 
 {% block content %}
     {% if displayer.limit == 1 %}
-        {{ _self.render(value.0 ?? null, field, options) }}
+        {{ macros.renderAsset(value.0 ?? null, field, options) }}
     {% else %}
         <ul class="asset-files">
             {% for asset in value %}
-                <li class="asset-file-item">{{ _self.render(asset, field, options) }}</li>
+                <li class="asset-file-item">{{ macros.renderAsset(asset, field, options) }}</li>
             {% endfor %}
         </ul>
     {% endif %}

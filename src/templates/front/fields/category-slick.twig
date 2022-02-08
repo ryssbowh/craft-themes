@@ -1,9 +1,10 @@
 {% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
 
 {% block content %}
     <div class="slick-carousel" data-slick="{{ options.getAttributes(null, ['viewModeUid'])|json_encode }}">
         {% for category in value %}
-            {{ displayer.groupLayout.render(category, options.viewMode.handle) }}
+            {{ macros.renderLayout(displayer.groupLayout, options.viewMode, category) }}
         {% endfor %}
     </div>
 {% endblock %}
