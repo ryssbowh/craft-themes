@@ -117,6 +117,33 @@ class LayoutService extends Service
     }
 
     /**
+     * Copy a layout into custom one
+     *
+     * @param  LayoutInterface $layout
+     * @param  string          $name
+     * @param  string          $handle
+     * @return LayoutInterface
+     */
+    public function copyIntoCustom(LayoutInterface $layout, string $name, string $handle): LayoutInterface
+    {
+        $blocks = [];
+        foreach ($layout->blocks as $block) {
+            $block = clone $block;
+            $block->id = null;
+            $block->uid = null;
+            $blocks[] = $block;
+        }
+        $layout = $this->createCustom([
+            'name' => $name,
+            'elementUid' => $handle,
+            'themeHandle' => $layout->themeHandle,
+        ]);
+        $layout->blocks = $blocks;
+        $this->save($layout);
+        return $layout;
+    }
+
+    /**
      * Get all layouts for a theme
      * 
      * @param  string|ThemeInterface $theme theme instance or theme handle
@@ -610,6 +637,7 @@ class LayoutService extends Service
     public function createCustom(array $data): CustomLayout
     {
         $data['type'] = self::CUSTOM_HANDLE;
+        $data['hasBlocks'] = true;
         return $this->create($data);
     }
 
