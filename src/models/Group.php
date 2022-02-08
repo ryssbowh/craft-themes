@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\traits\HasDisplays;
+use Twig\Markup;
 use craft\base\Element;
 
 /**
@@ -146,7 +147,7 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
-    public function render(): string
+    public function render(): Markup
     {
         return Themes::$plugin->view->renderGroup($this);
     }

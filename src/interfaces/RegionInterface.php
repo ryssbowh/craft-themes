@@ -1,6 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Twig\Markup;
+
 /**
  * Regions are defined by themes, and are assigned to layouts. They can have blocks.
  */
@@ -73,7 +75,7 @@ interface RegionInterface
     /**
      * Render this region
      * 
-     * @return string
+     * @return Markup
      */
-    public function render(): string;
+    public function render(): Markup;
 }

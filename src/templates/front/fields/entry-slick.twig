@@ -6,7 +6,7 @@
             {% set layout = entry.type.layout %}
             {% set viewMode = options.getViewMode(entry) %}
             {% if viewMode and layout %}
-                {{ layout.render(entry, viewMode.handle)|raw }}
+                {{ layout.render(entry, viewMode.handle) }}
             {% endif %}
         {% endfor %}
     </div>

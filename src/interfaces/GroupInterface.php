@@ -1,6 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Twig\Markup;
+
 /**
  * A group is a type of item, it can contains several displays
  */
@@ -23,7 +25,7 @@ interface GroupInterface extends HasDisplaysInterface
     /**
      * Render this group
      * 
-     * @return string
+     * @return Markup
      */
-    public function render(): string;
+    public function render(): Markup;
 }

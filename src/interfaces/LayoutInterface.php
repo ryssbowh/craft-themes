@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\services\ViewModeService;
+use Twig\Markup;
 use craft\base\Element;
 use craft\base\Field;
 use craft\models\FieldLayout;
@@ -263,7 +264,14 @@ interface LayoutInterface
      *
      * @param  Element                   $element
      * @param  string|ViewModeInterface  $viewMode
-     * @return string
+     * @return Markup
      */
-    public function render(Element $element, $viewMode = ViewModeService::DEFAULT_HANDLE): string;
+    public function render(Element $element, $viewMode = ViewModeService::DEFAULT_HANDLE): Markup;
+
+    /**
+     * Render this layout's regions
+     * 
+     * @return Markup
+     */
+    public function renderRegions(): Markup;
 }

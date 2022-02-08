@@ -15,9 +15,11 @@ use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\blocks\ContentBlock;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use Twig\Markup;
 use craft\base\Element;
 use craft\elements\Asset;
 use craft\events\TemplateEvent;
+use craft\helpers\Template;
 use yii\base\Event;
 use yii\caching\TagDependency;
 
@@ -145,10 +147,10 @@ class ViewService extends Service
      * @param  Region  $region
      * @return string
      */
-    public function renderRegion(RegionInterface $region): string
+    public function renderRegion(RegionInterface $region): Markup
     {
         if (!$region->beforeRender()) {
-            return '';
+            return Template::raw('');
         }
         $oldRegion = $this->renderingRegion;
         $this->_renderingRegion = $region;
@@ -159,9 +161,9 @@ class ViewService extends Service
             'attributes' => new AttributeBag($theme->preferences->getRegionAttributes($region)),
             'region' => $region,
         ]);
-        $html = $this->render(self::BEFORE_RENDERING_REGION, $templates, $variables);
+        $markup = $this->render(self::BEFORE_RENDERING_REGION, $templates, $variables);
         $this->_renderingRegion = $oldRegion;
-        return $html;
+        return $markup;
     }
 
     /**
@@ -171,10 +173,10 @@ class ViewService extends Service
      * @param  Element        $element
      * @return string
      */
-    public function renderBlock(BlockInterface $block): string
+    public function renderBlock(BlockInterface $block): Markup
     {
         if (!$block->beforeRender()) {
-            return '';
+            return Template::raw('');
         }
         $oldBlock = $this->renderingBlock;
         $this->_renderingBlock = $block;
@@ -185,9 +187,9 @@ class ViewService extends Service
             'attributes' => new AttributeBag($theme->preferences->getBlockAttributes($block)),
             'block' => $block,
         ]);
-        $html = $this->render(self::BEFORE_RENDERING_BLOCK, $templates, $variables);
+        $markup = $this->render(self::BEFORE_RENDERING_BLOCK, $templates, $variables);
         $this->_renderingBlock = $oldBlock;
-        return $html;
+        return $markup;
     }
 
     /**
@@ -197,10 +199,10 @@ class ViewService extends Service
      * @param  mixed          $value
      * @return string
      */
-    public function renderField(FieldInterface $field, $value): string
+    public function renderField(FieldInterface $field, $value): Markup
     {
         if (!$displayer = $field->getDisplayer() or !$displayer->beforeRender($value)) {
-            return '';
+            return Template::raw('');
         }
         $theme = $this->themesRegistry()->current;
         $templates = $field->getFieldTemplates();
@@ -228,10 +230,10 @@ class ViewService extends Service
      * @param  Element        $element
      * @return string
      */
-    public function renderGroup(GroupInterface $group): string
+    public function renderGroup(GroupInterface $group): Markup
     {
         if (!$group->beforeRender()) {
-            return '';
+            return Template::raw('');
         }
         $theme = $this->themesRegistry()->current;
         $templates = $group->getTemplates();
@@ -255,10 +257,10 @@ class ViewService extends Service
      * @param  FileDisplayerInterface $displayer
      * @return string
      */
-    public function renderFile(Asset $asset, FieldInterface $field, ?FileDisplayerInterface $displayer): string
+    public function renderFile(Asset $asset, FieldInterface $field, ?FileDisplayerInterface $displayer): Markup
     {
         if (!$displayer or !$displayer->beforeRender($asset)) {
-            return '';
+            return Template::raw('');
         }
         $theme = $this->themesRegistry()->current;
         $templates = $field->getFileTemplates($displayer);
@@ -282,7 +284,7 @@ class ViewService extends Service
      * @param  string                   $mode
      * @return string
      */
-    public function renderLayout(LayoutInterface $layout, $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): string
+    public function renderLayout(LayoutInterface $layout, $viewMode, ?Element $element, string $mode = LayoutInterface::RENDER_MODE_DISPLAYS): Markup
     {
         if (is_string($viewMode)) {
             $viewMode = $layout->getViewMode($viewMode);
@@ -315,12 +317,12 @@ class ViewService extends Service
                 $theme->getRegionsTemplate()
             ];
         }
-        $html = $this->render(self::BEFORE_RENDERING_LAYOUT, $templates, $variables);
+        $markup = $this->render(self::BEFORE_RENDERING_LAYOUT, $templates, $variables);
         $this->_renderingLayout = $oldLayout;
         $this->_renderingViewMode = $oldViewMode;
         $this->_renderingElement = $oldElement;
         $this->_renderingMode = $oldMode;
-        return $html;
+        return $markup;
     }
 
     /**
@@ -399,7 +401,7 @@ class ViewService extends Service
      * @param  array    $variables
      * @return string
      */
-    protected function render(string $eventType, array $templates, array $variables): string
+    protected function render(string $eventType, array $templates, array $variables): Markup
     {
         $event = $this->triggerRenderingEvent($eventType, $templates, $variables);
         if (!$event->render) {
@@ -408,7 +410,7 @@ class ViewService extends Service
         $template = $this->resolveTemplateFromCache($event->templates);   
         $html = $this->getDevModeHtml($event->templates, $template, $event->variables);
         $html .= \Craft::$app->view->renderTemplate($template, $event->variables);
-        return $html;
+        return Template::raw($html);
     }
 
     /**

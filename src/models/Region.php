@@ -7,6 +7,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use Twig\Markup;
 use craft\base\Element;
 use craft\base\Model;
 
@@ -137,7 +138,7 @@ class Region extends Model implements RegionInterface
     /**
      * @inheritDoc
      */
-    public function render(): string
+    public function render(): Markup
     {
         return Themes::$plugin->view->renderRegion($this);
     }

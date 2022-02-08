@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\interfaces;
 
 use Ryssbowh\CraftThemes\interfaces\BlockProviderInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
+use Twig\Markup;
 
 /**
  * Defines a block. Blocks are defined by providers, they can have various options
@@ -140,7 +141,7 @@ interface BlockInterface
     /**
      * Render this block
      * 
-     * @return string
+     * @return Markup
      */
-    public function render(): string;
+    public function render(): Markup;
 }

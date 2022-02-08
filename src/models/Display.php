@@ -8,6 +8,7 @@ use Ryssbowh\CraftThemes\interfaces\GroupInterface;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
+use Twig\Markup;
 use craft\base\Element;
 use craft\base\Model;
 
@@ -247,7 +248,7 @@ class Display extends Model implements DisplayInterface
     /**
      * @inheritDoc
      */
-    public function render(array $params = []): string
+    public function render(array $params = []): Markup
     {
         return $this->item->render(...$params);
     }

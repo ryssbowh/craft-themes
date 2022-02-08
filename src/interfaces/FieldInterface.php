@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Twig\Markup;
 use craft\base\Element;
 use craft\base\Field as BaseField;
 
@@ -153,9 +154,9 @@ interface FieldInterface
      * the element being rendered which can be pulled from the View service.
      *
      * @param  mixed $value
-     * @return string
+     * @return Markup
      */
-    public function render($value = null): string;
+    public function render($value = null): Markup;
 
     /**
      * Can this field be cached

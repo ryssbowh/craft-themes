@@ -5,7 +5,7 @@
         {% for asset in value %}
             {% set viewMode = options.getViewMode(asset) %}
             {% if viewMode %}
-                {{ asset.volume.layout.render(asset, viewMode.handle)|raw }}
+                {{ asset.volume.layout.render(asset, viewMode.handle) }}
             {% endif %}
         {% endfor %}
     </div>

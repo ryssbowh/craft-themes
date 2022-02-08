@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\Formidable\Models\Fields\LightSwitch;
+use Twig\Markup;
 use craft\base\Field as BaseField;
 use craft\fields\Color;
 use craft\fields\Date;
@@ -139,7 +140,7 @@ class TableField extends Field
     /**
      * @inheritDoc
      */
-    public function render($value = null): string
+    public function render($value = null): Markup
     {
         return Themes::$plugin->view->renderField($this, $value);
     }

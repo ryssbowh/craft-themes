@@ -12,6 +12,7 @@ use Ryssbowh\CraftThemes\interfaces\RegionInterface;
 use Ryssbowh\CraftThemes\models\BlockOptions;
 use Ryssbowh\CraftThemes\models\blockCacheOptions\BlockCacheStrategyOptions;
 use Ryssbowh\CraftThemes\services\LayoutService;
+use Twig\Markup;
 use craft\base\Element;
 use craft\base\Model;
 
@@ -397,7 +398,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function render(): string
+    public function render(): Markup
     {
         return Themes::$plugin->view->renderBlock($this);
     }

@@ -4,7 +4,7 @@
     {% for entry in value %}
         {% set viewMode = options.getViewMode(entry) %}
         {% if viewMode and layout %}
-            {{ entry.type.layout.render(entry, viewMode)|raw }}
+            {{ entry.type.layout.render(entry, viewMode) }}
         {% endif %}
     {% endfor %}
 {% endblock %}

@@ -4,7 +4,7 @@
     {% set viewMode = options.viewMode %}
     {% if viewMode %}
         {% for category in value %}
-            {{ category.group.layout.render(category, viewMode)|raw }}
+            {{ category.group.layout.render(category, viewMode) }}
         {% endfor %}
     {% endif %}
 {% endblock %}

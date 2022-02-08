@@ -10,7 +10,7 @@
     <div class="{{ classes }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
         {% block content %}
             {% for display in visibleDisplays %}
-                {{ display.render()|raw }}
+                {{ display.render() }}
             {% endfor %}
         {% endblock %}
     </div>

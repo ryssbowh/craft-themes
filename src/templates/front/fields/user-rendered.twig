@@ -5,7 +5,7 @@
     {% set viewMode = options.viewMode %}
     {% if layout and viewMode %}
         {% for user in value %}
-            {{ layout.render(user, viewMode)|raw }}
+            {{ layout.render(user, viewMode) }}
         {% endfor %}
     {% endif %}
 {% endblock %}

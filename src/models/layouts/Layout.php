@@ -18,6 +18,7 @@ use Ryssbowh\CraftThemes\records\BlockRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\LayoutService;
 use Ryssbowh\CraftThemes\services\ViewModeService;
+use Twig\Markup;
 use craft\base\Element;
 use craft\base\Model;
 use craft\helpers\UrlHelper;
@@ -422,7 +423,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function render(Element $element, $viewMode = ViewModeService::DEFAULT_HANDLE): string
+    public function render(Element $element, $viewMode = ViewModeService::DEFAULT_HANDLE): Markup
     {
         return Themes::$plugin->view->renderLayout($this, $viewMode, $element);
     }
@@ -430,7 +431,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function renderRegions(): string
+    public function renderRegions(): Markup
     {
         return Themes::$plugin->view->renderLayout($this, ViewModeService::DEFAULT_HANDLE, null, LayoutInterface::RENDER_MODE_REGIONS);
     }

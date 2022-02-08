@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
+use Twig\Markup;
 use craft\base\Element;
 
 /**
@@ -89,7 +90,7 @@ interface DisplayInterface
      * Render this display
      *
      * @param  array $params Parameters forwarded to display's item render method
-     * @return string
+     * @return Markup
      */
-    public function render(array $params = []): string;
+    public function render(array $params = []): Markup;
 }

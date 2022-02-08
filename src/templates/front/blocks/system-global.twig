@@ -4,6 +4,6 @@
     {% set viewMode = block.viewMode %}
     {% set globalSet = block.globalSet %}
     {% if viewMode and globalSet %}
-        {{ globalSet.layout.render(globalSet, viewMode)|raw }}
+        {{ globalSet.layout.render(globalSet, viewMode) }}
     {% endif %}
 {% endblock %}

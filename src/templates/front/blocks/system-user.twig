@@ -4,7 +4,7 @@
     {% for item in block.users %}
         {% if item.viewMode and item.user %}
             {% set layout = item.user.layout %}
-            {{ craft.themes.view.renderLayout(layout, item.viewMode.handle, item.user)|raw }}
+            {{ craft.themes.view.renderLayout(layout, item.viewMode.handle, item.user) }}
         {% endif %}
     {% endfor %}
 {% endblock %}

@@ -4,6 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
+use Twig\Markup;
 
 /**
  * Handles a field inside a matrix block
@@ -76,9 +77,9 @@ class MatrixField extends CraftField
      * The value is required here, it must come from a MatrixBlock
      * 
      * @param  mixed $value
-     * @return string
+     * @return Markup
      */
-    public function render($value = null): string
+    public function render($value = null): Markup
     {
         if ($value === null) {
             return '';

@@ -2,6 +2,6 @@
 
 {% block content %}
     {% for display in viewMode.getVisibleDisplays('default') %}
-        {{ display.render()|raw }}
+        {{ display.render() }}
     {% endfor %}
 {% endblock %}

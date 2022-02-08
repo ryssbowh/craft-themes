@@ -7,7 +7,7 @@
     {% set layout = displayer.tagLayout %}
     {% if viewMode and layout %}
         {% for tag in value %}
-            {{ layout.render(tag, viewMode)|raw }}
+            {{ layout.render(tag, viewMode) }}
         {% endfor %}
     {% endif %}
 {% endblock %}

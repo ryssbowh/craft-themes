@@ -5,7 +5,7 @@
         {% for matrixBlock in value %}
             <div class="matrix-block {{ matrixBlock.type.handle }}">
                 {% for matrixField in field.visibleFields(matrixBlock) %}
-                    {{ matrixField.render(matrixBlock[matrixField.handle])|raw }}
+                    {{ matrixField.render(matrixBlock[matrixField.handle]) }}
                 {% endfor %}
             </div>
         {% endfor %}

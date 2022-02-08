@@ -15,7 +15,7 @@
             {% for row in value %}
                 <tr>
                     {% for fieldToRender in field.visibleFields %}
-                        <td>{{ craft.themes.view.renderField(fieldToRender, row[fieldToRender.handle])|raw }}</td>
+                        <td>{{ craft.themes.view.renderField(fieldToRender, row[fieldToRender.handle]) }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}

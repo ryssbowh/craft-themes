@@ -2,7 +2,7 @@
 
 {% macro render(asset, field, options) %}
     {% if asset %}
-        {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind))|raw }}
+        {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind)) }}
     {% endif %}
 {% endmacro %}
 

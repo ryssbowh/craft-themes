@@ -5,7 +5,7 @@
 {% block content %}
     <div class="slick-carousel" data-slick="{{ options.getAttributes(null, ['viewModeUid'])|json_encode }}">
         {% for tag in value %}
-            {{ craft.themes.view.renderLayout(displayer.tagLayout, options.viewMode.handle, tag)|raw }}
+            {{ craft.themes.view.renderLayout(displayer.tagLayout, options.viewMode.handle, tag) }}
         {% endfor %}
     </div>
 {% endblock %}

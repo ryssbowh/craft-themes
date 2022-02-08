@@ -13,6 +13,7 @@ use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\FieldsService;
+use Twig\Markup;
 use craft\base\Element;
 use craft\base\Field as BaseField;
 use craft\helpers\StringHelper;
@@ -363,7 +364,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function render($value = null): string
+    public function render($value = null): Markup
     {
         if ($value === null) {
             $value = $this->renderingValue;
