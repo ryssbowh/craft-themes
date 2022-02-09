@@ -1,6 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
+use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\helpers\ViewModesHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;

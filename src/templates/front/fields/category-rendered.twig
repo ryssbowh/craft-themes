@@ -2,10 +2,7 @@
 {% import "_includes/macros" as macros %}
 
 {% block content %}
-    {% set viewMode = options.viewMode %}
-    {% if viewMode %}
-        {% for category in value %}
-            {{ macros.renderLayout(category.group.layout, viewMode, category) }}
-        {% endfor %}
-    {% endif %}
+    {% for category in value %}
+        {{ macros.renderLayout(category.group.layout, options.viewMode, category) }}
+    {% endfor %}
 {% endblock %}

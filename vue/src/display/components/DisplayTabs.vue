@@ -134,7 +134,7 @@ export default {
 }
 #tabs {
     position: relative;
-    // padding-left: 120px;
+    min-height: 40px;
     ul {
         overflow: hidden;
         flex: 1;
@@ -145,9 +145,6 @@ export default {
     margin-left: 10px;
 }
 .heading {
-    // position: absolute;
-    // left: 12px;
-    // top: 20px;
     text-transform: uppercase;
     padding-right: 10px;
     color: $mediumTextColor;

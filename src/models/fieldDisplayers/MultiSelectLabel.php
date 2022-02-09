@@ -46,7 +46,8 @@ class MultiSelectLabel extends FieldDisplayer
      */
     public function beforeRender(&$value): bool
     {
-        $selected = array_filter($value->getOptions(), function ($option) {
+        $options = $value ? $value->getOptions() : [];
+        $selected = array_filter($options, function ($option) {
             return $option->selected;
         });
         return !(empty($selected) and Themes::$plugin->settings->hideEmptyFields);

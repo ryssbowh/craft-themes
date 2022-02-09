@@ -5,7 +5,7 @@
         {% if options.photo %}
             {% set asset = user.photo %}
             {% if asset %}
-                {{ asset.img }}
+                {{ asset.getImg({width: 50, height: 50}) }}
             {% endif %}
         {% endif %}
         {% if options.username %}
