@@ -14,6 +14,11 @@ class EmailEmailOptions extends FieldDisplayerOptions
             'linked' => [
                 'field' => 'lightswitch',
                 'label' => \Craft::t('themes', 'Output as link')
+            ],
+            'label' => [
+                'field' => 'text',
+                'label' => \Craft::t('themes', 'Custom label'),
+                'placeholder' => \Craft::t('themes', 'Take the email itself if left blank')
             ]
         ];
     }
@@ -25,6 +30,7 @@ class EmailEmailOptions extends FieldDisplayerOptions
     {
         return [
             'linked' => true,
+            'label' => '',
         ];
     }
 
@@ -34,7 +40,8 @@ class EmailEmailOptions extends FieldDisplayerOptions
     public function defineRules(): array
     {
         return [
-            ['linked', 'boolean', 'trueValue' => true, 'falseValue' => false]       
+            ['linked', 'boolean', 'trueValue' => true, 'falseValue' => false],
+            ['label', 'trim']
         ];
     }
 }

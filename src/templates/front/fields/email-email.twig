@@ -2,8 +2,8 @@
 
 {% block content %}
     {% if options.linked %}
-        <a href="mailto:{{ value }}">{{ value }}</a>
+        <a href="mailto:{{ value }}">{{ options.label ? options.label : value }}</a>
     {% else %}
-        {{ value }}
+        {{ options.label ? options.label : value }}
     {% endif %}
 {% endblock %}
