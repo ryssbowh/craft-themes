@@ -1,6 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\exceptions;
 
+use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
+
 class ThemeException extends \Exception
 {
     public static function notDefined(string $name)
@@ -32,5 +34,10 @@ class ThemeException extends \Exception
     {
         $message = $theme ? "Unable to set the theme to " . $theme->handle : "Unable to unset the theme";
         return new static($message . ": You must do this earlier in the request, before the view template roots are registered");
+    }
+
+    public static function handleInvalid(ThemeInterface $theme, string $handle)
+    {
+        return new static("the region's handle '$handle' defined in theme ({$theme->handle}) is invalid, it can only contain alphanumeric characters and hyphens");
     }
 }

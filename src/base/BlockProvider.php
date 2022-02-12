@@ -67,7 +67,7 @@ abstract class BlockProvider extends Component implements BlockProviderInterface
             }
             $blocks = [];
             foreach ($event->blocks as $class) {
-                if (!preg_match('/^[a-zA-Z\-]+$/', $class::$handle)) {
+                if (!preg_match('/^[a-zA-Z0-9\-]+$/', $class::$handle)) {
                     throw BlockProviderException::handleInvalid($class);   
                 }
                 if (isset($blocks[$class::$handle])) {

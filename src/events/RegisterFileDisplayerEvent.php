@@ -60,7 +60,7 @@ class RegisterFileDisplayerEvent extends Event
         if (!$replaceIfExisting and isset($this->_displayers[$class::$handle])) {
             throw FileDisplayerException::alreadyDefined($class);
         }
-        if (!preg_match('/^[a-zA-Z\-]+$/', $class::$handle)) {
+        if (!preg_match('/^[a-zA-Z0-9\-]+$/', $class::$handle)) {
             throw FileDisplayerException::handleInvalid($class);   
         }
         $this->_displayers[$class::$handle] = $class;

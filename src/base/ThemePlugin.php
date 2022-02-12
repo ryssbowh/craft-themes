@@ -187,11 +187,14 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
                 if (!isset($region['handle'])) {
                     throw ThemeException::regionParameterMissing('handle', $this->handle);
                 }
-                if (!isset($region['name'])) {
-                    throw ThemeException::regionParameterMissing('name', $this->handle);
+                if (!preg_match('/^[a-zA-Z0-9\-]+$/', $region['handle'])) {
+                    throw ThemeException::handleInvalid($this, $region['handle']);   
                 }
                 if (in_array($region['handle'], $defined)) {
                     throw ThemeException::duplicatedRegion($this->handle, $region['handle']);
+                }
+                if (!isset($region['name'])) {
+                    throw ThemeException::regionParameterMissing('name', $this->handle);
                 }
                 $defined[] = $region['handle'];
                 $this->_regions[] = $region;
