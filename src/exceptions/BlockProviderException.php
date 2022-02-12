@@ -22,4 +22,9 @@ class BlockProviderException extends \Exception
     {
         return new static("The block '$handle' is not registered on provider '$provider'");
     }
+
+    public static function handleInvalid(string $class)
+    {
+        return new static("$class 'handle' ({$class::$handle}) is invalid, it can only contain alphanumeric characters and hyphens");
+    }
 }
