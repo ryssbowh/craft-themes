@@ -1,6 +1,6 @@
 # ryssbowh/craft-themes Changelog
 
-## 3.0.0 - unreleased
+## 3.0.0 - 2022-02-14
 > :warning: Read the breaking changes included in 3.0 in the [wiki](https://github.com/ryssbowh/craft-themes/wiki) before updating
 
 ### Added
