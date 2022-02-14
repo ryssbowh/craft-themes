@@ -1,24 +1,28 @@
 # ryssbowh/craft-themes Changelog
 
-## 3.0.0 - 
-> :warning: Read the breaking changes included in 3.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/DEVELOPERS.md) before updating
+## 3.0.0 - unreleased
+> :warning: Read the breaking changes included in 3.0 in the [wiki](https://github.com/ryssbowh/craft-themes/wiki) before updating
 
 ### Added
-- Pro version
 - Theme list
 - Theme plugins can define a preview image
 - View port rule
-- Layouts (pro)
-- View modes (pro)
-- Regions (pro)
-- Blocks (pro)
-- Field displayers (pro)
-- File displayers (pro)
+- Scss compiler
 - Asset bundle can be registered as regex
-- Themes can be set for CP requests
+- Themes can be set for CP/Console requests
+- Pro version:
+  - Layouts
+  - View modes
+  - Regions
+  - Blocks
+  - Field displayers
+  - File displayers
 
 ### Changed
 - Rules have their own section in CP
+- Requires Craft 3.7
+- Requires php >= 7.3
+- Requires php intl extension
 
 ### Deprecated
 - Twig variable `themesRegistry`
