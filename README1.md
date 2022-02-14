@@ -1,6 +1,6 @@
-# Craft themes
+# Craft themes 1.x
 
-## This version is deprecated, use 2.0 instead
+## This version is deprecated, use 3.0 instead
 
 Tired of re-making your front-ends all over again when a lot of it could be reused ?
 

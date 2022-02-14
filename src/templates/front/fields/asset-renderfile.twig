@@ -1,0 +1,14 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {% if displayer.limit == 1 %}
+        {{ macros.renderAsset(value.0 ?? null, field, options) }}
+    {% else %}
+        <ul class="asset-files">
+            {% for asset in value %}
+                <li class="asset-file-item">{{ macros.renderAsset(asset, field, options) }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

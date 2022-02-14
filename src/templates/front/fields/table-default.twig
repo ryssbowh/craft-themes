@@ -1,0 +1,24 @@
+{% extends "fields/_field" %}
+
+{% set show_field = field.visibleFields|length > 0 %}
+
+{% block content %}
+    <table>
+       <thead>
+            <tr>
+                {% for fieldToRender in field.visibleFields %}
+                    <th>{{ fieldToRender.name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in value %}
+                <tr>
+                    {% for fieldToRender in field.visibleFields %}
+                        <td>{{ craft.themes.view.renderField(fieldToRender, row[fieldToRender.handle]) }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

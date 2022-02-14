@@ -1,0 +1,57 @@
+{% extends "blocks/block" %}
+    
+{% block content %}
+    {% macro errorList(errors) %}
+        {% if errors %}
+            {{ ul(errors, {class: 'errors'}) }}
+        {% endif %}
+    {% endmacro %}
+
+    {# `user` is defined if the form returns validation errors. #}
+    {% set user = user ?? null %}
+
+    <form method="post" accept-charset="UTF-8">
+        {{ csrfInput() }}
+        {{ actionInput('users/save-user') }}
+        {{ redirectInput('') }}
+
+        {% if not craft.app.config.general.useEmailAsUsername %}
+            <label for="username">Username</label>
+            {{ input('text', 'username', user.username ?? null, {
+                id: 'username',
+                autocomplete: 'username',
+            }) }}
+            {{ user ? _self.errorList(user.getErrors('username')) }}
+        {% endif %}
+
+        <label for="firstName">First Name</label>
+        {{ input('text', 'firstName', user.firstName ?? null, {
+            id: 'firstName',
+            autocomplete: 'given-name',
+        }) }}
+        {{ user ? _self.errorList(user.getErrors('firstName')) }}
+
+        <label for="lastName">Last Name</label>
+        {{ input('text', 'lastName', user.lastName ?? null, {
+            id: 'lastName',
+            autocomplete: 'family-name',
+        }) }}
+        {{ user ? _self.errorList(user.getErrors('lastName')) }}
+
+        <label for="email">Email</label>
+        {{ input('email', 'email', user.email ?? null, {
+            id: 'email',
+            autocomplete: 'email',
+        }) }}
+        {{ user ? _self.errorList(user.getErrors('email')) }}
+
+        <label for="password">Password</label>
+        {{ input('password', 'password', null, {
+            id: 'password',
+        }) }}
+        {{ user ? _self.errorList(user.getErrors('password')) }}
+
+        <button type="submit">Register</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+enableVersioning: true
+handle: structure
+name: Structure
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  add58190-e8f2-483f-8f55-6be4dc9e80e7:
+    enabledByDefault: true
+    hasUrls: false
+    template: null
+    uriFormat: null
+structure:
+  maxLevels: null
+  uid: 4adf91db-229f-4b33-9adb-e52fe128ab09
+type: structure

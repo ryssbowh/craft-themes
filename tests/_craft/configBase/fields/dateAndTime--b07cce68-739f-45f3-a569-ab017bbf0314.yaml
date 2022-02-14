@@ -1,0 +1,15 @@
+contentColumnType: datetime
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+handle: dateAndTime
+instructions: ''
+name: 'Date and time'
+searchable: false
+settings:
+  max: null
+  min: null
+  minuteIncrement: '5'
+  showDate: true
+  showTime: true
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Date

@@ -1,0 +1,24 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% set elapsedYears = value.diff(now).y %}
+    {% set elapsedMonths = value.diff(now).m %}
+    {% set elapsedDays = value.diff(now).d %}
+    {% set elapsedHours = value.diff(now).h %}
+    {% set elapsedMinutes = value.diff(now).i %}
+    {% set elapsedSeconds = value.diff(now).s %}
+
+    {% if elapsedYears > 1 %}
+        {{ ('{number} year' ~ (elapsedYears != 1 ? 's' : '') ~ ' ago')|t('site', {number: elapsedYears}) }}
+    {% elseif elapsedMonths > 1 %}
+        {{ ('{number} month' ~ (elapsedMonths != 1 ? 's' : '') ~ ' ago')|t('site', {number: elapsedMonths}) }}
+    {% elseif elapsedDays > 1 %}
+        {{ ('{number} day' ~ (elapsedDays != 1 ? 's' : '') ~ ' ago')|t('site', {number: elapsedDays}) }}
+    {% elseif elapsedHours > 1 %}
+        {{ ('{number} hour' ~ (elapsedHours != 1 ? 's' : '') ~ ' ago')|t('site', {number: elapsedHours}) }}
+    {% elseif elapsedMinutes > 1 %}
+        {{ ('{number} minute' ~ (elapsedMinutes != 1 ? 's' : '') ~ ' ago')|t('site', {number: elapsedMinutes}) }}
+    {% else %}
+        {{ 'Just now'|t('site') }}
+    {% endif %}
+{% endblock %}

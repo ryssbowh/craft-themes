@@ -1,0 +1,6 @@
+{% extends "blocks/block" %}
+
+{% block content %}
+    {% set viewMode = block.viewMode %}
+    {{ craft.themes.view.renderLayout(block.userLayout, viewMode, currentUser) }}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% from '_includes/forms' import checkboxField %}
+
+<fieldset>
+    <div class="field">
+        <div class="heading">
+            <label>{{ 'Themes Development'|t('themes') }}</label>
+        </div>
+        <div class="input ltr">
+            {{ checkboxField({
+                label: 'Show templates suggestions and available variables as html comments on the front end.'|t('themes'),
+                name: 'themesDevMode',
+                id: 'themesDevMode',
+                checked: user.getPreference('themesDevMode')
+            }) }}
+            {% if user.can('viewThemesShortcuts') %}
+                {{ checkboxField({
+                    label: 'Show edition shortcuts on the front end.'|t('themes'),
+                    name: 'themesShowShorcuts',
+                    id: 'themesShowShorcuts',
+                    checked: user.getPreference('themesShowShorcuts')
+                }) }}
+            {% endif %}
+        </div>
+    </div>
+</fieldset>

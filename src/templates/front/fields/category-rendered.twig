@@ -1,0 +1,8 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {% for category in value %}
+        {{ macros.renderLayout(category.group.layout, options.viewMode, category) }}
+    {% endfor %}
+{% endblock %}

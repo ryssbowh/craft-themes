@@ -1,0 +1,73 @@
+{% import "_includes/forms" as forms %}
+{% extends "_layouts/cp" %}
+{% set title = title %}
+{% set selectedSubnavItem = 'themes-rules' %}
+{% set fullPageForm = true %}
+{% set mainFormAttributes = {
+    action: url('themes/save-rules')
+} %}
+
+{% block content %}
+    {% namespace namespace %}
+        <h2 class="first">{{ 'Themes rules'|t('themes') }}</h2>
+        <p>{{ 'Rules will be handled from top to bottom, the first match will define the theme and the other rules will not be looked at.'|t('themes') }}</p>
+
+        {% set name = 'themesRules' %}
+        {% set id = 'theme-rules' %}
+        {% set initJs = false %}
+        {% set rows = settings.themesRules %}
+        {% include "_includes/forms/editableTable" %}
+
+        <h2>{{ 'Default theme'|t('themes') }}</h2>
+        {{ forms.selectField({
+            name: 'default',
+            options: {'': 'No theme'|t('themes')}|merge(themes),
+            value: settings.default,
+            instructions: 'Default theme when no rules match'|t('themes')
+        }) }}
+
+        <h2>{{ 'Console requests'|t('themes') }}</h2>
+        {{ forms.lightswitchField({
+            name: 'setConsole',
+            on: settings.setConsole,
+            containerAttributes: {
+                class: ['console-lightswitch']
+            },
+            instructions: 'Set the theme for console requests, this is needed if console requests render templates (when sending emails for example)'|t('themes')
+        }) }}
+
+        {{ forms.selectField({
+            name: 'console',
+            label: 'Console requests theme'|t('themes'),
+            options: themes,
+            value: settings.console,
+            fieldClass: 'console-theme',
+            fieldAttributes: settings.setConsole ? {} : {style: 'display:none'}
+        }) }}
+
+        <h2>{{ 'CP requests'|t('themes') }}</h2>
+        {{ forms.lightswitchField({
+            name: 'setCp',
+            on: settings.setCp,
+            containerAttributes: {
+                class: ['cp-lightswitch']
+            },
+            instructions: 'Set the theme for cp requests, this is needed if cp requests render templates (when sending emails for example)'|t('themes')
+        }) }}
+
+        {{ forms.selectField({
+            name: 'cp',
+            label: 'CP requests theme'|t('themes'),
+            options: themes,
+            value: settings.cp,
+            fieldClass: 'cp-theme',
+            fieldAttributes: settings.setCp ? {} : {style: 'display:none'},
+            warning: 'This will not allow cp templates to be overriden. It will set templates when they are requested for the site mode (`View::TEMPLATE_MODE_SITE`)'|t('themes')
+        }) }}
+    {% endnamespace %}
+
+    {% js on ready %}
+        new Craft.Themes.RulesTable('settings-{{ id }}', 'settings[themesRules]', {{ cols|json_encode|raw }}, {});
+    {% endjs %}
+{% endblock %}
+

@@ -1,0 +1,10 @@
+{% extends "blocks/block" %}
+
+{% block content %}
+    {% for item in block.assets %}
+        {% if item.viewMode and item.asset %}
+            {% set layout = item.asset.volume.layout %}
+            {{ craft.themes.view.renderLayout(layout, item.viewMode.handle, item.asset) }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}

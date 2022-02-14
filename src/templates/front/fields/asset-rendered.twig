@@ -1,0 +1,8 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {% for asset in value %}
+        {{ macros.renderLayout(asset.volume.layout, options.getViewMode(asset), asset) }}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "files/_file" %}
+
+{% block content %}
+   <audio {% if options.controls %}controls{% endif %} {% if options.muted %}muted{% endif %} {% if options.autoplay %}autoplay{% endif %}>
+       <source src="{{ asset.getUrl() }}" type="{{ asset.getMimeType() }}">
+       {{ 'Your browser does not support the audio element.'|t('site') }}
+   </audio>
+{% endblock %}

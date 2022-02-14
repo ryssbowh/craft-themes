@@ -1,0 +1,30 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% for user in value %}
+        {% if options.photo %}
+            {% set asset = user.photo %}
+            {% if asset %}
+                {{ asset.getImg({width: 50, height: 50}) }}
+            {% endif %}
+        {% endif %}
+        {% if options.username %}
+            {{ user.username }}
+        {% endif %}
+        {% if options.firstName %}
+            {{ user.firstName }}
+        {% endif %}
+        {% if options.lastName %}
+            {{ user.lastName }}
+        {% endif %}
+        {% if options.email %}
+            ({% if options.linkEmail %}
+                <a href="mailto:{{ user.email }}">
+            {% endif %}
+            {{ user.email }}
+            {% if options.linkEmail %}
+                </a>
+            {% endif %})
+        {% endif %}
+    {% endfor %}
+{% endblock %}

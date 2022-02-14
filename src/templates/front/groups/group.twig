@@ -1,0 +1,17 @@
+<div class="{{ containerClasses|raw }}"{% if containerAttributes.size() %} {{ containerAttributes|raw }}{% endif %}>
+    {% block label %}
+        {% if not group.labelHidden %}
+            <label class="{{ labelClasses }}"{% if labelAttributes.size() %} {{ labelAttributes|raw }}{% endif %}>
+                {{ group.name }}
+            </label>
+        {% endif %}
+    {% endblock %}
+
+    <div class="{{ classes }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
+        {% block content %}
+            {% for display in visibleDisplays %}
+                {{ display.render() }}
+            {% endfor %}
+        {% endblock %}
+    </div>
+</div>

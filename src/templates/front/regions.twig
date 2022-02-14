@@ -1,0 +1,5 @@
+<body class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
+    {% for region in regions %}
+        {{ region.render() }}
+    {% endfor %}
+</body>

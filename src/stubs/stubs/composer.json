@@ -1,0 +1,16 @@
+{
+  "name": "themes/$HANDLE",
+  "description": "",
+  "type": "craft-plugin",
+  "version": "1.0",
+  "autoload": {
+    "psr-4": {
+      "$NAMESPACE": "src/"
+      }
+    },
+  "extra": {
+    "handle": "$HANDLE",
+    "name": "$NAME",
+    "class": "$NAMESPACE$CLASSNAME"
+  }
+}

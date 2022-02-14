@@ -1,33 +1,49 @@
 {
-  "name": "ryssbowh/craft-themes",
-  "description": "Themes engine",
-  "type": "craft-plugin",
-  "keywords": [
-    "cms",
-    "craftcms",
-    "themes"
-  ],
-  "license": "MIT",
-  "authors": [
-      {
-          "name": "The Web Puzzlers",
-          "homepage": "https://github.com/ryssbowh"
-      }
-  ],
-  "support": {
-  },
-  "require": {
-    "craftcms/cms": "^3.5"
-  },
-  "autoload": {
-    "psr-4": {
-      "Ryssbowh\\CraftThemes\\": "src/"
+    "name": "ryssbowh/craft-themes",
+    "description": "Themes engine",
+    "type": "craft-plugin",
+    "keywords": [
+        "cms",
+        "craftcms",
+        "themes"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "The Web Puzzlers",
+            "homepage": "https://github.com/ryssbowh"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "ext-intl": "*",
+        "craftcms/cms": "3.7.*",
+        "illuminate/support": "^8.3",
+        "mobiledetect/mobiledetectlib": "^2.8",
+        "ryssbowh/scss-php-compiler": "^0.1",
+        "twig/intl-extra": "^3.3"
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.0",
+        "codeception/module-asserts": "^1.0.0",
+        "codeception/module-phpbrowser": "^1.0.0",
+        "codeception/module-yii2": "^1.0.0",
+        "codeception/stub": "^3.0",
+        "vlucas/phpdotenv": "^3.0",
+        "symfony/var-dumper": "^5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ryssbowh\\CraftThemes\\": "src/",
+            "Ryssbowh\\CraftThemesTests\\fixtures\\": "tests/fixtures",
+            "Ryssbowh\\CraftThemesTests\\helpers\\": "tests/helpers",
+            "Ryssbowh\\CraftThemesTests\\themes\\": "tests/themes"
+        }
+    },
+    "extra": {
+        "name": "Themes",
+        "handle": "themes",
+        "documentationUrl": "https://github.com/ryssbowh/craft-themes",
+        "class": "Ryssbowh\\CraftThemes\\Themes"
     }
-  },
-  "extra": {
-    "name": "Themes",
-    "handle": "themes",
-    "documentationUrl": "https://github.com/ryssbowh/craft-themes",
-    "class": "Ryssbowh\\CraftThemes\\Themes"
-  }
 }

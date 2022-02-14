@@ -1,0 +1,7 @@
+{% filedisplayercache %}
+   <div class="{{ classes|raw }}"{% if attributes.size() %} {{ attributes|raw }}{% endif %}>
+       {% block content %}
+          {{ asset.getContents|raw }}
+       {% endblock %}
+   </div>
+{% endfiledisplayercache %}

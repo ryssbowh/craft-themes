@@ -1,0 +1,13 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    <div class="slick-carousel" data-slick="{{ options.attributes|json_encode }}">
+        {% for matrixBlock in value %}
+            <div class="matrix-block {{ matrixBlock.type.handle }}">
+                {% for matrixField in field.visibleFields(matrixBlock) %}
+                    {{ matrixField.render(matrixBlock[matrixField.handle]) }}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

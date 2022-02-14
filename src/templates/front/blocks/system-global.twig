@@ -1,0 +1,6 @@
+{% extends "blocks/block" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {{ macros.renderLayout(block.globalSet.layout, block.viewMode, block.globalSet) }}
+{% endblock %}

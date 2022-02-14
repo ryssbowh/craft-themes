@@ -1,0 +1,8 @@
+{% extends "blocks/block" %}
+
+{% block content %}
+    <form class="my-2 my-lg-0" action="/{{ block.options.action }}">
+        <input name="{{ block.options.inputName }}" placeholder="Search">
+        <button type="submit">Search</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {{ value ? (craftField.onLabel ?? 'On') : (craftField.offLabel ?? 'Off') }}
+{% endblock %}

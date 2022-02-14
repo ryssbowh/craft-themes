@@ -1,0 +1,22 @@
+contentColumnType: string
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+handle: tag
+instructions: ''
+name: Tag
+searchable: false
+settings:
+  allowLimit: false
+  allowMultipleSources: false
+  allowSelfRelations: false
+  limit: null
+  localizeRelations: false
+  selectionLabel: ''
+  showSiteMenu: true
+  source: 'taggroup:3bff0462-df76-4382-856c-d1afabc81d3e'
+  sources: '*'
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: null
+translationKeyFormat: null
+translationMethod: site
+type: craft\fields\Tags

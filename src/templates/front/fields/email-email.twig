@@ -1,0 +1,9 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% if options.linked %}
+        <a href="mailto:{{ value }}">{{ options.label ? options.label : value }}</a>
+    {% else %}
+        {{ options.label ? options.label : value }}
+    {% endif %}
+{% endblock %}

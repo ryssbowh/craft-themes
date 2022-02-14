@@ -1,0 +1,10 @@
+{% extends "blocks/block" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {% for item in block.categories %}
+        {% if item.viewMode and item.category %}
+            {{ macros.renderLayout(item.category.group.layout, item.viewMode, item.category) }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}

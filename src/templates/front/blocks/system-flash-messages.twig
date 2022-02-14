@@ -1,0 +1,22 @@
+{% extends "blocks/block" %}
+
+{% block content %}
+    <div class="{{ classes|raw }}" {{ attributes|raw }}>
+        {% if block.flashNotice %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ block.flashNotice }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+        {% if block.flashError %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ block.flashError }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {{ macros.truncateChars(value, options.truncated) }}
+    {% if options.ellipsis %}
+        {% if options.linked and element.url %}
+            <a href="{{ element.url }}">{{ options.ellipsis }}</a>
+        {% else %}
+            {{ options.ellipsis }}
+        {% endif %}
+    {% endif %}
+{% endblock %}

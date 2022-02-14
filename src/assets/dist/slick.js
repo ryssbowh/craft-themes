@@ -1,0 +1,1 @@
+"use strict";$(function(){$.each($(".slick-carousel"),function(c,i){$(i).slick()})});

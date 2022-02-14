@@ -1,0 +1,7 @@
+{% extends "blocks/block" %}
+
+{% block content %}
+    {% for display in viewMode.getVisibleDisplays('default') %}
+        {{ display.render() }}
+    {% endfor %}
+{% endblock %}

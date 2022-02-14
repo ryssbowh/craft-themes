@@ -1,0 +1,11 @@
+contentColumnType: string(7)
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+handle: colour
+instructions: ''
+name: Colour
+searchable: false
+settings:
+  defaultColor: ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Color

@@ -1,0 +1,5 @@
+{% extends "fields/_field" %}
+
+{% if options.stripped %}
+    {% set value = value|striptags %}
+{% endif %}

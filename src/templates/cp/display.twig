@@ -1,0 +1,42 @@
+{% extends "_layouts/cp" %}
+
+{% set selectedSubnavItem = 'themes-display' %}
+
+{% block contextMenu %}
+    {% if themes|length %}
+    	<display-context 
+            :initial-theme="'{{ theme }}'"
+            :themes="{{ themes|json_encode }}"
+            :all-layouts="{{ allLayouts|json_encode }}"
+            :current-layout="{{ layout }}"
+            :current-view-mode-handle="'{{ viewModeHandle }}'"
+            :show-field-handles="{{ showFieldHandles ? 1 : 0 }}"
+        />
+    {% endif %}
+{% endblock %}
+
+{% block toolbar %}
+    {% if themes|length %}
+        <display-toolbar></display-toolbar>
+    {% endif %}
+{% endblock %}
+
+{% block tabs %}
+    {% if themes|length %}
+        <display-tabs></display-tabs>
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    {% if themes|length %}
+        <display-menu></display-menu>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if themes|length %}
+        <displays></displays>
+    {% else %}
+        <p>{{ 'No themes are currently installed'|t('site') }}</p>
+    {% endif %}
+{% endblock %}

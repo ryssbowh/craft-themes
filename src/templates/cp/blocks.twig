@@ -1,0 +1,35 @@
+{% extends "_layouts/cp" %}
+{% set selectedSubnavItem = 'themes-blocks' %}
+
+{% block contextMenu %}
+    {% if themes|length %}
+    	<blocks-context 
+    		:initial-theme="'{{ theme }}'"
+    		:themes="{{ themes|json_encode }}"
+            :initial-layout="{{ layout }}"
+            :all-layouts="{{ allLayouts|json_encode }}"
+            :all-strategies="{{ cacheStrategies|json_encode }}"
+            :show-field-handles="{{ showFieldHandles ? 1 : 0 }}"
+    	/>
+    {% endif %}
+{% endblock %}
+
+{% block toolbar %}
+    {% if themes|length %}
+	   <blocks-toolbar />
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    {% if themes|length %}
+        <blocks-menu></blocks-menu>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if themes|length %}
+	   <blocks/>
+    {% else %}
+        <p>{{ 'No themes are currently installed'|t('site') }}</p>
+    {% endif %}
+{% endblock %}

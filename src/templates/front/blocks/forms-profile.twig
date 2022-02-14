@@ -1,0 +1,102 @@
+{% extends "blocks/block" %}
+
+{% macro errorList(errors) %}
+    {% if errors %}
+        {{ ul(errors, {class: 'errors'}) }}
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {# If there were any validation errors, a `user` variable will be passed to the
+    template, which contains the posted values and validation errors. If that’s not
+    set, we’ll default to the current user. #}
+    {% set user = user ?? currentUser %}
+
+    {% if user.hasErrors() %}
+        <p>Unable to save your profile.</p>
+    {% endif %}
+
+    <form method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+        {{ csrfInput() }}
+        {{ actionInput('users/save-user') }}
+        {{ hiddenInput('userId', user.id) }}
+
+        <label for="first-name">First Name</label>
+        {{ input('text', 'firstName', user.firstName, {
+            id: 'first-name',
+            class: user.hasErrors('firstName') ? 'error',
+            autocomplete: 'given-name',
+        }) }}
+        {{ _self.errorList(user.getErrors('firstName')) }}
+
+        <label for="last-name">Last Name</label>
+        {{ input('text', 'lastName', user.lastName, {
+            id: 'last-name',
+            class: user.hasErrors('lastName') ? 'error',
+            autocomplete: 'family-name',
+        }) }}
+        {{ _self.errorList(user.getErrors('lastName')) }}
+
+        {% if user.photo %}
+            <label>Photo</label>
+            {{ user.photo.getImg({width: 150, height: 150})|attr({
+                id: 'user-photo',
+                alt: user.friendlyName,
+            }) }}
+
+            <label for="delete-photo">
+                {{ input('checkbox', 'deletePhoto', '1', {
+                id: 'delete-photo',
+                }) }}
+                Delete photo
+            </label>
+        {% endif %}
+
+        <label for="photo">Upload a new photo</label>
+        {{ input('file', 'photo', null, {
+            id: 'photo',
+            accept: 'image/png,image/jpeg',
+        }) }}
+
+        {% if not craft.app.config.general.useEmailAsUsername %}
+            <label for="username">Username</label>
+            {{ input('text', 'username', user.username, {
+                id: 'username',
+                class: user.hasErrors('username') ? 'error',
+                autocomplete: 'username',
+            }) }}
+            {{ _self.errorList(user.getErrors('username')) }}
+        {% endif %}
+
+        <label for="email">Email</label>
+        {{ input('text', 'email', user.unverifiedEmail ?? user.email, {
+            id: 'email',
+            class: user.hasErrors('email') ? 'error',
+            autocomplete: 'email',
+        }) }}
+        {{ _self.errorList(user.getErrors('username')) }}
+
+        {% if craft.app.projectConfig.get('users.requireEmailVerification') %}
+            <p>New email addresses need to be verified.</p>
+        {% endif %}
+
+        <label for="new-password">New Password</label>
+        {{ input('password', 'newPassword', null, {
+            id: 'new-password',
+            class: user.hasErrors('newPassword') ? 'error',
+            autocomplete: 'new-password',
+        }) }}
+        {{ _self.errorList(user.getErrors('newPassword')) }}
+
+        <label for="current-password">Current Password</label>
+        {{ input('password', 'password', null, {
+            id: 'current-password',
+            class: user.hasErrors('currentPassword') ? 'error',
+            autocomplete: 'current-password',
+        }) }}
+        {{ _self.errorList(user.getErrors('currentPassword')) }}
+
+        <button type="submit">Save Profile</button>
+    </form>
+
+{% endblock %}
