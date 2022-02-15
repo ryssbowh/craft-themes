@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
+use Ryssbowh\CraftThemes\jobs\InstallThemesDataJob;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService, ScssService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
@@ -469,20 +470,17 @@ class Themes extends \craft\base\Plugin
     {
         $_this = $this;
         \Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY, function (ConfigEvent $e) use ($_this) {
-            $oldEdition = $e->oldValue['themes']['edition'] ?? null;
             $newEdition = $e->newValue['themes']['edition'] ?? null;
-            //Let's defer those events in case the edition is changed at the same time as installing/uninstalling
-            //themes, which would result in an endless loop
-            if ($newEdition == Themes::EDITION_PRO and $oldEdition = Themes::EDITION_LITE) {
-                \Craft::$app->projectConfig->defer($e, function ($e) use ($_this) {
-                    $_this->initPro();
-                    Themes::$plugin->registry->installAll(true);
-                });
+            $oldEdition = $e->oldValue['themes']['edition'] ?? null;
+            if (\Craft::$app->projectConfig->isApplyingYamlChanges) {
+                return;
             }
-            if ($newEdition == Themes::EDITION_LITE) {
-                \Craft::$app->projectConfig->defer($e, function ($e) use ($_this) {
-                    Themes::$plugin->registry->uninstallAll();
-                });
+            if ($oldEdition != $newEdition and $newEdition == Themes::EDITION_PRO) {
+                Queue::push(new InstallThemesDataJob);
+            } elseif ($oldEdition != $newEdition and $newEdition == Themes::EDITION_LITE) {
+                Queue::push(new InstallThemesDataJob([
+                    'uninstall' => true
+                ]));
             }
         });
     }

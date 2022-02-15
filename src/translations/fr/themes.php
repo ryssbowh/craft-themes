@@ -133,6 +133,8 @@ return [
 	"Infinite" => "Infini",
 	"Register" => "Inscription",
 	"Install" => "Installer",
+	"Installing themes data" => "Installation des données de thèmes",
+	"Uninstalling  themes data" => "Désinstallation des données de thèmes",
 	"Will fetch the message from the 'notice' and 'error' session flash data" => "Ira chercher les messages dans les données flash de session, 'notice' et 'error'",
 	"Invalid JSON string" => "JSON invalide",
 	"Requested layout doesn't exist, defaulting to {layout}" => "La disposition demandée n'existe pas, {layout} a été sélectionné automatiquement",
