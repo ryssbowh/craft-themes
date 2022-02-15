@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.0.1 2022-02-15
+
+### Fixed
+- Fixed issue when changing edition in plugin store
+
 ## 3.0.0 - 2022-02-14
 > :warning: Read the breaking changes included in 3.0 in the [wiki](https://github.com/ryssbowh/craft-themes/wiki) before updating
 
