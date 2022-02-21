@@ -110,6 +110,6 @@ else
 fi
 
 #Reset composer.json
-composer require craftcms/cms:"3.7.*" -W --quiet
+composer require craftcms/cms:"^3.7" -W --quiet
 
 exit $CODE;
