@@ -1,5 +1,11 @@
 # Craft themes (v3.x)
 
+This is a theme engine, it allows you to create themes that are reusable and extendable. Themes are regular plugins, as such they can have their own settings, migrations etc, but now have a set of templates and assets that will inherit themselves, allowing for faster frontend development.
+
+A rule system allows you to define which theme will be used for which site, language, view port or url path. Or a mix of those 4.
+
+Make use of the built-in compiler to compile scss files or scss inlined in your templates. Scss will use inheritance too !
+
 Version 3 has brought the pro version which is a big change from the v2 version. You can always use the v3 lite version which is very similar to v2 (make sure you check the breaking changes in the [developers readme](https://github.com/ryssbowh/craft-themes/wiki/Developers#breaking-changes)) with a few other changes.
 
 The pro version aims at taking control over how pages are displayed using an interface in the backend and a theme engine that is reusable, adaptable and easy to use.  
