@@ -1,6 +1,8 @@
 # Craft themes (v3.x)
 
-This is a theme engine, it allows you to create themes that are reusable and extendable. Themes are regular plugins, as such they can have their own settings, migrations etc, but now have a set of templates and assets that will inherit themselves, allowing for faster frontend development.
+This is a theme engine for [Craft CMS](https://craftcms.com/) 3.7, it allows you to create themes that are reusable and extendable.
+
+Themes are regular plugins, as such they can have their own settings, migrations etc, but now have a set of templates and assets that will inherit themselves, allowing for faster frontend development.
 
 A rule system allows you to define which theme will be used for which site, language, view port or url path. Or a mix of those 4.
 

@@ -1,11 +1,11 @@
 # ryssbowh/craft-themes Changelog
 
-## 3.0.2 2022-02-21
+## 3.0.2 - 2022-02-21
 
 ### Fixed
 - changed Craft requirement to ^3.7
 
-## 3.0.1 2022-02-15
+## 3.0.1 - 2022-02-15
 
 ### Fixed
 - Fixed issue when changing edition in plugin store
