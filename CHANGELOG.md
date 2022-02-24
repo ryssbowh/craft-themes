@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.0.3 - 2022-02-24
+
+### Fixed
+- proprietary licence in composer.json
+
 ## 3.0.2 - 2022-02-21
 
 ### Fixed
