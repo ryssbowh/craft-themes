@@ -12,6 +12,7 @@
 
 - Integration to commerce
 - Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
+- Twig tests `is instanceof` and `is numeric`
 
 ## 3.0.1 2022-02-15
 
