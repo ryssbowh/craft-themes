@@ -28,6 +28,7 @@ class Install extends Migration
 
         $this->createTable('{{%themes_layouts}}', [
             'id' => $this->primaryKey(),
+            'parent_id' => $this->integer(11)->null(),
             'themeHandle' => $this->string(255)->notNull(),
             'type' => $this->string(255)->notNull(),
             'elementUid' => $this->string(255)->notNull(),
@@ -113,6 +114,8 @@ class Install extends Migration
             'uid' => $this->uid()
         ]);
 
+        $this->addForeignKey('themes_layouts_parent', '{{%themes_layouts}}', ['parent_id'], '{{%themes_layouts}}', ['id'], 'SET NULL', null);
+
         $this->addForeignKey('themes_display_view_mode', '{{%themes_displays}}', ['viewMode_id'], '{{%themes_view_modes}}', ['id'], 'CASCADE', null);
         $this->addForeignKey('themes_display_group', '{{%themes_displays}}', ['group_id'], '{{%themes_groups}}', ['id'], 'SET NULL', null);
 
@@ -136,6 +139,7 @@ class Install extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('themes_layouts_parent', '{{%themes_layouts}}');
         $this->dropForeignKey('themes_display_view_mode', '{{%themes_displays}}');
         $this->dropForeignKey('themes_display_group', '{{%themes_displays}}');
         $this->dropForeignKey('themes_view_mode_layout', '{{%themes_view_modes}}');

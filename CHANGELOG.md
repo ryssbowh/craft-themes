@@ -10,7 +10,9 @@
 
 ### Added
 
+- Integration to commerce
 - Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
+
 ## 3.0.1 2022-02-15
 
 ### Fixed

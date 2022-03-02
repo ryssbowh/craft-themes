@@ -4,25 +4,19 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
-use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
-use Ryssbowh\CraftThemes\models\layouts\ProductLayout;
+use Ryssbowh\CraftThemes\models\layouts\VariantLayout;
 
 /**
- * Handles the postDate value of entry elements
+ * Handles the weight of a variant
  */
-class PostDate extends Field
-{
-    /**
-     * @var boolean
-     */
-    public $hidden = true;
-    
+class Weight extends Field
+{       
     /**
      * @inheritDoc
      */
     public static function getType(): string
     {
-        return 'post-date';
+        return 'weight';
     }
 
     /**
@@ -30,7 +24,10 @@ class PostDate extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        return $layout instanceof EntryLayout or $layout instanceof ProductLayout;
+        if ($layout instanceof VariantLayout) {
+            return $layout->element->hasDimensions;
+        }
+        return false;
     }
 
     /**
@@ -38,7 +35,7 @@ class PostDate extends Field
      */
     public function getHandle(): string
     {
-        return 'postDate';
+        return 'weight';
     }
 
     /**
@@ -46,6 +43,6 @@ class PostDate extends Field
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Date posted');
+        return \Craft::t('themes', 'Weight');
     }
 }

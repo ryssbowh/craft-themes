@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
+use Ryssbowh\CraftThemes\models\layouts\ProductLayout;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 
 /**
@@ -36,7 +37,7 @@ class ElementUrl extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        return $layout instanceof EntryLayout or $layout instanceof CategoryLayout or $layout instanceof VolumeLayout;
+        return $layout instanceof EntryLayout or $layout instanceof CategoryLayout or $layout instanceof VolumeLayout or $layout instanceof ProductLayout;
     }
 
     /**

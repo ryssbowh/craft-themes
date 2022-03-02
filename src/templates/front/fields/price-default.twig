@@ -1,0 +1,7 @@
+{% extends "fields/_field" %}
+
+{% set paymentCurrency = craft.commerce.carts.cart.paymentCurrency %}
+
+{% block content %}
+    {{ value|commerceCurrency(paymentCurrency, convert=true) }}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% set weightUnit = craft.commerce.settings.weightUnits %}
+
+{% block content %}
+    {{ macros.convertWeight(value, weightUnit, options.unit, options.decimals) }}{% if options.showUnit %}{{ options.unit }}{% endif %}
+{% endblock %}

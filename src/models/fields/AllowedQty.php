@@ -4,25 +4,19 @@ namespace Ryssbowh\CraftThemes\models\fields;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
-use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
-use Ryssbowh\CraftThemes\models\layouts\ProductLayout;
+use Ryssbowh\CraftThemes\models\layouts\VariantLayout;
 
 /**
- * Handles the postDate value of entry elements
+ * Handles the min and max quantity of a variant
  */
-class PostDate extends Field
-{
-    /**
-     * @var boolean
-     */
-    public $hidden = true;
-    
+class AllowedQty extends Field
+{       
     /**
      * @inheritDoc
      */
     public static function getType(): string
     {
-        return 'post-date';
+        return 'allowed-qty';
     }
 
     /**
@@ -30,7 +24,19 @@ class PostDate extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        return $layout instanceof EntryLayout or $layout instanceof ProductLayout;
+        return $layout instanceof VariantLayout;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRenderingValue()
+    {
+        $variant = Themes::$plugin->view->renderingElement;
+        return [
+            'min' => $variant->minQty,
+            'max' => $variant->maxQty
+        ];
     }
 
     /**
@@ -38,7 +44,7 @@ class PostDate extends Field
      */
     public function getHandle(): string
     {
-        return 'postDate';
+        return 'quantity';
     }
 
     /**
@@ -46,6 +52,6 @@ class PostDate extends Field
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Date posted');
+        return \Craft::t('themes', 'Allowed quantity');
     }
 }

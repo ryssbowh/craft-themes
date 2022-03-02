@@ -6,7 +6,9 @@ use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
+use Ryssbowh\CraftThemes\models\layouts\ProductLayout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
+use Ryssbowh\CraftThemes\models\layouts\VariantLayout;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 
 /**
@@ -32,7 +34,12 @@ class Title extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        if ($layout instanceof EntryLayout or $layout instanceof CategoryLayout or $layout instanceof VolumeLayout) {
+        if ($layout instanceof EntryLayout or 
+            $layout instanceof CategoryLayout or 
+            $layout instanceof VolumeLayout or 
+            $layout instanceof ProductLayout or 
+            $layout instanceof VariantLayout
+        ) {
             return true;
         }
         return false;

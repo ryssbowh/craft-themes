@@ -25,6 +25,20 @@ interface LayoutInterface
     public function getType(): string;
 
     /**
+     * Parent getter
+     * 
+     * @return ?LayoutInterface
+     */
+    public function getParent(): ?LayoutInterface;
+
+    /**
+     * Parent setter
+     * 
+     * @param LayoutInterface $layout
+     */
+    public function setParent(LayoutInterface $layout);
+
+    /**
      * Can this layout be assigned blocks
      * 
      * @return bool

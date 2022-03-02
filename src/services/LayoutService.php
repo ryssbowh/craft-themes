@@ -15,12 +15,16 @@ use Ryssbowh\CraftThemes\models\layouts\CustomLayout;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
 use Ryssbowh\CraftThemes\models\layouts\GlobalLayout;
 use Ryssbowh\CraftThemes\models\layouts\Layout;
+use Ryssbowh\CraftThemes\models\layouts\ProductLayout;
 use Ryssbowh\CraftThemes\models\layouts\TagLayout;
 use Ryssbowh\CraftThemes\models\layouts\UserLayout;
+use Ryssbowh\CraftThemes\models\layouts\VariantLayout;
 use Ryssbowh\CraftThemes\models\layouts\VolumeLayout;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use Ryssbowh\CraftThemes\services\ViewModeService;
 use craft\base\Element;
+use craft\commerce\Plugin as Commerce;
+use craft\commerce\elements\Product;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\events\ConfigEvent;
@@ -44,6 +48,8 @@ class LayoutService extends Service
     const VOLUME_HANDLE = 'volume';
     const GLOBAL_HANDLE = 'global';
     const TAG_HANDLE = 'tag';
+    const PRODUCT_HANDLE = 'product';
+    const VARIANT_HANDLE = 'variant';
     const CUSTOM_HANDLE = 'custom';
 
     /**
@@ -242,12 +248,13 @@ class LayoutService extends Service
         static::$isInstalling = true;
         $ids = [];
         foreach ($this->getAvailable($theme->handle) as $layout) {
-            if (!$layout2 = $this->get($theme, $layout->type, $layout->elementUid)) {
-                $layout->themeHandle = $theme->handle;
-                $layout2 = $layout;
+            $layout->themeHandle = $theme->handle;
+            if ($exists = $this->get($theme, $layout->type, $layout->elementUid)) {
+                $layout->id = $exists->id;
+                $layout->uid = $exists->uid;
             }
-            $this->installLayoutData($layout2);
-            $ids[] = $layout2->id;
+            $this->installLayoutData($layout);
+            $ids[] = $layout->id;
         }
         $layouts = $this->all()
             ->whereNotIn('id', $ids)
@@ -300,11 +307,10 @@ class LayoutService extends Service
      */
     public function get($theme, string $type, string $elementUid = ''): ?LayoutInterface
     {
-        $layout = $this->all()
+        return $this->all()
             ->where('themeHandle', $this->getThemeHandle($theme))
             ->where('elementUid', $elementUid)
             ->firstWhere('type', $type);
-        return $layout;
     }
 
     /**
@@ -355,6 +361,10 @@ class LayoutService extends Service
         $existing = $this->get($layout->theme, $layout->type, $layout->elementUid ?? '');
         if ($existing and $existing->id != $layout->id) {
             throw LayoutException::alreadyExists($layout->theme, $layout->type, $layout->elementUid ?? '');
+        }
+
+        if ($parent = $layout->parent and !$parent->id) {
+            $this->save($parent);
         }
 
         if (!$layout->hasViewMode(ViewModeService::DEFAULT_HANDLE)) {
@@ -435,6 +445,11 @@ class LayoutService extends Service
             $layout->themeHandle = $data['themeHandle'];
             $layout->hasBlocks = $data['hasBlocks'];
             $layout->name = $data['name'];
+            $layout->parent_id = null;
+            if ($data['parent'] ?? null) {
+                $parent = $this->getRecordByUid($data['parent']);
+                $layout->parent_id = $parent->id;
+            }
             $res = $layout->save(false);
             
             $transaction->commit();
@@ -550,6 +565,8 @@ class LayoutService extends Service
             $layout = $this->get($theme, self::CATEGORY_HANDLE, $element->getGroup()->uid);
         } elseif ($element instanceof Entry) {
             $layout = $this->get($theme, self::ENTRY_HANDLE, $element->getType()->uid);
+        } elseif ($element instanceof Product) {
+            $layout = $this->get($theme, self::PRODUCT_HANDLE, $element->getType()->uid);
         }
         return $layout;
     }
@@ -618,6 +635,12 @@ class LayoutService extends Service
                 break;
             case self::TAG_HANDLE:
                 $layout = new TagLayout;
+                break;
+            case self::PRODUCT_HANDLE:
+                $layout = new ProductLayout;
+                break;
+            case self::VARIANT_HANDLE:
+                $layout = new VariantLayout;
                 break;
             default:
                 throw LayoutException::unknownType($config['type']);
@@ -727,6 +750,7 @@ class LayoutService extends Service
             $this->createVolumesLayouts($themeHandle),
             $this->createGlobalsLayouts($themeHandle),
             $this->createTagsLayouts($themeHandle),
+            $this->createProductsLayouts($themeHandle),
             $this->getCustomLayouts($themeHandle)
         );
     }
@@ -869,6 +893,36 @@ class LayoutService extends Service
                 'type' => self::TAG_HANDLE,
                 'elementUid' => $group->uid,
                 'themeHandle' => $themeHandle
+            ]);
+        }
+        return $layouts;
+    }
+
+    /**
+     * Creates all product and variant layouts
+     *
+     * @param  string $themeHandle
+     * @return LayoutInterface[]
+     */
+    protected function createProductsLayouts(string $themeHandle): array
+    {
+        if (!\Craft::$app->plugins->getPlugin('commerce')) {
+            return [];
+        }
+        $types = Commerce::getInstance()->productTypes->getAllProductTypes();
+        $layouts = [];
+        foreach ($types as $type) {
+            $productLayout = $this->create([
+                'type' => self::PRODUCT_HANDLE,
+                'elementUid' => $type->uid,
+                'themeHandle' => $themeHandle
+            ]);
+            $layouts[] = $productLayout;
+            $layouts[] = $this->create([
+                'type' => self::VARIANT_HANDLE,
+                'elementUid' => $type->uid,
+                'themeHandle' => $themeHandle,
+                'parent' => $productLayout
             ]);
         }
         return $layouts;

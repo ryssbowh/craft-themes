@@ -6,6 +6,7 @@ use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
+use Ryssbowh\CraftThemes\behaviors\ProductTypeLayoutBehavior;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
@@ -18,6 +19,9 @@ use Twig\Extra\Intl\IntlExtension;
 use Twig\TwigTest;
 use craft\base\PluginInterface;
 use craft\base\Volume;
+use craft\commerce\elements\Variant;
+use craft\commerce\models\ProductType;
+use craft\commerce\services\ProductTypes;
 use craft\elements\GlobalSet;
 use craft\elements\User;
 use craft\events\{ElementEvent, DefineBehaviorsEvent, CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
@@ -51,7 +55,7 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '3.0.0';
+    public $schemaVersion = '3.1.0';
     
     /**
      * @inheritdoc
@@ -260,7 +264,7 @@ class Themes extends \craft\base\Plugin
             Volume::class => LayoutService::VOLUME_HANDLE,
             TagGroup::class => LayoutService::TAG_HANDLE,
             GlobalSet::class => LayoutService::GLOBAL_HANDLE,
-            User::class => LayoutService::USER_HANDLE
+            User::class => LayoutService::USER_HANDLE,
         ];
         foreach ($types as $class => $type) {
             Event::on($class::className(), $class::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) use ($type) {
@@ -272,6 +276,15 @@ class Themes extends \craft\base\Plugin
                 ]);
             });
         }
+        // This is not possible as of now
+        // @see https://github.com/craftcms/commerce/issues/2715
+        // Event::on(ProductType::class, ProductType::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) use ($type) {
+        //     $event->sender->attachBehaviors([
+        //         'themeLayout' => [
+        //             'class' => ProductTypeLayoutBehavior::class
+        //         ]
+        //     ]);
+        // });
     }
 
     /**
@@ -575,6 +588,15 @@ class Themes extends \craft\base\Plugin
                 $layouts->onCraftElementSaved(LayoutService::TAG_HANDLE, $e->tokenMatches[0]);
             })
             ->onRemove(Tags::CONFIG_TAGGROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementDeleted($e->tokenMatches[0]);
+            })
+            ->onAdd(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::PRODUCT_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onUpdate(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                $layouts->onCraftElementSaved(LayoutService::PRODUCT_HANDLE, $e->tokenMatches[0]);
+            })
+            ->onRemove(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
                 $layouts->onCraftElementDeleted($e->tokenMatches[0]);
             })
             ->onUpdate(Users::CONFIG_USERLAYOUT_KEY, function (ConfigEvent $e) use ($layouts) {

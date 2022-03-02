@@ -1,0 +1,17 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% if options.display %}
+        {% if (element.hasUnlimitedStock or value > 0) %}
+            {{ options.inStockLabel }}
+        {% else %}
+            {{ options.outStockLabel }}
+        {% endif %}
+    {% else %}
+        {% if (element.hasUnlimitedStock) %}
+            {{ options.unlimitedStockLabel }}
+        {% else %}
+            {{ value }}
+        {% endif %}
+    {% endif %}
+{% endblock %}

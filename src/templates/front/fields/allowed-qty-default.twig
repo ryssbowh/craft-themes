@@ -1,0 +1,10 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% if options.showMin and value.min is numeric %}
+        <p>{{ options.minQtyLabel }}: {{ value.min }}</p>
+    {% endif %}
+    {% if options.showMax and value.max is numeric %}
+        <p>{{ options.maxQtyLabel }}: {{ value.max }}</p>
+    {% endif %}
+{% endblock %}

@@ -61,6 +61,11 @@ class Layout extends Model implements LayoutInterface
     public $name;
 
     /**
+     * @var integer
+     */
+    public $parent_id;
+
+    /**
      * @var string
      */
     protected $_type = LayoutService::DEFAULT_HANDLE;
@@ -82,6 +87,11 @@ class Layout extends Model implements LayoutInterface
     protected $_regions;
 
     /**
+     * @var ?LayoutInterface
+     */
+    protected $_parent;
+
+    /**
      * @inheritDoc
      */
     public function defineRules(): array
@@ -90,7 +100,8 @@ class Layout extends Model implements LayoutInterface
             [['themeHandle'], 'required'],
             [['themeHandle', 'elementUid', 'name'], 'string'],
             ['hasBlocks', 'boolean', 'trueValue' => true, 'falseValue' => false],
-            [['uid', 'id', 'element'], 'safe'],
+            [['uid', 'id', 'element', 'parent'], 'safe'],
+            ['parent_id', 'integer'],
             ['themeHandle', 'validateThemeHandle'],
             ['elementUid', 'validateElementUid']
         ];
@@ -172,6 +183,28 @@ class Layout extends Model implements LayoutInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getParent(): ?LayoutInterface
+    {
+        if ($this->_parent === null) {
+            $this->_parent = false;
+            if ($this->parent_id) {
+                $this->_parent = Themes::$plugin->layouts->getById($this->parent_id);
+            }
+        }
+        return $this->_parent ?: null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setParent(LayoutInterface $layout)
+    {
+        $this->_parent = $layout;
+    }
+
+    /**
      * Is custom getter
      * 
      * @return bool
@@ -241,6 +274,7 @@ class Layout extends Model implements LayoutInterface
             'name' => $this->name,
             'type' => $this->type,
             'elementUid' => $this->elementUid,
+            'parent' => $this->parent ? $this->parent->uid : null,
             'hasBlocks' => (bool)$this->hasBlocks
         ];
     }
@@ -497,13 +531,13 @@ class Layout extends Model implements LayoutInterface
         $displayer = $field->displayer->handle;
         $handle = $field->handle;
         return [
-            'fields/' . $type . '_' . $key . '_' . $viewMode . '_' . $displayer . '-' . $handle,
+            'fields/' . $type . '_' . $key . '_' . $viewMode . '_' . $displayer . '_' . $handle,
             'fields/' . $type . '_' . $key . '_' . $viewMode . '_' . $displayer,
-            'fields/' . $type . '_' . $key . '_' . $displayer . '-' . $handle,
+            'fields/' . $type . '_' . $key . '_' . $displayer . '_' . $handle,
             'fields/' . $type . '_' . $key . '_' . $displayer,
-            'fields/' . $type . '_' . $displayer . '-' . $handle,
+            'fields/' . $type . '_' . $displayer . '_' . $handle,
             'fields/' . $type . '_' . $displayer,
-            'fields/' . $displayer . '-' . $handle,
+            'fields/' . $displayer . '_' . $handle,
             'fields/' . $displayer
         ];
     }
