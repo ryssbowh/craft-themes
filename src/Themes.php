@@ -219,6 +219,16 @@ class Themes extends \craft\base\Plugin
             return is_array($value);
         });
         $twig->addTest($isArray);
+        //Add the twig test 'is instanceof'
+        $isInstance = new TwigTest('instanceof', function ($value, $class) {
+            return $value instanceof $class;
+        });
+        $twig->addTest($isInstance);
+        //Add the twig test 'is numeric'
+        $isNumeric = new TwigTest('numeric', function ($value) {
+            return is_numeric($value);
+        });
+        $twig->addTest($isNumeric);
         // Registers Twig Intl extension to get the filter `format_datetime`
         // @see https://twig.symfony.com/doc/3.x/filters/format_datetime.html
         $twig->addExtension(new IntlExtension());

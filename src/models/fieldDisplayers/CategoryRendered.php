@@ -30,7 +30,7 @@ class CategoryRendered extends CategoryLabel
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Rendered as view mode');
+        return \Craft::t('themes', 'Rendered');
     }
 
     /**

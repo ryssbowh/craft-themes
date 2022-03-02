@@ -189,10 +189,10 @@ input[disabled] {
 }
 .modal {
     padding-bottom: 62px;
-    min-width: 300px;
-    min-height: 300px;
-    height: 307px;
-    width: 300px;
+    max-height: 307px !important;
+    max-width: 300px !important;
+    min-height: unset !important;
+    min-width: unset !important;
     .body {
         height: calc(100% - 65px);
     }

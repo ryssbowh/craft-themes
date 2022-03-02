@@ -23,7 +23,7 @@ class AssetRendered extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Rendered as view mode');
+        return \Craft::t('themes', 'Rendered');
     }
 
     /**

@@ -22,15 +22,7 @@ class EntryRendered extends FieldDisplayer
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Rendered as view mode');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function isDefault(string $fieldClass): bool
-    {
-        return false;
+        return \Craft::t('themes', 'Rendered');
     }
 
     /**

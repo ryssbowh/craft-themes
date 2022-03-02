@@ -22,7 +22,7 @@ class UserRendered extends UserDefault
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Rendered as view mode');
+        return \Craft::t('themes', 'Rendered');
     }
 
     /**

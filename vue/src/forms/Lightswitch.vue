@@ -2,7 +2,19 @@
     <form-field :errors="errors" :definition="definition" :name="name">
         <template v-slot:main>
             <div :class="inputClass">
-                <button type="button" :class="{lightswitch: true, on: value}">
+                <div class="lightswitch-outer-container" v-if="definition.onLabel">
+                    <div class="lightswitch-inner-container">
+                        <span data-toggle="off" aria-hidden="true" v-if="definition.offLabel">{{ definition.offLabel }}</span>
+                        <button type="button" :class="{lightswitch: true, on: value}">
+                            <div class="lightswitch-container">
+                                <div class="handle"></div>
+                            </div>
+                            <input type="hidden" :value="value ? 1 : ''">
+                        </button>
+                        <span data-toggle="off" aria-hidden="true" v-if="definition.onLabel">{{ definition.onLabel }}</span>
+                    </div>
+                </div>
+                <button v-if="!definition.onLabel" type="button" :class="{lightswitch: true, on: value}">
                     <div class="lightswitch-container">
                         <div class="handle"></div>
                     </div>

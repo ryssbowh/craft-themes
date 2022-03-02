@@ -1,5 +1,16 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.0 unreleased
+
+### Fixed
+- Fixed small modal sizes
+
+### Changed
+- Rendered displayers label
+
+### Added
+
+- Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
 ## 3.0.1 2022-02-15
 
 ### Fixed
