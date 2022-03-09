@@ -1,17 +1,18 @@
 <?php
 namespace Ryssbowh\CraftThemes\services;
 
+use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\RegisterFieldsEvent;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
-use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\fields\CraftField;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
-use craft\base\Field as BaseField;
+use Ryssbowh\CraftThemes\records\ParentPivotRecord;
+use craft\base\Field;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
@@ -28,6 +29,11 @@ class FieldsService extends Service
     private $_fields;
 
     /**
+     * @var Collection
+     */
+    private $_parentPivots;
+
+    /**
      * List of registered fields, indexed by their types
      * @var string[]
      */
@@ -38,7 +44,7 @@ class FieldsService extends Service
      * 
      * @return Collection
      */
-    public function all()
+    public function getAll(): Collection
     {
         if ($this->_fields === null) {
             $records = FieldRecord::find()->all();
@@ -48,6 +54,104 @@ class FieldsService extends Service
             }
         }
         return $this->_fields;
+    }
+
+    /**
+     * Get all parent pivots
+     * 
+     * @return Collection
+     */
+    public function getParentPivots(): Collection
+    {
+        if ($this->_parentPivots === null) {
+            $this->_parentPivots = collect(ParentPivotRecord::find()
+                ->with(['field', 'parent'])
+                ->orderBy(['order' => SORT_ASC])
+                ->all()
+            );
+        }
+        return $this->_parentPivots;
+    }
+
+    /**
+     * Get the child of a field related to a Craft field
+     * 
+     * @param  FieldInterface $field
+     * @param  Field          $craftField
+     * @return ?FieldInterface
+     */
+    public function getChild(FieldInterface $field, Field $craftField): ?FieldInterface
+    {
+        $child = $this->parentPivots
+            ->where('parent_id', $field->id)
+            ->where('field.craft_field_id', $craftField->id)
+            ->first();
+        if ($child) {
+            $child = $this->getById($child->field_id);
+        }
+        return $child;
+    }
+
+    /**
+     * Get the parent of a field
+     * 
+     * @param  FieldInterface $field
+     * @return ?FieldInterface
+     */
+    public function getParent(FieldInterface $field): ?FieldInterface
+    {
+        if ($field->id) {
+            $pivot = $this->parentPivots
+                ->firstWhere('field_id', $field->id);
+            return $pivot ? $this->getById($pivot->parent_id) : null;
+        }
+        return null;
+    }
+
+    /**
+     * Get the children pivots for a field
+     * 
+     * @param  FieldInterface $field
+     * @return ParentPivotRecord[]
+     */
+    public function getChildrenPivots(FieldInterface $field): array
+    {
+        return $this->parentPivots
+            ->where('parent_id', $field->id)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Get the children of a field
+     * 
+     * @param  FieldInterface $field
+     * @return FieldInterface[]
+     */
+    public function getChildren(FieldInterface $field): array
+    {
+        $_this = $this;
+        return array_map(function ($record) use ($_this, $field) {
+            return $_this->getById($record->field_id);
+        }, $this->getChildrenPivots($field));
+    }
+
+    /**
+     * Get a parent pivot record, or creates a new one
+     * 
+     * @param  int    $parentId
+     * @param  int    $fieldId
+     * @return ParentPivotRecord
+     */
+    public function getParentPivotRecord(int $parentId, int $fieldId): ParentPivotRecord
+    {
+        return $this->parentPivots
+            ->where('parent_id', $parentId)
+            ->firstWhere('field_id', $fieldId)
+            ?? new ParentPivotRecord([
+                'parent_id' => $parentId,
+                'field_id' => $fieldId
+            ]);
     }
 
     /**
@@ -77,21 +181,21 @@ class FieldsService extends Service
      * Get a field by id
      * 
      * @param  int    $id
-     * @return Field
+     * @return FieldInterface
      */
-    public function getById(int $id): Field
+    public function getById(int $id): FieldInterface
     {
-        return $this->all()->firstWhere('id', $id);
+        return $this->resolveParent($this->all->firstWhere('id', $id));
     }
 
     /**
-     * Create a field from config
+     * Create a field from config or active record
      * 
      * @param  array|ActiveRecord $config
-     * @return Field
+     * @return FieldInterface
      * @throws FieldException
      */
-    public function create($config): Field
+    public function create($config): FieldInterface
     {
         if ($config instanceof FieldRecord) {
             $config = $config->getAttributes();
@@ -100,6 +204,33 @@ class FieldsService extends Service
             throw FieldException::noType();
         }
         return $this->getFieldClassByType($config['type'])::create($config);
+    }
+
+    /**
+     * Create a field from a craft field
+     * 
+     * @param  Field $field
+     * @return FieldInterface
+     */
+    public function createFromField(Field $craftField): FieldInterface
+    {
+        return $this->create($this->buildConfig($craftField));
+    }
+
+    /**
+     * Build the config for a craft field
+     * 
+     * @param  Field $field
+     * @return array
+     */
+    public function buildConfig(Field $craftField): array
+    {
+        foreach ($this->registeredFields as $fieldClass) {
+            if ($fieldClass::forField() == get_class($craftField)) {
+                return $fieldClass::buildConfig($craftField);
+            }
+        }
+        return CraftField::buildConfig($craftField);
     }
 
     /**
@@ -130,6 +261,7 @@ class FieldsService extends Service
         }
 
         TagDependency::invalidate(\Craft::$app->cache, DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $field->id);
+        $this->_parentPivots = null;
 
         return true;
     }
@@ -143,7 +275,8 @@ class FieldsService extends Service
     public function delete(FieldInterface $field): bool
     {
         if ($field::delete($field)) {
-            $this->_fields = $this->all()->where('id', '!=', $field->id);
+            $this->_fields = $this->all->where('id', '!=', $field->id);
+            $this->_parentPivots = null;
             return true;
         }
         return false;
@@ -199,49 +332,33 @@ class FieldsService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         $parts = explode('.', self::CONFIG_KEY);
-        foreach ($this->all() as $field) {
+        foreach ($this->all as $field) {
             $e->config[$parts[0]][$parts[1]][$field->uid] = $field->getConfig();
         }
     }
 
     /**
-     * Populates a field from post
+     * Populates a field from array of data
      * 
      * @param  array            $data
      * @return FieldInterface
      */
-    public function populateFromPost(array $data): FieldInterface
+    public function populateFromData(array $data): FieldInterface
     {
         $field = $this->getById($data['id']);
-        $field->populateFromPost($data);
+        $field->populateFromData($data);
         return $field;
-    }
-
-    /**
-     * Create a field from a craft field
-     * 
-     * @param  BaseField $field
-     * @return Field
-     */
-    public function createFromField(BaseField $craftField): Field
-    {
-        foreach ($this->registeredFields as $fieldClass) {
-            if ($fieldClass::forField() == get_class($craftField)) {
-                return $fieldClass::createFromField($craftField);
-            }
-        }
-        return CraftField::createFromField($craftField);
     }
 
     /**
      * Get a field for a display
      * 
      * @param  DisplayInterface $display
-     * @return ?Field
+     * @return ?FieldInterface
      */
-    public function getForDisplay(DisplayInterface $display): ?Field
+    public function getForDisplay(DisplayInterface $display): ?FieldInterface
     {
-        return $this->all()->firstWhere('display_id', $display->id);
+        return $this->resolveParent($this->all->firstWhere('display_id', $display->id));
     }
 
     /**
@@ -262,8 +379,8 @@ class FieldsService extends Service
      */
     protected function add(FieldInterface $field)
     {
-        if (!$this->all()->firstWhere('id', $field->id)) {
-            $this->all()->push($field);
+        if (!$this->all->firstWhere('id', $field->id)) {
+            $this->all->push($field);
         }
     }
 
@@ -290,5 +407,19 @@ class FieldsService extends Service
             throw FieldException::unknownType($type);
         }
         return $fields[$type];
+    }
+
+    /**
+     * Resolve the parent of a field
+     * 
+     * @param  FieldInterface $field
+     * @return ?FieldInterface
+     */
+    protected function resolveParent(?FieldInterface $field): ?FieldInterface
+    {
+        if ($field) {
+            $field->parent = $this->getParent($field);
+        }
+        return $field;
     }
 }

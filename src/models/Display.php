@@ -174,10 +174,10 @@ class Display extends Model implements DisplayInterface
     public function getViewMode(): ?ViewModeInterface
     {
         if (is_null($this->_viewMode)) {
-            if ($this->viewMode_id) {
-                $this->_viewMode = Themes::$plugin->viewModes->getById($this->viewMode_id);
-            } elseif ($this->group_id) {
+            if ($this->group) {
                 $this->_viewMode = $this->group->viewMode;
+            } elseif ($this->viewMode_id) {
+                $this->_viewMode = Themes::$plugin->viewModes->getById($this->viewMode_id);
             }
         }
         return $this->_viewMode;

@@ -14,9 +14,14 @@ class VariantLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
+     * @inheritDoc
      */
     protected $_type = LayoutService::VARIANT_HANDLE;
+
+    /**
+     * @inheritDoc
+     */
+    protected $fieldLayoutIdAttribute = 'variantFieldLayoutId';
 
     /**
      * @inheritDoc
@@ -42,14 +47,6 @@ class VariantLayout extends Layout
     public function canHaveBlocks(): bool
     {
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFieldLayout(): ?FieldLayout
-    {
-        return $this->element->getVariantFieldLayout();
     }
 
     /**

@@ -1,20 +1,20 @@
 <?php
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\MatrixSlickOptions;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\SuperTableSlickOptions;
 use Ryssbowh\CraftThemes\traits\SlickRenderer;
 
 /**
- * Renders a matrix field as a slick carousel
+ * Renders a super table field as a slick carousel
  */
-class MatrixSlick extends MatrixDefault
+class SuperTableSlick extends SuperTableDefault
 {
     use SlickRenderer;
     
     /**
      * @inheritDoc
      */
-    public static $handle = 'matrix-slick';
+    public static $handle = 'super-table-slick';
 
     /**
      * @inheritDoc
@@ -29,6 +29,6 @@ class MatrixSlick extends MatrixDefault
      */
     protected function getOptionsModel(): string
     {
-        return MatrixSlickOptions::class;
+        return SuperTableSlickOptions::class;
     }
 }

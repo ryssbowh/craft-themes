@@ -1,7 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\interfaces;
 
-use craft\base\Field as BaseField;
+use craft\base\Field ;
 
 /**
  * Class that handles most Craft fields (all of them apart from Matrix and Table)
@@ -11,23 +11,30 @@ interface CraftFieldInterface extends FieldInterface
     /**
      * Get the associated craft field instance
      * 
-     * @return BaseField
+     * @return Field
      */
-    public function getCraftField(): BaseField;
+    public function getCraftField(): Field;
+
+    /**
+     * Build config from a field
+     * 
+     * @param  Field $craftField
+     * @return array
+     */
+    public static function buildConfig(Field $craftField): array;
 
     /**
      * Create field from a craft field
      * 
-     * @param  BaseField $craftField
+     * @param  Field $craftField
      * @return FieldInterface
      */
-    public static function createFromField(BaseField $craftField): FieldInterface;
+    public static function createFromField(Field $craftField): FieldInterface;
 
     /**
      * Callback when the associated Craft field is changed
      * 
-     * @param  BaseField $field
      * @return bool should the associated display be resaved
      */
-    public function onCraftFieldChanged(BaseField $field): bool;
+    public function onCraftFieldChanged(): bool;
 }

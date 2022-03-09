@@ -4,12 +4,13 @@ namespace Ryssbowh\CraftThemes\models;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use craft\base\Model;
 use craft\helpers\StringHelper;
-use craft\models\MatrixBlockType;
+use verbb\supertable\SuperTable;
+use verbb\supertable\models\SuperTableBlockTypeModel;
 
 /**
- * Class that handles a block type inside a matrix
+ * Class that handles a block type inside a super table
  */
-class DisplayMatrixType extends Model
+class DisplaySuperTableType extends Model
 {
     /**
      * @var array
@@ -23,7 +24,7 @@ class DisplayMatrixType extends Model
     public $type_id;
 
     /**
-     * @var MatrixBlockType
+     * @var SuperTableBlockTypeModel
      */
     private $_type;
 
@@ -43,24 +44,24 @@ class DisplayMatrixType extends Model
     }
 
     /**
-     * Matrix block type getter
+     * Super table block type getter
      * 
-     * @return MatrixBlockType
+     * @return SuperTableBlockTypeModel
      */
-    public function getType(): MatrixBlockType
+    public function getType(): SuperTableBlockTypeModel
     {
         if ($this->_type === null) {
-            $this->_type = \Craft::$app->matrix->getBlockTypeById($this->type_id);
+            $this->_type = SuperTable::$plugin->getService()->getBlockTypeById($this->type_id);
         }
         return $this->_type;
     }
 
     /**
-     * Matrix block type getter
+     * Super table block type setter
      * 
-     * @param MatrixBlockType $type
+     * @param SuperTableBlockTypeModel $type
      */
-    public function setType(MatrixBlockType $type)
+    public function setType(SuperTableBlockTypeModel $type)
     {
         $this->_type = $type;
         $this->type_id = $type->id;

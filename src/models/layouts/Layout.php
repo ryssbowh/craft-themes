@@ -92,6 +92,12 @@ class Layout extends Model implements LayoutInterface
     protected $_parent;
 
     /**
+     * Attribute that stores the field layout id
+     * @var string
+     */
+    protected $fieldLayoutIdAttribute = 'fieldLayoutId';
+
+    /**
      * @inheritDoc
      */
     public function defineRules(): array

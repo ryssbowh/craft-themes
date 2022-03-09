@@ -2,18 +2,18 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\MatrixDefaultOptions;
-use craft\fields\Matrix;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\SuperTableDefaultOptions;
+use verbb\supertable\fields\SuperTableField;
 
 /**
- * Renders a matrix field
+ * Renders a super table field
  */
-class MatrixDefault extends FieldDisplayer
+class SuperTableDefault extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'matrix-default';
+    public static $handle = 'super-table-default';
 
     /**
      * @inheritDoc
@@ -36,7 +36,7 @@ class MatrixDefault extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Matrix::class];
+        return [SuperTableField::class];
     }
 
     /**
@@ -44,6 +44,6 @@ class MatrixDefault extends FieldDisplayer
      */
     protected function getOptionsModel(): string
     {
-        return MatrixDefaultOptions::class;
+        return SuperTableDefaultOptions::class;
     }
 }

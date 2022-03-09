@@ -12,7 +12,7 @@ class GlobalLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
+     * @inheritDoc
      */
     protected $_type = LayoutService::GLOBAL_HANDLE;
 

@@ -306,7 +306,7 @@ abstract class Block extends Model implements BlockInterface
         if (is_string($options)) {
             $options = json_decode($options, true);
         }
-        $this->options->setValues($options);
+        $this->options->replaceValues($options);
     }
 
     /**
@@ -354,7 +354,7 @@ abstract class Block extends Model implements BlockInterface
         if ($this->_cacheStrategy === null) {
             if ($this->_cacheStrategyHandle and Themes::$plugin->blockCache->hasStrategy($this->_cacheStrategyHandle)) {
                 $this->_cacheStrategy = Themes::$plugin->blockCache->getStrategy($this->_cacheStrategyHandle);
-                $this->_cacheStrategy->options->setValues($this->_cacheStrategyOptions);
+                $this->_cacheStrategy->options->replaceValues($this->_cacheStrategyOptions);
             } else {
                 $this->_cacheStrategy = false;
             }

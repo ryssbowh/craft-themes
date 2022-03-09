@@ -12,7 +12,7 @@ use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\jobs\InstallThemesDataJob;
 use Ryssbowh\CraftThemes\models\Settings;
-use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, MatrixService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService, ScssService};
+use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService, ScssService};
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
@@ -437,12 +437,11 @@ class Themes extends \craft\base\Plugin
             ],
             'displays' => DisplayService::class,
             'fields' => FieldsService::class,
-            'matrix' => MatrixService::class,
             'tables' => TablesService::class,
             'fileDisplayers' => FileDisplayerService::class,
             'groups' => GroupsService::class,
             'creator' => CreatorService::class,
-            'scss' => ScssService::class,
+            'scss' => ScssService::class
         ]);
     }
 

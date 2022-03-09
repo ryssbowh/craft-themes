@@ -12,7 +12,7 @@ class VolumeLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
+     * @inheritDoc
      */
     protected $_type = LayoutService::VOLUME_HANDLE;
 

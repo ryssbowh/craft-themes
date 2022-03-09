@@ -12,7 +12,7 @@ class CategoryLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
+     * @inheritDoc
      */
     protected $_type = LayoutService::CATEGORY_HANDLE;
 

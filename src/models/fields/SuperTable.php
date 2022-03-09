@@ -2,25 +2,21 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\exceptions\DisplayMatrixException;
-use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
-use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
-use Ryssbowh\CraftThemes\models\DisplayMatrixType;
-use Ryssbowh\CraftThemes\records\DisplayRecord;
-use Ryssbowh\CraftThemes\records\FieldRecord;
-use Ryssbowh\CraftThemes\records\ParentPivotRecord;
+use Ryssbowh\CraftThemes\models\DisplaySuperTableType;
+use Ryssbowh\CraftThemes\records\SuperTablePivotRecord;
 use Ryssbowh\CraftThemes\services\DisplayerCacheService;
 use craft\base\Field as BaseField;
-use craft\elements\MatrixBlock;
-use craft\fields\Matrix as CraftMatrix;
 use craft\helpers\StringHelper;
+use verbb\supertable\SuperTable as SuperTablePlugin;
+use verbb\supertable\elements\SuperTableBlockElement;
+use verbb\supertable\fields\SuperTableField;
 
 /**
- * Handles a Craft matrix field
+ * Handles a Super table field
  */
-class Matrix extends CraftField implements MatrixInterface
+class SuperTable extends CraftField
 {
     private $_types;
 
@@ -70,7 +66,7 @@ class Matrix extends CraftField implements MatrixInterface
      */
     public static function getType(): string
     {
-        return 'matrix';
+        return 'super-table';
     }
 
     /**
@@ -78,7 +74,7 @@ class Matrix extends CraftField implements MatrixInterface
      */
     public static function forField(): string
     {
-        return CraftMatrix::class;
+        return SuperTableField::class;
     }
 
     /**
@@ -95,10 +91,10 @@ class Matrix extends CraftField implements MatrixInterface
         }
         $with = [$prefix . $this->craftField->handle];
         foreach ($this->getTypes() as $type) {
-            $typePrefix = $prefix . $this->craftField->handle . '.' . $type->type->handle . ':';
+            $tablePrefix = $prefix . $this->craftField->handle . '.';
             foreach ($type->fields as $field) {
                 $dependencies[] = DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $field->id;
-                $with = array_merge($with, $field->eagerLoad($typePrefix, $level + 1));
+                $with = array_merge($with, $field->eagerLoad($tablePrefix, $level + 1));
             }
         }
         return $with;
@@ -113,22 +109,23 @@ class Matrix extends CraftField implements MatrixInterface
         $newTypes = [];
         $fieldIdsToKeep = [];
         $hasChanged = false;
-        foreach ($this->craftField->getBlockTypes() as $craftType) {
-            if (isset($oldTypes[$craftType->handle])) {
-                $type = $oldTypes[$craftType->handle];
+        foreach ($this->craftField->getBlockTypes() as $blockType) {
+            if (isset($oldTypes[$blockType->handle])) {
+                $type = $oldTypes[$blockType->handle];
             } else {
                 //Type doesn't exist on the Matrix, creating a new one
-                $type = new DisplayMatrixType([
-                    'type' => $craftType,
+                $type = new DisplaySuperTableType([
+                    'type' => $blockType,
                     'fields' => []
                 ]);
             }
             $fields = [];
-            foreach ($craftType->fields as $craftField) {
-                $oldField = null;
+            foreach ($blockType->fields as $craftField) {
                 try {
                     $oldField = $type->getFieldById($craftField->id);
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) {
+                    $oldField = null;
+                }
                 if (!$oldField) {
                     //New field was added to the block type, creating new field
                     $field = Themes::$plugin->fields->createFromField($craftField);
@@ -154,7 +151,7 @@ class Matrix extends CraftField implements MatrixInterface
                 $fields[] = $field;
             }
             $type->fields = $fields;
-            $newTypes[$craftType->handle] = $type;
+            $newTypes[$blockType->handle] = $type;
         }
         $this->types = $newTypes;
         //Deleting all children apart from those that haven't changed to make sure project config is synced
@@ -166,18 +163,6 @@ class Matrix extends CraftField implements MatrixInterface
             }
         }
         return $hasChanged;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function populateFromData(array $data)
-    {
-        $data = array_intersect_key($data, array_flip($this->safeAttributes()));
-        if ($data['types'] ?? null) {
-            $data['types'] = $this->buildMatrixTypes($data['types']);
-        }
-        $this->setAttributes($data);
     }
 
     /**
@@ -202,12 +187,25 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
+    public function populateFromData(array $data)
+    {
+        $attributes = $this->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        if ($data['types'] ?? null) {
+            $data['types'] = $this->buildSuperTableTypes($data['types'], $this);
+        }
+        $this->setAttributes($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function save(FieldInterface $field): bool
     {
         foreach ($field->types as $type) {
-            foreach ($type->fields as $matrixField) {
-                // $matrixField->parent = $field;
-                Themes::$plugin->fields->save($matrixField);
+            foreach ($type->fields as $superTableField) {
+                // $superTableField->parent = $field;
+                Themes::$plugin->fields->save($superTableField);
             }
         }
         return parent::save($field);
@@ -219,13 +217,13 @@ class Matrix extends CraftField implements MatrixInterface
     public static function handleChanged(string $uid, array $data)
     {
         parent::handleChanged($uid, $data);
-        $matrix = Themes::$plugin->fields->getRecordByUid($uid);
-        foreach ($data['types'] as $typeData) {
+        $superTable = Themes::$plugin->fields->getRecordByUid($uid);
+        foreach ($data['types'] ?? [] as $typeData) {
             $fields = $typeData['fields'] ?? [];
             ProjectConfigHelper::ensureFieldsProcessed($fields);
             foreach ($fields as $order => $fieldUid) {
                 $field = Themes::$plugin->fields->getRecordByUid($fieldUid);
-                $pivot = Themes::$plugin->fields->getParentPivotRecord($matrix->id, $field->id);
+                $pivot = Themes::$plugin->fields->getParentPivotRecord($superTable->id, $field->id);
                 $pivot->order = $order;
                 $pivot->save(false);
             }
@@ -238,8 +236,8 @@ class Matrix extends CraftField implements MatrixInterface
     public static function delete(FieldInterface $field): bool
     {
         foreach ($field->types as $type) {
-            foreach ($type->fields as $matrixField) {
-                Themes::$plugin->fields->delete($matrixField);
+            foreach ($type->fields as $superTableField) {
+                Themes::$plugin->fields->delete($superTableField);
             }
         }
         return parent::delete($field);
@@ -274,7 +272,7 @@ class Matrix extends CraftField implements MatrixInterface
                         $fields[] = $field;
                     }
                 }
-                $this->_types[$type->handle] = new DisplayMatrixType([
+                $this->_types[$type->handle] = new DisplaySuperTableType([
                     'type' => $type,
                     'fields' => $fields
                 ]);
@@ -286,15 +284,7 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public function setTypes(array $types)
-    {
-        $this->_types = $types;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getVisibleFields(MatrixBlock $block): array
+    public function getVisibleFields(SuperTableBlockElement $block): array
     {
         if (!isset($this->types[$block->type->handle])) {
             return [];
@@ -378,23 +368,32 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
+    public function setTypes(array $types)
+    {
+        $this->_types = $types;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['types']);
     }
 
     /**
-     * Build matrix types from an array of data
+     * Build super table types from an array of data
      * 
-     * @param  array  $data
+     * @param  array      $data
+     * @param  SuperTable $superTable
      * @return array
      */
-    protected function buildMatrixTypes(array $data): array
+    protected static function buildSuperTableTypes(array $data, SuperTable $superTable): array
     {
         $types = [];
         foreach ($data as $typeData) {
             $type_id = $typeData['type_id'] ?? $typeData['type']['id'];
-            $type = \Craft::$app->matrix->getBlockTypeById($type_id);
+            $type = SuperTablePlugin::$plugin->getService()->getBlockTypeById($type_id);
             $fields = [];
             foreach ($typeData['fields'] as $fieldData) {
                 if ($fieldData['id'] ?? null) {
@@ -402,14 +401,14 @@ class Matrix extends CraftField implements MatrixInterface
                     $field->populateFromData($fieldData);
                 } else {
                     $field = Themes::$plugin->fields->create($fieldData);
-                    $field->parent = $this;
+                    $field->parent = $superTable;
                 }
                 if (!isset($fieldData['options']) and $field->displayer) {
                     $field->options = $field->displayer->options->toArray();
                 }
                 $fields[] = $field;
             }
-            $types[$type->handle] = new DisplayMatrixType([
+            $types[$type->handle] = new DisplaySuperTableType([
                 'type' => $type,
                 'fields' => $fields
             ]);
