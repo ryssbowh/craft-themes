@@ -44,7 +44,7 @@
 import { mapState, mapActions, mapMutations } from 'vuex';
 import { filter } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import HandleGenerator from '../../HandleGenerator'
+import { HandleGenerator } from '../../Helpers';
 
 export default {
     computed: {

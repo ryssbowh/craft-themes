@@ -1,9 +1,11 @@
 <?php
 namespace Ryssbowh\CraftThemes\assets;
 
-use craft\web\AssetBundle;
+use craft\web\View;
+use craft\web\assets\cp\CpAsset;
+use craft\web\assets\timepicker\TimepickerAsset;
 
-class DisplayAssets extends AssetBundle
+class VueAssets extends ThemesBaseAssets
 {
     /**
      * @inheritDoc
@@ -13,15 +15,24 @@ class DisplayAssets extends AssetBundle
     /**
      * @inheritDoc
      */
+    public $jsOptions = [
+        // 'position' => View::POS_HEAD
+    ];
+
+    /**
+     * @inheritDoc
+     */
     public $js = [
-        'display.js'
+        'chunk-vendors.js',
+        'vue.js'
     ];
 
     /**
      * @inheritDoc
      */
     public $depends = [
-        FieldsAsset::class
+        CpAsset::class,
+        TimepickerAsset::class
     ];
 
     /**

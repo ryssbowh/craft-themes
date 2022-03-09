@@ -1,9 +1,9 @@
 <?php
 namespace Ryssbowh\CraftThemes\assets;
 
-use craft\web\assets\cp\CpAsset;
+use craft\web\AssetBundle;
 
-class BlocksAssets extends ThemesBaseAssets
+class BlocksAssets extends AssetBundle
 {
     /**
      * @inheritDoc
@@ -14,8 +14,6 @@ class BlocksAssets extends ThemesBaseAssets
      * @inheritDoc
      */
     public $js = [
-        'chunk-vendors.js',
-        'chunk-common.js',
         'blocks.js',
     ];
 
@@ -23,6 +21,15 @@ class BlocksAssets extends ThemesBaseAssets
      * @inheritDoc
      */
     public $depends = [
-        CpAsset::class
+        VueAssets::class
     ];
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->sourcePath = realpath($this->sourcePath);
+    }
 }

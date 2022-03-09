@@ -1,5 +1,5 @@
 <template>
-    <div class="line-wrapper group">
+    <div class="group line has-sub-fields">
         <div :class="classes">
             <div class="move col"><div class="move icon"></div></div>
             <div class="title col">
@@ -41,7 +41,7 @@
         </div>
         <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('This group is empty') }}</i></span>
         <draggable
-            class="displays"
+            class="sub-fields"
             item-key="uid"
             :list="groupDisplays"
             :group="{name: 'displays', put: canPut}"
@@ -50,7 +50,7 @@
             @change="onDragChange"
             >
             <template #item="{element}">
-                <display-item :display="element" @updateItem="updateItem($event, element.uid)"/>
+                <display-item :display="element" :identation-level="identationLevel + 1" @updateItem="updateItem($event, element.uid)"/>
             </template>
         </draggable>
     </div>
@@ -58,7 +58,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import { sortBy, merge } from 'lodash';
+import { sortBy } from 'lodash';
 
 export default {
     computed: {
@@ -81,6 +81,7 @@ export default {
     },
     props: {
         item: Object,
+        identationLevel: Number,
         display: {
             type: Object,
             default: function () {
@@ -167,7 +168,7 @@ export default {
                 if (display.uid != uid) {
                     continue;
                 }
-                display = merge(display, {item: data});
+                display.item = data;
                 break;
             }
         },
@@ -210,23 +211,16 @@ export default {
 }
 .group {
     position: relative;
+    border-radius: 5px;
+    border: 1px solid $grey100;
     .no-displays {
         position: absolute;
         left: 15px;
         top: 50px;
         opacity: 0.7;
     }
-    & > .line {
-        min-height: unset !important;
-        &.opaque ~ .displays {
-            opacity: 0.5;
-        }
-    }
-}
-.displays {
-    min-height: 34px;
-    .line-wrapper {
-        padding: 0;
+    .sub-fields {
+        min-height: 34px;
     }
 }
 </style>

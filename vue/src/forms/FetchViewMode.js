@@ -1,18 +1,3 @@
-<template>
-    <form-field :errors="errors" :definition="definition" :name="name">
-        <template v-slot:main>
-            <div :class="inputClass">                    
-                <div class="select">
-                    <select v-model="realValue">
-                        <option v-for="viewMode in viewModes" :value="viewMode.uid" v-bind:key="viewMode.uid">{{ viewMode.name }}</option>
-                    </select>
-                </div>
-            </div>
-        </template>
-    </form-field>
-</template>
-
-<script>
 import FormField from './Field';
 import { mapState } from 'vuex';
 
@@ -80,6 +65,17 @@ export default {
     components: {
         'form-field': FormField
     },
-    emits: ['change']
+    emits: ['change'],
+    template: `
+        <form-field :errors="errors" :definition="definition" :name="name">
+            <template v-slot:main>
+                <div :class="inputClass">                    
+                    <div class="select">
+                        <select v-model="realValue">
+                            <option v-for="viewMode in viewModes" :value="viewMode.uid" v-bind:key="viewMode.uid">{{ viewMode.name }}</option>
+                        </select>
+                    </div>
+                </div>
+            </template>
+        </form-field>`
 };
-</script>

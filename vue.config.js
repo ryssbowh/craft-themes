@@ -2,6 +2,7 @@
 const path = require('path')
 
 module.exports = {
+    productionSourceMap: false,
     lintOnSave: process.env.NODE_ENV !== 'production',
     runtimeCompiler: true,
     filenameHashing: false,
@@ -23,7 +24,8 @@ module.exports = {
         entry: {
             blocks: "./vue/src/blocks/main.js",
             display: "./vue/src/display/main.js",
-            fields: "./vue/src/fields/main.js"
+            fields: "./vue/src/fields/main.js",
+            vue: "./vue/src/vue.js",
         },
         output: {
             filename: "js/[name].js"

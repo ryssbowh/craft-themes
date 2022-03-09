@@ -1,17 +1,3 @@
-<template>
-    <form-field :errors="errors" :definition="definition" :name="name">
-        <template v-slot:main>
-            <div :class="inputClass">
-                <div class="datewrapper">
-                    <input type="text" class="text" :value="value" size="10" autocomplete="off" placeholder=" ">
-                    <div data-icon="date"></div>
-                </div>
-            </div>
-        </template>
-    </form-field>
-</template>
-
-<script>
 import FormField from './Field';
 
 export default {
@@ -37,6 +23,16 @@ export default {
             });
         });
     },
-    emits: ['change']
+    emits: ['change'],
+    template: `
+        <form-field :errors="errors" :definition="definition" :name="name">
+            <template v-slot:main>
+                <div :class="inputClass">
+                    <div class="datewrapper">
+                        <input type="text" class="text" :value="value" size="10" autocomplete="off" placeholder=" ">
+                        <div data-icon="date"></div>
+                    </div>
+                </div>
+            </template>
+        </form-field>`
 };
-</script>

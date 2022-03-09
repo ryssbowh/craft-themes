@@ -1,36 +1,6 @@
-<template>
-    <form-field :errors="errors" :definition="definition" :name="name">
-        <template v-slot:heading>
-            <div class="heading" v-if="definition.label">
-                <label :class="{required: definition.required ?? false}">{{ definition.label }}</label>
-                <label :class="{required: definition.required ?? false}">{{ t('View mode') }}</label>
-            </div>
-        </template>
-        <template v-slot:main>
-            <div :class="inputClass">
-                <div :id="'field-' + name + '-elements'" :class="options.class">
-                    <div class="elements">
-                    </div>
-                    <div class="flex">
-                        <button type="button" class="btn add icon dashed">{{ definition.addElementLabel }}</button>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template v-slot:errors>
-            <ul class="errors" v-if="mainErrors">
-                <li class="error" v-for="error, index in mainErrors" v-bind:key="index">
-                    {{ error }}
-                </li>
-            </ul>
-        </template>
-    </form-field>
-</template>
-
-<script>
 import FormField from './Field';
 import { mapState } from 'vuex';
-import SelectInput from '../SelectInput';
+import { SelectInput } from '../Helpers.js';
 
 export default {
     data: function () {
@@ -213,12 +183,32 @@ export default {
     components: {
         'form-field': FormField
     },
-    emits: ['change']
+    emits: ['change'],
+    template: `
+        <form-field :errors="errors" :definition="definition" :name="name" :classes="'select-elements'">
+            <template v-slot:heading>
+                <div class="heading" v-if="definition.label">
+                    <label :class="{required: definition.required ?? false}">{{ definition.label }}</label>
+                    <label :class="{required: definition.required ?? false}">{{ t('View mode') }}</label>
+                </div>
+            </template>
+            <template v-slot:main>
+                <div :class="inputClass">
+                    <div :id="'field-' + name + '-elements'" :class="options.class">
+                        <div class="elements">
+                        </div>
+                        <div class="flex">
+                            <button type="button" class="btn add icon dashed">{{ definition.addElementLabel }}</button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template v-slot:errors>
+                <ul class="errors" v-if="mainErrors">
+                    <li class="error" v-for="error, index in mainErrors" v-bind:key="index">
+                        {{ error }}
+                    </li>
+                </ul>
+            </template>
+        </form-field>`
 };
-</script>
-<style lang="scss" scoped>
-.heading {
-    display:flex;
-    justify-content:space-between;
-}
-</style>

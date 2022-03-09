@@ -1,17 +1,3 @@
-<template>
-    <form-field :errors="errors" :definition="definition" :name="name">
-        <template v-slot:main>
-            <div class="flex color-container">
-                <div class="color static">
-                    <div class="color-preview" :style="value ? 'background-color:' + value : ''"></div>
-                </div>
-                <input class="color-input text" type="text" size="10" :value="value">
-            </div>
-        </template>
-    </form-field>
-</template>
-
-<script>
 import FormField from './Field';
 
 export default {
@@ -32,6 +18,16 @@ export default {
     components: {
         'form-field': FormField
     },
-    emits: ['change']
+    emits: ['change'],
+    template: `
+        <form-field :errors="errors" :definition="definition" :name="name">
+            <template v-slot:main>
+                <div class="flex color-container">
+                    <div class="color static">
+                        <div class="color-preview" :style="value ? 'background-color:' + value : ''"></div>
+                    </div>
+                    <input class="color-input text" type="text" size="10" :value="value">
+                </div>
+            </template>
+        </form-field>`
 };
-</script>

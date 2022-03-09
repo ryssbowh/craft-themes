@@ -1,9 +1,9 @@
 <template>
-    <component :is="type" :display="display" :item="display.item" @updateItem="updateItem({displayUid: display.uid, data: $event})"/>
+    <component :is="type" :display="display" :item="display.item" :identation-level="identationLevel" @updateItem="updateItem({displayUid: display.uid, data: $event})"/>
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
     computed: {
@@ -11,23 +11,15 @@ export default {
             if (this.display.type == 'group') {
                 return 'group';
             }
-            if (this.fieldComponents().includes(this.display.item.type)) {
-                return 'field-' + this.display.item.type;
-            }
-            return 'field';
-        },
-        ...mapState([])
-    },
-    props: {
-        display: Object
-    },
-    data() {
-        return {
+            return this.fieldComponent(this.display.item.type);
         }
     },
+    props: {
+        display: Object,
+        identationLevel: Number
+    },
     methods: {
-        ...mapMutations(['updateItem', 'removeDisplay']),
-        ...mapActions([])
+        ...mapMutations(['updateItem'])
     },
     emits: []
 };

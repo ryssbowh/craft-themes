@@ -23,7 +23,7 @@
                     @change="onDragChange"
                     >
                     <template #item="{element}">
-                        <display-item :display="element"/>
+                        <display-item :display="element" :identation-level="0"/>
                     </template>
                 </draggable>
             </div>
@@ -141,17 +141,38 @@ export default {
         grid-template-columns: 5% 20% 16% 17% 17% 19% 6%;
         align-items: center;
         margin: 0 0 7px 0;
+        width: 100%;
+        &.opaque, &.opaque ~ .sub-fields {
+            opacity: 0.5;
+        }
     }
-    .line-wrapper {
+    .line.bg-grey {
+        background: $grey050;
+    }
+    .line.has-sub-fields {
         display: flex;
         flex-direction: column;
         border-radius: 5px;
-        background: $grey050;
         padding: 7px 0;
-        margin-bottom: 7px;
     }
-    .line-wrapper:last-child, .line:last-child {
-        margin-bottom: 0;
+    .sub-fields {
+        width: 100%;
+        transition: opacity 0.3s;
+        .line:last-child {
+           margin-bottom: 0;
+        }
+    }
+    .idented-1 .move.icon {
+       padding-left: 7px;
+    }
+    .idented-2 .move.icon {
+       padding-left: 14px;
+    }
+    .idented-3 .move.icon {
+       padding-left: 21px;
+    }
+    .idented-3 .move.icon {
+       padding-left: 28px;
     }
     .head .col {
         padding: 7px 8px;

@@ -1,42 +1,13 @@
 @import '~craftcms-sass/_mixins';
 
 .themes-displays {
-    .line, .matrix-type, .table-type {
-        transition: opacity 0.3s;
-    }
-    .line.matrix, .line.table {
-        width: 100%;
-    }
     .line.matrix {
         margin-bottom: 0;
     }
-    .table-type, .matrix-type {
-        width: 100%;
-        .line:last-child {
-            margin-bottom: 0;
-        }
-    }
     .matrix-type {
-        position: relative;
         .matrix-type-name {
             opacity: 0.7;
             padding-left: 1.5%;
-        }
-        .col.move {
-            justify-content: center;
-        }
-    }
-    .opaque {
-        opacity: 0.5;
-        &.matrix ~ .matrix-type, &.table ~ .table-type {
-            opacity: 0.5;
-        }
-    }
-    .group {
-        .matrix-type {
-            .col.move {
-                justify-content: end !important;
-            }
         }
     }
 }

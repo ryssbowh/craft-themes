@@ -55,9 +55,10 @@ export default {
         classes: function () {
             let classes = {
                 line: true, 
-                opaque: this.isOpaque
+                opaque: this.isOpaque,
             };
             classes[this.item.type] = true;
+            classes['idented-' + this.identationLevel] = true;
             return classes;
         },
         hasErrors: function () {
@@ -94,6 +95,7 @@ export default {
     },
     props: {
         item: Object,
+        identationLevel: Number,
         display: {
             type: Object,
             default: () => {}
@@ -175,7 +177,7 @@ export default {
             return false;
         },
         updateDisplayer: function(e) {
-            this.$emit("updateItem", {displayerHandle: e.originalTarget.value});
+            this.$emit("updateItem", {displayerHandle: e.originalTarget.value, options: {}});
             this.displayerHasChanged = true;
             this.displayer = this.getDisplayer(e.originalTarget.value);
             if(this.displayer.hasOptions) {

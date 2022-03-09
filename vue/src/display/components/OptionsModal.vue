@@ -1,9 +1,8 @@
 <template>
-    <div :class="'modal elementselectormodal options-modal displayer-' + displayer.handle" style="display:none" ref="modal">
+    <div :class="'modal elementselectormodal themes-modal-options displayer-' + displayer.handle" style="display:none" ref="modal">
         <div class="header">
             <h3>{{ t('Edit displayer options') }}</h3>
-        </div>
-        <div class="header description" v-if="displayer.description" v-html="displayer.description">
+            <i class="description" v-if="displayer.description" v-html="displayer.description"></i>
         </div>
         <div class="body">
             <div class="content">
@@ -99,22 +98,3 @@ export default {
     emits: ['onSave', 'onHide'],
 };
 </script>
-<style lang="scss" scoped>
-@import '~craftcms-sass/_mixins';
-
-.options-modal {
-    padding-bottom: 62px;
-    min-width: 300px;
-    min-height: 300px;
-    height: 60vh;
-    width: 30%;
-    .body {
-        height: calc(100% - 65px);
-    }
-}
-.header.description {
-    border-radius: 0;
-    padding: 10px 24px;
-    background: $grey050;
-}
-</style>
