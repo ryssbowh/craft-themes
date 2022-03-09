@@ -14,7 +14,7 @@ class UserLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
+     * @inheritDoc
      */
     protected $_type = LayoutService::USER_HANDLE;
 

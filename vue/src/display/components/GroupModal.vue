@@ -43,7 +43,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
-import HandleGenerator from '../../HandleGenerator'
+import { HandleGenerator } from '../../Helpers';
 
 export default {
     computed: {
@@ -166,6 +166,8 @@ export default {
                     uid: uuidv4(),
                     order: this.maxOrder + 1,
                     item: {
+                        id: null,
+                        uid: uuidv4(),
                         name: this.name, 
                         handle: this.handle,
                         visuallyHidden: false,

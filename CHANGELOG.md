@@ -1,20 +1,30 @@
 # ryssbowh/craft-themes Changelog
 
-## 3.1.0 unreleased
+## 3.1.0 - unreleased
+
+### Added
+- Integration to commerce
+- Fields can now have parents
+- Layouts can now have parents
+- Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
+- Twig tests `is instanceof` and `is numeric`
+- [Super Table](https://github.com/verbb/super-table) support
+- Nested multi fields (matrix, super table) support
 
 ### Fixed
 - Fixed small modal sizes
+- Fixed issue where custom layouts would have displays created for them automatically
+- Fixed issues where field layouts would not have their fields populated properly. [10237](https://github.com/craftcms/cms/issues/10237)
+- Fixed issues with fields not properly rebuilt
 
 ### Changed
 - Rendered displayers label
+- Matrix fields now use parenting system
+- Removed Matrix service
+- Changed how field components are registered on Vue
+- Changed how fields are cloned on Vue
 
-### Added
-
-- Integration to commerce
-- Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
-- Twig tests `is instanceof` and `is numeric`
-
-## 3.0.1 2022-02-15
+## 3.0.1 - 2022-02-15
 
 ### Fixed
 - Fixed issue when changing edition in plugin store

@@ -1,21 +1,3 @@
-<template>
-    <form-field :errors="errors" :definition="definition" :name="name">
-        <template v-slot:main>
-            <div :class="inputClass">
-                <fieldset class="radio-group">
-                    <div v-for="rvalue, label in definition.options" v-bind:key="rvalue">
-                        <label>
-                            <input type="radio" :selected="rvalue == value" :value="rvalue" :disabled="definition.disabled" :name="name">
-                            {{ label }}
-                        </label>
-                    </div>
-                </fieldset>
-            </div>
-        </template>
-    </form-field>
-</template>
-
-<script>
 import FormField from './Field';
 
 export default {
@@ -53,6 +35,20 @@ export default {
     components: {
         'form-field': FormField
     },
-    emits: ['change']
+    emits: ['change'],
+    template: `
+        <form-field :errors="errors" :definition="definition" :name="name">
+            <template v-slot:main>
+                <div :class="inputClass">
+                    <fieldset class="radio-group">
+                        <div v-for="rvalue, label in definition.options" v-bind:key="rvalue">
+                            <label>
+                                <input type="radio" :selected="rvalue == value" :value="rvalue" :disabled="definition.disabled" :name="name">
+                                {{ label }}
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+            </template>
+        </form-field>`
 };
-</script>

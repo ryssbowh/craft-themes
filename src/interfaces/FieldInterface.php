@@ -2,8 +2,6 @@
 namespace Ryssbowh\CraftThemes\interfaces;
 
 use Twig\Markup;
-use craft\base\Element;
-use craft\base\Field as BaseField;
 
 /**
  * A field is a type of item, it can handle a Craft field or a theme field (title, author etc)
@@ -32,7 +30,7 @@ interface FieldInterface
      * @param  array  $config
      * @return FieldInterface
      */
-    public static function create(?array $config = null): FieldInterface;
+    public static function create(array $config): FieldInterface;
 
     /**
      * Saves a field
@@ -69,11 +67,11 @@ interface FieldInterface
     public static function handleDeleted(string $uid, array $data);
 
     /**
-     * Populate this field from post data
+     * Populate this field from array of data
      * 
      * @param array $data
      */
-    public function populateFromPost(array $data);
+    public function populateFromData(array $data);
 
     /**
      * Should this field exist on a layout, called during the creation of a layout
@@ -97,6 +95,20 @@ interface FieldInterface
      * @param ?array $options
      */
     public function setOptions(?array $options);
+
+    /**
+     * Parent getter
+     * 
+     * @return ?FieldInterface
+     */
+    public function getParent(): ?FieldInterface;
+
+    /**
+     * Parent setter
+     * 
+     * @param ?FieldInterface $field
+     */
+    public function setParent(?FieldInterface $field);
 
     /**
      * Get the displayer for this field
@@ -164,4 +176,9 @@ interface FieldInterface
      * @return bool
      */
     public function getCanBeCached(): bool;
+
+    /**
+     * Rebuild the field
+     */
+    public function rebuild();
 }

@@ -16,7 +16,7 @@ class m220228_090716_AddLayoutParent extends Migration
     public function safeUp()
     {
         $this->addColumn('{{%themes_layouts}}', 'parent_id', $this->integer(11)->null()->after('id'));
-        $this->addForeignKey('themes_layouts_parent', '{{%themes_layouts}}', ['parent_id'], '{{%themes_layouts}}', ['id'], 'SET NULL', null);
+        $this->addForeignKey('themes_layouts_parent', '{{%themes_layouts}}', ['parent_id'], '{{%themes_layouts}}', ['id'], 'SET NULL');
     }
 
     /**
@@ -25,5 +25,6 @@ class m220228_090716_AddLayoutParent extends Migration
     public function safeDown()
     {
         $this->dropForeignKey('themes_layouts_parent', '{{%themes_layouts}}');
+        $this->dropColumn('{{%themes_layouts}}', 'parent_id');
     }
 }

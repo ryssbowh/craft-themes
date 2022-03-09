@@ -262,12 +262,12 @@ class ViewModeService extends Service
     }
 
     /**
-     * Populates a view mode from posted data
+     * Populates a view mode from an array of data
      * 
      * @param  array $data
      * @return ViewModeInterface
      */
-    public function populateFromPost(array $data): ViewModeInterface
+    public function populateFromData(array $data): ViewModeInterface
     {
         $viewMode = $this->getById($data['id']);
         $displaysData = $data['displays'];
@@ -275,7 +275,9 @@ class ViewModeService extends Service
         $viewMode->setAttributes($data);
         $displays = [];
         foreach ($displaysData as $data) {
-            $displays[] = Themes::$plugin->displays->populateFromPost($data);
+            $display = Themes::$plugin->displays->populateFromData($data);
+            $display->viewMode = $viewMode;
+            $displays[] = $display;
         }
         $viewMode->displays = $displays;
         return $viewMode;

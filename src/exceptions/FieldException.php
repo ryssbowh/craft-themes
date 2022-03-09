@@ -13,11 +13,6 @@ class FieldException extends \Exception
         return new static("Field can't be built, no type is defined for it");
     }
 
-    public static function noMatrixType(string $uid)
-    {
-        return new static("Matrix type with uid $uid is not defined");
-    }
-
     public static function alreadyDefined(string $fieldClass)
     {
         return new static("Field $fieldClass can't be registered, its type ({$fieldClass::getType()} is already defined");

@@ -36,6 +36,8 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorFull;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorTruncated;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\StockDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\SuperTableDefault;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\SuperTableSlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TableDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagRendered;
@@ -99,6 +101,8 @@ class RegisterFieldDisplayerEvent extends Event
             RedactorFull::class,
             RedactorTruncated::class,
             StockDefault::class,
+            SuperTableSlick::class,
+            SuperTableDefault::class,
             TableDefault::class,
             TagLabel::class,
             TagTitle::class,

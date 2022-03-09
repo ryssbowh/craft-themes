@@ -1,21 +1,3 @@
-<template>
-    <form-field :errors="errors" :definition="definition" :name="name">
-        <template v-slot:main>
-            <div :class="inputClass">
-                <fieldset class="checkbox-group">
-                    <div v-for="label, cvalue in definition.options" v-bind:key="cvalue">
-                        <input type="checkbox" :checked="value.includes(cvalue)" class="checkbox" :value="cvalue" :id="id + '-' + cvalue" :disabled="definition.disabled">
-                        <label :for="id + '-' + cvalue">
-                            {{ label }}
-                        </label>
-                    </div>
-                </fieldset>
-            </div>
-        </template>
-    </form-field>
-</template>
-
-<script>
 import FormField from './Field';
 
 export default {
@@ -52,6 +34,20 @@ export default {
     components: {
         'form-field': FormField
     },
-    emits: ['change']
+    emits: ['change'],
+    template: `
+        <form-field :errors="errors" :definition="definition" :name="name">
+            <template v-slot:main>
+                <div :class="inputClass">
+                    <fieldset class="checkbox-group">
+                        <div v-for="label, cvalue in definition.options" v-bind:key="cvalue">
+                            <input type="checkbox" :checked="value.includes(cvalue)" class="checkbox" :value="cvalue" :id="id + '-' + cvalue" :disabled="definition.disabled">
+                            <label :for="id + '-' + cvalue">
+                                {{ label }}
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+            </template>
+        </form-field>`
 };
-</script>

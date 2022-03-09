@@ -226,12 +226,12 @@ class GroupsService extends Service
     }
 
     /**
-     * Populates a group from post
+     * Populates a group from an array of data
      * 
      * @param  array $data
      * @return GroupInterface
      */
-    public function populateFromPost(array $data): GroupInterface
+    public function populateFromData(array $data): GroupInterface
     {
         $displaysData = $data['displays'] ?? [];
         unset($data['displays']);
@@ -243,8 +243,10 @@ class GroupsService extends Service
         } else {
             $group = $this->create($data);
         }
-        $group->displays = array_map(function ($data) {
-            return Themes::$plugin->displays->populateFromPost($data);
+        $group->displays = array_map(function ($data) use ($group) {
+            $display = Themes::$plugin->displays->populateFromData($data);
+            $display->group = $group;
+            return $display;
         }, $displaysData);
         return $group;
     }

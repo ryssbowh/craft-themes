@@ -124,7 +124,7 @@ abstract class FieldDisplayer extends Model implements FieldDisplayerInterface
      */
     public function setOptions(array $options)
     {
-        $this->options->setValues($options);
+        $this->options->replaceValues($options);
     }
 
     /**

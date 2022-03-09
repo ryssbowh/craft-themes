@@ -763,15 +763,15 @@ class LayoutService extends Service
      */
     protected function installLayoutData(LayoutInterface $layout): bool
     {
-        //Creating default view mode
-        if (!$layout->hasViewMode(ViewModeService::DEFAULT_HANDLE)) {
-            $viewMode = $this->viewModesService()->create([
-                'handle' => ViewModeService::DEFAULT_HANDLE,
-                'name' => \Craft::t('themes', 'Default')
-            ]);
-            $layout->addViewMode($viewMode);
-        }
-        if ($layout->type != self::DEFAULT_HANDLE) {
+        if ($layout->hasDisplays()) {
+            //Creating default view mode
+            if (!$layout->hasViewMode(ViewModeService::DEFAULT_HANDLE)) {
+                $viewMode = $this->viewModesService()->create([
+                    'handle' => ViewModeService::DEFAULT_HANDLE,
+                    'name' => \Craft::t('themes', 'Default')
+                ]);
+                $layout->addViewMode($viewMode);
+            }
             foreach ($layout->viewModes as $viewMode) {
                 $viewMode->displays = $this->displayService()->createViewModeDisplays($viewMode);
             }

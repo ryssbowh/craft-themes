@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { store } from './stores/store.js';
+import { createStore } from './stores/store.js';
 import DisplayContext from './components/DisplayContext.vue';
 import Displays from './components/Displays.vue';
 import DisplayToolbar from './components/DisplayToolbar.vue';
@@ -12,7 +12,7 @@ import GroupModal from './components/GroupModal.vue';
 import Field from './components/Field.vue';
 import Group from './components/Group.vue';
 import Draggable from 'vuedraggable';
-import FormFields from '../FormFields';
+import { Translate, HandleError, Clone, FieldComponent } from '../Helpers.js';
 
 const app = createApp({
   components: {
@@ -24,7 +24,12 @@ const app = createApp({
   }
 });
 
+const store = createStore(app);
 app.use(store);
+app.use(Translate);
+app.use(HandleError);
+app.use(FieldComponent);
+app.use(Clone);
 app.component('field', Field);
 app.component('view-mode-modal', ViewModeModal);
 app.component('draggable', Draggable);
@@ -33,54 +38,12 @@ app.component('options-modal', OptionsModal);
 app.component('group-modal', GroupModal);
 app.component('display-item', DisplayItem);
 
-for (let name in FormFields) {
-  app.component('formfield-' + name, FormFields[name]);
+for (let name in window.CraftThemes.formFieldComponents) {
+  app.component('formfield-' + name, window.CraftThemes.formFieldComponents[name]);
 }
 
-let event = new CustomEvent("register-fields-components", {detail: {}});
-document.dispatchEvent(event);
-//Global object containing clone functions for bespoke field types
-window.cloneField = {};
-
-for (let name in event.detail) {
-    app.component('field-' + name, event.detail[name].component);
-    window.cloneField[name] = event.detail[name].clone;
+for (let name in window.CraftThemes.fieldComponents) {
+    app.component('field-' + name, window.CraftThemes.fieldComponents[name].component);
 }
-
-const FieldComponents = {
-  install(app) {
-    app.config.globalProperties.fieldComponents = () => {
-      return Object.keys(event.detail);
-    }
-  },
-};
-
-const Translate = {
-  install(app) {
-    app.config.globalProperties.t = (str, params, category = 'themes') => {
-      return window.Craft.t(category, str, params);
-    }
-  },
-};
-
-const HandleError = {
-  install(app) {
-    app.config.globalProperties.handleError = (err) => {
-      let message = err;
-      if (err.response) {
-        if (err.response.data.message ?? null) {
-          message = err.response.data.message;
-        } else if (err.response.data.error ?? null) {
-          message = err.response.data.error;
-        }
-      }
-      Craft.cp.displayError(message);
-    }
-  }
-};
-
-app.use(Translate);
-app.use(HandleError);
-app.use(FieldComponents);
 
 app.mount('#main');

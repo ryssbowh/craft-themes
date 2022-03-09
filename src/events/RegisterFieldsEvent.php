@@ -12,11 +12,11 @@ use Ryssbowh\CraftThemes\models\fields\ElementUrl;
 use Ryssbowh\CraftThemes\models\fields\ExpiryDate;
 use Ryssbowh\CraftThemes\models\fields\File;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
-use Ryssbowh\CraftThemes\models\fields\MatrixField;
 use Ryssbowh\CraftThemes\models\fields\PostDate;
 use Ryssbowh\CraftThemes\models\fields\Price;
 use Ryssbowh\CraftThemes\models\fields\Sku;
 use Ryssbowh\CraftThemes\models\fields\Stock;
+use Ryssbowh\CraftThemes\models\fields\SuperTable;
 use Ryssbowh\CraftThemes\models\fields\Table;
 use Ryssbowh\CraftThemes\models\fields\TableField;
 use Ryssbowh\CraftThemes\models\fields\TagTitle;
@@ -46,7 +46,6 @@ class RegisterFieldsEvent extends Event
         parent::init();
         $this->register(CraftField::class);
         $this->register(Matrix::class);
-        $this->register(MatrixField::class);
         $this->register(Table::class);
         $this->register(TableField::class);
         $this->register(Title::class);
@@ -71,6 +70,7 @@ class RegisterFieldsEvent extends Event
         $this->register(Dimensions::class);
         $this->register(Weight::class);
         $this->register(AllowedQty::class);
+        $this->register(SuperTable::class);
     }
 
     /**

@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\ViewModeInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\Formidable\Models\Fields\LightSwitch;
@@ -38,11 +39,6 @@ class TableField extends Field
     public $labelHidden = true;
 
     /**
-     * @var Table
-     */
-    protected $_table;
-
-    /**
      * @inheritDoc
      */
     public static function getType(): string
@@ -63,22 +59,12 @@ class TableField extends Field
      * 
      * @return ?Table
      */
-    public function getTable(): ?Table
+    public function getParent(): ?FieldInterface
     {
-        if (is_null($this->_table)) {
-            $this->_table = Themes::$plugin->tables->getTableForField($this->id);
+        if ($this->_parent === null and $this->id) {
+            $this->_parent = Themes::$plugin->tables->getTableForField($this->id);
         }
-        return $this->_table;
-    }
-
-    /**
-     * Table setter
-     * 
-     * @param Table $table
-     */
-    public function setTable(Table $table)
-    {
-        $this->_table = $table;
+        return $this->_parent;
     }
 
     /**
@@ -120,21 +106,11 @@ class TableField extends Field
      */
     public function getConfig(): array
     {
-        $config = array_merge(parent::getConfig(), [
+        return array_merge(parent::getConfig(), [
             'handle' => $this->handle,
             'name' => $this->name,
             'craft_field_class' => $this->craft_field_class
         ]);
-        unset($config['display_id']);
-        return $config;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDisplay(): DisplayInterface
-    {
-        return $this->table->display;
     }
 
     /**
@@ -148,15 +124,7 @@ class TableField extends Field
     /**
      * @inheritDoc
      */
-    public function getCanBeCached(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected static function buildConfig($column): array
+    public static function buildConfig($column): array
     {
         switch ($column['type']) {
             case 'checkbox':

@@ -14,7 +14,7 @@ class ProductLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
+     * @inheritDoc
      */
     protected $_type = LayoutService::PRODUCT_HANDLE;
 
@@ -34,14 +34,6 @@ class ProductLayout extends Layout
     public function getDescription(): string
     {
         return \Craft::t('themes', 'Product : {name}', ['name' => $this->element->name]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFieldLayout(): ?FieldLayout
-    {
-        return $this->element->getProductFieldLayout();
     }
 
     /**

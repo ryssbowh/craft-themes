@@ -9,7 +9,7 @@ use Ryssbowh\CraftThemes\services\LayoutService;
 class CustomLayout extends Layout
 {
     /**
-     * @var string
+     * @inheritDoc
      */
     protected $_type = LayoutService::CUSTOM_HANDLE;
 

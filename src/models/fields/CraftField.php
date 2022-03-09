@@ -70,16 +70,13 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
-    public function onCraftFieldChanged(BaseField $field): bool
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
+        if ($this->parent) {
+            //if the field has a parent it's inside a multi-field (matrix, super table etc)
+            //we're good to simply return the name of the field
+            return $this->craftField->name;
+        }
         foreach ($this->layout->fieldLayout->tabs as $tab) {
             foreach ($tab->elements as $element) {
                 if (get_class($element) == CustomField::class and $element->field->handle == $this->handle) {
@@ -152,7 +149,7 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
-    protected static function buildConfig($craftField): array
+    public static function buildConfig(BaseField $craftField): array
     {
         $class = get_class($craftField);
         return [

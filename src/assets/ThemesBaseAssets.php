@@ -5,17 +5,8 @@ use craft\web\AssetBundle;
 use craft\web\View;
 use craft\web\assets\cp\CpAsset;
 
-class ThemesBaseAssets extends AssetBundle
+abstract class ThemesBaseAssets extends AssetBundle
 {
-    /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-        $this->sourcePath = realpath($this->sourcePath);
-    }
-
     /**
      * @inheritdoc
      */

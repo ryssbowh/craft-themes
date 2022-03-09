@@ -1,23 +1,3 @@
-<template>
-    <form-field :errors="errors" :definition="definition" :name="name">
-        <template v-slot:main>
-            <div :class="inputClass">
-                <div class="datetimewrapper">
-                    <div class="datewrapper">
-                        <input type="text" class="text date" :value="value ? value.split(' ')[0] ?? '' : ''" size="10" autocomplete="off" placeholder=" ">
-                        <div data-icon="date"></div>
-                    </div>
-                    <div class="timewrapper">
-                        <input type="text" class="text time" :value="value ? value.split(' ')[1] ?? '' : ''" size="10" autocomplete="off" placeholder=" ">
-                        <div data-icon="time"></div>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </form-field>
-</template>
-
-<script>
 import FormField from './Field';
 
 export default {
@@ -62,6 +42,22 @@ export default {
             this.$emit('change', val);
         }
     },
-    emits: ['change']
+    emits: ['change'],
+    template: `
+        <form-field :errors="errors" :definition="definition" :name="name">
+            <template v-slot:main>
+                <div :class="inputClass">
+                    <div class="datetimewrapper">
+                        <div class="datewrapper">
+                            <input type="text" class="text date" :value="value ? value.split(' ')[0] ?? '' : ''" size="10" autocomplete="off" placeholder=" ">
+                            <div data-icon="date"></div>
+                        </div>
+                        <div class="timewrapper">
+                            <input type="text" class="text time" :value="value ? value.split(' ')[1] ?? '' : ''" size="10" autocomplete="off" placeholder=" ">
+                            <div data-icon="time"></div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </form-field>`
 };
-</script>
