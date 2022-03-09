@@ -103,12 +103,11 @@ class SuperTable extends CraftField
     /**
      * @inheritDoc
      */
-    public function rebuild(): bool
+    public function rebuild()
     {
         $oldTypes = $this->types;
         $newTypes = [];
         $fieldIdsToKeep = [];
-        $hasChanged = false;
         foreach ($this->craftField->getBlockTypes() as $blockType) {
             if (isset($oldTypes[$blockType->handle])) {
                 $type = $oldTypes[$blockType->handle];
@@ -129,7 +128,6 @@ class SuperTable extends CraftField
                 if (!$oldField) {
                     //New field was added to the block type, creating new field
                     $field = Themes::$plugin->fields->createFromField($craftField);
-                    $hasChanged = true;
                 } else if ($oldField->craft_field_class != get_class($craftField)) {
                     //Field has changed class, creating a new one and copying old fields attributes
                     $field = Themes::$plugin->fields->createFromField($craftField);
@@ -140,11 +138,10 @@ class SuperTable extends CraftField
                     $field->visuallyHidden = $oldField->visuallyHidden;
                     $field->hidden = $field->hidden ?: $oldField->hidden;
                     $fieldIdsToKeep[] = $field->id;
-                    $hasChanged = true;
                 } else {
                     //Field hasn't changed but forwarding the change to sub fields, in case they have things to change
                     $field = $oldField;
-                    $hasChanged = ($hasChanged or $field->rebuild());
+                    $field->rebuild();
                     $fieldIdsToKeep[] = $field->id;
                 }
                 $field->parent = $this;
@@ -154,7 +151,6 @@ class SuperTable extends CraftField
             $newTypes[$blockType->handle] = $type;
         }
         $this->types = $newTypes;
-        return $hasChanged;
     }
 
     /**
@@ -194,10 +190,18 @@ class SuperTable extends CraftField
      */
     public static function save(FieldInterface $field): bool
     {
+        $fieldsToKeep = [];
+        $children = Themes::$plugin->fields->getChildren($field);
         foreach ($field->types as $type) {
             foreach ($type->fields as $superTableField) {
                 // $superTableField->parent = $field;
                 Themes::$plugin->fields->save($superTableField);
+                $fieldsToKeep[] = $superTableField->id;
+            }
+        }
+        foreach ($children as $child) {
+            if (!in_array($child->id, $fieldsToKeep)) {
+                Themes::$plugin->fields->delete($child);
             }
         }
         return parent::save($field);
@@ -210,7 +214,6 @@ class SuperTable extends CraftField
     {
         parent::handleChanged($uid, $data);
         $superTable = Themes::$plugin->fields->getRecordByUid($uid);
-        $pivotsToKeep = [];
         foreach ($data['types'] ?? [] as $typeData) {
             $fields = $typeData['fields'] ?? [];
             ProjectConfigHelper::ensureFieldsProcessed($fields);
@@ -219,19 +222,6 @@ class SuperTable extends CraftField
                 $pivot = Themes::$plugin->fields->getParentPivotRecord($superTable->id, $field->id);
                 $pivot->order = $order;
                 $pivot->save(false);
-                $pivotsToKeep[] = $pivot->id;
-            }
-        }
-        // dd($pivotsToKeep);
-        //Delete unused pivots
-        $children = Themes::$plugin->fields->getChildrenPivots($superTable->id);
-        foreach ($children as $pivot) {
-            if (!in_array($pivot->id, $pivotsToKeep)) {
-                $pivot->delete();
-                try {
-                    $field = Themes::$plugin->fields->getById($pivot->field_id);
-                    Themes::$plugin->fields->delete($field);
-                } catch (\Throwable $e) {}
             }
         }
     }

@@ -18,7 +18,7 @@ class TablesService extends Service
      * 
      * @return Collection
      */
-    public function allPivots(): Collection
+    public function getAllPivots(): Collection
     {
         if ($this->_pivots === null) {
             $records = TablePivotRecord::find()->orderBy(['order' => SORT_ASC])->all();
@@ -34,7 +34,7 @@ class TablesService extends Service
      * Get all pivots for a table field
      * 
      * @param  Table  $table
-     * @return TablePivotRecord[]
+     * @return FieldInterface[]
      */
     public function getForTable(Table $table): array
     {
@@ -43,7 +43,7 @@ class TablesService extends Service
             $field->name = $pivot->name;
             $field->handle = $pivot->handle;
             return $field;
-        }, $this->allPivots()
+        }, $this->allPivots
             ->where('table_id', $table->id)
             ->values()
             ->all()
@@ -60,7 +60,7 @@ class TablesService extends Service
      */
     public function getTablePivotRecord(int $tableId, int $fieldId): TablePivotRecord
     {
-        return $this->allPivots()
+        return $this->allPivots
             ->where('table_id', $tableId)
             ->firstWhere('field_id', $fieldId) 
             ?? new TablePivotRecord([
@@ -77,7 +77,7 @@ class TablesService extends Service
      */
     public function getTableForField(int $fieldId): ?Table
     {
-        $pivot = $this->allPivots()
+        $pivot = $this->allPivots
             ->firstWhere('field_id', $fieldId);
         if ($pivot) {
             return $this->fieldsService()->getById($pivot->table_id);

@@ -422,8 +422,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function rebuild(): bool
+    public function rebuild()
     {
-        return false;
     }
 }

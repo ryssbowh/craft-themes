@@ -179,8 +179,6 @@ interface FieldInterface
 
     /**
      * Rebuild the field
-     * 
-     * @return bool true if the field has changed
      */
-    public function rebuild(): bool;
+    public function rebuild();
 }

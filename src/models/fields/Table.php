@@ -101,9 +101,17 @@ class Table extends CraftField
      */
     public static function save(FieldInterface $field): bool
     {
+        $fieldsToKeep = [];
+        $children = Themes::$plugin->table->getForTable($table);
         foreach ($field->fields as $tableField) {
             // $tableField->parent = $field;
             Themes::$plugin->fields->save($tableField);
+            $fieldsToKeep[] = $tableField->id;
+        }
+        foreach ($children as $child) {
+            if (!in_array($child->id, $fieldsToKeep)) {
+                Themes::$plugin->fields->delete($child);
+            }
         }
         return parent::save($field);
     }
@@ -116,7 +124,6 @@ class Table extends CraftField
         parent::handleChanged($uid, $data);
         $table = Themes::$plugin->fields->getRecordByUid($uid);
         $fields = $data['fields'] ?? [];
-        $pivotsToKeep = [];
         ProjectConfigHelper::ensureFieldsProcessed(array_map(function ($data) {
             return $data['uid'];
         }, $fields));
@@ -127,18 +134,6 @@ class Table extends CraftField
             $pivot->name = $fieldData['name'];
             $pivot->handle = $fieldData['handle'];
             $pivot->save(false);
-            $pivotsToKeep[] = $pivot->id;
-        }
-        //Delete unused pivots
-        $children = Themes::$plugin->table->getForTable($table);
-        foreach ($children as $pivot) {
-            if (!in_array($pivot->id, $pivotsToKeep)) {
-                $pivot->delete();
-                try {
-                    $field = Themes::$plugin->fields->getById($pivot->field_id);
-                    Themes::$plugin->fields->delete($field);
-                } catch (\Throwable $e) {}
-            }
         }
     }
 
@@ -162,7 +157,6 @@ class Table extends CraftField
         $newFields = [];
         $fieldIdsToKeep = [];
         $order = 0;
-        $hasChanged = false;
         foreach ($this->craftField->columns as $column) {
             $newConfig = TableField::buildConfig($column);
             $oldField = $this->getFieldByHandle($column['handle']);
@@ -176,27 +170,21 @@ class Table extends CraftField
                     $field->labelVisuallyHidden = $oldField->labelVisuallyHidden;
                     $field->visuallyHidden = $oldField->visuallyHidden;
                     $field->hidden = $field->hidden ?: $oldField->hidden;
-                    $hasChanged = true;
                 } else {
                     //Column is the same, replacing name in case it's changed
                     $field = $oldField;
-                    if ($field->name != $column['heading']) {
-                        $field->name = $column['heading'];
-                        $hasChanged = true;
-                    }
+                    $field->name = $column['heading'];
                 }
                 $fieldIdsToKeep[] = $field->id;
             } else {
                 //New column was added to the table
                 $field = TableField::create($newConfig);
-                $hasChanged = true;
             }
             $field->parent = $this;
             $newFields[$order] = $field;
             $order++;
         }
         $this->fields = $newFields;
-        return $hasChanged;
     }
 
     /**

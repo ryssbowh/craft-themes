@@ -14,6 +14,7 @@ use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\ParentPivotRecord;
 use craft\base\Field;
 use craft\events\ConfigEvent;
+use craft\events\FieldEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\StringHelper;
 use yii\caching\TagDependency;
@@ -130,6 +131,9 @@ class FieldsService extends Service
      */
     public function getChildren(FieldInterface $field): array
     {
+        if (!$field->id) {
+            return [];
+        }
         $_this = $this;
         return array_map(function ($record) use ($_this, $field) {
             return $_this->getById($record->field_id);
@@ -152,6 +156,60 @@ class FieldsService extends Service
                 'parent_id' => $parentId,
                 'field_id' => $fieldId
             ]);
+    }
+
+    /**
+     * Get all fields for a craft field id
+     * 
+     * @param  int    $fieldId
+     * @return FieldInterface[]
+     */
+    public function getAllForCraftField(int $fieldId): array
+    {
+        return $this->all
+            ->where('craft_field_id', $fieldId)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Handles a craft field save: If the type of field has changed we#ll delete the field and recreate it
+     * Otherwise we'll rebuild it in case changes are to be made by the field
+     * 
+     * @param FieldEvent $event
+     */
+    public function onCraftFieldSaved(FieldEvent $event)
+    {
+        if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
+            // If Craft is applying Yaml changes it means we have the fields defined
+            // in config, and don't need to respond to these events as it would create duplicates
+            return;
+        }
+        if ($event->isNew) {
+            return;
+        }
+        $craftField = $event->field;
+        $fields = $this->getAllForCraftField($craftField->id);
+        foreach ($fields as $field) {
+            $display = $field->display;
+            if ($field->craft_field_class != get_class($craftField)) {
+                // Field has changed class, deleting old field, recreating it
+                // and copying old field attributes
+                $this->delete($field);
+                $newField = $this->fieldsService()->createFromField($craftField);
+                $newField->setAttributes([
+                    'labelHidden' => $field->labelHidden,
+                    'visuallyHidden' => $field->labelVisuallyHidden,
+                    'labelVisuallyHidden' => $field->labelVisuallyHidden,
+                    'hidden' => $newField->hidden ?: $field->hidden,
+                    'display' => $display
+                ]);
+                $this->save($newField);
+            } else {
+                $field->rebuild();
+                $this->save($field);
+            }
+        }
     }
 
     /**

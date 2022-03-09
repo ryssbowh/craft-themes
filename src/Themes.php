@@ -603,7 +603,7 @@ class Themes extends \craft\base\Plugin
             });
 
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
-            Themes::$plugin->displays->onCraftFieldSaved($e);
+            Themes::$plugin->fields->onCraftFieldSaved($e);
         });
 
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(ElementEvent $event) {

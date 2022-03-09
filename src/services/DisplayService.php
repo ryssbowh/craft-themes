@@ -14,9 +14,7 @@ use Ryssbowh\CraftThemes\models\fields\Matrix;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\events\ConfigEvent;
-use craft\events\FieldEvent;
 use craft\events\RebuildConfigEvent;
-use craft\fields\Matrix as CraftMatrix;
 use craft\helpers\StringHelper;
 
 class DisplayService extends Service
@@ -236,47 +234,6 @@ class DisplayService extends Service
     }
 
     /**
-     * Handles a craft field save: If the type of field has changed
-     * replaces the item in each display associated to the field.
-     * Otherwise let the item handle the change.
-     * 
-     * @param FieldEvent $event
-     */
-    public function onCraftFieldSaved(FieldEvent $event)
-    {
-        if ($event->isNew) {
-            return;
-        }
-        $field = $event->field;
-        $displays = $this->getAllForCraftField($field->id);
-        foreach ($displays as $display) {
-            $oldItem = $display->item;
-            if ($oldItem->craft_field_class != get_class($field)) {
-                // Field has changed class, deleting old field, recreating it
-                // and copying old field attributes
-                $oldItem->delete();
-                $display->item = $this->fieldsService()->createFromField($field);
-                $display->item->setAttributes([
-                    'id' => $oldItem->id,
-                    'uid' => $oldItem->uid,
-                    'labelHidden' => $oldItem->labelHidden,
-                    'visuallyHidden' => $oldItem->labelVisuallyHidden,
-                    'labelVisuallyHidden' => $oldItem->labelVisuallyHidden,
-                    'hidden' => $display->item->hidden ?: $oldItem->hidden,
-                    'display' => $display
-                ]);
-                $this->save($display);
-            } else {
-                // Let rebuild the field in case they have changes to make
-                // and save the display if they did changes
-                if ($oldItem->rebuild()) {
-                    $this->save($display);
-                }
-            }
-        }
-    }
-
-    /**
      * Populate a display from an array of data
      * 
      * @param  array $data
@@ -326,21 +283,6 @@ class DisplayService extends Service
     public function getByUid(string $uid): ?DisplayInterface
     {
         return $this->all->firstWhere('uid', $uid);
-    }
-
-    /**
-     * Get all displays for a craft field id
-     * 
-     * @param  int    $fieldId
-     * @return DisplayInterface[]
-     */
-    public function getAllForCraftField(int $fieldId): array
-    {
-        return $this->all
-            ->where('type', self::TYPE_FIELD)
-            ->where('item.craft_field_id', $fieldId)
-            ->values()
-            ->all();
     }
 
     /**

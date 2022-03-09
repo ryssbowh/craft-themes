@@ -107,12 +107,11 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public function rebuild(): bool
+    public function rebuild()
     {
         $oldTypes = $this->types;
         $newTypes = [];
         $fieldIdsToKeep = [];
-        $hasChanged = false;
         foreach ($this->craftField->getBlockTypes() as $craftType) {
             if (isset($oldTypes[$craftType->handle])) {
                 $type = $oldTypes[$craftType->handle];
@@ -132,7 +131,6 @@ class Matrix extends CraftField implements MatrixInterface
                 if (!$oldField) {
                     //New field was added to the block type, creating new field
                     $field = Themes::$plugin->fields->createFromField($craftField);
-                    $hasChanged = true;
                 } else if ($oldField->craft_field_class != get_class($craftField)) {
                     //Field has changed class, creating a new one and copying old fields attributes
                     $field = Themes::$plugin->fields->createFromField($craftField);
@@ -143,11 +141,10 @@ class Matrix extends CraftField implements MatrixInterface
                     $field->visuallyHidden = $oldField->visuallyHidden;
                     $field->hidden = $field->hidden ?: $oldField->hidden;
                     $fieldIdsToKeep[] = $field->id;
-                    $hasChanged = true;
                 } else {
                     //Field hasn't changed but forwarding the change to sub fields, in case they have things to change
                     $field = $oldField;
-                    $hasChanged = ($hasChanged or $field->rebuild());
+                    $field->rebuild();
                     $fieldIdsToKeep[] = $field->id;
                 }
                 $field->parent = $this;
@@ -157,7 +154,6 @@ class Matrix extends CraftField implements MatrixInterface
             $newTypes[$craftType->handle] = $type;
         }
         $this->types = $newTypes;
-        return $hasChanged;
     }
 
     /**
@@ -196,10 +192,18 @@ class Matrix extends CraftField implements MatrixInterface
      */
     public static function save(FieldInterface $field): bool
     {
+        $fieldsToKeep = [];
+        $children = Themes::$plugin->fields->getChildren($field);
         foreach ($field->types as $type) {
             foreach ($type->fields as $matrixField) {
                 // $matrixField->parent = $field;
                 Themes::$plugin->fields->save($matrixField);
+                $fieldsToKeep[] = $matrixField->id;
+            }
+        }
+        foreach ($children as $child) {
+            if (!in_array($child->id, $fieldsToKeep)) {
+                Themes::$plugin->fields->delete($child);
             }
         }
         return parent::save($field);
@@ -212,7 +216,6 @@ class Matrix extends CraftField implements MatrixInterface
     {
         parent::handleChanged($uid, $data);
         $matrix = Themes::$plugin->fields->getRecordByUid($uid);
-        $pivotsToKeep = [];
         foreach ($data['types'] as $typeData) {
             $fields = $typeData['fields'] ?? [];
             ProjectConfigHelper::ensureFieldsProcessed($fields);
@@ -221,18 +224,6 @@ class Matrix extends CraftField implements MatrixInterface
                 $pivot = Themes::$plugin->fields->getParentPivotRecord($matrix->id, $field->id);
                 $pivot->order = $order;
                 $pivot->save(false);
-                $pivotsToKeep[] = $pivot->id;
-            }
-        }
-        //Delete unused pivots
-        $children = Themes::$plugin->fields->getChildrenPivots($matrix->id);
-        foreach ($children as $pivot) {
-            if (!in_array($pivot->id, $pivotsToKeep)) {
-                $pivot->delete();
-                try {
-                    $field = Themes::$plugin->fields->getById($pivot->field_id);
-                    Themes::$plugin->fields->delete($field);
-                } catch (\Throwable $e) {}
             }
         }
     }
