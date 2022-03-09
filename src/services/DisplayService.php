@@ -267,8 +267,9 @@ class DisplayService extends Service
                 ]);
                 $this->save($display);
             } else {
-                // Let the field deal with the change itself
-                if ($oldItem->onCraftFieldChanged()) {
+                // Let rebuild the field in case they have changes to make
+                // and save the display if they did changes
+                if ($oldItem->rebuild()) {
                     $this->save($display);
                 }
             }
@@ -409,7 +410,7 @@ class DisplayService extends Service
     }
 
     /**
-     * Create all displays for a view mode
+     * Create all displays for a view mode, will rebuild the existing ones
      * 
      * @param  ViewModeInterface $viewMode
      * @return DisplayInterface[]
@@ -432,12 +433,11 @@ class DisplayService extends Service
         //Getting or creating displays for fields that are not craft fields (author, title etc)
         foreach (Themes::$plugin->fields->registeredFields as $fieldType => $fieldClass) {
             if ($fieldClass::shouldExistOnLayout($viewMode->layout)) {
-                $display = $this->getForFieldType($viewMode, $fieldType);
+                $display = $item = null;
                 try {
+                    $display = $this->getForFieldType($viewMode, $fieldType);
                     $item = $display ? $display->getItem() : null;
-                } catch (\Throwable $e) {
-                    $item = null;
-                }
+                } catch (\Throwable $e) {}
                 if (!$display) {
                     $display = $this->create([
                         'type' => self::TYPE_FIELD,
@@ -452,19 +452,19 @@ class DisplayService extends Service
                     ]);
                     $display->item = $item;
                     $item->display = $display;
+                } else {
+                    $item->rebuild();
                 }
                 $displays[] = $display;
             }
         }
         //Getting or creating displays for craft fields
         foreach ($viewMode->layout->getCraftFields() as $craftField) {
-            $display = $this->getForCraftField($craftField->id, $viewMode);
+            $display = $item = null;
             try {
-                //Catching errors when the item is not defined
+                $display = $this->getForCraftField($craftField->id, $viewMode);
                 $item = $display ? $display->getItem() : null;
-            } catch (\Throwable $e) {
-                $item = null;
-            }
+            } catch (\Throwable $e) {}
             if (!$display) {
                 $display = $this->create([
                     'type' => self::TYPE_FIELD,
@@ -477,6 +477,8 @@ class DisplayService extends Service
                 $item = Themes::$plugin->fields->createFromField($craftField);
                 $display->item = $item;
                 $item->display = $display;
+            } else {
+                $item->rebuild();
             }
             $displays[] = $display;
         }

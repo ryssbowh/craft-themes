@@ -418,4 +418,12 @@ abstract class Field extends DisplayItem implements FieldInterface
     {
         return true;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function rebuild(): bool
+    {
+        return false;
+    }
 }

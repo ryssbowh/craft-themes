@@ -30,11 +30,4 @@ interface CraftFieldInterface extends FieldInterface
      * @return FieldInterface
      */
     public static function createFromField(Field $craftField): FieldInterface;
-
-    /**
-     * Callback when the associated Craft field is changed
-     * 
-     * @return bool should the associated display be resaved
-     */
-    public function onCraftFieldChanged(): bool;
 }

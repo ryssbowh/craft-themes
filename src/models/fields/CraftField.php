@@ -70,14 +70,6 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
-    public function onCraftFieldChanged(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         if ($this->parent) {

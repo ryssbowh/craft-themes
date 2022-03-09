@@ -109,15 +109,15 @@ class FieldsService extends Service
     }
 
     /**
-     * Get the children pivots for a field
+     * Get the children pivots for a parent
      * 
-     * @param  FieldInterface $field
+     * @param  int $parentId
      * @return ParentPivotRecord[]
      */
-    public function getChildrenPivots(FieldInterface $field): array
+    public function getChildrenPivots(int $parentId): array
     {
         return $this->parentPivots
-            ->where('parent_id', $field->id)
+            ->where('parent_id', $parentId)
             ->values()
             ->all();
     }
@@ -133,7 +133,7 @@ class FieldsService extends Service
         $_this = $this;
         return array_map(function ($record) use ($_this, $field) {
             return $_this->getById($record->field_id);
-        }, $this->getChildrenPivots($field));
+        }, $this->getChildrenPivots($field->id));
     }
 
     /**

@@ -176,4 +176,11 @@ interface FieldInterface
      * @return bool
      */
     public function getCanBeCached(): bool;
+
+    /**
+     * Rebuild the field
+     * 
+     * @return bool true if the field has changed
+     */
+    public function rebuild(): bool;
 }

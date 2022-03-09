@@ -116,6 +116,7 @@ class Table extends CraftField
         parent::handleChanged($uid, $data);
         $table = Themes::$plugin->fields->getRecordByUid($uid);
         $fields = $data['fields'] ?? [];
+        $pivotsToKeep = [];
         ProjectConfigHelper::ensureFieldsProcessed(array_map(function ($data) {
             return $data['uid'];
         }, $fields));
@@ -126,6 +127,18 @@ class Table extends CraftField
             $pivot->name = $fieldData['name'];
             $pivot->handle = $fieldData['handle'];
             $pivot->save(false);
+            $pivotsToKeep[] = $pivot->id;
+        }
+        //Delete unused pivots
+        $children = Themes::$plugin->table->getForTable($table);
+        foreach ($children as $pivot) {
+            if (!in_array($pivot->id, $pivotsToKeep)) {
+                $pivot->delete();
+                try {
+                    $field = Themes::$plugin->fields->getById($pivot->field_id);
+                    Themes::$plugin->fields->delete($field);
+                } catch (\Throwable $e) {}
+            }
         }
     }
 
@@ -143,7 +156,7 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
-    public function onCraftFieldChanged(): bool
+    public function rebuild(): bool
     {
         $oldFields = $this->fields;
         $newFields = [];
@@ -183,16 +196,6 @@ class Table extends CraftField
             $order++;
         }
         $this->fields = $newFields;
-        //Deleting all fields apart from those that haven't changed to make sure project config is synced
-        //New fields will be created later when the table is saved
-        $oldRecords = TablePivotRecord::find()
-            ->where(['table_id' => $this->id])
-            ->andWhere(['not in', 'field_id', $fieldIdsToKeep])
-            ->all();
-        foreach ($oldRecords as $record) {
-            $field = Themes::$plugin->fields->getById($record->field_id);
-            Themes::$plugin->fields->delete($field);
-        }
         return $hasChanged;
     }
 

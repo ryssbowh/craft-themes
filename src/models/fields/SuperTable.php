@@ -103,7 +103,7 @@ class SuperTable extends CraftField
     /**
      * @inheritDoc
      */
-    public function onCraftFieldChanged(): bool
+    public function rebuild(): bool
     {
         $oldTypes = $this->types;
         $newTypes = [];
@@ -144,7 +144,7 @@ class SuperTable extends CraftField
                 } else {
                     //Field hasn't changed but forwarding the change to sub fields, in case they have things to change
                     $field = $oldField;
-                    $hasChanged = ($hasChanged or $field->onCraftFieldChanged());
+                    $hasChanged = ($hasChanged or $field->rebuild());
                     $fieldIdsToKeep[] = $field->id;
                 }
                 $field->parent = $this;
@@ -154,14 +154,6 @@ class SuperTable extends CraftField
             $newTypes[$blockType->handle] = $type;
         }
         $this->types = $newTypes;
-        //Deleting all children apart from those that haven't changed to make sure project config is synced
-        //New fields will be created later when the matrix is saved
-        $children = Themes::$plugin->fields->getChildren($this);
-        foreach ($children as $child) {
-            if (!in_array($child->id, $fieldIdsToKeep)) {
-                Themes::$plugin->fields->delete($child);
-            }
-        }
         return $hasChanged;
     }
 
@@ -218,6 +210,7 @@ class SuperTable extends CraftField
     {
         parent::handleChanged($uid, $data);
         $superTable = Themes::$plugin->fields->getRecordByUid($uid);
+        $pivotsToKeep = [];
         foreach ($data['types'] ?? [] as $typeData) {
             $fields = $typeData['fields'] ?? [];
             ProjectConfigHelper::ensureFieldsProcessed($fields);
@@ -226,6 +219,19 @@ class SuperTable extends CraftField
                 $pivot = Themes::$plugin->fields->getParentPivotRecord($superTable->id, $field->id);
                 $pivot->order = $order;
                 $pivot->save(false);
+                $pivotsToKeep[] = $pivot->id;
+            }
+        }
+        // dd($pivotsToKeep);
+        //Delete unused pivots
+        $children = Themes::$plugin->fields->getChildrenPivots($superTable->id);
+        foreach ($children as $pivot) {
+            if (!in_array($pivot->id, $pivotsToKeep)) {
+                $pivot->delete();
+                try {
+                    $field = Themes::$plugin->fields->getById($pivot->field_id);
+                    Themes::$plugin->fields->delete($field);
+                } catch (\Throwable $e) {}
             }
         }
     }
