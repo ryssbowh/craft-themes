@@ -149,6 +149,15 @@ class CraftField extends Field implements CraftFieldInterface
     /**
      * @inheritDoc
      */
+    public function rebuild()
+    {
+        $this->craft_field_class = get_class($this->craftField);
+        $this->type = Themes::$plugin->fields->getTypeForCraftField(get_class($this->craftField));
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function buildConfig(BaseField $craftField): array
     {
         $class = get_class($craftField);

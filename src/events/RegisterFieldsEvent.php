@@ -12,6 +12,7 @@ use Ryssbowh\CraftThemes\models\fields\ElementUrl;
 use Ryssbowh\CraftThemes\models\fields\ExpiryDate;
 use Ryssbowh\CraftThemes\models\fields\File;
 use Ryssbowh\CraftThemes\models\fields\Matrix;
+use Ryssbowh\CraftThemes\models\fields\Missing;
 use Ryssbowh\CraftThemes\models\fields\PostDate;
 use Ryssbowh\CraftThemes\models\fields\Price;
 use Ryssbowh\CraftThemes\models\fields\Sku;
@@ -45,6 +46,7 @@ class RegisterFieldsEvent extends Event
     {
         parent::init();
         $this->register(CraftField::class);
+        $this->register(Missing::class);
         $this->register(Matrix::class);
         $this->register(Table::class);
         $this->register(TableField::class);
