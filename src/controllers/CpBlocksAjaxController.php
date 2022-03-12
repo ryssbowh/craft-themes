@@ -38,7 +38,7 @@ class CpBlocksAjaxController extends Controller
     public function actionBlockProviders()
     {
         return [
-            'providers' => $this->blockProviders->all(true)
+            'providers' => $this->blockProviders->getAll(true)
         ];
     }
 

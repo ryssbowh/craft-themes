@@ -14,7 +14,7 @@ class FieldDisplayerService extends Service
 {
     const EVENT_REGISTER_DISPLAYERS = 'register_displayers';
     const EVENT_FIELD_TARGETS = 'field_targets';
-    const EVENT_DEFAULT_DISPLAYER = 'default_dsplayer';
+    const EVENT_DEFAULT_DISPLAYER = 'default_displayer';
 
     /**
      * All displayers classes, indexed by handle
@@ -39,7 +39,7 @@ class FieldDisplayerService extends Service
      * 
      * @return string[]
      */
-    public function all(): array
+    public function getAll(): array
     {
         if (is_null($this->_displayers)) {
             $this->register();
@@ -55,7 +55,7 @@ class FieldDisplayerService extends Service
      */
     public function hasDisplayer(string $handle)
     {
-        return isset($this->all()[$handle]);
+        return isset($this->getAll()[$handle]);
     }
 
     /**
@@ -68,7 +68,7 @@ class FieldDisplayerService extends Service
     public function getClassByHandle(string $handle): string
     {
         $this->ensureDisplayerIsDefined($handle);
-        return $this->all()[$handle];
+        return $this->getAll()[$handle];
     }
 
     /**
@@ -123,7 +123,7 @@ class FieldDisplayerService extends Service
     public function getAvailable(FieldInterface $field): array
     {
         $available = [];
-        foreach ($this->all() as $handle => $class) {
+        foreach ($this->getAll() as $handle => $class) {
             if (in_array($field->getTargetClass(), $this->getFieldTargets($handle))) {
                 $available[] = $handle;
             }
@@ -212,7 +212,7 @@ class FieldDisplayerService extends Service
     {
         //figure out the default as defined by displayer classes :
         $default = '';
-        foreach ($this->all() as $handle => $class) {
+        foreach ($this->getAll() as $handle => $class) {
             foreach ($this->getFieldTargets($handle) as $target) {
                 if ($target == $fieldClass and $class::isDefault($fieldClass)) {
                     $default = $handle;

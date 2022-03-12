@@ -40,7 +40,7 @@ class CpThemesController extends Controller
 
         return $this->renderTemplate('themes/cp/themes', [
             'title' => \Craft::t('themes', 'Themes'),
-            'themes' => Themes::$plugin->registry->all(),
+            'themes' => Themes::$plugin->registry->getAll(),
             'isPro' => Themes::$plugin->is(Themes::EDITION_PRO)
         ]);
     }

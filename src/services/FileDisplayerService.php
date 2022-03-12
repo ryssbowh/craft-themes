@@ -35,7 +35,7 @@ class FileDisplayerService extends Service
      * 
      * @return array
      */
-    public function all(): array
+    public function getAll(): array
     {
         if ($this->_displayers === null) {
             $this->register();
@@ -79,10 +79,10 @@ class FileDisplayerService extends Service
      */
     public function getClassByHandle(string $handle): string
     {
-        if (!isset($this->all()[$handle])) {
+        if (!isset($this->getAll()[$handle])) {
             throw FileDisplayerException::displayerNotDefined($handle);
         }
-        return $this->all()[$handle];
+        return $this->getAll()[$handle];
     }
 
     /**
@@ -106,7 +106,7 @@ class FileDisplayerService extends Service
     public function getForKind(string $kind): array
     {
         $handles = [];
-        foreach ($this->all() as $handle => $class) {
+        foreach ($this->getAll() as $handle => $class) {
             if (in_array($kind, $this->getKindTargets($handle))) {
                 $handles[] = $handle;
             }
@@ -145,7 +145,7 @@ class FileDisplayerService extends Service
     {
         //figure out the default as defined by displayer classes :
         $defaults = [];
-        foreach ($this->all() as $handle => $class) {
+        foreach ($this->getAll() as $handle => $class) {
             foreach ($this->getKindTargets($handle) as $kind) {
                 if ($class::isDefault($kind)) {
                     $defaults[$kind] = $handle;
@@ -159,7 +159,7 @@ class FileDisplayerService extends Service
         $this->trigger(self::EVENT_DEFAULT_DISPLAYERS, $event);
         $this->_defaults = [];
         foreach ($event->defaults as $kind => $handle) {
-            if (!isset($this->all()[$handle])) {
+            if (!isset($this->getAll()[$handle])) {
                 continue;
             }
             if ($this->isDisplayerValidForKind($handle, $kind)) {

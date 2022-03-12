@@ -166,7 +166,7 @@ class FieldsService extends Service
      */
     public function getAllForCraftField(int $fieldId): array
     {
-        return $this->all
+        return $this->getAll()
             ->where('craft_field_id', $fieldId)
             ->values()
             ->all();
@@ -243,7 +243,7 @@ class FieldsService extends Service
      */
     public function getById(int $id): FieldInterface
     {
-        return $this->resolveParent($this->all->firstWhere('id', $id));
+        return $this->resolveParent($this->getAll()->firstWhere('id', $id));
     }
 
     /**
@@ -333,7 +333,7 @@ class FieldsService extends Service
     public function delete(FieldInterface $field): bool
     {
         if ($field::delete($field)) {
-            $this->_fields = $this->all->where('id', '!=', $field->id);
+            $this->_fields = $this->getAll()->where('id', '!=', $field->id);
             $this->_parentPivots = null;
             return true;
         }
@@ -390,7 +390,7 @@ class FieldsService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         $parts = explode('.', self::CONFIG_KEY);
-        foreach ($this->all as $field) {
+        foreach ($this->getAll() as $field) {
             $e->config[$parts[0]][$parts[1]][$field->uid] = $field->getConfig();
         }
     }
@@ -416,7 +416,7 @@ class FieldsService extends Service
      */
     public function getForDisplay(DisplayInterface $display): ?FieldInterface
     {
-        return $this->resolveParent($this->all->firstWhere('display_id', $display->id));
+        return $this->resolveParent($this->getAll()->firstWhere('display_id', $display->id));
     }
 
     /**
@@ -437,8 +437,8 @@ class FieldsService extends Service
      */
     protected function add(FieldInterface $field)
     {
-        if (!$this->all->firstWhere('id', $field->id)) {
-            $this->all->push($field);
+        if (!$this->getAll()->firstWhere('id', $field->id)) {
+            $this->getAll()->push($field);
         }
     }
 

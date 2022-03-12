@@ -28,7 +28,7 @@ class GroupsService extends Service
      * 
      * @return Collection
      */
-    public function all()
+    public function getAll()
     {
         if ($this->_groups === null) {
             $records = GroupRecord::find()->all();
@@ -49,7 +49,7 @@ class GroupsService extends Service
      */
     public function getById(int $id): GroupInterface
     {
-        if ($group = $this->all()->firstWhere('id', $id)) {
+        if ($group = $this->getAll()->firstWhere('id', $id)) {
             return $group;
         }
         throw GroupException::noId($id);
@@ -63,7 +63,7 @@ class GroupsService extends Service
      */
     public function getByUid(string $uid): ?GroupInterface
     {
-        return $this->all()->firstWhere('uid', $uid);
+        return $this->getAll()->firstWhere('uid', $uid);
     }
 
     /**
@@ -74,7 +74,7 @@ class GroupsService extends Service
      */
     public function getForDisplay(DisplayInterface $display): ?GroupInterface
     {
-        return $this->all()->firstWhere('display_id', $display->id);
+        return $this->getAll()->firstWhere('display_id', $display->id);
     }
 
     /**
@@ -159,7 +159,7 @@ class GroupsService extends Service
 
         \Craft::$app->projectConfig->remove(self::CONFIG_KEY . '.' . $group->uid);
 
-        $this->_groups = $this->all()->where('id', '!=', $group->id);
+        $this->_groups = $this->getAll()->where('id', '!=', $group->id);
 
         return true;
     }
@@ -220,7 +220,7 @@ class GroupsService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         $parts = explode('.', self::CONFIG_KEY);
-        foreach ($this->all() as $group) {
+        foreach ($this->getAll() as $group) {
             $e->config[$parts[0]][$parts[1]][$group->uid] = $group->getConfig();
         }
     }
@@ -269,8 +269,8 @@ class GroupsService extends Service
      */
     protected function add(GroupInterface $group)
     {
-        if (!$this->all()->firstWhere('id', $group->id)) {
-            $this->all()->push($group);
+        if (!$this->getAll()->firstWhere('id', $group->id)) {
+            $this->getAll()->push($group);
         }
     }
 }

@@ -68,7 +68,7 @@ class LayoutService extends Service
      * 
      * @return Collection
      */
-    public function all(): Collection
+    public function getAll(): Collection
     {
         if ($this->_layouts === null) {
             $records = LayoutRecord::find()->all();
@@ -89,7 +89,7 @@ class LayoutService extends Service
      */
     public function getById(int $id): LayoutInterface
     {
-        if ($layout = $this->all()->firstWhere('id', $id)) {
+        if ($layout = $this->getAll()->firstWhere('id', $id)) {
             return $layout;
         }
         throw LayoutException::noId($id);
@@ -104,7 +104,7 @@ class LayoutService extends Service
      */
     public function getByUid(string $uid): LayoutInterface
     {
-        if ($layout = $this->all()->firstWhere('uid', $uid)) {
+        if ($layout = $this->getAll()->firstWhere('uid', $uid)) {
             return $layout;
         }
         throw LayoutException::noUid($uid);
@@ -117,7 +117,7 @@ class LayoutService extends Service
      */
     public function withDisplays(): array
     {
-        return $this->all()->filter(function ($layout) {
+        return $this->getAll()->filter(function ($layout) {
             return $layout->hasDisplays();
         })->values()->all();
     }
@@ -160,7 +160,7 @@ class LayoutService extends Service
     public function getForTheme($theme, ?bool $withHasDisplays = null, ?bool $withHasBlocks = null): array
     {
         $theme = $this->getThemeHandle($theme);
-        return $this->all()->filter(function ($layout) use ($theme, $withHasDisplays, $withHasBlocks) {
+        return $this->getAll()->filter(function ($layout) use ($theme, $withHasDisplays, $withHasBlocks) {
             if ($layout->themeHandle != $theme) {
                 return false;
             }
@@ -182,8 +182,8 @@ class LayoutService extends Service
     public function getBlockLayouts(): array
     {
         $layouts = [];
-        foreach (Themes::$plugin->registry->all() as $theme) {
-            $layouts[$theme->handle] = $this->all()->filter(function ($layout) use ($theme) {
+        foreach (Themes::$plugin->registry->getAll() as $theme) {
+            $layouts[$theme->handle] = $this->getAll()->filter(function ($layout) use ($theme) {
                 return ($layout->canHaveBlocks() and $layout->themeHandle == $theme->handle);
             })->sort(function ($elem, $elem2) {
                 return strcasecmp($elem->description, $elem2->description);
@@ -202,8 +202,8 @@ class LayoutService extends Service
     public function getWithDisplays(): array
     {
         $layouts = [];
-        foreach (Themes::$plugin->registry->all() as $theme) {
-            $layouts[$theme->handle] = $this->all()->filter(function ($layout) use ($theme) {
+        foreach (Themes::$plugin->registry->getAll() as $theme) {
+            $layouts[$theme->handle] = $this->getAll()->filter(function ($layout) use ($theme) {
                 return ($layout->hasDisplays() and $layout->themeHandle == $theme->handle);
             })->sort(function ($elem, $elem2) {
                 return strcasecmp($elem->description, $elem2->description);
@@ -256,7 +256,7 @@ class LayoutService extends Service
             $this->installLayoutData($layout);
             $ids[] = $layout->id;
         }
-        $layouts = $this->all()
+        $layouts = $this->getAll()
             ->whereNotIn('id', $ids)
             ->where('themeHandle', $theme->handle)
             ->all();
@@ -307,7 +307,7 @@ class LayoutService extends Service
      */
     public function get($theme, string $type, string $elementUid = ''): ?LayoutInterface
     {
-        return $this->all()
+        return $this->getAll()
             ->where('themeHandle', $this->getThemeHandle($theme))
             ->where('elementUid', $elementUid)
             ->firstWhere('type', $type);
@@ -323,7 +323,7 @@ class LayoutService extends Service
     public function getForType($theme, string $type): array
     {
         $theme = $this->getThemeHandle($theme);
-        return $this->all()
+        return $this->getAll()
             ->where('themeHandle', $theme)
             ->where('type', $type)
             ->values()
@@ -503,7 +503,7 @@ class LayoutService extends Service
             // in config, and don't need to respond to these events as it would create duplicates
             return;
         }
-        $layouts = $this->all()->filter(function ($layout) use ($uid) {
+        $layouts = $this->getAll()->filter(function ($layout) use ($uid) {
             return $layout->elementUid == $uid;
         })->all();
         foreach ($layouts as $layout) {
@@ -545,7 +545,7 @@ class LayoutService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         $parts = explode('.', self::CONFIG_KEY);
-        foreach ($this->all() as $layout) {
+        foreach ($this->getAll() as $layout) {
             $e->config[$parts[0]][$parts[1]][$layout->uid] = $layout->getConfig();
         }
     }
@@ -706,7 +706,7 @@ class LayoutService extends Service
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $layout->uid);
 
-        $this->_layouts = $this->all()->where('id', '!=', $layout->id);
+        $this->_layouts = $this->getAll()->where('id', '!=', $layout->id);
 
         return true;
     }
@@ -718,8 +718,8 @@ class LayoutService extends Service
      */
     protected function add(LayoutInterface $layout)
     {
-        if (!$this->all()->firstWhere('id', $layout->id)) {
-            $this->all()->push($layout);
+        if (!$this->getAll()->firstWhere('id', $layout->id)) {
+            $this->getAll()->push($layout);
         }
     }
 
@@ -790,7 +790,7 @@ class LayoutService extends Service
      */
     protected function getCustomLayouts(string $themeHandle): array
     {
-        return $this->all()
+        return $this->getAll()
             ->where('type', self::CUSTOM_HANDLE)
             ->where('themeHandle', $themeHandle)
             ->all();

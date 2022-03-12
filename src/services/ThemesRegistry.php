@@ -114,7 +114,7 @@ class ThemesRegistry extends Service
      * 
      * @return ThemeInterface[]
      */
-    public function all(): array
+    public function getAll(): array
     {
         if ($this->themes === null) {
             $this->loadThemes();
@@ -131,7 +131,7 @@ class ThemesRegistry extends Service
     {
         return array_map(function ($theme) {
             return $theme->name;
-        }, $this->all());
+        }, $this->getAll());
     }
 
     /**
@@ -143,7 +143,7 @@ class ThemesRegistry extends Service
      */
     public function getNonPartials(bool $asNames = false, bool $asArrays = false): array
     {
-        $themes = array_filter($this->all(), function ($theme) {
+        $themes = array_filter($this->getAll(), function ($theme) {
             return !$theme->isPartial();
         });
         if ($asNames) {
@@ -166,7 +166,7 @@ class ThemesRegistry extends Service
      */
     public function getDependencies(ThemeInterface $theme): array
     {
-        $dependencies = array_values(array_filter($this->all(), function ($theme2) use ($theme) {
+        $dependencies = array_values(array_filter($this->getAll(), function ($theme2) use ($theme) {
             return $theme2->extends == $theme->handle;
         }));
         foreach ($dependencies as $theme2) {
@@ -184,8 +184,8 @@ class ThemesRegistry extends Service
      */
     public function getTheme(string $handle): ThemeInterface
     {
-        if (isset($this->all()[$handle])) {
-            return $this->all()[$handle];
+        if (isset($this->getAll()[$handle])) {
+            return $this->getAll()[$handle];
         }
         throw ThemeException::notDefined($handle);
     }
@@ -198,7 +198,7 @@ class ThemesRegistry extends Service
      */
     public function hasTheme(string $handle): bool
     {
-        return isset($this->all()[$handle]);
+        return isset($this->getAll()[$handle]);
     }
 
     /**

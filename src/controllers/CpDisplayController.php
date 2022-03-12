@@ -32,7 +32,7 @@ class CpDisplayController extends Controller
                 $themeName = $keys[0];
                 $theme = $themes[$keys[0]];
             }
-        } else {
+        } elseif ($this->registry->hasTheme($themeName)) {
             $theme = $this->registry->getTheme($themeName);
         }
 

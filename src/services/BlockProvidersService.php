@@ -25,7 +25,7 @@ class BlockProvidersService extends Component
      * @param  bool $asArrays
      * @return BlockProviderInterface[]
      */
-    public function all(bool $asArrays = false): array
+    public function getAll(bool $asArrays = false): array
     {
         if ($this->_providers === null) {
             $this->register();
@@ -47,8 +47,8 @@ class BlockProvidersService extends Component
      */
     public function getByHandle(string $handle): BlockProviderInterface
     {
-        if (isset($this->all()[$handle])) {
-            return $this->all()[$handle];
+        if (isset($this->getAll()[$handle])) {
+            return $this->getAll()[$handle];
         }
         throw BlockProviderException::notDefined($handle);
     }
@@ -61,7 +61,7 @@ class BlockProvidersService extends Component
      */
     public function has(string $handle): bool
     {
-        return isset($this->all()[$handle]);
+        return isset($this->getAll()[$handle]);
     }
 
     /**

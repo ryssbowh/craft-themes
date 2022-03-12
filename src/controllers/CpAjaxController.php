@@ -32,7 +32,7 @@ class CpAjaxController extends Controller
      */
     public function actionInstall(): array
     {
-        $this->layouts->install(true);
+        $this->layouts->installAll();
         return [
             'message' => \Craft::t('themes', 'Themes data has been installed')
         ];

@@ -15,6 +15,7 @@ use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\LayoutRecord;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
+use craft\fields\MissingField;
 use craft\helpers\StringHelper;
 
 class DisplayService extends Service
@@ -150,7 +151,7 @@ class DisplayService extends Service
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
 
-        $this->_displays = $this->all->where('id', '!=', $display->id);
+        $this->_displays = $this->getAll()->where('id', '!=', $display->id);
         $display->viewMode->displays = null;
 
         return true;
@@ -228,7 +229,7 @@ class DisplayService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         $parts = explode('.', self::CONFIG_KEY);
-        foreach ($this->all as $display) {
+        foreach ($this->getAll() as $display) {
             $e->config[$parts[0]][$parts[1]][$display->uid] = $display->getConfig();
         }
     }
@@ -271,7 +272,7 @@ class DisplayService extends Service
      */
     public function getById(int $id): ?DisplayInterface
     {
-        return $this->all->firstWhere('id', $id);
+        return $this->getAll()->firstWhere('id', $id);
     }
 
     /**
@@ -282,7 +283,7 @@ class DisplayService extends Service
      */
     public function getByUid(string $uid): ?DisplayInterface
     {
-        return $this->all->firstWhere('uid', $uid);
+        return $this->getAll()->firstWhere('uid', $uid);
     }
 
     /**
@@ -294,7 +295,7 @@ class DisplayService extends Service
      */
     public function getForFieldType(ViewModeInterface $viewMode, string $type): ?DisplayInterface
     {
-        return $this->all
+        return $this->getAll()
             ->where('type', self::TYPE_FIELD)
             ->where('viewMode_id', $viewMode->id)
             ->firstWhere('item.type', $type);
@@ -314,7 +315,7 @@ class DisplayService extends Service
         $viewModes = array_map(function ($viewMode) {
             return $viewMode->id;
         }, $layout->viewModes);
-        return $this->all
+        return $this->getAll()
             ->whereIn('viewMode_id', $viewModes)
             ->values()
             ->all();
@@ -328,7 +329,7 @@ class DisplayService extends Service
      */
     public function getForGroup(int $groupId): array
     {
-        return $this->all
+        return $this->getAll()
             ->where('group_id', $groupId)
             ->values()
             ->all();
@@ -343,7 +344,7 @@ class DisplayService extends Service
      */
     public function getForViewMode(ViewModeInterface $viewMode, bool $onlyRoots = true): array
     {
-        $query = $this->all
+        $query = $this->getAll()
             ->where('viewMode_id', $viewMode->id);
         if ($onlyRoots) {
             $query = $query->where('group_id', null);
@@ -428,6 +429,11 @@ class DisplayService extends Service
         return $displays;
     }
 
+    protected function createDisplay()
+    {
+
+    }
+
     /**
      * Clean up for view mode, deletes old displays
      *
@@ -439,7 +445,7 @@ class DisplayService extends Service
         $toKeep = array_map(function ($display) {
             return $display->id;
         }, $displays);
-        $toDelete = $this->all
+        $toDelete = $this->getAll()
             ->whereNotIn('id', $toKeep)
             ->where('viewMode_id', $viewMode->id)
             ->values()
@@ -456,8 +462,8 @@ class DisplayService extends Service
      */
     protected function add(DisplayInterface $display)
     {
-        if (!$this->all->firstWhere('id', $display->id)) {
-            $this->all->push($display);
+        if (!$this->getAll()->firstWhere('id', $display->id)) {
+            $this->getAll()->push($display);
         }
     }
 
@@ -470,7 +476,7 @@ class DisplayService extends Service
      */
     protected function getForCraftField(?int $fieldId = null, ViewModeInterface $viewMode): ?DisplayInterface
     {
-        return $this->all
+        return $this->getAll()
             ->where('type', self::TYPE_FIELD)
             ->where('item.craft_field_id', $fieldId)
             ->firstWhere('viewMode_id', $viewMode->id);
