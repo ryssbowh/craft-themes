@@ -138,25 +138,13 @@ class Install extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('themes_layouts_parent', '{{%themes_layouts}}');
-        $this->dropForeignKey('themes_display_view_mode', '{{%themes_displays}}');
-        $this->dropForeignKey('themes_display_group', '{{%themes_displays}}');
-        $this->dropForeignKey('themes_view_mode_layout', '{{%themes_view_modes}}');
-        $this->dropForeignKey('themes_blocks_layout', '{{%themes_blocks}}');
-        $this->dropForeignKey('themes_fields_display', '{{%themes_fields}}');
-        $this->dropForeignKey('themes_groups_display', '{{%themes_groups}}');
-        $this->dropForeignKey('themes_pivot_table_field', '{{%themes_pivot_table}}');
-        $this->dropForeignKey('themes_pivot_table_parent', '{{%themes_pivot_table}}');
-        $this->dropForeignKey('themes_pivot_parents_field', '{{%themes_pivot_parents}}');
-        $this->dropForeignKey('themes_pivot_parents_parent', '{{%themes_pivot_parents}}');
-
+        $this->dropTableIfExists('{{%themes_pivot_parents}}');
+        $this->dropTableIfExists('{{%themes_pivot_table}}');
         $this->dropTableIfExists('{{%themes_fields}}');
         $this->dropTableIfExists('{{%themes_groups}}');
         $this->dropTableIfExists('{{%themes_blocks}}');
         $this->dropTableIfExists('{{%themes_displays}}');
         $this->dropTableIfExists('{{%themes_view_modes}}');
         $this->dropTableIfExists('{{%themes_layouts}}');
-        $this->dropTableIfExists('{{%themes_pivot_parents}}');
-        $this->dropTableIfExists('{{%themes_pivot_table}}');
     }
 }

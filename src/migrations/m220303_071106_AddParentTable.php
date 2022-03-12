@@ -7,9 +7,9 @@ use Ryssbowh\CraftThemes\records\ParentPivotRecord;
 use craft\db\Migration;
 
 /**
- * m220303_071106_AddSuperTableTable migration.
+ * m220303_071106_AddParentTable migration.
  */
-class m220303_071106_AddSuperTableTable extends Migration
+class m220303_071106_AddParentTable extends Migration
 {
     /**
      * @inheritdoc
