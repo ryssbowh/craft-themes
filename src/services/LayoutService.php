@@ -6,7 +6,6 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\LayoutEvent;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
-use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\models\ViewMode;
@@ -215,34 +214,24 @@ class LayoutService extends Service
     }
 
     /**
-     * Create all layouts for all themes.
-     * Will mark each theme as having its data installed in project config
-     * to avoid syncing issues when installing themes on other environments.
-     * $force is to bypass this marker.
-     *
-     * @param bool $force
+     * (Re)create all layouts for all themes.
      */
-    public function install(bool $force = false)
+    public function installAll()
     {
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {
-            $this->installThemeData($theme, $force);
+            $this->installForTheme($theme);
         }
     }
 
     /**
-     * Install layouts for a theme, will deletes orphans.
-     * Will abort if force is false and theme is marked has having its data installed in project config.
+     * (Re)create layouts for a theme, will deletes orphans.
      * 
      * @param  ThemeInterface $theme
-     * @param  bool           $force
      * @return bool
      */
-    public function installThemeData(ThemeInterface $theme, bool $force = false): bool
+    public function installForTheme(ThemeInterface $theme): bool
     {
-        if ($theme->isPartial()) {
-            return false;
-        }
-        if (!$force and ProjectConfigHelper::isDataInstalledForTheme($theme)) {
+        if ($theme->isPartial() or !Themes::$plugin->is(Themes::EDITION_PRO)) {
             return false;
         }
         static::$isInstalling = true;
@@ -269,16 +258,12 @@ class LayoutService extends Service
 
     /**
      * Deletes all layouts for a theme. 
-     * Will abort if theme is not marked as having its data installed in project config.
      * 
      * @param  ThemeInterface $theme
      * @return bool
      */
-    public function uninstallThemeData(ThemeInterface $theme): bool
+    public function uninstallForTheme(ThemeInterface $theme): bool
     {
-        if (!ProjectConfigHelper::isDataInstalledForTheme($theme)) {
-            return false;
-        }
         foreach ($this->getForTheme($theme) as $layout) {
             $this->delete($layout, true);
         }
@@ -645,7 +630,6 @@ class LayoutService extends Service
             default:
                 throw LayoutException::unknownType($config['type']);
         }
-
         $config = array_intersect_key($config, array_flip($layout->safeAttributes()));
         $layout->setAttributes($config);
         return $layout;
@@ -731,7 +715,7 @@ class LayoutService extends Service
      */
     protected function getAvailable(string $themeHandle): array
     {
-        return array_merge(
+        $layouts = array_merge(
             [
                 $this->create([
                     'type' => self::DEFAULT_HANDLE,
@@ -750,9 +734,12 @@ class LayoutService extends Service
             $this->createVolumesLayouts($themeHandle),
             $this->createGlobalsLayouts($themeHandle),
             $this->createTagsLayouts($themeHandle),
-            $this->createProductsLayouts($themeHandle),
             $this->getCustomLayouts($themeHandle)
         );
+        if (\Craft::$app->plugins->getPlugin('commerce')) {
+            $layouts = array_merge($layouts, $this->createProductsLayouts($themeHandle));
+        }
+        return $layouts;
     }
 
     /**

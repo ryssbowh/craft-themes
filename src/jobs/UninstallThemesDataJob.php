@@ -5,19 +5,21 @@ use Ryssbowh\CraftThemes\Themes;
 use craft\queue\BaseJob;
 
 /**
- * Install all themes
+ * Uninstall all themes
+ *
+ * @since 3.1.0
  */
-class InstallThemesDataJob extends BaseJob
+class UninstallThemesDataJob extends BaseJob
 {
     public function execute($queue)
     {
         foreach (Themes::$plugin->registry->getNonPartials() as $theme) {
-            Themes::$plugin->registry->installTheme($theme);
+            Themes::$plugin->registry->uninstallTheme($theme);
         }
     }
 
     public function getDescription()
     {
-        return \Craft::t('themes', 'Install all themes data');
+        return \Craft::t('themes', 'Uninstall all themes data');
     }
 }

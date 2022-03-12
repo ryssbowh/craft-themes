@@ -69,7 +69,6 @@ class RegisterFieldDisplayerEvent extends Event
     {
         parent::init();
         $this->registerMany([
-            AllowedQtyDefault::class,
             AssetSlick::class,
             AssetRendered::class,
             AssetRenderFile::class,
@@ -80,7 +79,6 @@ class RegisterFieldDisplayerEvent extends Event
             ColourDefault::class,
             Date::class,
             DateTime::class,
-            DimensionsDefault::class,
             DropdownLabel::class,
             EmailEmail::class,
             ElementLink::class,
@@ -95,14 +93,9 @@ class RegisterFieldDisplayerEvent extends Event
             NumberDefault::class,
             PlainTextPlain::class,
             PlainTextTruncated::class,
-            PriceDefault::class,
-            ProductRendered::class,
             RadioButtonsLabel::class,
             RedactorFull::class,
             RedactorTruncated::class,
-            StockDefault::class,
-            SuperTableSlick::class,
-            SuperTableDefault::class,
             TableDefault::class,
             TagLabel::class,
             TagTitle::class,
@@ -115,10 +108,25 @@ class RegisterFieldDisplayerEvent extends Event
             UserDefault::class,
             UserRendered::class,
             UserSlick::class,
-            ProductVariantsRendered::class,
-            VariantRendered::class,
-            WeightDefault::class
         ]);
+        if (\Craft::$app->plugins->getPlugin('commerce')) {
+            $this->registerMany([
+                AllowedQtyDefault::class,
+                DimensionsDefault::class,
+                PriceDefault::class,
+                ProductRendered::class,
+                ProductVariantsRendered::class,
+                StockDefault::class,
+                VariantRendered::class,
+                WeightDefault::class
+            ]);
+        }
+        if (\Craft::$app->plugins->getPlugin('super-table')) {
+            $this->registerMany([
+                SuperTableSlick::class,
+                SuperTableDefault::class
+            ]);
+        }
     }
 
     /**
@@ -141,7 +149,7 @@ class RegisterFieldDisplayerEvent extends Event
     public function register(string $class, bool $replaceIfExisting = false)
     {
         if (!$replaceIfExisting and isset($this->_displayers[$class::$handle])) {
-            throw FieldDisplayerException::alreadyDefined($class);
+            throw FieldDisplayerException::alreadyDefined($class, $this->_displayers[$class::$handle]);
         }
         if (!preg_match('/^[a-zA-Z0-9\-]+$/', $class::$handle)) {
             throw FieldDisplayerException::handleInvalid($class);   

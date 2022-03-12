@@ -202,73 +202,39 @@ class ThemesRegistry extends Service
     }
 
     /**
-     * Install all theme's data
-     *
-     * @param bool $force
-     */
-    public function installAll(bool $force = false)
-    {
-        foreach ($this->all() as $theme) {
-            $this->installThemeData($theme, $force);
-        }
-    }
-
-    /**
-     * Uninstall all theme's data
-     */
-    public function uninstallAll()
-    {
-        foreach ($this->all() as $theme) {
-            $this->uninstallThemeData($theme);
-        }
-    }
-
-    /**
-     * Install a theme
-     *
-     * @param ThemeInterface $theme
-     * @param bool           $force
-     */
-    public function installThemeData(ThemeInterface $theme, bool $force = false)
-    {
-        $this->resetThemes();
-        if ($force or Themes::$plugin->is(Themes::EDITION_PRO)) {
-            Themes::$plugin->layouts->installThemeData($theme);
-            $theme->afterThemeInstall();
-            ProjectConfigHelper::markDataInstalledForTheme($theme);
-        }
-    }
-
-    /**
-     * Uninstall a theme
-     *
-     * @return ThemeInterface $theme
-     */
-    public function uninstallThemeData(ThemeInterface $theme)
-    {
-        $this->resetThemes();
-        Themes::$plugin->rules->flushCache();
-        Themes::$plugin->layouts->uninstallThemeData($theme);
-        $theme->afterThemeUninstall();
-        ProjectConfigHelper::markDataNotInstalledForTheme($theme);
-    }
-
-    /**
-     * Disables all themes
-     */
-    public function disableAll()
-    {
-        foreach ($this->all() as $theme) {
-            \Craft::$app->plugins->disablePlugin($theme->handle);
-        }
-    }
-
-    /**
      * Reset themes internal cache
      */
     public function resetThemes()
     {
         $this->themes = null;
+    }
+
+    public function isInstalled(ThemeInterface $theme)
+    {
+        $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
+        return in_array($theme->handle, $installed);
+    }
+
+    public function installTheme(ThemeInterface $theme)
+    {
+        if (Themes::$plugin->is(Themes::EDITION_PRO) and !$this->isInstalled($theme)) {
+            Themes::$plugin->layouts->installForTheme($theme);
+            $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
+            $installed[] = $theme->handle;
+            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
+            $theme->afterThemeInstall();
+        }
+    }
+
+    public function uninstallTheme(ThemeInterface $theme)
+    {
+        Themes::$plugin->layouts->uninstallForTheme($theme);
+        $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
+        $installed = array_filter($installed, function ($handle) use ($theme) {
+            return $theme->handle != $handle;
+        });
+        \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
+        $theme->afterThemeUninstall();
     }
 
     /**

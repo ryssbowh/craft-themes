@@ -65,14 +65,18 @@ class RegisterFieldsEvent extends Event
         $this->register(UserEmail::class);
         $this->register(ElementUrl::class);
         $this->register(ExpiryDate::class);
-        $this->register(Variants::class);
-        $this->register(Stock::class);
-        $this->register(Sku::class);
-        $this->register(Price::class);
-        $this->register(Dimensions::class);
-        $this->register(Weight::class);
-        $this->register(AllowedQty::class);
-        $this->register(SuperTable::class);
+        if (\Craft::$app->plugins->getPlugin('commerce')) {
+            $this->register(Variants::class);
+            $this->register(Stock::class);
+            $this->register(Sku::class);
+            $this->register(Price::class);
+            $this->register(Dimensions::class);
+            $this->register(Weight::class);
+            $this->register(AllowedQty::class);
+        }
+        if (\Craft::$app->plugins->getPlugin('super-table')) {
+            $this->register(SuperTable::class);    
+        }
     }
 
     /**

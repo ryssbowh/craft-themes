@@ -17,6 +17,7 @@
 - Fixed issues where field layouts would not have their fields populated properly. [10237](https://github.com/craftcms/cms/issues/10237)
 - Fixed issues with fields not properly rebuilt
 - Fixed errors with missing fields
+- Fixed issues when (un)installing other plugins related to themes
 
 ### Changed
 - Rendered displayers label

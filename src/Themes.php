@@ -7,9 +7,9 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
 use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
 use Ryssbowh\CraftThemes\behaviors\ProductTypeLayoutBehavior;
-use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
+use Ryssbowh\CraftThemes\events\RelatedPluginsEvent;
+use Ryssbowh\CraftThemes\helpers\PluginsHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
-use Ryssbowh\CraftThemes\jobs\InstallThemesData;
 use Ryssbowh\CraftThemes\jobs\InstallThemesDataJob;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService, ScssService};
@@ -29,8 +29,7 @@ use craft\helpers\Queue;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
 use craft\models\TagGroup;
-use craft\services\Elements;
-use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields, Users};
+use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields, Users, Elements};
 use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
 use craft\web\View;
@@ -46,6 +45,8 @@ class Themes extends \craft\base\Plugin
 {   
     const EDITION_LITE = 'lite';
     const EDITION_PRO = 'pro';
+
+    const EVENT_RELATED_PLUGINS = 'related_plugins';
 
     /**
      * @var Themes
@@ -67,6 +68,8 @@ class Themes extends \craft\base\Plugin
      */
     public $hasCpSection = true;
 
+    protected $_relatedPlugins;
+
     /**
      * inheritDoc
      */
@@ -86,9 +89,8 @@ class Themes extends \craft\base\Plugin
         $this->registerServices();
         $this->registerPermissions();
         $this->registerClearCacheEvent();
-        $this->registerPluginsEvents();
+        $this->registerPluginsConfig();
         $this->registerTwig();
-        $this->registerSwitchEdition();
         $this->registerBehaviors();
         $this->registerProjectConfig();
 
@@ -120,22 +122,6 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Initialise for pro edition
-     */
-    protected function initPro()
-    {
-        $this->registerShortcuts();
-        $this->registerCraftEvents();
-        $this->registerCpHooks();
-
-        Event::on(
-            View::class, 
-            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            [$this->view, 'beforeRenderPage']
-        );
-    }
-
-    /**
      * @inheritDoc
      */
     public static function editions(): array
@@ -144,6 +130,35 @@ class Themes extends \craft\base\Plugin
             self::EDITION_LITE,
             self::EDITION_PRO,
         ];
+    }
+
+    /**
+     * Get all plugins handles that are related to themes.
+     * This list will keep track of plugins for which (un)installation will trigger layouts to be rebuilt
+     *
+     * @return array
+     * @since  3.1.0
+     */
+    public function getRelatedPlugins(): array
+    {
+        if ($this->_relatedPlugins === null) {
+            $e = new RelatedPluginsEvent;
+            $this->trigger(self::EVENT_RELATED_PLUGINS, $e);
+            $this->_relatedPlugins = $e->related;
+        }
+        return $this->_relatedPlugins;
+    }
+
+    /**
+     * Is a plugin related to themes
+     * 
+     * @param  string  $handle
+     * @return boolean
+     * @since  3.1.0
+     */
+    public function isPluginRelated(string $handle)
+    {
+        return in_array($handle, $this->relatedPlugins);
     }
 
     /**
@@ -187,6 +202,22 @@ class Themes extends \craft\base\Plugin
             }
         }
         return $item ?? null;
+    }
+
+    /**
+     * Initialise for pro edition
+     */
+    protected function initPro()
+    {
+        $this->registerShortcuts();
+        $this->registerCraftEvents();
+        $this->registerCpHooks();
+
+        Event::on(
+            View::class, 
+            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+            [$this->view, 'beforeRenderPage']
+        );
     }
 
     /**
@@ -276,7 +307,7 @@ class Themes extends \craft\base\Plugin
                 ]);
             });
         }
-        // This is not possible as of now
+        // Add product type behavior, this is not possible as of now
         // @see https://github.com/craftcms/commerce/issues/2715
         // Event::on(ProductType::class, ProductType::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) use ($type) {
         //     $event->sender->attachBehaviors([
@@ -288,56 +319,46 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Registers to plugins related events
+     * Register to project config changes related to plugins
      */
-    protected function registerPluginsEvents()
+    protected function registerPluginsConfig()
     {
-        // Disable all theme dependencies before it's disabled
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin->handle == 'themes') {
-                    Themes::$plugin->registry->disableAll();
-                }
-                if ($event->plugin instanceof ThemeInterface) {
-                    $deps = Themes::$plugin->registry->getDependencies($event->plugin);
-                    foreach ($deps as $theme) {
-                        \Craft::$app->plugins->disablePlugin($theme->handle);
-                    }
-                }
-            }
-        );
+        $_this = $this;
+        \Craft::$app->projectConfig
+            ->onAdd(Plugins::CONFIG_PLUGINS_KEY . '.{uid}', function (ConfigEvent $e) {
+                PluginsHelper::onAdd($e->tokenMatches[0], $e->newValue);
+            })
+            ->onRemove(Plugins::CONFIG_PLUGINS_KEY . '.{uid}', function (ConfigEvent $e) {
+                PluginsHelper::onRemove($e->tokenMatches[0], $e->oldValue);
+            })
+            ->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.{uid}', function (ConfigEvent $e) {
+                // dd($e);
+                PluginsHelper::onUpdate($e->tokenMatches[0], $e->oldValue, $e->newValue);
+            });
 
-        // Enable the dependency of a theme before enabling it
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_ENABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    $extends = $event->plugin->extends;
-                    if ($extends) {
-                        \Craft::$app->plugins->enablePlugin($extends);
-                    }
+        //Install theme's dependencies before it's installed
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN, function (PluginEvent $event) {
+            if ($event->plugin instanceof ThemeInterface) {
+                $extends = $event->plugin->extends;
+                if ($extends) {
+                    \Craft::$app->plugins->installPlugin($extends);
                 }
             }
-        );
+        });
 
-        // Flush rules and registry cache after a theme if disabled
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->registry->resetThemes();
-                    Themes::$plugin->rules->flushCache();
-                }
+        // Install theme's data after a theme is installed
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN, function (PluginEvent $event) {
+            if ($event->plugin instanceof ThemeInterface) {
+                Themes::$plugin->registry->installTheme($event->plugin);
             }
-        );
+        });
 
-        // Flush rules and registry cache after enabling a theme
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin instanceof ThemeInterface) {
-                    Themes::$plugin->registry->resetThemes();
-                    Themes::$plugin->rules->flushCache();
-                }
+        // Uninstall theme's data before a theme is uninstalled
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN, function (PluginEvent $event) {
+            if ($event->plugin instanceof ThemeInterface) {
+                Themes::$plugin->registry->uninstallTheme($event->plugin);
             }
-        );
+        });
     }
 
     /**
@@ -486,28 +507,6 @@ class Themes extends \craft\base\Plugin
     }
 
     /**
-     * Registers to edition change event. Installs all themes data if edition is pro
-     */
-    protected function registerSwitchEdition()
-    {
-        $_this = $this;
-        \Craft::$app->projectConfig->onUpdate(Plugins::CONFIG_PLUGINS_KEY, function (ConfigEvent $e) use ($_this) {
-            $newEdition = $e->newValue['themes']['edition'] ?? null;
-            $oldEdition = $e->oldValue['themes']['edition'] ?? null;
-            if (\Craft::$app->projectConfig->isApplyingYamlChanges) {
-                return;
-            }
-            if ($oldEdition != $newEdition and $newEdition == Themes::EDITION_PRO) {
-                Queue::push(new InstallThemesDataJob);
-            } elseif ($oldEdition != $newEdition and $newEdition == Themes::EDITION_LITE) {
-                Queue::push(new InstallThemesDataJob([
-                    'uninstall' => true
-                ]));
-            }
-        });
-    }
-
-    /**
      * Modify some cp pages through hooks
      */
     protected function registerCpHooks()
@@ -589,18 +588,22 @@ class Themes extends \craft\base\Plugin
             ->onRemove(Tags::CONFIG_TAGGROUP_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
                 $layouts->onCraftElementDeleted($e->tokenMatches[0]);
             })
-            ->onAdd(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
-                $layouts->onCraftElementSaved(LayoutService::PRODUCT_HANDLE, $e->tokenMatches[0]);
-            })
-            ->onUpdate(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
-                $layouts->onCraftElementSaved(LayoutService::PRODUCT_HANDLE, $e->tokenMatches[0]);
-            })
-            ->onRemove(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
-                $layouts->onCraftElementDeleted($e->tokenMatches[0]);
-            })
             ->onUpdate(Users::CONFIG_USERLAYOUT_KEY, function (ConfigEvent $e) use ($layouts) {
                 $layouts->onCraftElementSaved(LayoutService::USER_HANDLE);
             });
+
+        if (\Craft::$app->plugins->getPlugin('commerce')) {
+            Craft::$app->projectConfig
+                ->onAdd(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                    $layouts->onCraftElementSaved(LayoutService::PRODUCT_HANDLE, $e->tokenMatches[0]);
+                })
+                ->onUpdate(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                    $layouts->onCraftElementSaved(LayoutService::PRODUCT_HANDLE, $e->tokenMatches[0]);
+                })
+                ->onRemove(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function (ConfigEvent $e) use ($layouts) {
+                    $layouts->onCraftElementDeleted($e->tokenMatches[0]);
+                });
+        }
 
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
             Themes::$plugin->fields->onCraftFieldSaved($e);
@@ -693,17 +696,6 @@ class Themes extends \craft\base\Plugin
     protected function createSettingsModel(): Settings
     {
         return new Settings();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function beforeUninstall(): bool
-    {
-        foreach ($this->registry->all() as $plugin) {
-            \Craft::$app->plugins->uninstallPlugin($plugin->handle);
-        }
-        return true;
     }
 
     /**

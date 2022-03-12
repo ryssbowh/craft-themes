@@ -222,7 +222,8 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     public function hasDataInstalled(): bool
     {
-        return ProjectConfigHelper::isDataInstalledForTheme($this);
+        $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
+        return in_array($this->handle, $installed);
     }
 
     /**
@@ -230,6 +231,16 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     public function afterSet()
     {
+    }
+
+    /**
+     * Make sure themes plugin is installed before installing
+     *
+     * @since  3.1.0
+     */
+    protected function beforeInstall(): bool
+    {
+        return (\Craft::$app->plugins->getPlugin('themes') != null);
     }
 
     /**
