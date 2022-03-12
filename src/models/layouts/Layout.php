@@ -66,6 +66,16 @@ class Layout extends Model implements LayoutInterface
     public $parent_id;
 
     /**
+     * @var \DateTime
+     */
+    public $dateCreated;
+
+    /**
+     * @var \DateTime
+     */
+    public $dateUpdated;
+
+    /**
      * @var string
      */
     protected $_type = LayoutService::DEFAULT_HANDLE;
@@ -106,7 +116,7 @@ class Layout extends Model implements LayoutInterface
             [['themeHandle'], 'required'],
             [['themeHandle', 'elementUid', 'name'], 'string'],
             ['hasBlocks', 'boolean', 'trueValue' => true, 'falseValue' => false],
-            [['uid', 'id', 'element', 'parent'], 'safe'],
+            [['uid', 'id', 'element', 'parent', 'dateCreated', 'dateUpdated'], 'safe'],
             ['parent_id', 'integer'],
             ['themeHandle', 'validateThemeHandle'],
             ['elementUid', 'validateElementUid']
@@ -133,7 +143,7 @@ class Layout extends Model implements LayoutInterface
     public function validateElementUid()
     {
         if ($this->type == LayoutService::CUSTOM_HANDLE) {
-            foreach (Themes::$plugin->layouts->all() as $layout) {
+            foreach (Themes::$plugin->layouts->getAll() as $layout) {
                 if ($layout->id != $this->id and $layout->elementUid == $this->elementUid and $layout->themeHandle == $this->themeHandle) {
                     $this->addError('elementUid', \Craft::t('themes', 'Handle "' . $this->elementUid . '" already exists'));
                 }
