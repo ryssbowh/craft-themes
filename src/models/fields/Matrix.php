@@ -190,23 +190,15 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public static function save(FieldInterface $field): bool
+    public function getChildren(): array
     {
-        $fieldsToKeep = [];
-        $children = Themes::$plugin->fields->getChildren($field);
-        foreach ($field->types as $type) {
-            foreach ($type->fields as $matrixField) {
-                // $matrixField->parent = $field;
-                Themes::$plugin->fields->save($matrixField);
-                $fieldsToKeep[] = $matrixField->id;
+        $children = [];
+        foreach ($this->types as $type) {
+            foreach ($type->fields as $field) {
+                $children[] = $field;
             }
         }
-        foreach ($children as $child) {
-            if (!in_array($child->id, $fieldsToKeep)) {
-                Themes::$plugin->fields->delete($child);
-            }
-        }
-        return parent::save($field);
+        return $children;
     }
 
     /**
@@ -226,19 +218,6 @@ class Matrix extends CraftField implements MatrixInterface
                 $pivot->save(false);
             }
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function delete(FieldInterface $field): bool
-    {
-        foreach ($field->types as $type) {
-            foreach ($type->fields as $matrixField) {
-                Themes::$plugin->fields->delete($matrixField);
-            }
-        }
-        return parent::delete($field);
     }
 
     /**

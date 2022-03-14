@@ -16,7 +16,7 @@
 - Fixed issue where custom layouts would have displays created for them automatically
 - Fixed issues where field layouts would not have their fields populated properly. [10237](https://github.com/craftcms/cms/issues/10237)
 - Fixed issues with fields not properly rebuilt
-- Fixed errors with missing fields
+- Fixed issues with missing fields
 - Fixed issues when (un)installing other plugins related to themes
 
 ### Changed
@@ -25,6 +25,9 @@
 - Removed Matrix service
 - Changed how field components are registered on Vue
 - Changed how fields are cloned on Vue
+
+### Removed
+- Themes installer
 
 ## 3.0.1 - 2022-02-15
 

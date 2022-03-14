@@ -106,6 +106,14 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
+    public function getChildren(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function eagerLoad(string $prefix = '', int $level = 0, array &$dependencies = []): array
     {
         return [];
@@ -207,6 +215,17 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public static function save(FieldInterface $field): bool
     {
+        $children = Themes::$plugin->fields->getChildren($field);
+        $fieldsToKeep = [];
+        foreach ($field->getChildren() as $child) {
+            Themes::$plugin->fields->save($child);
+            $fieldsToKeep[] = $child->id;
+        }
+        foreach ($children as $child) {
+            if (!in_array($child->id, $fieldsToKeep)) {
+                Themes::$plugin->fields->delete($child);
+            }
+        }
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $field->getConfig();
         $uid = $field->uid ?? StringHelper::UUID();
@@ -236,6 +255,9 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public static function delete(FieldInterface $field): bool
     {
+        foreach ($this->getChildren() as $child) {
+            Themes::$plugin->fields->delete($child);
+        }
         \Craft::$app->getProjectConfig()->remove(FieldsService::CONFIG_KEY . '.' . $field->uid);
         return true;
     }

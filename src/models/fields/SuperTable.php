@@ -15,6 +15,8 @@ use verbb\supertable\fields\SuperTableField;
 
 /**
  * Handles a Super table field
+ *
+ * @since 3.1.0
  */
 class SuperTable extends CraftField
 {
@@ -188,23 +190,15 @@ class SuperTable extends CraftField
     /**
      * @inheritDoc
      */
-    public static function save(FieldInterface $field): bool
+    public function getChildren(): array
     {
-        $fieldsToKeep = [];
-        $children = Themes::$plugin->fields->getChildren($field);
-        foreach ($field->types as $type) {
-            foreach ($type->fields as $superTableField) {
-                // $superTableField->parent = $field;
-                Themes::$plugin->fields->save($superTableField);
-                $fieldsToKeep[] = $superTableField->id;
+        $children = [];
+        foreach ($this->types as $type) {
+            foreach ($type->fields as $field) {
+                $children[] = $field;
             }
         }
-        foreach ($children as $child) {
-            if (!in_array($child->id, $fieldsToKeep)) {
-                Themes::$plugin->fields->delete($child);
-            }
-        }
-        return parent::save($field);
+        return $children;
     }
 
     /**
@@ -224,19 +218,6 @@ class SuperTable extends CraftField
                 $pivot->save(false);
             }
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function delete(FieldInterface $field): bool
-    {
-        foreach ($field->types as $type) {
-            foreach ($type->fields as $superTableField) {
-                Themes::$plugin->fields->delete($superTableField);
-            }
-        }
-        return parent::delete($field);
     }
 
     /**

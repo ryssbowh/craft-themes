@@ -173,6 +173,37 @@ class FieldsService extends Service
     }
 
     /**
+     * Get the type of field for a craft field
+     * 
+     * @param  Field $field
+     * @return string
+     */
+    public function getTypeForCraftField(Field $field): string
+    {
+        foreach ($this->registeredFields as $type => $class) {
+            if ($class::forField() == get_class($field)) {
+                return $type;
+            }
+        }
+        return 'field';
+    }
+
+    /**
+     * Get a field class for a type
+     * 
+     * @param  string $type
+     * @return string
+     */
+    public function getFieldClassByType(string $type): string
+    { 
+        $fields = $this->registeredFields;
+        if (!isset($fields[$type])) {
+            throw FieldException::unknownType($type);
+        }
+        return $fields[$type];
+    }
+
+    /**
      * Handles a craft field save: If the type of field has changed we#ll delete the field and recreate it
      * Otherwise we'll rebuild it in case changes are to be made by the field
      * 
@@ -450,21 +481,6 @@ class FieldsService extends Service
         $event = new RegisterFieldsEvent;
         $this->triggerEvent(self::EVENT_REGISTER_FIELDS, $event);
         $this->_registered = $event->fields;
-    }
-
-    /**
-     * Get a field class for a type
-     * 
-     * @param  string $type
-     * @return string
-     */
-    protected function getFieldClassByType(string $type): string
-    {
-        $fields = $this->registeredFields;
-        if (!isset($fields[$type])) {
-            throw FieldException::unknownType($type);
-        }
-        return $fields[$type];
     }
 
     /**

@@ -100,6 +100,7 @@ interface FieldInterface
      * Parent getter
      * 
      * @return ?FieldInterface
+     * @since  3.1.0
      */
     public function getParent(): ?FieldInterface;
 
@@ -107,8 +108,17 @@ interface FieldInterface
      * Parent setter
      * 
      * @param ?FieldInterface $field
+     * @since  3.1.0
      */
     public function setParent(?FieldInterface $field);
+
+    /**
+     * Get this field's children 
+     * 
+     * @return array
+     * @since  3.1.0
+     */
+    public function getChildren(): array;
 
     /**
      * Get the displayer for this field

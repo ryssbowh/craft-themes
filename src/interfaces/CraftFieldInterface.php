@@ -22,12 +22,4 @@ interface CraftFieldInterface extends FieldInterface
      * @return array
      */
     public static function buildConfig(Field $craftField): array;
-
-    /**
-     * Create field from a craft field
-     * 
-     * @param  Field $craftField
-     * @return FieldInterface
-     */
-    public static function createFromField(Field $craftField): FieldInterface;
 }

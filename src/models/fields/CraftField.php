@@ -58,14 +58,6 @@ class CraftField extends Field implements CraftFieldInterface
         }
         return [];
     }
-    
-    /**
-     * @inheritDoc
-     */
-    public static function createFromField(BaseField $craftField): FieldInterface
-    {
-        return static::create(static::buildConfig($craftField));
-    }
 
     /**
      * @inheritDoc
@@ -152,7 +144,7 @@ class CraftField extends Field implements CraftFieldInterface
     public function rebuild()
     {
         $this->craft_field_class = get_class($this->craftField);
-        $this->type = Themes::$plugin->fields->getTypeForCraftField(get_class($this->craftField));
+        $this->type = Themes::$plugin->fields->getTypeForCraftField($this->craftField);
     }
 
     /**
