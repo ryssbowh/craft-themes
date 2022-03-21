@@ -97,12 +97,17 @@ class Themes extends \craft\base\Plugin
         $this->registerTwig();
         $this->registerBehaviors();
         $this->registerProjectConfig();
+        $this->registerShortcuts();
+        $this->registerElementsEvents();
+        $this->registerCpHooks();
         $this->initEcommerce();
         $this->initSuperTable();
 
-        if ($this->is($this::EDITION_PRO)) {
-            $this->initPro();
-        }
+        Event::on(
+            View::class, 
+            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+            [$this->view, 'beforeRenderPage']
+        );
 
         Event::on(
             Application::class, 
@@ -124,7 +129,7 @@ class Themes extends \craft\base\Plugin
             $this->registerCpRoutes();
         }
 
-        \Craft::info('Loaded themes plugin', __METHOD__);
+        \Craft::info('Loaded themes plugin in ' . $this->edition . ' edition', __METHOD__);
     }
 
     /**
@@ -208,22 +213,6 @@ class Themes extends \craft\base\Plugin
             }
         }
         return $item ?? null;
-    }
-
-    /**
-     * Initialise for pro edition
-     */
-    protected function initPro()
-    {
-        $this->registerShortcuts();
-        $this->registerCraftEvents();
-        $this->registerCpHooks();
-
-        Event::on(
-            View::class, 
-            View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            [$this->view, 'beforeRenderPage']
-        );
     }
 
     /**
@@ -517,7 +506,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerCpHooks()
     {
-        if (\Craft::$app->config->getGeneral()->allowAdminChanges and $this->settings->showCpShortcuts) {
+        if ($this->is($this::EDITION_PRO) and \Craft::$app->config->getGeneral()->allowAdminChanges and $this->settings->showCpShortcuts) {
             Craft::$app->view->hook('cp.users.edit.prefs', function (array &$context) {
                 return \Craft::$app->view->renderTemplate('themes/cp/userprefs', ['user' => $context['currentUser']]);
             });

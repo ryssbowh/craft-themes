@@ -39,7 +39,7 @@ class ShortcutsService extends Service
      * @param RenderEvent $e
      */
     public function registerLayout(RenderEvent $e) {
-        if (!$this->showShortcuts) {
+        if (!Themes::$plugin->is(Themes::EDITION_PRO) or !$this->showShortcuts) {
             return;
         }
         $this->initShortcuts();
