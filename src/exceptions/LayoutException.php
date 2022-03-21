@@ -21,9 +21,14 @@ class LayoutException extends \Exception
         return new static("Layout couldn't be saved");
     }
 
+    public static function typeAlreadyDefined(string $name, string $class)
+    {
+        return new static("Layout type '$name' is already defined by $class");
+    }
+
     public static function unknownType(string $type)
     {
-        return new static("Type $type is not a valid layout type");
+        return new static("Type '$type' is not a valid layout type");
     }
 
     public static function noViewMode(string $viewMode)
@@ -44,11 +49,6 @@ class LayoutException extends \Exception
     public static function defaultUndeletable()
     {
         return new static("Default layout can't be deleted");
-    }
-
-    public static function notLoaded(LayoutInterface $layout, string $method)
-    {
-        return new static("$method can't be called unless the layout (".get_class($layout).") is loaded");
     }
 
     public static function alreadyExists(ThemeInterface $theme, string $type, string $uid)
