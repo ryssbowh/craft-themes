@@ -9,7 +9,9 @@ use craft\commerce\models\ProductType;
 use yii\base\Behavior;
 
 /**
- * This behaviour is attached to all the variants
+ * This behaviour is attached to all product types. Behaviors on product types can't be added before commerce 3.4.12.
+ * @since 3.1.0
+ * @see   https://github.com/craftcms/commerce/issues/2715
  */
 class ProductTypeLayoutBehavior extends Behavior
 {

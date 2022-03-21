@@ -3,7 +3,6 @@ namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\AllowedQtyDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRenderFile;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetSlick;
@@ -14,7 +13,6 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\CheckboxesLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\ColourDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\Date;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DateTime;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\DimensionsDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\DropdownLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\ElementLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\ElementLinks;
@@ -29,15 +27,9 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\NumberDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextPlain;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextTruncated;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\PriceDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\ProductRendered;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\ProductVariantsRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RadioButtonsLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorFull;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\RedactorTruncated;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\StockDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\SuperTableDefault;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\SuperTableSlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TableDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\TagRendered;
@@ -50,8 +42,6 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\UrlLink;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\UserSlick;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\VariantRendered;
-use Ryssbowh\CraftThemes\models\fieldDisplayers\WeightDefault;
 use yii\base\Event;
 
 class RegisterFieldDisplayerEvent extends Event
@@ -109,24 +99,6 @@ class RegisterFieldDisplayerEvent extends Event
             UserRendered::class,
             UserSlick::class,
         ]);
-        if (\Craft::$app->plugins->getPlugin('commerce')) {
-            $this->registerMany([
-                AllowedQtyDefault::class,
-                DimensionsDefault::class,
-                PriceDefault::class,
-                ProductRendered::class,
-                ProductVariantsRendered::class,
-                StockDefault::class,
-                VariantRendered::class,
-                WeightDefault::class
-            ]);
-        }
-        if (\Craft::$app->plugins->getPlugin('super-table')) {
-            $this->registerMany([
-                SuperTableSlick::class,
-                SuperTableDefault::class
-            ]);
-        }
     }
 
     /**

@@ -13,6 +13,8 @@ use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemesDataJob;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService, ScssService};
+use Ryssbowh\CraftThemes\traits\Ecommerce;
+use Ryssbowh\CraftThemes\traits\SuperTable;
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
@@ -42,7 +44,9 @@ use yii\base\Event;
  * Main plugin class
  */
 class Themes extends \craft\base\Plugin
-{   
+{
+    use Ecommerce, SuperTable;
+
     const EDITION_LITE = 'lite';
     const EDITION_PRO = 'pro';
 
@@ -93,6 +97,8 @@ class Themes extends \craft\base\Plugin
         $this->registerTwig();
         $this->registerBehaviors();
         $this->registerProjectConfig();
+        $this->initEcommerce();
+        $this->initSuperTable();
 
         if ($this->is($this::EDITION_PRO)) {
             $this->initPro();
