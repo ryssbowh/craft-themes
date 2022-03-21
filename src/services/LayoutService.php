@@ -548,7 +548,7 @@ class LayoutService extends Service
      */
     public function onCraftElementDeleted(string $uid)
     {
-        $layouts = $this->getAll()->filter(function ($layout) use ($uid) {
+        $layouts = $this->all->filter(function ($layout) use ($uid) {
             return $layout->elementUid == $uid;
         })->all();
         foreach ($layouts as $layout) {

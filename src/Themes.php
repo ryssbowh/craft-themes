@@ -26,7 +26,6 @@ use craft\commerce\models\ProductType;
 use craft\commerce\services\ProductTypes;
 use craft\elements\GlobalSet;
 use craft\elements\User;
-use craft\events\{ElementEvent, DefineBehaviorsEvent, CategoryGroupEvent, ConfigEvent, EntryTypeEvent, FieldEvent, GlobalSetEvent, RegisterUserPermissionsEvent, TagGroupEvent, VolumeEvent, PluginEvent, RebuildConfigEvent, RegisterCacheOptionsEvent, RegisterCpNavItemsEvent, RegisterTemplateRootsEvent, RegisterUrlRulesEvent, TemplateEvent};
 use craft\helpers\Queue;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
@@ -49,7 +48,6 @@ class Themes extends \craft\base\Plugin
 
     const EDITION_LITE = 'lite';
     const EDITION_PRO = 'pro';
-
     const EVENT_RELATED_PLUGINS = 'related_plugins';
 
     /**
@@ -298,7 +296,7 @@ class Themes extends \craft\base\Plugin
             User::class => 'user',
         ];
         foreach ($types as $class => $type) {
-            Event::on($class::className(), $class::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) use ($type) {
+            Event::on($class::className(), $class::EVENT_DEFINE_BEHAVIORS, function(Event $event) use ($type) {
                 $event->sender->attachBehaviors([
                     'themeLayout' => [
                         'class' => LayoutBehavior::class,
@@ -315,35 +313,35 @@ class Themes extends \craft\base\Plugin
     protected function registerPluginsEvents()
     {
         \Craft::$app->projectConfig
-            ->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (ConfigEvent $e) {
+            ->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (Event $e) {
                 PluginsHelper::onThemesEditionChanged($e->oldValue, $e->newValue);
             });
 
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN, function (PluginEvent $event) {
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_DISABLE_PLUGIN, function (Event $event) {
             PluginsHelper::beforeDisable($event->plugin);
         });
 
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN, function (PluginEvent $event) {
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_DISABLE_PLUGIN, function (Event $event) {
             PluginsHelper::afterDisable($event->plugin);
         });
 
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_ENABLE_PLUGIN, function (PluginEvent $event) {
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_ENABLE_PLUGIN, function (Event $event) {
             PluginsHelper::beforeEnable($event->plugin);
         });
 
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN, function (PluginEvent $event) {
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_ENABLE_PLUGIN, function (Event $event) {
             PluginsHelper::afterEnable($event->plugin);
         });
 
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN, function (PluginEvent $event) {
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_INSTALL_PLUGIN, function (Event $event) {
             PluginsHelper::beforeInstall($event->plugin);
         });
 
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN, function (PluginEvent $event) {
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN, function (Event $event) {
             PluginsHelper::afterInstall($event->plugin);
         });
 
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN, function (PluginEvent $event) {
+        Event::on(Plugins::class, Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN, function (Event $event) {
             PluginsHelper::beforeUninstall($event->plugin);
         });
     }
@@ -353,7 +351,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerCpRoutes()
     {
-        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
+        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(Event $event) {
             $event->rules = array_merge($event->rules, [
                 'themes' => 'themes/cp-themes',
                 'themes/list' => 'themes/cp-themes/list'
@@ -458,7 +456,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerClearCacheEvent()
     {
-        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS, function (RegisterCacheOptionsEvent $event) {
+        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS, function (Event $event) {
             $event->options[] = [
                 'key' => 'themes-scss-cache',
                 'label' => \Craft::t('themes', 'Inline Scss cache'),
@@ -467,7 +465,7 @@ class Themes extends \craft\base\Plugin
                 }
             ];
         });
-        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_TAG_OPTIONS, function (RegisterCacheOptionsEvent $event) {
+        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_TAG_OPTIONS, function (Event $event) {
             $event->options[] = [
                 'tag' => RulesService::RULES_CACHE_TAG,
                 'label' => Craft::t('themes', 'Themes rules')
@@ -530,45 +528,45 @@ class Themes extends \craft\base\Plugin
         //         Themes::$plugin->layouts->onCraftElementSaved('entry', $entryType->uid);
         //     }
         // });
-        Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_ENTRY_TYPE, function (EntryTypeEvent $e) {
+        Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_ENTRY_TYPE, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementSaved('entry', $uid, $e->entryType->uid);
         });
-        Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_ENTRY_TYPE, function (EntryTypeEvent $e) {
-            Themes::$plugin->layouts->onCraftElementDeleted('entry', $e->entryType->uid);
+        Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_ENTRY_TYPE, function (Event $e) {
+            Themes::$plugin->layouts->onCraftElementDeleted($e->entryType->uid);
         });
-        Event::on(Categories::class, Categories::EVENT_AFTER_SAVE_GROUP, function (CategoryGroupEvent $e) {
+        Event::on(Categories::class, Categories::EVENT_AFTER_SAVE_GROUP, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementSaved('category', $e->categoryGroup->uid);
         });
-        Event::on(Categories::class, Categories::EVENT_AFTER_DELETE_GROUP, function (CategoryGroupEvent $e) {
-            Themes::$plugin->layouts->onCraftElementDeleted('category', $e->categoryGroup->uid);
+        Event::on(Categories::class, Categories::EVENT_AFTER_DELETE_GROUP, function (Event $e) {
+            Themes::$plugin->layouts->onCraftElementDeleted($e->categoryGroup->uid);
         });
-        Event::on(Volumes::class, Volumes::EVENT_AFTER_SAVE_VOLUME, function (VolumeEvent $e) {
+        Event::on(Volumes::class, Volumes::EVENT_AFTER_SAVE_VOLUME, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementSaved('volume', $e->volume->uid);
         });
-        Event::on(Volumes::class, Volumes::EVENT_AFTER_DELETE_VOLUME, function (VolumeEvent $e) {
-            Themes::$plugin->layouts->onCraftElementDeleted('volume', $e->volume->uid);
+        Event::on(Volumes::class, Volumes::EVENT_AFTER_DELETE_VOLUME, function (Event $e) {
+            Themes::$plugin->layouts->onCraftElementDeleted($e->volume->uid);
         });
-        Event::on(Globals::class, Globals::EVENT_AFTER_SAVE_GLOBAL_SET, function (GlobalSetEvent $e) {
+        Event::on(Globals::class, Globals::EVENT_AFTER_SAVE_GLOBAL_SET, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementSaved('global', $e->globalSet->uid);
         });
-        Craft::$app->projectConfig->onRemove(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function(ConfigEvent $e) {
+        Craft::$app->projectConfig->onRemove(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function(Event $e) {
             if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
                 // If Craft is applying Yaml changes it means we have the fields defined
                 // in config, and don't need to respond to these events as it would create duplicates
                 return;
             }
-            Themes::$plugin->layouts->onCraftElementDeleted('global', $e->tokenMatches[0]);
+            Themes::$plugin->layouts->onCraftElementDeleted($e->tokenMatches[0]);
         });
-        Event::on(Tags::class, Tags::EVENT_AFTER_SAVE_GROUP, function (TagGroupEvent $e) {
+        Event::on(Tags::class, Tags::EVENT_AFTER_SAVE_GROUP, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementSaved('tag', $e->tagGroup->uid);
         });
-        Event::on(Tags::class, Tags::EVENT_AFTER_DELETE_GROUP, function (TagGroupEvent $e) {
-            Themes::$plugin->layouts->onCraftElementDeleted('tag', $e->tagGroup->uid);
+        Event::on(Tags::class, Tags::EVENT_AFTER_DELETE_GROUP, function (Event $e) {
+            Themes::$plugin->layouts->onCraftElementDeleted($e->tagGroup->uid);
         });
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
             Themes::$plugin->fields->onCraftFieldSaved($e);
         });
-        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(ElementEvent $event) {
+        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(Event $event) {
             if ($event->element instanceof User) {
                 $user = $event->element;
                 $preferences = [
@@ -605,7 +603,7 @@ class Themes extends \craft\base\Plugin
             ->onUpdate(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleChanged'])
             ->onRemove(FieldsService::CONFIG_KEY.'.{uid}',   [$this->fields,    'handleDeleted']);
 
-        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (RebuildConfigEvent $e) {
+        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function (Event $e) {
             Themes::$plugin->layouts->rebuildConfig($e);
             Themes::$plugin->viewModes->rebuildConfig($e);
             Themes::$plugin->blocks->rebuildConfig($e);
@@ -624,7 +622,7 @@ class Themes extends \craft\base\Plugin
             Event::on(
                 UserPermissions::class,
                 UserPermissions::EVENT_REGISTER_PERMISSIONS,
-                function (RegisterUserPermissionsEvent $event) {
+                function (Event $event) {
                     $perms = [
                         'manageThemesRules' => [
                             'label' => \Craft::t('themes', 'Manage rules')

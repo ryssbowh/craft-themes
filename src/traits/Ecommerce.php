@@ -44,13 +44,18 @@ trait Ecommerce
 
     protected function _initEcommerce()
     {
-        Event::on(ProductTypes::class, ProductTypes::EVENT_AFTER_SAVE_PRODUCTTYPE, function ($e) {
+        Event::on(ProductTypes::class, ProductTypes::EVENT_AFTER_SAVE_PRODUCTTYPE, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementSaved('product', $e->productType->uid);
         });
-        Event::on(ProductTypes::class, ProductTypes::EVENT_AFTER_SAVE_PRODUCTTYPE, function ($e) {
-            Themes::$plugin->layouts->onCraftElementDeleted('product', $e->productType->uid);
+        \Craft::$app->projectConfig->onRemove(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function(Event $e) {
+            if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
+                // If Craft is applying Yaml changes it means we have the fields defined
+                // in config, and don't need to respond to these events as it would create duplicates
+                return;
+            }
+            Themes::$plugin->layouts->onCraftElementDeleted($e->tokenMatches[0]);
         });
-        Event::on(FieldDisplayerService::class, FieldDisplayerService::EVENT_REGISTER_DISPLAYERS, function ($e) {
+        Event::on(FieldDisplayerService::class, FieldDisplayerService::EVENT_REGISTER_DISPLAYERS, function (Event $e) {
             $e->registerMany([
                 AllowedQtyDefault::class,
                 DimensionsDefault::class,
@@ -62,7 +67,7 @@ trait Ecommerce
                 WeightDefault::class
             ]);
         });
-        Event::on(FieldsService::class, FieldsService::EVENT_REGISTER_FIELDS, function ($e) {
+        Event::on(FieldsService::class, FieldsService::EVENT_REGISTER_FIELDS, function (Event $e) {
             $e->registerMany([
                 Variants::class,
                 Stock::class,
@@ -73,13 +78,13 @@ trait Ecommerce
                 AllowedQty::class
             ]);
         });
-        Event::on(LayoutService::class, LayoutService::EVENT_REGISTER_TYPES, function ($e) {
+        Event::on(LayoutService::class, LayoutService::EVENT_REGISTER_TYPES, function (Event $e) {
             $e->registerMany([
                 'product' => ProductLayout::class,
                 'variant' => VariantLayout::class
             ]);
         });
-        Event::on(LayoutService::class, LayoutService::EVENT_AVAILABLE_LAYOUTS, function ($e) {
+        Event::on(LayoutService::class, LayoutService::EVENT_AVAILABLE_LAYOUTS, function (Event $e) {
             $types = Commerce::getInstance()->productTypes->getAllProductTypes();
             foreach ($types as $type) {
                 $productLayout = Themes::$plugin->layouts->create([
@@ -97,14 +102,14 @@ trait Ecommerce
                 $e->layouts[] = $variantLayout;
             }
         });
-        Event::on(LayoutService::class, LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT, function ($e) {
+        Event::on(LayoutService::class, LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT, function (Event $e) {
             if ($e->element instanceof Product) {
                 $e->layout = Themes::$plugin->layouts->get($theme, 'product', $e->element->getType()->uid);
             }
         });
         // Add product type behavior, this won't have any effect before commerce 3.4.12
         // @see https://github.com/craftcms/commerce/issues/2715
-        Event::on(ProductType::class, ProductType::EVENT_DEFINE_BEHAVIORS, function($e) {
+        Event::on(ProductType::class, ProductType::EVENT_DEFINE_BEHAVIORS, function(Event $e) {
             $e->sender->attachBehaviors([
                 'themeLayout' => [
                     'class' => ProductTypeLayoutBehavior::class

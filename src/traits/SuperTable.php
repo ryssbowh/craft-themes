@@ -23,13 +23,13 @@ trait SuperTable
 
     protected function _initSuperTable()
     {
-        Event::on(FieldDisplayerService::class, FieldDisplayerService::EVENT_REGISTER_DISPLAYERS, function ($e) {
+        Event::on(FieldDisplayerService::class, FieldDisplayerService::EVENT_REGISTER_DISPLAYERS, function (Event $e) {
             $e->registerMany([
                 SuperTableSlick::class,
                 SuperTableDefault::class
             ]);
         });
-        Event::on(FieldsService::class, FieldsService::EVENT_REGISTER_FIELDS, function ($e) {
+        Event::on(FieldsService::class, FieldsService::EVENT_REGISTER_FIELDS, function (Event $e) {
             $e->registerMany([
                 SuperTableField::class
             ]);
