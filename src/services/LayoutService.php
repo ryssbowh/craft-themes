@@ -3,7 +3,10 @@ namespace Ryssbowh\CraftThemes\services;
 
 use Illuminate\Support\Collection;
 use Ryssbowh\CraftThemes\Themes;
+use Ryssbowh\CraftThemes\events\AvailableLayoutsEvent;
 use Ryssbowh\CraftThemes\events\LayoutEvent;
+use Ryssbowh\CraftThemes\events\RegisterLayoutTypesEvent;
+use Ryssbowh\CraftThemes\events\ResolveRequestLayoutEvent;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
@@ -39,6 +42,8 @@ class LayoutService extends Service
     const EVENT_AFTER_DELETE = 'after_delete';
     const EVENT_BEFORE_DELETE = 'before_delete';
     const EVENT_REGISTER_TYPES = 'register_types';
+    const EVENT_AVAILABLE_LAYOUTS = 'available_layouts';
+    const EVENT_RESOLVE_REQUEST_LAYOUT = 'resolve_request_layout';
     const CONFIG_KEY = 'themes.layouts';
 
     /**
@@ -75,6 +80,37 @@ class LayoutService extends Service
     }
 
     /**
+     * Create a layout from config
+     * 
+     * @param  array|ActiveRecord $config
+     * @return LayoutInterface
+     * @throws LayoutException
+     */
+    public function create($config): LayoutInterface
+    {
+        if ($config instanceof LayoutRecord) {
+            $config = $config->getAttributes();
+        }
+        if (!isset($config['themeHandle'])) {
+            throw LayoutException::parameterMissing('themeHandle', __METHOD__);
+        }
+        if ($viewModesData = $config['viewModes'] ?? null) {
+            foreach ($viewModesData as $data) {
+                $viewMode = $this->viewModesService()->create($data);
+                $viewModes[] = $viewMode;
+            }
+            $config['viewModes'] = $viewModes;
+        }
+        if ($class = $this->types[$config['type']] ?? null) {
+            $layout = new $class;
+        } else {
+            throw LayoutException::unknownType($config['type']);
+        }
+        $config = array_intersect_key($config, array_flip($layout->safeAttributes()));
+        $layout->setAttributes($config);
+        return $layout;
+    }
+
     /**
      * Get defined layouts types
      * 
@@ -579,10 +615,13 @@ class LayoutService extends Service
             $layout = $this->get($theme, 'category', $element->getGroup()->uid);
         } elseif ($element instanceof Entry) {
             $layout = $this->get($theme, 'entry', $element->getType()->uid);
-        } elseif ($element instanceof Product) {
-            $layout = $this->get($theme, self::PRODUCT_HANDLE, $element->getType()->uid);
         }
-        return $layout;
+        $event = new ResolveRequestLayoutEvent([
+            'element' => $element,
+            'layout' => $layout
+        ]);
+        $this->triggerEvent(self::EVENT_RESOLVE_REQUEST_LAYOUT, $event);
+        return $event->layout;
     }
 
     /**
@@ -601,67 +640,6 @@ class LayoutService extends Service
             return $theme;
         }
         throw ThemeException::wrongParameter(debug_backtrace()[1]['function']);
-    }
-
-    /**
-     * Create a layout from config
-     * 
-     * @param  array|ActiveRecord $config
-     * @return LayoutInterface
-     * @throws LayoutException
-     */
-    protected function create($config): LayoutInterface
-    {
-        if ($config instanceof LayoutRecord) {
-            $config = $config->getAttributes();
-        }
-        if (!isset($config['themeHandle'])) {
-            throw LayoutException::parameterMissing('themeHandle', __METHOD__);
-        }
-        if ($viewModesData = $config['viewModes'] ?? null) {
-            foreach ($viewModesData as $data) {
-                $viewMode = $this->viewModesService()->create($data);
-                $viewModes[] = $viewMode;
-            }
-            $config['viewModes'] = $viewModes;
-        }
-        switch ($config['type']) {
-            case self::DEFAULT_HANDLE:
-                $layout = new Layout;
-                break;
-            case self::CUSTOM_HANDLE:
-                $layout = new CustomLayout;
-                break;
-            case self::CATEGORY_HANDLE:
-                $layout = new CategoryLayout;
-                break;
-            case self::ENTRY_HANDLE:
-                $layout = new EntryLayout;
-                break;
-            case self::USER_HANDLE:
-                $layout = new UserLayout;
-                break;
-            case self::VOLUME_HANDLE:
-                $layout = new VolumeLayout;
-                break;
-            case self::GLOBAL_HANDLE:
-                $layout = new GlobalLayout;
-                break;
-            case self::TAG_HANDLE:
-                $layout = new TagLayout;
-                break;
-            case self::PRODUCT_HANDLE:
-                $layout = new ProductLayout;
-                break;
-            case self::VARIANT_HANDLE:
-                $layout = new VariantLayout;
-                break;
-            default:
-                throw LayoutException::unknownType($config['type']);
-        }
-        $config = array_intersect_key($config, array_flip($layout->safeAttributes()));
-        $layout->setAttributes($config);
-        return $layout;
     }
 
     /**
@@ -765,10 +743,12 @@ class LayoutService extends Service
             $this->createTagsLayouts($themeHandle),
             $this->getCustomLayouts($themeHandle)
         );
-        if (\Craft::$app->plugins->getPlugin('commerce')) {
-            $layouts = array_merge($layouts, $this->createProductsLayouts($themeHandle));
-        }
-        return $layouts;
+        $event = new AvailableLayoutsEvent([
+            'layouts' => $layouts,
+            'themeHandle' => $themeHandle
+        ]);
+        $this->triggerEvent(self::EVENT_AVAILABLE_LAYOUTS, $event);
+        return $event->layouts;
     }
 
     /**
@@ -909,36 +889,6 @@ class LayoutService extends Service
                 'type' => 'tag',
                 'elementUid' => $group->uid,
                 'themeHandle' => $themeHandle
-            ]);
-        }
-        return $layouts;
-    }
-
-    /**
-     * Creates all product and variant layouts
-     *
-     * @param  string $themeHandle
-     * @return LayoutInterface[]
-     */
-    protected function createProductsLayouts(string $themeHandle): array
-    {
-        if (!\Craft::$app->plugins->getPlugin('commerce')) {
-            return [];
-        }
-        $types = Commerce::getInstance()->productTypes->getAllProductTypes();
-        $layouts = [];
-        foreach ($types as $type) {
-            $productLayout = $this->create([
-                'type' => self::PRODUCT_HANDLE,
-                'elementUid' => $type->uid,
-                'themeHandle' => $themeHandle
-            ]);
-            $layouts[] = $productLayout;
-            $layouts[] = $this->create([
-                'type' => self::VARIANT_HANDLE,
-                'elementUid' => $type->uid,
-                'themeHandle' => $themeHandle,
-                'parent' => $productLayout
             ]);
         }
         return $layouts;
