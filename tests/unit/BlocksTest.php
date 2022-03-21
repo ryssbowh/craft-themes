@@ -2,7 +2,7 @@
 
 use Codeception\Test\Unit;
 use Craft;
-use Ryssbowh\CraftThemesTests\fixtures\InstallThemeFixture;
+use Ryssbowh\CraftThemesTests\fixtures\ThemesFixture;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\BlockProviderException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
@@ -15,12 +15,15 @@ class BlocksTest extends Unit
      */
     protected $tester;
 
-    protected $blocks;
-    protected $layouts;
+    public function _fixtures()
+    {
+        return [
+            'themes' => ThemesFixture::class
+        ];
+    }
 
     protected function _before()
     {
-        \Craft::$app->plugins->installPlugin('child-theme');
         $this->blocks = Themes::getInstance()->blocks;
         $this->layouts = Themes::getInstance()->layouts;
     }
@@ -55,22 +58,22 @@ class BlocksTest extends Unit
         $block = $this->createBlock();
         $defaultLayout->addBlock($block, 'content');
         $this->layouts->save($defaultLayout);
-        $this->assertCount(1, $this->blocks->all());
+        $this->assertCount(1, $this->blocks->all);
         $this->assertCount(1, $defaultLayout->getRegion('content')->blocks);
         $this->assertCount(1, $defaultLayout->getBlocks());
         $this->blocks->delete($block);
-        $this->assertCount(0, $this->blocks->all());
+        $this->assertCount(0, $this->blocks->all);
         $this->assertCount(0, $defaultLayout->getRegion('content')->blocks);
         $this->assertCount(0, $defaultLayout->getBlocks());
 
         $block = $this->createBlock('content');
         $block->layout = $defaultLayout;
         $this->assertTrue($this->blocks->save($block));
-        $this->assertCount(1, $this->blocks->all());
+        $this->assertCount(1, $this->blocks->all);
         $this->assertCount(1, $defaultLayout->getRegion('content')->blocks);
         $this->assertCount(1, $defaultLayout->getBlocks());
         $this->blocks->delete($block);
-        $this->assertCount(0, $this->blocks->all());
+        $this->assertCount(0, $this->blocks->all);
         $this->assertCount(0, $defaultLayout->getRegion('content')->blocks);
         $this->assertCount(0, $defaultLayout->getBlocks());
 

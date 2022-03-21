@@ -21,70 +21,86 @@ class RegistryTest extends Unit
      */
     protected $tester;
 
-    protected $registry;
-    protected $plugins;
-
     protected function _before()
     {
-        $this->registry = Themes::getInstance()->registry;
         $this->plugins = Craft::$app->plugins;
     }
 
-    public function testInstallChildTheme()
+    public function testInstallTheme()
     {
-        $this->installChildTheme();
+        Craft::$app->plugins->installPlugin('themes', 'pro');
+        Craft::$app->plugins->installPlugin('child-theme');
         $this->assertTrue($this->plugins->isPluginInstalled('parent-theme'));
         $this->assertTrue($this->plugins->isPluginInstalled('partial-theme'));
         $this->assertTrue($this->plugins->isPluginInstalled('child-theme'));
         $this->assertTrue($this->plugins->isPluginEnabled('child-theme'));
         $this->assertTrue($this->plugins->isPluginEnabled('parent-theme'));
         $this->assertTrue($this->plugins->isPluginEnabled('partial-theme'));
+        $config = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled');
+        $this->assertEquals($config, ['partial-theme', 'parent-theme', 'child-theme']);
+        Craft::$app->plugins->uninstallPlugin('themes');
     }
 
-    public function testDisablePartialTheme()
+    public function testUninstallTheme()
     {
-        $this->installChildTheme();
+        Craft::$app->plugins->installPlugin('themes', 'pro');
+        Craft::$app->plugins->installPlugin('child-theme');
+        Craft::$app->plugins->uninstallPlugin('themes');
+        $this->assertFalse($this->plugins->isPluginInstalled('child-theme'));
+        $this->assertFalse($this->plugins->isPluginInstalled('parent-theme'));
+        $this->assertFalse($this->plugins->isPluginInstalled('child-theme'));
+        $config = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled');
+        $this->assertEquals($config, null);
+    }
+
+    public function testDisableTheme()
+    {
+        Craft::$app->plugins->installPlugin('themes');
+        Craft::$app->plugins->installPlugin('child-theme');
         $this->plugins->disablePlugin('partial-theme');
         $this->assertFalse($this->plugins->isPluginEnabled('parent-theme'));
         $this->assertFalse($this->plugins->isPluginEnabled('child-theme'));
         $this->assertFalse($this->plugins->isPluginEnabled('partial-theme'));
-    }
-
-    public function testUninstallPartialTheme()
-    {
-        $this->installChildTheme();
-        $this->uninstallPartialTheme();
-        $this->assertFalse($this->plugins->isPluginInstalled('child-theme'));
-        $this->assertFalse($this->plugins->isPluginInstalled('parent-theme'));
-        $this->assertFalse($this->plugins->isPluginInstalled('child-theme'));
         $_this = $this;
         $this->tester->expectThrowable(ThemeException::class, function () use ($_this) {
-            $_this->registry->getTheme('child-theme');
+            $_this->registry()->getTheme('child-theme');
         });
+        $this->plugins->enablePlugin('child-theme');
+        $this->assertTrue($this->plugins->isPluginEnabled('parent-theme'));
+        $this->assertTrue($this->plugins->isPluginEnabled('child-theme'));
+        $this->assertTrue($this->plugins->isPluginEnabled('partial-theme'));
+        Craft::$app->plugins->uninstallPlugin('themes');
     }
 
     public function testGetThemes()
     {
-        $this->installChildTheme();
-        $this->assertInstanceOf(ThemeInterface::class, $this->registry->getTheme('child-theme'));
-        $this->assertInstanceOf(ThemeInterface::class, $this->registry->getTheme('parent-theme'));
-        $this->assertCount(3, $this->registry->all());
-        $this->assertCount(2, $this->registry->getNonPartials());
-        $this->assertInstanceOf(ParentTheme::class, $this->registry->getTheme('parent-theme'));
-        $this->assertContains('Parent Theme', $this->registry->getAsNames());
-        $this->assertInstanceOf(ChildTheme::class, $this->registry->getTheme('child-theme'));
-        $this->assertContains('Child Theme', $this->registry->getAsNames());
-        $this->assertInstanceOf(PartialTheme::class, $this->registry->getTheme('partial-theme'));
-        $this->assertContains('Partial Theme', $this->registry->getAsNames());
-    }
-
-    protected function installChildTheme()
-    {
+        Craft::$app->plugins->installPlugin('themes');
         Craft::$app->plugins->installPlugin('child-theme');
+        $this->assertInstanceOf(ThemeInterface::class, $this->registry()->getTheme('child-theme'));
+        $this->assertInstanceOf(ThemeInterface::class, $this->registry()->getTheme('parent-theme'));
+        $this->assertCount(3, $this->registry()->all);
+        $this->assertCount(2, $this->registry()->getNonPartials());
+        $this->assertInstanceOf(ParentTheme::class, $this->registry()->getTheme('parent-theme'));
+        $this->assertContains('Parent Theme', $this->registry()->getAsNames());
+        $this->assertInstanceOf(ChildTheme::class, $this->registry()->getTheme('child-theme'));
+        $this->assertContains('Child Theme', $this->registry()->getAsNames());
+        $this->assertInstanceOf(PartialTheme::class, $this->registry()->getTheme('partial-theme'));
+        $this->assertContains('Partial Theme', $this->registry()->getAsNames());
+        Craft::$app->plugins->uninstallPlugin('themes');
     }
 
-    protected function uninstallPartialTheme()
+    public function testChangeEdition()
     {
-        Craft::$app->plugins->uninstallPlugin('partial-theme');
+        Craft::$app->plugins->installPlugin('themes');
+        Craft::$app->plugins->installPlugin('child-theme');
+        Craft::$app->plugins->switchEdition('themes', 'pro');
+        $config = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled');
+        $this->assertEquals($config, ['partial-theme', 'parent-theme', 'child-theme']);
+        Craft::$app->plugins->uninstallPlugin('themes');
+    }
+
+    protected function registry()
+    {
+        return Themes::$plugin->registry;
     }
 }

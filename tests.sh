@@ -75,7 +75,7 @@ done
 
 for php in ${PHP[@]}; do
     for craft in ${CRAFT[@]}; do
-        php$php $(which composer) require craftcms/cms:"$craft.*" -W -o
+        php$php $(which composer) require craftcms/cms:"^$craft" craftcms/commerce:^3.4 -W -o --quiet
         code=$?
         CODE=$((CODE + $code));
         if [ "$code" -ne "0" ]; then
@@ -110,6 +110,9 @@ else
 fi
 
 #Reset composer.json
-composer require craftcms/cms:"3.7.*" -W --quiet
+echo "Reverting composer...";
+composer remove craftcms/commerce -W --ignore-platform-reqs --quiet;
+composer require craftcms/cms:"^3.7" -W --ignore-platform-reqs --quiet;
+rm composer.lock;
 
 exit $CODE;

@@ -27,7 +27,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: e62c6607-e845-4656-98e9-e021b18067be
+            fieldUid: c4d46adc-0b08-41f6-aa92-f6f63f42c1e3 # Matrix
             instructions: null
             label: null
             required: false
@@ -36,7 +36,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 5e560734-6af7-411f-872f-3eb47d83b1b9
+            fieldUid: e62c6607-e845-4656-98e9-e021b18067be # Assets
             instructions: null
             label: null
             required: false
@@ -45,7 +45,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 81a78bb9-50b1-4929-b623-e68e16009193
+            fieldUid: 5e560734-6af7-411f-872f-3eb47d83b1b9 # Category
             instructions: null
             label: null
             required: false
@@ -54,7 +54,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: a88e3386-ca7b-4800-8a4d-91d424e0f5da
+            fieldUid: 81a78bb9-50b1-4929-b623-e68e16009193 # Checkboxes
             instructions: null
             label: null
             required: false
@@ -63,7 +63,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 36852d23-0bd3-408a-a747-ef28bdfe7463
+            fieldUid: a88e3386-ca7b-4800-8a4d-91d424e0f5da # Users
             instructions: null
             label: null
             required: false
@@ -72,7 +72,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: b07cce68-739f-45f3-a569-ab017bbf0314
+            fieldUid: 36852d23-0bd3-408a-a747-ef28bdfe7463 # Colour
             instructions: null
             label: null
             required: false
@@ -81,7 +81,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 8e213f28-4a27-4653-a694-6b9937bf0c74
+            fieldUid: b07cce68-739f-45f3-a569-ab017bbf0314 # Date and time
             instructions: null
             label: null
             required: false
@@ -90,7 +90,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: ac6903d0-131c-459a-a74b-37656c93e52e
+            fieldUid: 8e213f28-4a27-4653-a694-6b9937bf0c74 # Date only
             instructions: null
             label: null
             required: false
@@ -99,7 +99,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: b73896c8-08bd-4545-9d25-270e53421f32
+            fieldUid: ac6903d0-131c-459a-a74b-37656c93e52e # Dropdown
             instructions: null
             label: null
             required: false
@@ -108,7 +108,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: dac7c1d6-1722-413b-a106-56c2e5365a11
+            fieldUid: b73896c8-08bd-4545-9d25-270e53421f32 # Email
             instructions: null
             label: null
             required: false
@@ -117,7 +117,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 546a8c7a-ce9c-45c7-9fc9-af6081db5a5e
+            fieldUid: dac7c1d6-1722-413b-a106-56c2e5365a11 # Entries
             instructions: null
             label: null
             required: false
@@ -126,7 +126,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 4d8da59d-322c-4f68-ab61-8a03a9dea24d
+            fieldUid: 546a8c7a-ce9c-45c7-9fc9-af6081db5a5e # Image
             instructions: null
             label: null
             required: false
@@ -135,7 +135,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: a9a45980-f224-4ebd-90b8-3bebbe174561
+            fieldUid: 4d8da59d-322c-4f68-ab61-8a03a9dea24d # Multi select
             instructions: null
             label: null
             required: false
@@ -144,7 +144,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 3d96efc0-85b3-4dc1-bf91-45da1b309776
+            fieldUid: a9a45980-f224-4ebd-90b8-3bebbe174561 # Number
             instructions: null
             label: null
             required: false
@@ -153,7 +153,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 38cfcd02-e35e-4e7a-b634-aa4f3623553e
+            fieldUid: 3d96efc0-85b3-4dc1-bf91-45da1b309776 # Plain Text
             instructions: null
             label: null
             required: false
@@ -162,7 +162,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: cc30a44e-af80-4bb4-be14-982571bd3007
+            fieldUid: 38cfcd02-e35e-4e7a-b634-aa4f3623553e # Radio buttons
             instructions: null
             label: null
             required: false
@@ -171,7 +171,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: e8954c6d-61ec-4291-bae5-c0b89dc6e0b5
+            fieldUid: cc30a44e-af80-4bb4-be14-982571bd3007 # Switch
             instructions: null
             label: null
             required: false
@@ -180,7 +180,7 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: 03fd5f14-deaa-4a38-b304-7c3e3883a47b
+            fieldUid: e8954c6d-61ec-4291-bae5-c0b89dc6e0b5 # Tag
             instructions: null
             label: null
             required: false
@@ -189,7 +189,16 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            fieldUid: ab40dfa3-8c22-428c-b240-e59ca1766e53
+            fieldUid: 03fd5f14-deaa-4a38-b304-7c3e3883a47b # Time
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            warning: null
+            width: 100
+          -
+            fieldUid: ab40dfa3-8c22-428c-b240-e59ca1766e53 # Url
             instructions: null
             label: null
             required: false
@@ -202,7 +211,7 @@ fieldLayouts:
 handle: channel
 hasTitleField: true
 name: Channel
-section: d72bd961-7348-451a-b502-e52f2491b33c
+section: d72bd961-7348-451a-b502-e52f2491b33c # Channel
 sortOrder: 1
 titleFormat: null
 titleTranslationKeyFormat: null

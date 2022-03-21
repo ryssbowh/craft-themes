@@ -1,5 +1,6 @@
+columnSuffix: null
 contentColumnType: string
-fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: category
 instructions: ''
 name: Category
@@ -13,7 +14,7 @@ settings:
   localizeRelations: false
   selectionLabel: ''
   showSiteMenu: true
-  source: 'group:dfc2be57-06f6-4818-8c42-295e7b53f75b'
+  source: 'group:dfc2be57-06f6-4818-8c42-295e7b53f75b' # Category
   sources: '*'
   targetSiteId: null
   validateRelatedElements: false

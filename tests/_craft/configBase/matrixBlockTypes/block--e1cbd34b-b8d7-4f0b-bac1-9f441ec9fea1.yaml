@@ -1,0 +1,83 @@
+field: c4d46adc-0b08-41f6-aa92-f6f63f42c1e3 # Matrix
+fieldLayouts:
+  c472ed52-933c-45c0-9b9f-ac342c4e565e:
+    tabs:
+      -
+        elements:
+          -
+            fieldUid: c529b2aa-09d4-4732-b24e-e05701b533ca # Text
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            warning: null
+            width: 100
+          -
+            fieldUid: d115eafe-66a2-4595-abaa-e79eb5989473 # Assets
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            warning: null
+            width: 100
+        name: Content
+        sortOrder: 1
+fields:
+  c529b2aa-09d4-4732-b24e-e05701b533ca: # Text
+    columnSuffix: null
+    contentColumnType: text
+    fieldGroup: null
+    handle: text
+    instructions: ''
+    name: Text
+    searchable: false
+    settings:
+      byteLimit: null
+      charLimit: null
+      code: ''
+      columnType: null
+      initialRows: '4'
+      multiline: ''
+      placeholder: null
+      uiMode: normal
+    translationKeyFormat: null
+    translationMethod: none
+    type: craft\fields\PlainText
+  d115eafe-66a2-4595-abaa-e79eb5989473: # Assets
+    columnSuffix: null
+    contentColumnType: string
+    fieldGroup: null
+    handle: assets
+    instructions: ''
+    name: Assets
+    searchable: false
+    settings:
+      allowSelfRelations: false
+      allowUploads: true
+      allowedKinds: null
+      defaultUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
+      defaultUploadLocationSubpath: ''
+      limit: ''
+      localizeRelations: false
+      previewMode: full
+      restrictFiles: ''
+      selectionLabel: ''
+      showSiteMenu: true
+      showUnpermittedFiles: false
+      showUnpermittedVolumes: false
+      singleUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
+      singleUploadLocationSubpath: ''
+      source: null
+      sources: '*'
+      targetSiteId: null
+      useSingleFolder: false
+      validateRelatedElements: false
+      viewMode: list
+    translationKeyFormat: null
+    translationMethod: site
+    type: craft\fields\Assets
+handle: block
+name: Block
+sortOrder: 1

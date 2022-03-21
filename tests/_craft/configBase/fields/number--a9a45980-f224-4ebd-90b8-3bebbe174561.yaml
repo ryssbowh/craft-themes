@@ -1,5 +1,6 @@
+columnSuffix: null
 contentColumnType: integer(10)
-fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: number
 instructions: ''
 name: Number
@@ -8,12 +9,12 @@ settings:
   decimals: 0
   defaultValue: null
   max: null
-  min: '0'
+  min: 0
   prefix: £
   previewCurrency: ''
   previewFormat: decimal
   size: null
-  suffix: ''
+  suffix: null
 translationKeyFormat: null
 translationMethod: none
 type: craft\fields\Number

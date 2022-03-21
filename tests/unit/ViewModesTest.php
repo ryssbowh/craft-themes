@@ -2,12 +2,7 @@
 
 use Codeception\Test\Unit;
 use Craft;
-use Ryssbowh\CraftThemesTests\fixtures\CategoryGroupsFixture;
-use Ryssbowh\CraftThemesTests\fixtures\GlobalSetsFixture;
-use Ryssbowh\CraftThemesTests\fixtures\InstallThemeFixture;
-use Ryssbowh\CraftThemesTests\fixtures\SectionsFixture;
-use Ryssbowh\CraftThemesTests\fixtures\TagGroupsFixture;
-use Ryssbowh\CraftThemesTests\fixtures\VolumesFixture;
+use Ryssbowh\CraftThemesTests\fixtures\ThemesFixture;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\ViewModeException;
 use Ryssbowh\CraftThemes\models\ViewMode;
@@ -26,12 +21,15 @@ class ViewModesTest extends Unit
      */
     protected $tester;
 
-    protected $displays;
-    protected $layouts;
+    public function _fixtures()
+    {
+        return [
+            'themes' => ThemesFixture::class
+        ];
+    }
 
     protected function _before()
     {
-        \Craft::$app->plugins->installPlugin('child-theme');
         $this->layouts = Themes::getInstance()->layouts;
         $this->viewModes = Themes::getInstance()->viewModes;
     }
@@ -44,19 +42,21 @@ class ViewModesTest extends Unit
      * Tags : 1
      * User : 1
      * Default : 1
+     * Product: 1
+     * Variant: 1
      *
-     * Layouts per non-partial theme : 9
-     * 2 non-partial theme : 18 layouts
+     * Layouts per non-partial theme : 11
+     * 2 non-partial theme : 22 layouts
      * 1 view mode per layout
      */
     public function testViewModesAreCreated()
     {
-        $this->assertCount(18, $this->viewModes->all());
+        $this->assertCount(22, $this->viewModes->all);
     }
 
     public function testDefaultViewModes()
     {
-        $layout = $this->layouts->get('child-theme', LayoutService::USER_HANDLE);
+        $layout = $this->layouts->get('child-theme', 'user');
         $viewMode = $this->viewModes->getDefault($layout);
         $viewModes = $layout->viewModes;
         $this->assertCount(1, $viewModes);
@@ -64,19 +64,19 @@ class ViewModesTest extends Unit
         $this->assertEquals($viewMode, $viewModes[0]);
         $this->assertEquals($viewMode->handle, ViewModeService::DEFAULT_HANDLE);
 
-        $layout = $this->layouts->get('child-theme', LayoutService::DEFAULT_HANDLE);
+        $layout = $this->layouts->get('child-theme', 'default');
         $viewMode = $this->viewModes->getDefault($layout);
         $viewModes = $layout->viewModes;
         $this->assertCount(1, $viewModes);
         $this->assertInstanceOf(ViewMode::class, $viewModes[0]);
         $this->assertEquals($viewMode, $viewModes[0]);
-        $this->assertEquals($viewMode->handle, ViewModeService::DEFAULT_HANDLE);
+        $this->assertEquals($viewMode->handle, 'default');
     }
 
     public function testCreatingDeletingViewModes()
     {
         $entryType = \Craft::$app->sections->getSectionByHandle('single')->entryTypes[0];
-        $layout = $this->layouts->get('child-theme', LayoutService::ENTRY_HANDLE, $entryType->uid);
+        $layout = $this->layouts->get('child-theme', 'entry', $entryType->uid);
         $viewMode = $this->viewModes->create([
             'name' => 'Name',
             'handle' => 'handle',
@@ -84,10 +84,10 @@ class ViewModesTest extends Unit
         ]);
         $this->assertInstanceOf(ViewMode::class, $viewMode);
         $this->assertTrue($this->viewModes->save($viewMode));
-        $this->assertCount(19, $this->viewModes->all());
+        $this->assertCount(23, $this->viewModes->all);
         $this->assertCount(2, $layout->viewModes);
         $this->assertTrue($this->viewModes->delete($viewMode));
-        $this->assertCount(18, $this->viewModes->all());
+        $this->assertCount(22, $this->viewModes->all);
         $this->assertCount(1, $layout->viewModes);
 
         //Try saving duplicated view mode

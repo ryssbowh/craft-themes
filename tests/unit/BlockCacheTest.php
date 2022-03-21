@@ -2,7 +2,7 @@
 
 use Codeception\Test\Unit;
 use Craft;
-use Ryssbowh\CraftThemesTests\fixtures\InstallThemeFixture;
+use Ryssbowh\CraftThemesTests\fixtures\ThemesFixture;
 use Ryssbowh\CraftThemesTests\themes\child\models\cacheStrategies\TestBlockCacheStrategy;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\events\RegisterBlockCacheStrategies;
@@ -18,9 +18,15 @@ class BlockCacheTest extends Unit
      */
     protected $tester;
 
+    public function _fixtures()
+    {
+        return [
+            'themes' => ThemesFixture::class
+        ];
+    }
+
     protected function _before()
     {
-        \Craft::$app->plugins->installPlugin('child-theme');
         $this->blockCache = Themes::getInstance()->blockCache;
         $this->blockCache->cacheEnabled = true;
         $this->layouts = Themes::getInstance()->layouts;
