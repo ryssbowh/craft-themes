@@ -83,8 +83,8 @@ class Themes extends \craft\base\Plugin
 
         self::$plugin = $this;
 
-        \Craft::setAlias('@themesWebPath', '@webroot/themes');
-        \Craft::setAlias('@themesWeb', '@web/themes');
+        \Craft::setAlias('@themesWebPath', '@webroot/' . $this->settings->folder);
+        \Craft::setAlias('@themesWeb', '@web/' . $this->settings->folder);
 
         if (\Craft::$app->request->getIsConsoleRequest()) {
             $this->controllerNamespace = 'Ryssbowh\\CraftThemes\\console';

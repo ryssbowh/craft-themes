@@ -4,10 +4,21 @@
 
 {{
     forms.textField({
+        label: 'Themes folder'|t('themes'),
+        value: settings.folder,
+        instructions: 'The folder containing themes, this is relative to the root folder'|t('themes'),
+        tip: 'This folder should be referenced in your composer config as a {tag}path repository{endtag}'|t('themes', {tag: '<a target="_blank" href="https://getcomposer.org/doc/05-repositories.md#path">', endtag: '</a>'}),
+        name: 'folder',
+        fieldClass: 'first',
+        errors: settings.getErrors('folder'),
+    })
+}}
+
+{{
+    forms.textField({
         label: 'Main menu item label'|t('themes'),
         value: settings.menuItemName,
-        name: 'menuItemName',
-        fieldClass: 'first'
+        name: 'menuItemName'
     })
 }}
 
