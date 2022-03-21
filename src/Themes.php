@@ -529,7 +529,7 @@ class Themes extends \craft\base\Plugin
         //     }
         // });
         Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_ENTRY_TYPE, function (Event $e) {
-            Themes::$plugin->layouts->onCraftElementSaved('entry', $uid, $e->entryType->uid);
+            Themes::$plugin->layouts->onCraftElementSaved('entry', $e->entryType->uid);
         });
         Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_ENTRY_TYPE, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementDeleted($e->entryType->uid);
@@ -563,7 +563,7 @@ class Themes extends \craft\base\Plugin
         Event::on(Tags::class, Tags::EVENT_AFTER_DELETE_GROUP, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementDeleted($e->tagGroup->uid);
         });
-        Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (FieldEvent $e) {
+        Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD, function (Event $e) {
             Themes::$plugin->fields->onCraftFieldSaved($e);
         });
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(Event $event) {
