@@ -26,7 +26,7 @@ class GlobalBlockOptions extends BlockOptions
             'viewMode' => [
                 'field' => 'fetchviewmode',
                 'element' => 'from:#field-set:select',
-                'layoutType' => LayoutService::GLOBAL_HANDLE,
+                'layoutType' => 'global',
                 'label' => \Craft::t('themes', 'View mode'),
                 'required' => true
             ]

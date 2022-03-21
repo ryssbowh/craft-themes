@@ -18,11 +18,6 @@ class EntryLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
-     */
-    protected $_type = LayoutService::ENTRY_HANDLE;
-
-    /**
      * @inheritDoc
      */
     public function defineRules(): array

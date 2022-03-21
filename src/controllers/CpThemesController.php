@@ -21,7 +21,7 @@ class CpThemesController extends Controller
         $this->requirePermission('accessPlugin-themes');
 
         $redirectTo = Themes::$plugin->settings->redirectTo;
-        if (!\Craft::$app->config->getGeneral()->allowAdminChanges and $redirectTo != 'list') {
+        if ((!Themes::$plugin->is(Themes::EDITION_PRO) or !\Craft::$app->config->getGeneral()->allowAdminChanges) and in_array($redirectTo, ['display', 'blocks'])) {
             $redirectTo = 'list';
         }
         return $this->redirect('themes/' . $redirectTo);
@@ -40,7 +40,7 @@ class CpThemesController extends Controller
 
         return $this->renderTemplate('themes/cp/themes', [
             'title' => \Craft::t('themes', 'Themes'),
-            'themes' => Themes::$plugin->registry->all(),
+            'themes' => Themes::$plugin->registry->getAll(),
             'isPro' => Themes::$plugin->is(Themes::EDITION_PRO)
         ]);
     }

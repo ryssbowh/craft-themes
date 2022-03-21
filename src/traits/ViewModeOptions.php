@@ -79,7 +79,7 @@ trait ViewModeOptions
         if ($this->viewModeUid and !isset($this->displayer->getViewModes()[$this->viewModeUid])) {
             $this->addError('viewModeUid', \Craft::t('themes', 'View mode is invalid'));
         }
-        if ($this->viewModeUid == $this->displayer->field->viewMode->uid) {
+        if ($this->viewModeUid and $this->viewModeUid == $this->displayer->field->viewMode->uid) {
             $this->addError('viewModeUid', \Craft::t('themes', 'View modes can\'t reference themselves'));   
         }
     }

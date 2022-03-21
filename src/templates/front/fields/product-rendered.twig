@@ -1,0 +1,9 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {% for product in value %}
+        {% set layout = craft.themes.layouts.get(craft.themes.current, 'product', product.type.uid) %}
+        {{ macros.renderLayout(layout, options.getViewMode(product), product) }}
+    {% endfor %}
+{% endblock %}

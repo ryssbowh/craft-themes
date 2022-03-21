@@ -157,6 +157,9 @@ class Group extends DisplayItem implements GroupInterface
      */
     protected function loadDisplays(): array
     {
-        return Themes::$plugin->displays->getForGroup($this->id);
+        if ($this->id) {
+            return Themes::$plugin->displays->getForGroup($this->id);
+        }
+        return [];
     }
 }

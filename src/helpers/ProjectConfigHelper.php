@@ -177,35 +177,4 @@ class ProjectConfigHelper
             $projectConfig->processConfigChanges(ViewModeService::CONFIG_KEY . '.' . $uid, false, null, $force);
         }
     }
-
-    /**
-     * Is a theme marked as having its data installed in project config
-     *
-     * @param  ThemeInterface $theme
-     * @return bool
-     */
-    public static function isDataInstalledForTheme(ThemeInterface $theme): bool
-    {
-        return \Craft::$app->projectConfig->get('plugins.' . $theme->handle . '.dataInstalled', true) ?? false;
-    }
-
-    /**
-     * Mark a theme as having its data installed in project config
-     * 
-     * @param ThemeInterface $theme
-     */
-    public static function markDataInstalledForTheme(ThemeInterface $theme)
-    {
-        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', true, null, false);
-    }
-
-    /**
-     * Mark a theme as having its data not installed in project config
-     * 
-     * @param ThemeInterface $theme
-     */
-    public static function markDataNotInstalledForTheme(ThemeInterface $theme)
-    {
-        \Craft::$app->projectConfig->set('plugins.' . $theme->handle . '.dataInstalled', false, null, false);
-    }
 }

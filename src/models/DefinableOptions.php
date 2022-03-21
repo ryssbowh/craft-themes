@@ -94,6 +94,16 @@ abstract class DefinableOptions extends Model
     }
 
     /**
+     * Replace all values
+     * 
+     * @param array $values
+     */
+    public function replaceValues($values)
+    {
+        $this->_values = (array)$values;
+    }
+
+    /**
      * Get the value for an option
      * 
      * @param  string $name

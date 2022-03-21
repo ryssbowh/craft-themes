@@ -203,7 +203,6 @@ return [
 	"Remove messages from session" => "Remove messages from session",
 	"Render file" => "Render file",
 	"Rendered" => "Rendered",
-	"Rendered as view mode" => "Rendered as view mode",
 	"Requested layout doesn't exist, defaulting to {layout}" => "Requested layout doesn't exist, defaulting to {layout}",
 	"Reset password" => "Reset password",
 	"Right to left" => "Right to left",

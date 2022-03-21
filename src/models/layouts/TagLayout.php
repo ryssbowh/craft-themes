@@ -12,11 +12,6 @@ class TagLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
-     */
-    protected $_type = LayoutService::TAG_HANDLE;
-
-    /**
      * @inheritDoc
      */
     public function defineRules(): array

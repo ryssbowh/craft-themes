@@ -1,23 +1,35 @@
 <?php
 namespace Ryssbowh\CraftThemes\assets;
 
-use craft\web\assets\cp\CpAsset;
-use craft\web\assets\timepicker\TimepickerAsset;
+use craft\web\AssetBundle;
 
-class DisplayAssets extends ThemesBaseAssets
+class DisplayAssets extends AssetBundle
 {
+    /**
+     * @inheritDoc
+     */
     public $sourcePath = __DIR__ . '/../../vue/dist/js';
 
+    /**
+     * @inheritDoc
+     */
     public $js = [
-        'chunk-vendors.js',
-        'chunk-common.js',
-        'display.js',
-        'fields.js',
+        'display.js'
     ];
 
+    /**
+     * @inheritDoc
+     */
     public $depends = [
-        CpAsset::class,
-        FieldsAsset::class,
-        TimepickerAsset::class
+        FieldsAsset::class
     ];
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->sourcePath = realpath($this->sourcePath);
+    }
 }

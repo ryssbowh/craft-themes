@@ -58,7 +58,7 @@ class FileFileOptions extends FieldDisplayerOptions
             $displayer = Themes::$plugin->fileDisplayers->getByHandle($handle);
             $displayer->displayer = $this->displayer;
             if ($options = $this->displayers[$kind]['options'] ?? null) {
-                $displayer->options->setValues($options);
+                $displayer->options->replaceValues($options);
             }
         }
         return $displayer;

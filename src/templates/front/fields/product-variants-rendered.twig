@@ -1,0 +1,14 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% block content %}
+    {% if value|length %}
+        {% set viewMode = options.viewMode %}
+        {% if viewMode %}
+            {% for variant in value %}
+                {% set layout = craft.themes.layouts.get(craft.themes.current, 'variant', variant.product.type.uid) %}
+                {{ layout.render(variant, viewMode) }}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endblock %}

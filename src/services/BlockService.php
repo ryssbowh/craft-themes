@@ -40,7 +40,7 @@ class BlockService extends Service
      * 
      * @return Collection
      */
-    public function all(): Collection
+    public function getAll(): Collection
     {
         if (is_null($this->_blocks)) {
             $this->_blocks = collect();
@@ -142,7 +142,7 @@ class BlockService extends Service
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $block->uid);
 
-        $this->_blocks = $this->all()->where('id', '!=', $block->id);
+        $this->_blocks = $this->getAll()->where('id', '!=', $block->id);
         $block->layout->getRegion($block->region)->blocks = null;
 
         return true;
@@ -219,7 +219,7 @@ class BlockService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         $parts = explode('.', self::CONFIG_KEY);
-        foreach ($this->all() as $block) {
+        foreach ($this->getAll() as $block) {
             $e->config[$parts[0]][$parts[1]][$block->uid] = $block->getConfig();
         }
     }
@@ -235,7 +235,7 @@ class BlockService extends Service
         $toKeep = array_map(function ($block) {
             return $block->id;
         }, $blocks);
-        $toDelete = $this->all()
+        $toDelete = $this->getAll()
             ->whereNotIn('id', $toKeep)
             ->where('layout_id', $layout->id)
             ->all();
@@ -252,7 +252,7 @@ class BlockService extends Service
      */
     public function getById(int $id): ?BlockInterface
     {
-        return $this->all()->firstWhere('id', $id);
+        return $this->getAll()->firstWhere('id', $id);
     }
 
     /**
@@ -263,7 +263,7 @@ class BlockService extends Service
      */
     public function getForRegion(Region $region): array
     {
-        return $this->all()
+        return $this->getAll()
             ->where('layout_id', $region->layout->id)
             ->where('region', $region->handle)
             ->values()
@@ -305,8 +305,8 @@ class BlockService extends Service
      */
     protected function add(BlockInterface $block)
     {
-        if (!$this->all()->firstWhere('id', $block->id)) {
-            $this->all()->push($block);
+        if (!$this->getAll()->firstWhere('id', $block->id)) {
+            $this->getAll()->push($block);
         }
     }
 }

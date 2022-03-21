@@ -12,11 +12,6 @@ class VolumeLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
-     */
-    protected $_type = LayoutService::VOLUME_HANDLE;
-
-    /**
      * @inheritDoc
      */
     public function defineRules(): array

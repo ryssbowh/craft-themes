@@ -22,7 +22,7 @@ class UserRendered extends UserDefault
      */
     public function getName(): string
     {
-        return \Craft::t('themes', 'Rendered as view mode');
+        return \Craft::t('themes', 'Rendered');
     }
 
     /**
@@ -55,7 +55,7 @@ class UserRendered extends UserDefault
      */
     public function getUserLayout(): LayoutInterface
     {
-        return Themes::$plugin->layouts->get($this->getTheme(), LayoutService::USER_HANDLE);
+        return Themes::$plugin->layouts->get($this->getTheme(), 'user');
     }
 
     /**

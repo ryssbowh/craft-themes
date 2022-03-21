@@ -115,6 +115,9 @@ class ViewService extends Service
      */
     public function beforeRenderPage(TemplateEvent $event)
     {
+        if (!Themes::$plugin->is(Themes::EDITION_PRO)) {
+            return;
+        }
         if (!$theme = $this->themesRegistry()->current) {
             //No theme is defined for that request
             return;

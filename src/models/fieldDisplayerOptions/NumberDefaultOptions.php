@@ -21,6 +21,7 @@ class NumberDefaultOptions extends FieldDisplayerOptions
             ],
             'decimals' => [
                 'field' => 'text',
+                'label' => \Craft::t('themes', 'Decimals'),
                 'type' => 'number',
                 'min' => 0,
                 'step' => 1

@@ -12,11 +12,6 @@ class GlobalLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
-     */
-    protected $_type = LayoutService::GLOBAL_HANDLE;
-
-    /**
      * @inheritDoc
      */
     public function defineRules(): array

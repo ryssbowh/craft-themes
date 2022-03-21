@@ -42,7 +42,7 @@ class ViewModeService extends Service
      * 
      * @return Collection
      */
-    public function all()
+    public function getAll()
     {
         if ($this->_viewModes === null) {
             $records = ViewModeRecord::find()->all();
@@ -97,11 +97,11 @@ class ViewModeService extends Service
             return false;
         }
 
-        if ($viewMode->layout->type == LayoutService::DEFAULT_HANDLE and $viewMode->handle != self::DEFAULT_HANDLE) {
+        if ($viewMode->layout->type == 'default' and $viewMode->handle != self::DEFAULT_HANDLE) {
             throw ViewModeException::defaultLayoutNoViewModes($viewMode->layout);
         }
 
-        $exists = $this->all()
+        $exists = $this->getAll()
             ->where('layout_id', $viewMode->layout->id)
             ->firstWhere('handle', $viewMode->handle);
         if ($exists and $exists->id != $viewMode->id) {
@@ -183,7 +183,7 @@ class ViewModeService extends Service
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $viewMode->uid);
 
-        $this->_viewModes = $this->all()->where('id', '!=', $viewMode->id);
+        $this->_viewModes = $this->getAll()->where('id', '!=', $viewMode->id);
         $viewMode->layout->viewModes = null;
 
         return true;
@@ -256,18 +256,18 @@ class ViewModeService extends Service
     public function rebuildConfig(RebuildConfigEvent $e)
     {
         $parts = explode('.', self::CONFIG_KEY);
-        foreach ($this->all() as $viewMode) {
+        foreach ($this->getAll() as $viewMode) {
             $e->config[$parts[0]][$parts[1]][$viewMode->uid] = $viewMode->getConfig();
         }
     }
 
     /**
-     * Populates a view mode from posted data
+     * Populates a view mode from an array of data
      * 
      * @param  array $data
      * @return ViewModeInterface
      */
-    public function populateFromPost(array $data): ViewModeInterface
+    public function populateFromData(array $data): ViewModeInterface
     {
         $viewMode = $this->getById($data['id']);
         $displaysData = $data['displays'];
@@ -275,7 +275,9 @@ class ViewModeService extends Service
         $viewMode->setAttributes($data);
         $displays = [];
         foreach ($displaysData as $data) {
-            $displays[] = Themes::$plugin->displays->populateFromPost($data);
+            $display = Themes::$plugin->displays->populateFromData($data);
+            $display->viewMode = $viewMode;
+            $displays[] = $display;
         }
         $viewMode->displays = $displays;
         return $viewMode;
@@ -292,7 +294,7 @@ class ViewModeService extends Service
         $toKeep = array_map(function ($viewMode) {
             return $viewMode->id;
         }, $viewModes);
-        $toDelete = $this->all()
+        $toDelete = $this->getAll()
             ->whereNotIn('id', $toKeep)
             ->where('layout_id', $layout->id)
             ->all();
@@ -310,7 +312,7 @@ class ViewModeService extends Service
      */
     public function getById(int $id): ViewModeInterface
     {
-        if ($viewMode = $this->all()->firstWhere('id', $id)) {
+        if ($viewMode = $this->getAll()->firstWhere('id', $id)) {
             $this->collectCacheTag($viewMode);
             return $viewMode;
         }
@@ -326,7 +328,7 @@ class ViewModeService extends Service
      */
     public function getByUid(string $uid): ViewModeInterface
     {
-        if ($viewMode = $this->all()->firstWhere('uid', $uid)) {
+        if ($viewMode = $this->getAll()->firstWhere('uid', $uid)) {
             $this->collectCacheTag($viewMode);
             return $viewMode;
         }
@@ -344,7 +346,7 @@ class ViewModeService extends Service
         if (!$layout->id) {
             return [];
         }
-        return $this->all()
+        return $this->getAll()
             ->where('layout.id', $layout->id)
             ->values()
             ->all();
@@ -373,7 +375,7 @@ class ViewModeService extends Service
         if (!$layout->id) {
             return null;
         }
-        $viewMode = $this->all()
+        $viewMode = $this->getAll()
             ->where('layout.id', $layout->id)
             ->firstWhere('handle', $handle);
         if ($viewMode) {
@@ -400,8 +402,8 @@ class ViewModeService extends Service
      */
     protected function add(ViewModeInterface $viewMode)
     {
-        if (!$this->all()->firstWhere('id', $viewMode->id)) {
-            $this->all()->push($viewMode);
+        if (!$this->getAll()->firstWhere('id', $viewMode->id)) {
+            $this->getAll()->push($viewMode);
         }
     }
 

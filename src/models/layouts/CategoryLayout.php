@@ -12,11 +12,6 @@ class CategoryLayout extends Layout
     use ElementLayout;
 
     /**
-     * @var string
-     */
-    protected $_type = LayoutService::CATEGORY_HANDLE;
-
-    /**
      * @inheritDoc
      */
     public function defineRules(): array

@@ -1,5 +1,6 @@
+columnSuffix: null
 contentColumnType: string
-fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: image
 instructions: ''
 name: Image
@@ -9,7 +10,7 @@ settings:
   allowUploads: true
   allowedKinds:
     - image
-  defaultUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af'
+  defaultUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
   defaultUploadLocationSubpath: ''
   limit: '1'
   localizeRelations: false
@@ -19,7 +20,7 @@ settings:
   showSiteMenu: true
   showUnpermittedFiles: false
   showUnpermittedVolumes: false
-  singleUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af'
+  singleUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
   singleUploadLocationSubpath: ''
   source: null
   sources: '*'

@@ -2,6 +2,7 @@
 
 use Codeception\Test\Unit;
 use Craft;
+use Ryssbowh\CraftThemesTests\fixtures\ThemesFixture;
 use Ryssbowh\CraftThemesTests\themes\child\models\blockProviders\TestBlockProvider;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\blockProviders\SystemBlockProvider;
@@ -20,6 +21,13 @@ class BlockProvidersTest extends Unit
      */
     protected $tester;
 
+    public function _fixtures()
+    {
+        return [
+            'themes' => ThemesFixture::class
+        ];
+    }
+
     protected function _before()
     {
         $this->providers = Themes::getInstance()->blockProviders;
@@ -33,7 +41,7 @@ class BlockProvidersTest extends Unit
             $event->add(new TestBlockProvider);
         });
         $this->tester->expectThrowable(BlockProviderException::class, function () use ($providers) {
-            $providers->all();
+            $providers->all;
         });
     }
 
@@ -44,9 +52,9 @@ class BlockProvidersTest extends Unit
             $event->add(new TestBlockProvider);
         });
         $this->tester->expectEvent(BlockProvidersService::class, BlockProvidersService::EVENT_REGISTER_BLOCK_PROVIDERS, function () use ($providers) {
-            $providers->all();
+            $providers->all;
         });
-        $this->assertCount(3, $providers->all());
+        $this->assertCount(3, $providers->all);
         $this->assertInstanceOf(BlockProviderInterface::class, $providers->getByHandle('system'));
         $this->assertInstanceOf(BlockProviderInterface::class, $providers->getByHandle('forms'));
         $this->assertInstanceOf(BlockProviderInterface::class, $providers->getByHandle('child'));

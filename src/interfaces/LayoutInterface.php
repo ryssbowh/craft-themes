@@ -25,6 +25,20 @@ interface LayoutInterface
     public function getType(): string;
 
     /**
+     * Parent getter
+     * 
+     * @return ?LayoutInterface
+     */
+    public function getParent(): ?LayoutInterface;
+
+    /**
+     * Parent setter
+     * 
+     * @param LayoutInterface $layout
+     */
+    public function setParent(LayoutInterface $layout);
+
+    /**
      * Can this layout be assigned blocks
      * 
      * @return bool
@@ -33,7 +47,7 @@ interface LayoutInterface
 
     /**
      * Can this layout define displays.
-     * Only the default layout can't have displays since it doesn't have an element associated to it.
+     * Default and custom layout can't have displays since it doesn't have an element associated to it.
      * 
      * @return bool
      */

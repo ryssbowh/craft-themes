@@ -11,6 +11,12 @@ use craft\base\Model;
 class Settings extends Model
 {
     /**
+     * @var string
+     * @since 3.1.0
+     */
+    public $folder = 'themes';
+
+    /**
      * @var array
      */
     public $themesRules = [];
@@ -113,8 +119,20 @@ class Settings extends Model
     {
         return [
             [['showCpShortcuts', 'hideEmptyFields'], 'boolean'],
-            [['redirectTo', 'menuItemName'], 'string']
+            [['redirectTo', 'menuItemName'], 'string'],
+            ['folder', 'required'],
+            ['folder', 'validateFolder']
         ];
+    }
+
+    /**
+     * Validate the folder setting
+     */
+    public function validateFolder()
+    {
+        if (!file_exists(\Craft::getAlias('@root/' . $this->folder))) {
+            $this->addError('folder', \Craft::t('themes', 'This folder doesn\'t exist'));
+        }
     }
 
     /**

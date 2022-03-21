@@ -28,6 +28,7 @@ class Install extends Migration
 
         $this->createTable('{{%themes_layouts}}', [
             'id' => $this->primaryKey(),
+            'parent_id' => $this->integer(11)->null(),
             'themeHandle' => $this->string(255)->notNull(),
             'type' => $this->string(255)->notNull(),
             'elementUid' => $this->string(255)->notNull(),
@@ -90,17 +91,6 @@ class Install extends Migration
             'uid' => $this->uid()
         ]);
 
-        $this->createTable('{{%themes_pivot_matrix}}', [
-            'id' => $this->primaryKey(),
-            'parent_id' => $this->integer(11)->notNull(),
-            'field_id' => $this->integer(11)->notNull(),
-            'matrix_type_id' => $this->integer(11)->notNull(),
-            'order' => $this->integer(11),
-            'dateCreated' => $this->dateTime()->notNull(),
-            'dateUpdated' => $this->dateTime()->notNull(),
-            'uid' => $this->uid()
-        ]);
-
         $this->createTable('{{%themes_pivot_table}}', [
             'id' => $this->primaryKey(),
             'table_id' => $this->integer(11)->notNull(),
@@ -113,6 +103,18 @@ class Install extends Migration
             'uid' => $this->uid()
         ]);
 
+        $this->createTable('{{%themes_pivot_parents}}', [
+            'id' => $this->primaryKey(),
+            'parent_id' => $this->integer(11)->notNull(),
+            'field_id' => $this->integer(11)->notNull(),
+            'order' => $this->integer(11),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid()
+        ]);
+
+        $this->addForeignKey('themes_layouts_parent', '{{%themes_layouts}}', ['parent_id'], '{{%themes_layouts}}', ['id'], 'SET NULL', null);
+
         $this->addForeignKey('themes_display_view_mode', '{{%themes_displays}}', ['viewMode_id'], '{{%themes_view_modes}}', ['id'], 'CASCADE', null);
         $this->addForeignKey('themes_display_group', '{{%themes_displays}}', ['group_id'], '{{%themes_groups}}', ['id'], 'SET NULL', null);
 
@@ -124,11 +126,11 @@ class Install extends Migration
 
         $this->addForeignKey('themes_groups_display', '{{%themes_groups}}', ['display_id'], '{{%themes_displays}}', ['id'], 'CASCADE', null);
 
-        $this->addForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}', ['field_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
-        $this->addForeignKey('themes_pivot_matrix_parent', '{{%themes_pivot_matrix}}', ['parent_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
-
         $this->addForeignKey('themes_pivot_table_field', '{{%themes_pivot_table}}', ['field_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
         $this->addForeignKey('themes_pivot_table_parent', '{{%themes_pivot_table}}', ['table_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
+
+        $this->addForeignKey('themes_pivot_parents_field', '{{%themes_pivot_parents}}', ['field_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
+        $this->addForeignKey('themes_pivot_parents_parent', '{{%themes_pivot_parents}}', ['parent_id'], '{{%themes_fields}}', ['id'], 'CASCADE', null);
     }
 
     /**
@@ -136,24 +138,24 @@ class Install extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('themes_layouts_parent', '{{%themes_layouts}}');
         $this->dropForeignKey('themes_display_view_mode', '{{%themes_displays}}');
         $this->dropForeignKey('themes_display_group', '{{%themes_displays}}');
         $this->dropForeignKey('themes_view_mode_layout', '{{%themes_view_modes}}');
         $this->dropForeignKey('themes_blocks_layout', '{{%themes_blocks}}');
         $this->dropForeignKey('themes_fields_display', '{{%themes_fields}}');
         $this->dropForeignKey('themes_groups_display', '{{%themes_groups}}');
-        $this->dropForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}');
-        $this->dropForeignKey('themes_pivot_matrix_parent', '{{%themes_pivot_matrix}}');
         $this->dropForeignKey('themes_pivot_table_field', '{{%themes_pivot_table}}');
         $this->dropForeignKey('themes_pivot_table_parent', '{{%themes_pivot_table}}');
-
+        $this->dropForeignKey('themes_pivot_parents_field', '{{%themes_pivot_parents}}');
+        $this->dropForeignKey('themes_pivot_parents_parent', '{{%themes_pivot_parents}}');
+        $this->dropTableIfExists('{{%themes_pivot_parents}}');
+        $this->dropTableIfExists('{{%themes_pivot_table}}');
         $this->dropTableIfExists('{{%themes_fields}}');
         $this->dropTableIfExists('{{%themes_groups}}');
         $this->dropTableIfExists('{{%themes_blocks}}');
         $this->dropTableIfExists('{{%themes_displays}}');
         $this->dropTableIfExists('{{%themes_view_modes}}');
         $this->dropTableIfExists('{{%themes_layouts}}');
-        $this->dropTableIfExists('{{%themes_pivot_matrix}}');
-        $this->dropTableIfExists('{{%themes_pivot_table}}');
     }
 }

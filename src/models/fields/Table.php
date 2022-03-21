@@ -73,34 +73,27 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
-    public static function create(?array $config = null): FieldInterface
+    public function populateFromData(array $data)
     {
-        $class = get_called_class();
-        $field = new $class;
-        $attributes = $field->safeAttributes();
-        $config = array_intersect_key($config, array_flip($attributes));
-        $field->setAttributes($config);
-        if ($config['fields'] ?? null) {
-            $field->fields = static::buildFields($config['fields'], $field);
+        $data = array_intersect_key($data, array_flip($this->safeAttributes()));
+        if ($data['fields'] ?? null) {
+            $data['fields'] = $this->buildFields($data['fields']);
         }
-        if (!isset($config['options']) and $field->displayer) {
-            $field->options = $field->displayer->options->toArray();
-        }
-        return $field;
+        $this->setAttributes($data);
     }
 
     /**
      * @inheritDoc
      */
-    public static function createFromField(BaseField $craftField): FieldInterface
+    public static function buildConfig(BaseField $craftField): array
     {
+        $config = parent::buildConfig($craftField);
         $fields = [];
-        foreach ($craftField->columns as $order => $column) {
+        foreach ($craftField->columns as $column) {
             $fields[] = TableField::buildConfig($column);
         }
-        $config = static::buildConfig($craftField);
         $config['fields'] = $fields;
-        return static::create($config);
+        return $config;
     }
 
     /**
@@ -108,9 +101,17 @@ class Table extends CraftField
      */
     public static function save(FieldInterface $field): bool
     {
+        $fieldsToKeep = [];
+        $children = Themes::$plugin->table->getForTable($table);
         foreach ($field->fields as $tableField) {
-            $tableField->table = $field;
+            // $tableField->parent = $field;
             Themes::$plugin->fields->save($tableField);
+            $fieldsToKeep[] = $tableField->id;
+        }
+        foreach ($children as $child) {
+            if (!in_array($child->id, $fieldsToKeep)) {
+                Themes::$plugin->fields->delete($child);
+            }
         }
         return parent::save($field);
     }
@@ -150,16 +151,16 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
-    public function onCraftFieldChanged(BaseField $craftField): bool
+    public function rebuild(): bool
     {
         $oldFields = $this->fields;
         $newFields = [];
         $fieldIdsToKeep = [];
         $order = 0;
-        foreach ($craftField->columns as $column) {
+        foreach ($this->craftField->columns as $column) {
             $newConfig = TableField::buildConfig($column);
-            if (isset($oldFields[$order])) {
-                $oldField = $oldFields[$order];
+            $oldField = $this->getFieldByHandle($column['handle']);
+            if ($oldField) {
                 if ($oldField->craft_field_class != $newConfig['craft_field_class']) {
                     //Column has changed field class, creating a new field and copying old fields attributes
                     $field = TableField::create($newConfig);
@@ -170,43 +171,20 @@ class Table extends CraftField
                     $field->visuallyHidden = $oldField->visuallyHidden;
                     $field->hidden = $field->hidden ?: $oldField->hidden;
                 } else {
-                    //Column is the same, replacing name and handle in case they have changed
+                    //Column is the same, replacing name in case it's changed
                     $field = $oldField;
                     $field->name = $column['heading'];
-                    $field->handle = $column['handle'];
                 }
                 $fieldIdsToKeep[] = $field->id;
             } else {
                 //New column was added to the table
                 $field = TableField::create($newConfig);
             }
-            $field->table = $this;
+            $field->parent = $this;
             $newFields[$order] = $field;
             $order++;
         }
         $this->fields = $newFields;
-        //Deleting all fields apart from those that haven't changed to make sure project config is synced
-        //New fields will be created later when the table is saved
-        $oldRecords = TablePivotRecord::find()
-            ->where(['table_id' => $this->id])
-            ->andWhere(['not in', 'field_id', $fieldIdsToKeep])
-            ->all();
-        foreach ($oldRecords as $record) {
-            $field = Themes::$plugin->fields->getById($record->field_id);
-            Themes::$plugin->fields->delete($field);
-        }
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function populateFromPost(array $data)
-    {
-        $attributes = $this->safeAttributes();
-        $data = array_intersect_key($data, array_flip($attributes));
-        $data['fields'] = $this->buildFields($data['fields'], $this);
-        $this->setAttributes($data);
     }
 
     /**
@@ -247,6 +225,22 @@ class Table extends CraftField
     }
 
     /**
+     * Get a sub field by handle
+     * 
+     * @param  string $handle
+     * @return ?FieldInterface
+     */
+    public function getFieldByHandle(string $handle): ?FieldInterface
+    {
+        foreach ($this->fields as $field) {
+            if ($field->handle == $handle) {
+                return $field;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Fields setter
      * 
      * @param array $fields
@@ -268,20 +262,21 @@ class Table extends CraftField
      * Build table fields from an array of data
      * 
      * @param  array $data
-     * @param  Table $table
      * @return array
      */
-    protected static function buildFields(array $data, Table $table): array
+    protected function buildFields(array $data): array
     {
         $fields = [];
         foreach ($data as $fieldData) {
-            $field = Themes::$plugin->fields->create($fieldData);
+            if ($fieldData['id'] ?? null) {
+                $field = Themes::$plugin->fields->getById($fieldData['id']);
+                $field->populateFromData($fieldData);
+            } else {
+                $field = Themes::$plugin->fields->create($fieldData);
+                $field->parent = $this;
+            }
             $field->handle = $fieldData['handle'];
             $field->name = $fieldData['name'];
-            $field->table = $table;
-            if (!isset($fieldData['options']) and $field->displayer) {
-                $field->options = $field->displayer->options->toArray();
-            }
             $fields[] = $field;
         }
         return $fields;

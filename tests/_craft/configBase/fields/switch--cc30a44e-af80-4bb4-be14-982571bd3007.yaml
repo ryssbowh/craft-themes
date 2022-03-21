@@ -1,5 +1,6 @@
+columnSuffix: null
 contentColumnType: boolean
-fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: switch
 instructions: ''
 name: Switch

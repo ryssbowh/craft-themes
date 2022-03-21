@@ -10,9 +10,9 @@ class FieldDisplayerException extends \Exception
         return new static("$handle is not a registered field displayer handle");
     }
 
-    public static function alreadyDefined(string $class)
+    public static function alreadyDefined(string $class, string $registeredBy)
     {
-        return new static($class::$handle . " is already a registered field displayer");
+        return new static("Field displayer $class : {$class::$handle} is already a registered field displayer handle (registered by $registeredBy)");
     }
 
     public static function notValid(string $displayerHandle, string $fieldClass)

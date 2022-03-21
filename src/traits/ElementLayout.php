@@ -1,6 +1,8 @@
 <?php
 namespace Ryssbowh\CraftThemes\traits;
 
+use craft\db\Query;
+use craft\db\Table;
 use craft\models\FieldLayout;
 
 /**
@@ -8,6 +10,11 @@ use craft\models\FieldLayout;
  */
 trait ElementLayout
 {
+    /**
+     * @var FieldLayout
+     */
+    protected $_fieldLayout;
+
     /**
      * @inheritDoc
      */
@@ -33,10 +40,28 @@ trait ElementLayout
     }
 
     /**
-     * @inheritDoc
+     * Get layout's element field layout.
+     * We create the layout again here due to an issue in Craft where layout fields aren't properly propagated
+     *
+     * @see    https://github.com/craftcms/cms/issues/10237
+     * @return FieldLayout
      */
     public function getFieldLayout(): ?FieldLayout
     {
-        return $this->element->getFieldLayout();
+        if ($this->_fieldLayout === null) {
+            $idAttribute = $this->fieldLayoutIdAttribute;
+            $id = $this->element->$idAttribute;
+            $result = (new Query)->select([
+                'id',
+                'type',
+                'uid',
+            ])
+            ->from([Table::FIELDLAYOUTS])
+            ->where(['dateDeleted' => null])
+            ->andWhere(['id' => $id])
+            ->one();
+            $this->_fieldLayout = new FieldLayout($result);
+        }
+        return $this->_fieldLayout;
     }
 }

@@ -25,3 +25,69 @@
         {{ layout.render(element, viewMode) }}
     {% endif %}
 {% endmacro %}
+
+{% macro convertWeight(value, from, to, decimals = 2) %}
+    {% if from == 'g' and to == 'kg' %}
+        {% set value = value * 0.001 %}
+    {% elseif from == 'g' and to == 'oz' %}
+        {% set value = value * 0.035274 %}
+    {% elseif from == 'g' and to == 'lb' %}
+        {% set value = value * 0.00220462 %}
+    {% elseif from == 'g' and to == 'st' %}
+        {% set value = value * 0.000157473 %}
+    {% elseif from == 'kg' and to == 'g' %}
+        {% set value = value * 1000 %}
+    {% elseif from == 'kg' and to == 'oz' %}
+        {% set value = value * 35.274 %}
+    {% elseif from == 'kg' and to == 'lb' %}
+        {% set value = value * 2.20462 %}
+    {% elseif from == 'kg' and to == 'st' %}
+        {% set value = value * 0.157473 %}
+    {% elseif from == 'lb' and to == 'g' %}
+        {% set value = value * 453.592 %}
+    {% elseif from == 'lb' and to == 'oz' %}
+        {% set value = value * 16 %}
+    {% elseif from == 'lb' and to == 'kg' %}
+        {% set value = value * 0.453592 %}
+    {% elseif from == 'lb' and to == 'st' %}
+        {% set value = value * 0.0714286 %}
+    {% endif %}
+    {{ value|number_format(decimals) }}
+{% endmacro %}
+
+{% macro convertDimension(value, from, to, decimals = 2) %}
+    {% if from == 'mm' and to == 'cm' %}
+        {% set value = value * 0.1 %}
+    {% elseif from == 'mm' and to == 'm' %}
+        {% set value = value * 0.001 %}
+    {% elseif from == 'mm' and to == 'ft' %}
+        {% set value = value * 0.00328084 %}
+    {% elseif from == 'mm' and to == 'in' %}
+        {% set value = value * 0.0393701 %}
+    {% elseif from == 'cm' and to == 'mm' %}
+        {% set value = value * 10 %}
+    {% elseif from == 'cm' and to == 'm' %}
+        {% set value = value * 0.01 %}
+    {% elseif from == 'cm' and to == 'ft' %}
+        {% set value = value * 0.0328084 %}
+    {% elseif from == 'cm' and to == 'in' %}
+        {% set value = value * 0.393701 %}
+    {% elseif from == 'ft' and to == 'mm' %}
+        {% set value = value * 304.8 %}
+    {% elseif from == 'ft' and to == 'cm' %}
+        {% set value = value * 30.48 %}
+    {% elseif from == 'ft' and to == 'm' %}
+        {% set value = value * 0.3048 %}
+    {% elseif from == 'ft' and to == 'in' %}
+        {% set value = value * 12 %}
+    {% elseif from == 'in' and to == 'mm' %}
+        {% set value = value * 25.4 %}
+    {% elseif from == 'in' and to == 'cm' %}
+        {% set value = value * 2.54 %}
+    {% elseif from == 'in' and to == 'm' %}
+        {% set value = value * 0.0254 %}
+    {% elseif from == 'in' and to == 'ft' %}
+        {% set value = value * 0.0833333 %}
+    {% endif %}
+    {{ value|number_format(decimals) }}
+{% endmacro %}

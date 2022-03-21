@@ -1,5 +1,6 @@
+columnSuffix: null
 contentColumnType: string(255)
-fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: urlField
 instructions: ''
 name: Url
@@ -7,6 +8,8 @@ searchable: false
 settings:
   maxLength: '255'
   placeholder: ''
+  types:
+    - url
 translationKeyFormat: null
 translationMethod: none
 type: craft\fields\Url

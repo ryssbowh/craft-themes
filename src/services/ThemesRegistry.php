@@ -18,7 +18,6 @@ use craft\models\Site;
 class ThemesRegistry extends Service
 {   
     const EVENT_THEME_SET = 'themes.set';
-    const THEMES_WEBROOT = '@webroot/themes/';
 
     /**
      * @var ThemeInterface[]
@@ -114,7 +113,7 @@ class ThemesRegistry extends Service
      * 
      * @return ThemeInterface[]
      */
-    public function all(): array
+    public function getAll(): array
     {
         if ($this->themes === null) {
             $this->loadThemes();
@@ -131,7 +130,7 @@ class ThemesRegistry extends Service
     {
         return array_map(function ($theme) {
             return $theme->name;
-        }, $this->all());
+        }, $this->getAll());
     }
 
     /**
@@ -139,11 +138,11 @@ class ThemesRegistry extends Service
      * 
      * @param  boolean $asNames
      * @param  boolean $asArrays
-     * @return ThemeInterface[]
+     * @return ThemeInterface[]|string[]|array[]
      */
     public function getNonPartials(bool $asNames = false, bool $asArrays = false): array
     {
-        $themes = array_filter($this->all(), function ($theme) {
+        $themes = array_filter($this->getAll(), function ($theme) {
             return !$theme->isPartial();
         });
         if ($asNames) {
@@ -166,7 +165,7 @@ class ThemesRegistry extends Service
      */
     public function getDependencies(ThemeInterface $theme): array
     {
-        $dependencies = array_values(array_filter($this->all(), function ($theme2) use ($theme) {
+        $dependencies = array_values(array_filter($this->getAll(), function ($theme2) use ($theme) {
             return $theme2->extends == $theme->handle;
         }));
         foreach ($dependencies as $theme2) {
@@ -184,8 +183,8 @@ class ThemesRegistry extends Service
      */
     public function getTheme(string $handle): ThemeInterface
     {
-        if (isset($this->all()[$handle])) {
-            return $this->all()[$handle];
+        if (isset($this->getAll()[$handle])) {
+            return $this->getAll()[$handle];
         }
         throw ThemeException::notDefined($handle);
     }
@@ -198,69 +197,7 @@ class ThemesRegistry extends Service
      */
     public function hasTheme(string $handle): bool
     {
-        return isset($this->all()[$handle]);
-    }
-
-    /**
-     * Install all theme's data
-     *
-     * @param bool $force
-     */
-    public function installAll(bool $force = false)
-    {
-        foreach ($this->all() as $theme) {
-            $this->installThemeData($theme, $force);
-        }
-    }
-
-    /**
-     * Uninstall all theme's data
-     */
-    public function uninstallAll()
-    {
-        foreach ($this->all() as $theme) {
-            $this->uninstallThemeData($theme);
-        }
-    }
-
-    /**
-     * Install a theme
-     *
-     * @param ThemeInterface $theme
-     * @param bool           $force
-     */
-    public function installThemeData(ThemeInterface $theme, bool $force = false)
-    {
-        $this->resetThemes();
-        if ($force or Themes::$plugin->is(Themes::EDITION_PRO)) {
-            Themes::$plugin->layouts->installThemeData($theme);
-            $theme->afterThemeInstall();
-            ProjectConfigHelper::markDataInstalledForTheme($theme);
-        }
-    }
-
-    /**
-     * Uninstall a theme
-     *
-     * @return ThemeInterface $theme
-     */
-    public function uninstallThemeData(ThemeInterface $theme)
-    {
-        $this->resetThemes();
-        Themes::$plugin->rules->flushCache();
-        Themes::$plugin->layouts->uninstallThemeData($theme);
-        $theme->afterThemeUninstall();
-        ProjectConfigHelper::markDataNotInstalledForTheme($theme);
-    }
-
-    /**
-     * Disables all themes
-     */
-    public function disableAll()
-    {
-        foreach ($this->all() as $theme) {
-            \Craft::$app->plugins->disablePlugin($theme->handle);
-        }
+        return isset($this->getAll()[$handle]);
     }
 
     /**
@@ -269,6 +206,19 @@ class ThemesRegistry extends Service
     public function resetThemes()
     {
         $this->themes = null;
+    }
+
+    /**
+     * Is a theme's data installed (layouts, displays etc)
+     * This is tracked through the project config 'plugins.themes.themesInstalled' array
+     * 
+     * @param  ThemeInterface $theme
+     * @return boolean
+     */
+    public function isInstalled(ThemeInterface $theme): bool
+    {
+        $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
+        return in_array($theme->handle, $installed);
     }
 
     /**

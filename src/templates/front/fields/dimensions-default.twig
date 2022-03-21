@@ -1,0 +1,8 @@
+{% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
+
+{% set dimensionUnit = craft.commerce.settings.dimensionUnits %}
+
+{% block content %}
+    {{ macros.convertDimension(value.width, dimensionUnit, options.unit, options.decimals) }}{{ options.showUnit ? options.unit : '' }} /{{ macros.convertDimension(value.height, dimensionUnit, options.unit, options.decimals) }}{{ options.showUnit ? options.unit : '' }} /{{ macros.convertDimension(value.length, dimensionUnit, options.unit, options.decimals) }}{{ options.showUnit ? options.unit : '' }}
+{% endblock %}

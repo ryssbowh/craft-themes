@@ -1,7 +1,7 @@
 <?php
 use Codeception\Test\Unit;
 use Craft;
-use Ryssbowh\CraftThemesTests\fixtures\InstallThemeFixture;
+use Ryssbowh\CraftThemesTests\fixtures\ThemesFixture;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\services\DisplayService;
 use Ryssbowh\CraftThemes\services\LayoutService;
@@ -15,9 +15,15 @@ class GroupsTest extends Unit
      */
     protected $tester;
 
+    public function _fixtures()
+    {
+        return [
+            'themes' => ThemesFixture::class
+        ];
+    }
+
     protected function _before()
     {
-        \Craft::$app->plugins->installPlugin('child-theme');
         $this->groups = Themes::getInstance()->groups;
         $this->layouts = Themes::getInstance()->layouts;
         $this->displays = Themes::getInstance()->displays;
@@ -25,7 +31,7 @@ class GroupsTest extends Unit
 
     public function testCreatingGroup()
     {
-        $layout = $this->layouts->get('child-theme', LayoutService::USER_HANDLE);
+        $layout = $this->layouts->get('child-theme', 'user');
         $viewMode = $layout->getViewMode('default');
         $display = $viewMode->displays[0];
         $groupDisplay = $this->displays->create([

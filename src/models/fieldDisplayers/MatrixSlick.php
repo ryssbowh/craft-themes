@@ -19,14 +19,6 @@ class MatrixSlick extends MatrixDefault
     /**
      * @inheritDoc
      */
-    public static function isDefault(string $fieldClass): bool
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return \Craft::t('themes', 'Slick Carousel');

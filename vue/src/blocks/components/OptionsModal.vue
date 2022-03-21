@@ -1,5 +1,5 @@
 <template>
-    <div class="modal elementselectormodal modal-options" style="display:none" ref="modal">
+    <div class="modal elementselectormodal themes-modal-options" style="display:none" ref="modal">
         <div class="header" v-if="editedBlock">
             <h3>{{ t('Edit block {block} options', {block: this.editedBlock.name}) }}</h3>
         </div>
@@ -171,16 +171,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped>
-.modal {
-    padding-bottom: 62px;
-    height: auto;
-    width: auto;
-    min-height: calc(100vh / 2);
-    .body {
-        height: calc(100% - 65px);
-        overflow-y: auto;
-    }
-}
-</style>

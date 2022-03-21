@@ -5,6 +5,7 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\Field;
 use Ryssbowh\CraftThemes\models\layouts\EntryLayout;
+use Ryssbowh\CraftThemes\models\layouts\ProductLayout;
 
 /**
  * Handles the postDate value of entry elements
@@ -29,7 +30,7 @@ class PostDate extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        return get_class($layout) == EntryLayout::class;
+        return $layout instanceof EntryLayout or $layout instanceof ProductLayout;
     }
 
     /**

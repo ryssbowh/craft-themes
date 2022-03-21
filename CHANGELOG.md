@@ -1,5 +1,42 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.0 - unreleased
+
+### Added
+- Integration to commerce
+- Fields can now have parents
+- Layouts can now have parents
+- Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
+- Twig tests `is instanceof` and `is numeric`
+- [Super Table](https://github.com/verbb/super-table) support
+- Nested multi fields (matrix, super table) support
+- LayoutService::EVENT_REGISTER_TYPES to register layout types
+- LayoutService::EVENT_AVAILABLE_LAYOUTS to add layouts when rebuilding
+- LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT to resolve the current layout on a web request
+- The themes folder can now be changed in settings
+
+### Fixed
+- Fixed small modal sizes
+- Fixed issue where custom layouts would have displays created for them automatically
+- Fixed issues where field layouts would not have their fields populated properly. [10237](https://github.com/craftcms/cms/issues/10237)
+- Fixed issues with fields not properly rebuilt
+- Fixed issues with missing fields
+- Fixed issues when (un)installing other plugins related to themes
+
+### Changed
+- Installing a theme will fail if this plugin is not installed
+- Rendered displayers label
+- Matrix fields now use parenting system
+- Changed how field components are registered on Vue
+- Changed how fields are cloned on Vue
+- Changed how layout types are defined
+
+### Removed
+- Themes installer
+- Matrix service
+- `ThemePlugin::hasDataInstalled()` replaced by `Themes::$plugin->registry->isInstalled($theme)`
+- Removed all `LayoutService::{type}_HANDLE`. Types are now defined through the event `LayoutService::EVENT_REGISTER_TYPES`
+
 ## 3.0.3 - 2022-02-24
 
 ### Fixed
@@ -16,7 +53,8 @@
 - Fixed issue when changing edition in plugin store
 
 ## 3.0.0 - 2022-02-14
-> :warning: Read the breaking changes included in 3.0 in the [wiki](https://github.com/ryssbowh/craft-themes/wiki) before updating
+
+> {warning} Read the breaking changes included in 3.0 in the [wiki](https://github.com/ryssbowh/craft-themes/wiki) before updating
 
 ### Added
 - Theme list

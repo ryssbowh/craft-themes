@@ -11,7 +11,7 @@ class InstallController extends Controller
      */
     public function actionIndex()
     {
-        Themes::$plugin->layouts->install(true);
+        Themes::$plugin->layouts->installAll();
         return ExitCode::OK;
     }
 }

@@ -41,7 +41,6 @@ class CpViewModesAjaxController extends Controller
             $viewMode->validate();
             return $viewMode;
         }, $this->layouts->getById($layoutId)->viewModes);
-
         return [
             'viewModes' => $viewModes
         ];
@@ -96,7 +95,7 @@ class CpViewModesAjaxController extends Controller
         $viewModes = [];
         foreach ($viewModesData as $data) {
             if ($data['id'] ?? null) {
-                $viewMode = $this->viewModes->populateFromPost($data);
+                $viewMode = $this->viewModes->populateFromData($data);
             } else {
                 $viewMode = $this->viewModes->create($data);
             }

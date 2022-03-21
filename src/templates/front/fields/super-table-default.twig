@@ -1,0 +1,11 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% for _block in value %}
+        <div class="super-table-block {{ _block.type.handle }}">
+            {% for superField in field.visibleFields(_block) %}
+                {{ superField.render(_block[superField.handle]) }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\models;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
+use Ryssbowh\CraftThemes\interfaces\DisplayInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
@@ -39,6 +40,11 @@ abstract class Field extends DisplayItem implements FieldInterface
     public $craft_field_class;
 
     /**
+     * @var FieldInterface|null
+     */
+    protected $_parent;
+
+    /**
      * @var string
      */
     protected $_displayerHandle;
@@ -62,9 +68,47 @@ abstract class Field extends DisplayItem implements FieldInterface
             [['displayerHandle', 'type'], 'string'],
             ['type', 'required'],
             ['craft_field_id', 'integer'],
-            ['options', 'safe'],
+            [['parent', 'options'], 'safe'],
             ['type', 'in', 'range' => Themes::$plugin->fields->getValidTypes()]
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDisplay(): DisplayInterface
+    {
+        if ($parent = $this->parent) {
+            return $parent->getDisplay();
+        }
+        return parent::getDisplay();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParent(): ?FieldInterface
+    {
+        if ($this->_parent === null and $this->id) {
+            $this->_parent = Themes::$plugin->fields->getParent($this);
+        }
+        return $this->_parent;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setParent(?FieldInterface $field)
+    {
+        $this->_parent = $field;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getChildren(): array
+    {
+        return [];
     }
 
     /**
@@ -147,17 +191,23 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public static function create(?array $config = null): FieldInterface
+    public static function create(array $config): FieldInterface
     {
         $class = get_called_class();
-        if ($config == null) {
-            $config = $class::buildConfig(null);
-        }
+        $config['displayerHandle'] = $config['displayerHandle'] ?? Themes::$plugin->fieldDisplayers->getDefaultHandle($class) ?? '';
         $field = new $class;
-        $attributes = $field->safeAttributes();
-        $config = array_intersect_key($config, array_flip($attributes));
-        $field->setAttributes($config);
+        $field->populateFromData($config);
         return $field;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function populateFromData(array $data)
+    {
+        $attributes = $this->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        $this->setAttributes($data);
     }
 
     /**
@@ -165,6 +215,17 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public static function save(FieldInterface $field): bool
     {
+        $children = Themes::$plugin->fields->getChildren($field);
+        $fieldsToKeep = [];
+        foreach ($field->getChildren() as $child) {
+            Themes::$plugin->fields->save($child);
+            $fieldsToKeep[] = $child->id;
+        }
+        foreach ($children as $child) {
+            if (!in_array($child->id, $fieldsToKeep)) {
+                Themes::$plugin->fields->delete($child);
+            }
+        }
         $projectConfig = \Craft::$app->getProjectConfig();
         $configData = $field->getConfig();
         $uid = $field->uid ?? StringHelper::UUID();
@@ -181,6 +242,9 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public static function handleChanged(string $uid, array $data)
     {
+        if (!isset($data['options'])) {
+            $data['options'] = [];
+        }
         $field = Themes::$plugin->fields->getRecordByUid($uid);
         $field->setAttributes($data, false);
         $field->save(false);
@@ -191,6 +255,9 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public static function delete(FieldInterface $field): bool
     {
+        foreach ($this->getChildren() as $child) {
+            Themes::$plugin->fields->delete($child);
+        }
         \Craft::$app->getProjectConfig()->remove(FieldsService::CONFIG_KEY . '.' . $field->uid);
         return true;
     }
@@ -217,16 +284,6 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function populateFromPost(array $data)
-    {
-        $attributes = $this->safeAttributes();
-        $data = array_intersect_key($data, array_flip($attributes));
-        $this->setAttributes($data);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function isVisible(): bool
     {
         if ($this->hidden or !$this->displayer) {
@@ -240,11 +297,15 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public function getConfig(): array
     {
-        return array_merge(parent::getConfig(), [
+        $config = array_merge(parent::getConfig(), [
             'displayerHandle' => $this->displayerHandle,
             'options' => $this->options,
             'type' => $this->type
         ]);
+        if ($parent = $this->parent) {
+            unset($config['display_id']);
+        }
+        return $config;
     }
 
     /**
@@ -304,7 +365,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     public function setOptions($options)
     {
         if ($this->displayer) {
-            $this->displayer->options->setValues($options ?? []);
+            $this->displayer->options->replaceValues($options ?? []);
         }
     }
 
@@ -383,14 +444,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    protected static function buildConfig($arg): array
+    public function rebuild()
     {
-        $class = get_called_class();
-        return [
-            'type' => get_called_class()::getType(),
-            'craft_field_id' => null,
-            'craft_field_class' => null,
-            'displayerHandle' => Themes::$plugin->fieldDisplayers->getDefaultHandle($class) ?? ''
-        ];
     }
 }

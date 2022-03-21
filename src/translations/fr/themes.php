@@ -170,7 +170,6 @@ return [
 	"Cache depends on view port (mobile, tablet or desktop)" => "Mettre en cache différemment en fonction de la vue de l'utilisateur (mobile, tablette, ou bureau)",
 	"Cache depends on user authentication" => "Mettre en cache différemment si l'utilisateur est connecté ou non",
 	"Caching" => "Mise en cache",
-	"Rendered as view mode" => "Mode de vue",
 	"View mode" => "Mode de vue",
 	"View mode is invalid" => "Mode de vue invalide",
 	"View mode for volume {volume}" => "Mode de vue pour le volume {volume}",

@@ -1,7 +1,7 @@
 <?php
 namespace Ryssbowh\CraftThemes\models;
 
-use Ryssbowh\CraftThemes\models\fields\MatrixField;
+use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 use craft\models\MatrixBlockType;
@@ -78,12 +78,12 @@ class DisplayMatrixType extends Model
      * Find a field by craft field id
      * 
      * @param  int $id
-     * @return ?MatrixField
+     * @return ?FieldInterface
      */
-    public function getFieldById(int $craftFieldId): ?MatrixField
+    public function getFieldById(int $craftFieldId): ?FieldInterface
     {
         foreach ($this->fields as $field) {
-            if ($field->craftField->id == $craftFieldId) {
+            if ($field->craft_field_id == $craftFieldId) {
                 return $field;
             }
         }

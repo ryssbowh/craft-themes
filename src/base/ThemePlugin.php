@@ -216,20 +216,22 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     public function afterThemeInstall()
     {
     }
-    
-    /**
-     * @inheritDoc
-     */
-    public function hasDataInstalled(): bool
-    {
-        return ProjectConfigHelper::isDataInstalledForTheme($this);
-    }
 
     /**
      * @inheritDoc
      */
     public function afterSet()
     {
+    }
+
+    /**
+     * Make sure themes plugin is installed before installing
+     *
+     * @since  3.1.0
+     */
+    protected function beforeInstall(): bool
+    {
+        return (\Craft::$app->plugins->getPlugin('themes') != null);
     }
 
     /**

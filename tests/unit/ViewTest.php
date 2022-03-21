@@ -2,9 +2,7 @@
 
 use Codeception\Test\Unit;
 use Craft;
-use Ryssbowh\CraftThemesTests\fixtures\EntriesFixture;
-use Ryssbowh\CraftThemesTests\fixtures\InstallThemeFixture;
-use Ryssbowh\CraftThemesTests\fixtures\SectionsFixture;
+use Ryssbowh\CraftThemesTests\fixtures\ThemesFixture;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\services\DisplayService;
@@ -21,9 +19,15 @@ class ViewTest extends Unit
      */
     protected $tester;
 
+    public function _fixtures()
+    {
+        return [
+            'themes' => ThemesFixture::class
+        ];
+    }
+
     protected function _before()
     {
-        \Craft::$app->plugins->installPlugin('child-theme');
         $this->layouts = Themes::getInstance()->layouts;
         $this->view = Themes::getInstance()->view;
         $this->rules = Themes::getInstance()->rules;
@@ -45,7 +49,7 @@ class ViewTest extends Unit
         $this->assertInstanceOf(LayoutInterface::class, $layout);
         $viewMode = $layout->getDefaultViewMode();
         $with = $viewMode->eagerLoad();
-        $this->assertEquals(['author', 'author.photo', 'assets', 'category', 'users', 'users.photo', 'entries', 'image', 'tag'], $with);
+        $this->assertEquals(['author', 'author.photo', 'matrix', 'matrix.block:assets', 'assets', 'category', 'users', 'users.photo', 'entries', 'image', 'tag'], $with);
     }
 
     public function testRendering()

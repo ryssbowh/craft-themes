@@ -24,7 +24,7 @@ class UserEmail extends Field
      */
     public static function shouldExistOnLayout(LayoutInterface $layout): bool
     {
-        return get_class($layout) == UserLayout::class;
+        return $layout instanceof UserLayout;
     }
 
     /**
