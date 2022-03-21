@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\jobs\InstallThemesDataJob;
 use Ryssbowh\CraftThemes\jobs\ReinstallLayoutsJob;
 use Ryssbowh\CraftThemes\jobs\UninstallThemesDataJob;
 use craft\base\Plugin;
+use craft\base\PluginInterface;
 use craft\helpers\Queue;
 
 /**
@@ -18,188 +19,195 @@ use craft\helpers\Queue;
  */
 class PluginsHelper
 {
+    private static $reinstallQueued = false;
+
     /**
-     * Callback when a plugin is added to project config
+     * When themes edition is changed
      * 
-     * @param  string $handle
-     * @param  array  $data
+     * @param  array  $oldEdition
+     * @param  array  $newData
      */
-    public static function onAdd(string $handle, array $data)
+    public static function onThemesEditionChanged(string $oldEdition, string $newEdition)
     {
         if (\Craft::$app->projectConfig->isApplyingYamlChanges) {
             return;
         }
-        if ($data['enabled']) {
-            $class = \Craft::$app->plugins->getComposerPluginInfo($handle)['class'];
-            static::onPluginInstalled($handle, $class);   
+        if ($oldEdition != $newEdition) {
+            if ($newEdition == Themes::EDITION_PRO) {
+                //Change the edition on the plugin, it's not done at this point as the plugin service does it after the project config change
+                Themes::$plugin->edition = $newEdition;
+                foreach (Themes::$plugin->registry->all as $theme) {
+                    static::installTheme($theme);
+                }
+            } else {
+                foreach (Themes::$plugin->registry->all as $theme) {
+                    static::uninstallTheme($theme);
+                }
+            }
+        } else if ($schemaChanged) {
+            static::reinstallLayouts();
         }
     }
 
     /**
-     * Callback when a plugin is removed from project config
+     * Before a plugin is installed
      * 
-     * @param  string $handle
-     * @param  array  $data
+     * @param  PluginInterface $plugin
      */
-    public static function onRemove(string $handle, array $data)
+    public static function beforeInstall(PluginInterface $plugin)
     {
-        if (\Craft::$app->projectConfig->isApplyingYamlChanges) {
+        $config = \Craft::$app->projectConfig->get('plugins.' . $plugin->handle, true);
+        if ($config) {
+            //Already done in config, we must be applying config changes, abort
             return;
         }
-        if ($handle == 'themes') {
-            return static::onThemesUninstalled($handle);    
-        }
-        static::onPluginUninstalled($handle);
-    }
-
-    /**
-     * Callback when a plugin is updated in project config
-     * 
-     * @param  string $handle
-     * @param  array  $oldData
-     * @param  array  $oldData
-     */
-    public static function onUpdate(string $handle, array $oldData, array $newData)
-    {
-        if (\Craft::$app->projectConfig->isApplyingYamlChanges) {
-            return;
-        }
-        $disabled = ($oldData['enabled'] and !$newData['enabled']);
-        $enabled = (!$oldData['enabled'] and $newData['enabled']);
-        $schemaChanged = ($oldData['schemaVersion'] != $newData['schemaVersion']);
-        $editionChanged = ($oldData['edition'] != $newData['edition']);
-        if ($handle === 'themes') {
-            if ($disabled) {
-                return static::onThemesDisabled();
-            }
-            if ($editionChanged) {
-                return static::onThemesEditionChanged($oldData['edition'], $newData['edition']);
-            }
-            if ($schemaChanged) {
-                return static::onThemesSchemaVersionChanged();
-            }
-        } else {
-            if ($enabled) {
-                return static::onPluginEnabled($handle);
-            }
-            if ($disabled) {
-                return static::onPluginDisabled($handle);
-            }
-        }
-    }
-
-    /**
-     * When a plugin is enabled
-     * 
-     * @param  string $handle
-     */
-    protected static function onPluginEnabled(string $handle)
-    {
-        $plugin = \Craft::$app->plugins->getPlugin($handle);
-        if ($event->plugin instanceof ThemeInterface) {
-            $extends = $event->plugin->extends;
-            if ($extends) {
-                \Craft::$app->plugins->enablePlugin($extends);
-            }
-            Themes::$plugin->registry->resetThemes();
-        }
-        if (Themes::$plugin->is(Themes::EDITION_PRO) and Themes::$plugin->isPluginRelated($handle)) {
-            Queue::push(new ReinstallLayoutsJob);
-        }
-    }
-
-    /**
-     * When a plugin is disabled
-     * 
-     * @param string $handle
-     */
-    protected static function onPluginDisabled(string $handle)
-    {
-        $plugin = \Craft::$app->plugins->getPlugin($handle);
         if ($plugin instanceof ThemeInterface) {
+            $extends = $plugin->extends;
+            if ($extends) {
+                \Craft::$app->plugins->installPlugin($extends);
+            }
+        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+            static::reinstallLayouts();
+        }
+    }
+
+    /**
+     * After a plugin is installed
+     * 
+     * @param  PluginInterface $plugin
+     */
+    public static function afterInstall(PluginInterface $plugin)
+    {
+        if ($plugin instanceof ThemeInterface) {
+            static::installTheme($plugin);
+        }
+    }
+
+    /**
+     * Before a plugin is uninstalled
+     * 
+     * @param  PluginInterface $plugin
+     */
+    public static function beforeUninstall(PluginInterface $plugin)
+    {
+        $config = \Craft::$app->projectConfig->get('plugins.' . $plugin->handle, true);
+        if (!$config) {
+            //Already done in config, we must be applying config changes, abort
+            return;
+        }
+        if ($plugin instanceof ThemeInterface) {
+            foreach (Themes::$plugin->registry->getDependencies($plugin) as $theme) {
+                \Craft::$app->plugins->uninstallPlugin($theme->handle);
+            }
+            static::uninstallTheme($plugin);
+            Themes::$plugin->rules->flushCache();
+        } else if ($plugin->handle == 'themes') {
+            foreach (Themes::$plugin->registry->getAll() as $theme) {
+                \Craft::$app->plugins->uninstallPlugin($theme->handle);
+            }
+        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+            static::reinstallLayouts();
+        }
+    }
+
+    /**
+     * Before a plugin is disabled
+     * 
+     * @param PluginInterface $plugin
+     */
+    public static function beforeDisable(PluginInterface $plugin)
+    {
+        if ($plugin->handle == 'themes') {
+            foreach (Themes::$plugin->registry->getAll() as $theme) {
+                \Craft::$app->plugins->disablePlugin($theme->handle);
+            }
+        } elseif ($plugin instanceof ThemeInterface) {
             $deps = Themes::$plugin->registry->getDependencies($plugin);
             foreach ($deps as $theme) {
                 \Craft::$app->plugins->disablePlugin($theme->handle);
             }
-            Themes::$plugin->registry->resetThemes();
             Themes::$plugin->rules->flushCache();
+        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+            static::reinstallLayouts();
         }
-        if (Themes::$plugin->is(Themes::EDITION_PRO) and Themes::$plugin->isPluginRelated($handle)) {
+    }
+
+    /**
+     * After a plugin is disabled
+     * 
+     * @param PluginInterface $plugin
+     */
+    public static function afterDisable(PluginInterface $plugin)
+    {
+        if ($plugin instanceof ThemeInterface) {
+            Themes::$plugin->registry->resetThemes();
+        }
+    }
+
+    /**
+     * Before a plugin is enabled
+     * 
+     * @param PluginInterface $plugin
+     */
+    public static function beforeEnable(PluginInterface $plugin)
+    {
+        if ($plugin instanceof ThemeInterface) {
+            $extends = $plugin->extends;
+            if ($extends) {
+                \Craft::$app->plugins->enablePlugin($extends);
+            }
+            static::reinstallLayouts();
+        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+            static::reinstallLayouts();
+        }
+    }
+
+    /**
+     * After a plugin is enabled
+     * 
+     * @param PluginInterface $plugin
+     */
+    public static function afterEnable(PluginInterface $plugin)
+    {
+        if ($plugin instanceof ThemeInterface) {
+            Themes::$plugin->registry->resetThemes();
+        }
+    }
+
+    /**
+     * Reinstall all layouts through a job
+     */
+    private static function reinstallLayouts()
+    {
+        if (Themes::$plugin->is(Themes::EDITION_PRO) and !static::$reinstallQueued) {
             Queue::push(new ReinstallLayoutsJob);
+            static::$reinstallQueued = true;
         }
     }
 
-    /**
-     * When a plugin is installed
-     * 
-     * @param string $handle
-     * @param string $class
-     */
-    protected static function onPluginInstalled(string $handle, string $class)
+    private static function installTheme(ThemeInterface $theme)
     {
-        if (!Themes::$plugin->is(Themes::EDITION_PRO) or
-            is_subclass_of($class, ThemeInterface::class) or
-            !Themes::$plugin->isPluginRelated($handle)
-        ) {
-            return;
-        }
-        Queue::push(new ReinstallLayoutsJob);
-    }
-
-    /**
-     * When a plugin is uninstalled
-     * 
-     * @param string $handle
-     */
-    protected static function onPluginUninstalled(string $handle)
-    {
-        $plugin = \Craft::$app->plugins->getPlugin($handle);
-        if (!Themes::$plugin->is(Themes::EDITION_PRO) or 
-            $plugin instanceof ThemeInterface or
-            !Themes::$plugin->isPluginRelated($handle)
-        ) {
-            return;
-        }
-        Queue::push(new ReinstallLayoutsJob);
-    }
-
-    /**
-     * When the themes plugin is uninstalled
-     */
-    protected static function onThemesUninstalled()
-    {
-        foreach (Themes::$plugin->registry->getAll() as $plugin) {
-            \Craft::$app->plugins->uninstallPlugin($plugin->handle);
+        Themes::$plugin->registry->resetThemes();
+        if (Themes::$plugin->is(Themes::EDITION_PRO) and !Themes::$plugin->registry->isInstalled($theme)) {
+            Themes::$plugin->layouts->installForTheme($theme);
+            $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
+            $installed[] = $theme->handle;
+            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
+            $theme->afterThemeInstall();
         }
     }
 
-    /**
-     * When the themes plugin is disabled
-     */
-    protected static function onThemesDisabled()
+    private static function uninstallTheme(ThemeInterface $theme)
     {
-        foreach (Themes::$plugin->registry->getAll() as $theme) {
-            \Craft::$app->plugins->disablePlugin($theme->handle);
-        }
-    }
-
-    /**
-     * When the themes plugin changes schema version
-     */
-    protected static function onThemesSchemaVersionChanged()
-    {
-        Queue::push(new ReinstallLayoutsJob);
-    }
-
-    /**
-     * When the themes plugin changes edition
-     */
-    protected static function onThemesEditionChanged(string $oldEdition, string $newEdition)
-    {
-        if ($newEdition == Themes::EDITION_PRO) {
-            Queue::push(new InstallThemesDataJob);
-        } elseif ($newEdition == Themes::EDITION_LITE) {
-            Queue::push(new UninstallThemesDataJob);
+        Themes::$plugin->registry->resetThemes();
+        if (Themes::$plugin->is(Themes::EDITION_PRO) and Themes::$plugin->registry->isInstalled($theme)) {
+            Themes::$plugin->layouts->uninstallForTheme($theme);
+            $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
+            $installed = array_filter($installed, function ($handle) use ($theme) {
+                return $theme->handle != $handle;
+            });
+            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
+            $theme->afterThemeUninstall();
         }
     }
 }

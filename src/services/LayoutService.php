@@ -548,11 +548,6 @@ class LayoutService extends Service
      */
     public function onCraftElementDeleted(string $uid)
     {
-        if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
-            // If Craft is applying Yaml changes it means we have the fields defined
-            // in config, and don't need to respond to these events as it would create duplicates
-            return;
-        }
         $layouts = $this->getAll()->filter(function ($layout) use ($uid) {
             return $layout->elementUid == $uid;
         })->all();
@@ -569,9 +564,7 @@ class LayoutService extends Service
      */
     public function onCraftElementSaved(string $type, string $uid = '')
     {
-        if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
-            // If Craft is applying Yaml changes it means we have the layouts/displays defined
-            // in config, and don't need to respond to these events as it would create duplicates
+        if (!Themes::$plugin->is(Themes::EDITION_PRO)) {
             return;
         }
         foreach ($this->themesRegistry()->getNonPartials() as $theme) {

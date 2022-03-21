@@ -18,7 +18,6 @@ use craft\models\Site;
 class ThemesRegistry extends Service
 {   
     const EVENT_THEME_SET = 'themes.set';
-    const THEMES_WEBROOT = '@webroot/themes/';
 
     /**
      * @var ThemeInterface[]
@@ -139,7 +138,7 @@ class ThemesRegistry extends Service
      * 
      * @param  boolean $asNames
      * @param  boolean $asArrays
-     * @return ThemeInterface[]
+     * @return ThemeInterface[]|string[]|array[]
      */
     public function getNonPartials(bool $asNames = false, bool $asArrays = false): array
     {
@@ -209,32 +208,17 @@ class ThemesRegistry extends Service
         $this->themes = null;
     }
 
-    public function isInstalled(ThemeInterface $theme)
+    /**
+     * Is a theme's data installed (layouts, displays etc)
+     * This is tracked through the project config 'plugins.themes.themesInstalled' array
+     * 
+     * @param  ThemeInterface $theme
+     * @return boolean
+     */
+    public function isInstalled(ThemeInterface $theme): bool
     {
         $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
         return in_array($theme->handle, $installed);
-    }
-
-    public function installTheme(ThemeInterface $theme)
-    {
-        if (Themes::$plugin->is(Themes::EDITION_PRO) and !$this->isInstalled($theme)) {
-            Themes::$plugin->layouts->installForTheme($theme);
-            $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
-            $installed[] = $theme->handle;
-            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
-            $theme->afterThemeInstall();
-        }
-    }
-
-    public function uninstallTheme(ThemeInterface $theme)
-    {
-        Themes::$plugin->layouts->uninstallForTheme($theme);
-        $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
-        $installed = array_filter($installed, function ($handle) use ($theme) {
-            return $theme->handle != $handle;
-        });
-        \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
-        $theme->afterThemeUninstall();
     }
 
     /**

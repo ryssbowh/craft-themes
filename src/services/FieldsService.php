@@ -211,11 +211,6 @@ class FieldsService extends Service
      */
     public function onCraftFieldSaved(FieldEvent $event)
     {
-        if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
-            // If Craft is applying Yaml changes it means we have the fields defined
-            // in config, and don't need to respond to these events as it would create duplicates
-            return;
-        }
         if ($event->isNew) {
             return;
         }
