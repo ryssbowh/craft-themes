@@ -290,12 +290,12 @@ class Themes extends \craft\base\Plugin
     protected function registerBehaviors()
     {
         $types = [
-            EntryType::class => LayoutService::ENTRY_HANDLE,
-            CategoryGroup::class => LayoutService::CATEGORY_HANDLE,
-            Volume::class => LayoutService::VOLUME_HANDLE,
-            TagGroup::class => LayoutService::TAG_HANDLE,
-            GlobalSet::class => LayoutService::GLOBAL_HANDLE,
-            User::class => LayoutService::USER_HANDLE,
+            EntryType::class => 'entry',
+            CategoryGroup::class => 'category',
+            Volume::class => 'volume',
+            TagGroup::class => 'tag',
+            GlobalSet::class => 'global',
+            User::class => 'user',
         ];
         foreach ($types as $class => $type) {
             Event::on($class::className(), $class::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) use ($type) {

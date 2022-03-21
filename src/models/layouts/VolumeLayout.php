@@ -14,11 +14,6 @@ class VolumeLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::VOLUME_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

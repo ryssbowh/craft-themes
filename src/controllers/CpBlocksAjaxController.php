@@ -100,7 +100,7 @@ class CpBlocksAjaxController extends Controller
             $layout = $this->layouts->getById($layoutId);
         }
 
-        if ($customData and $layout->type == LayoutService::CUSTOM_HANDLE) {
+        if ($customData and $layout->type == 'custom') {
             $layout->name = $customData['name'];
             $layout->elementUid = $customData['elementUid'];
         }

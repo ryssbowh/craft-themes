@@ -29,7 +29,7 @@ class ProductTypeLayoutBehavior extends Behavior
         if (is_null($theme)) {
             $theme = Themes::$plugin->registry->current;
         }
-        return Themes::$plugin->layouts->get($theme, LayoutService::PRODUCT_HANDLE, $this->owner->uid);
+        return Themes::$plugin->layouts->get($theme, 'product', $this->owner->uid);
     }
 
     /**
@@ -43,7 +43,7 @@ class ProductTypeLayoutBehavior extends Behavior
         if (is_null($theme)) {
             $theme = Themes::$plugin->registry->current;
         }
-        return Themes::$plugin->layouts->get($theme, LayoutService::VARIANT_HANDLE, $this->owner->uid);
+        return Themes::$plugin->layouts->get($theme, 'variant', $this->owner->uid);
     }
 
     /**

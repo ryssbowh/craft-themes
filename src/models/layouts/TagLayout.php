@@ -14,11 +14,6 @@ class TagLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::TAG_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

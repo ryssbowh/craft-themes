@@ -62,7 +62,7 @@ class CpAjaxController extends Controller
             if (!$category) {
                 continue;
             }
-            $layout = Themes::$plugin->layouts->get($theme, LayoutService::CATEGORY_HANDLE, $category->group->uid);
+            $layout = Themes::$plugin->layouts->get($theme, 'category', $category->group->uid);
             $data[] = [
                 'id' => $category->id,
                 'status' => $category->status,
@@ -95,7 +95,7 @@ class CpAjaxController extends Controller
             if (!$asset) {
                 continue;
             }
-            $layout = Themes::$plugin->layouts->get($theme, LayoutService::VOLUME_HANDLE, $asset->volume->uid);
+            $layout = Themes::$plugin->layouts->get($theme, 'volume', $asset->volume->uid);
             $asset->setTransform(['width' => 34, 'height' => 25]);
             $data[] = [
                 'id' => $asset->id,
@@ -128,7 +128,7 @@ class CpAjaxController extends Controller
             if (!$entry) {
                 continue;
             }
-            $layout = Themes::$plugin->layouts->get($theme, LayoutService::ENTRY_HANDLE, $entry->type->uid);
+            $layout = Themes::$plugin->layouts->get($theme, 'entry', $entry->type->uid);
             $data[] = [
                 'id' => $entry->id,
                 'status' => $entry->status,
@@ -155,7 +155,7 @@ class CpAjaxController extends Controller
         $theme = $this->request->getRequiredParam('theme');
         $id = is_array($id) ? $id : [$id];
         $data = [];
-        $layout = Themes::$plugin->layouts->get($theme, LayoutService::USER_HANDLE);
+        $layout = Themes::$plugin->layouts->get($theme, 'user');
         $viewModes = array_map(function ($viewMode) {
             return [
                 'uid' => $viewMode->uid,

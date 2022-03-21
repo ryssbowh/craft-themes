@@ -14,11 +14,6 @@ class GlobalLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::GLOBAL_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

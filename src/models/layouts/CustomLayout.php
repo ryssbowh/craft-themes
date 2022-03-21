@@ -11,11 +11,6 @@ class CustomLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::CUSTOM_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     public function getIsCustom(): bool
     {
         return true;

@@ -16,11 +16,6 @@ class ProductLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::PRODUCT_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [

@@ -16,11 +16,6 @@ class UserLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::USER_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     public function getDescription(): string
     {
         return \Craft::t('app', 'User');

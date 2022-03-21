@@ -76,11 +76,6 @@ class Layout extends Model implements LayoutInterface
     public $dateUpdated;
 
     /**
-     * @var string
-     */
-    protected $_type = LayoutService::DEFAULT_HANDLE;
-
-    /**
      * Element associated with this layout (entry type, user, category group etc)
      * @var mixed
      */
@@ -142,7 +137,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function validateElementUid()
     {
-        if ($this->type == LayoutService::CUSTOM_HANDLE) {
+        if ($this->type == 'custom') {
             foreach (Themes::$plugin->layouts->getAll() as $layout) {
                 if ($layout->id != $this->id and $layout->elementUid == $this->elementUid and $layout->themeHandle == $this->themeHandle) {
                     $this->addError('elementUid', \Craft::t('themes', 'Handle "' . $this->elementUid . '" already exists'));
@@ -235,7 +230,7 @@ class Layout extends Model implements LayoutInterface
      */
     public function getType(): string
     {
-        return $this->_type;
+        return Themes::$plugin->layouts->getType($this);
     }
 
     /**

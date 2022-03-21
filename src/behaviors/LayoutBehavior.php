@@ -42,7 +42,7 @@ class LayoutBehavior extends Behavior
         if (is_null($theme)) {
             $theme = Themes::$plugin->registry->current;
         }
-        $uid = $this->type == LayoutService::USER_HANDLE ? '' : $this->owner->uid;
+        $uid = $this->type == 'user' ? '' : $this->owner->uid;
         return Themes::$plugin->layouts->get($theme, $this->type, $uid);
     }
 

@@ -38,23 +38,18 @@ class LayoutService extends Service
     const EVENT_BEFORE_APPLY_DELETE = 'before_apply_delete';
     const EVENT_AFTER_DELETE = 'after_delete';
     const EVENT_BEFORE_DELETE = 'before_delete';
+    const EVENT_REGISTER_TYPES = 'register_types';
     const CONFIG_KEY = 'themes.layouts';
-
-    const DEFAULT_HANDLE = 'default';
-    const CATEGORY_HANDLE = 'category';
-    const ENTRY_HANDLE = 'entry';
-    const USER_HANDLE = 'user';
-    const VOLUME_HANDLE = 'volume';
-    const GLOBAL_HANDLE = 'global';
-    const TAG_HANDLE = 'tag';
-    const PRODUCT_HANDLE = 'product';
-    const VARIANT_HANDLE = 'variant';
-    const CUSTOM_HANDLE = 'custom';
 
     /**
      * @var Collection
      */
     protected $_layouts;
+
+    /**
+     * @var array
+     */
+    protected $_types;
 
     /**
      * Marker when layouts are being installed
@@ -77,6 +72,40 @@ class LayoutService extends Service
             }
         }
         return $this->_layouts;
+    }
+
+    /**
+    /**
+     * Get defined layouts types
+     * 
+     * @return array
+     * @since 3.1.0
+     */
+    public function getTypes(): array
+    {
+        if ($this->_types === null) {
+            $event = new RegisterLayoutTypesEvent;
+            $this->triggerEvent(self::EVENT_REGISTER_TYPES, $event);
+            $this->_types = $event->types;
+        }
+        return $this->_types;
+    }
+
+    /**
+     * Get the type of a layout
+     * 
+     * @param  LayoutInterface $layout
+     * @return ?string
+     * @since 3.1.0
+     */
+    public function getType(LayoutInterface $layout): ?string
+    {
+        foreach ($this->types as $name => $class) {
+            if ($class == get_class($layout)) {
+                return $name;
+            }
+        }
+        return null;
     }
 
     /**
@@ -278,7 +307,7 @@ class LayoutService extends Service
      */
     public function getDefault($theme): ?LayoutInterface
     {
-        return $this->get($theme, self::DEFAULT_HANDLE);
+        return $this->get($theme, 'default');
     }
 
     /**
@@ -324,7 +353,7 @@ class LayoutService extends Service
      */
     public function getCustom($theme, string $handle): ?CustomLayout
     {
-        return $this->get($theme, self::CUSTOM_HANDLE, $handle);
+        return $this->get($theme, 'custom', $handle);
     }
 
     /**
@@ -547,9 +576,9 @@ class LayoutService extends Service
         $theme = $this->getThemeHandle($theme);
         $layout = null;
         if ($element instanceof Category) {
-            $layout = $this->get($theme, self::CATEGORY_HANDLE, $element->getGroup()->uid);
+            $layout = $this->get($theme, 'category', $element->getGroup()->uid);
         } elseif ($element instanceof Entry) {
-            $layout = $this->get($theme, self::ENTRY_HANDLE, $element->getType()->uid);
+            $layout = $this->get($theme, 'entry', $element->getType()->uid);
         } elseif ($element instanceof Product) {
             $layout = $this->get($theme, self::PRODUCT_HANDLE, $element->getType()->uid);
         }
@@ -643,7 +672,7 @@ class LayoutService extends Service
      */
     public function createCustom(array $data): CustomLayout
     {
-        $data['type'] = self::CUSTOM_HANDLE;
+        $data['type'] = 'custom';
         $data['hasBlocks'] = true;
         return $this->create($data);
     }
@@ -669,7 +698,7 @@ class LayoutService extends Service
      */
     protected function delete(LayoutInterface $layout, bool $force = false): bool
     {
-        if (!$force and ($layout->type == self::DEFAULT_HANDLE or $layout->type == self::USER_HANDLE)) {
+        if (!$force and ($layout->type == 'default' or $layout->type == 'user')) {
             throw LayoutException::defaultUndeletable();
         }
         $this->triggerEvent(self::EVENT_BEFORE_DELETE, new LayoutEvent([
@@ -718,13 +747,13 @@ class LayoutService extends Service
         $layouts = array_merge(
             [
                 $this->create([
-                    'type' => self::DEFAULT_HANDLE,
+                    'type' => 'default',
                     'elementUid' => '',
                     'hasBlocks' => true,
                     'themeHandle' => $themeHandle
                 ]),
                 $this->create([
-                    'type' => self::USER_HANDLE,
+                    'type' => 'user',
                     'elementUid' => '',
                     'themeHandle' => $themeHandle
                 ])
@@ -778,7 +807,7 @@ class LayoutService extends Service
     protected function getCustomLayouts(string $themeHandle): array
     {
         return $this->getAll()
-            ->where('type', self::CUSTOM_HANDLE)
+            ->where('type', 'custom')
             ->where('themeHandle', $themeHandle)
             ->all();
     }
@@ -795,7 +824,7 @@ class LayoutService extends Service
         $layouts = [];
         foreach ($groups as $group) {
             $layouts[] = $this->create([
-                'type' => self::CATEGORY_HANDLE,
+                'type' => 'category',
                 'elementUid' => $group->uid,
                 'themeHandle' => $themeHandle
             ]);
@@ -816,7 +845,7 @@ class LayoutService extends Service
         foreach ($sections as $section) {
             foreach ($section->getEntryTypes() as $entryType) {
                 $layouts[] = $this->create([
-                    'type' => self::ENTRY_HANDLE,
+                    'type' => 'entry',
                     'elementUid' => $entryType->uid,
                     'themeHandle' => $themeHandle
                 ]);
@@ -837,7 +866,7 @@ class LayoutService extends Service
         $layouts = [];
         foreach ($volumes as $volume) {
             $layouts[] = $this->create([
-                'type' => self::VOLUME_HANDLE,
+                'type' => 'volume',
                 'elementUid' => $volume->uid,
                 'themeHandle' => $themeHandle
             ]);
@@ -857,7 +886,7 @@ class LayoutService extends Service
         $layouts = [];
         foreach ($sets as $set) {
             $layouts[] = $this->create([
-                'type' => self::GLOBAL_HANDLE,
+                'type' => 'global',
                 'elementUid' => $set->uid,
                 'themeHandle' => $themeHandle
             ]);
@@ -877,7 +906,7 @@ class LayoutService extends Service
         $layouts = [];
         foreach ($groups as $group) {
             $layouts[] = $this->create([
-                'type' => self::TAG_HANDLE,
+                'type' => 'tag',
                 'elementUid' => $group->uid,
                 'themeHandle' => $themeHandle
             ]);

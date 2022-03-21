@@ -195,7 +195,7 @@ class ViewModesHelper
      */
     public static function getUserViewModes(ThemeInterface $theme): array
     {
-        $layout = Themes::$plugin->layouts->get($theme, LayoutService::USER_HANDLE);
+        $layout = Themes::$plugin->layouts->get($theme, 'user');
         if (!$layout) {
             return [];
         }
@@ -211,6 +211,7 @@ class ViewModesHelper
      *
      * @param  ThemeInterface $theme
      * @return array
+     * @since  3.1.0
      */
     public static function getAllProductsViewModes(ThemeInterface $theme): array
     {
@@ -228,11 +229,12 @@ class ViewModesHelper
      * @param  ThemeInterface $theme
      * @param  string $uid
      * @return array
+     * @since  3.1.0
      */
     public static function getProductViewModes(ThemeInterface $theme, ProductType $type): array
     {
         $viewModes = [];
-        $layout = Themes::$plugin->layouts->get($theme, LayoutService::PRODUCT_HANDLE, $type->uid);
+        $layout = Themes::$plugin->layouts->get($theme, 'product', $type->uid);
         if (!$layout) {
             return [];
         }
@@ -251,6 +253,7 @@ class ViewModesHelper
      *
      * @param  ThemeInterface $theme
      * @return array
+     * @since  3.1.0
      */
     public static function getAllVariantsViewModes(ThemeInterface $theme): array
     {
@@ -268,10 +271,11 @@ class ViewModesHelper
      * @param  ThemeInterface $theme
      * @param  ProductType    $type
      * @return array
+     * @since  3.1.0
      */
     public static function getVariantViewModes(ThemeInterface $theme, ProductType $type): array
     {
-        $layout = Themes::$plugin->layouts->get($theme, LayoutService::VARIANT_HANDLE, $type->uid);
+        $layout = Themes::$plugin->layouts->get($theme, 'variant', $type->uid);
         if (!$layout) {
             return [];
         }

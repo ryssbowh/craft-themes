@@ -16,11 +16,6 @@ class VariantLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::VARIANT_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     protected $fieldLayoutIdAttribute = 'variantFieldLayoutId';
 
     /**

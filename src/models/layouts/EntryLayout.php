@@ -20,11 +20,6 @@ class EntryLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $_type = LayoutService::ENTRY_HANDLE;
-
-    /**
-     * @inheritDoc
-     */
     public function defineRules(): array
     {
         return array_merge(parent::defineRules(), [
