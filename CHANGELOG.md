@@ -10,6 +10,10 @@
 - Twig tests `is instanceof` and `is numeric`
 - [Super Table](https://github.com/verbb/super-table) support
 - Nested multi fields (matrix, super table) support
+- LayoutService::EVENT_REGISTER_TYPES to register layout types
+- LayoutService::EVENT_AVAILABLE_LAYOUTS to add layouts when rebuilding
+- LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT to resolve the current layout on a web request
+- The themes folder can now be changed in settings
 
 ### Fixed
 - Fixed small modal sizes
@@ -20,14 +24,18 @@
 - Fixed issues when (un)installing other plugins related to themes
 
 ### Changed
+- Installing a theme will fail if this plugin is not installed
 - Rendered displayers label
 - Matrix fields now use parenting system
-- Removed Matrix service
 - Changed how field components are registered on Vue
 - Changed how fields are cloned on Vue
+- Changed how layout types are defined
 
 ### Removed
 - Themes installer
+- Matrix service
+- `ThemePlugin::hasDataInstalled()` replaced by `Themes::$plugin->registry->isInstalled($theme)`
+- Removed all `LayoutService::{type}_HANDLE`. Types are now defined through the event `LayoutService::EVENT_REGISTER_TYPES`
 
 ## 3.0.1 - 2022-02-15
 
