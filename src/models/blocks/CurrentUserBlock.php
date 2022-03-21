@@ -47,7 +47,7 @@ class CurrentUserBlock extends Block
      */
     public function getUserLayout(): LayoutInterface
     {
-        return Themes::$plugin->layouts->get($this->layout->theme, LayoutService::USER_HANDLE, '');
+        return Themes::$plugin->layouts->get($this->layout->theme, 'user', '');
     }
 
     /**
