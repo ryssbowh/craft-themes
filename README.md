@@ -49,12 +49,8 @@ This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.7 and php 7.
 
 ## Roadmap/Ideas
 
-- Integrate to Commerce
 - Themes preferences not related to project config
 - Restricted version of blocks page for envs where admin changes are disabled
 - Improve displayer cache by not saving the ones that didn't change
 - Add a Theme tab to the debug bar
-
-## docs
-
-- twig instanceof
+- Add a project config tracked data version to warn when layouts need rebuilt
