@@ -15,11 +15,14 @@ class CreateController extends Controller
      * @param  string made up from the name if empty
      * @param  string The backslashes must be doubled (\\), made up from the name if empty
      * @param  string made up from the name if empty
-     * @param  string
+     * @param  string taken from settings if empty
      * @return int
      */
-    public function actionTheme(string $name, string $handle = '', string $namespace = '', string $className = '', string $folder = 'themes')
+    public function actionTheme(string $name, string $handle = '', string $namespace = '', string $className = '', string $folder = null)
     {
+        if ($folder === null) {
+            $folder = Themes::$plugin->settings->folder;
+        }
         try {
             list($handle, $className, $namespace) = Themes::$plugin->creator->createTheme($name, $handle, $namespace, $className, $folder);
         } catch (CreatorException $e) {
