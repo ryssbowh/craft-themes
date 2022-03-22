@@ -16,4 +16,9 @@ class ResolveRequestLayoutEvent extends Event
      * @var LayoutInterface|null
      */
     public $layout;
+
+    /**
+     * @var ThemeInterface
+     */
+    public $theme;
 }

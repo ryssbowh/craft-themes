@@ -104,7 +104,7 @@ trait Ecommerce
         });
         Event::on(LayoutService::class, LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT, function (Event $e) {
             if ($e->element instanceof Product) {
-                $e->layout = Themes::$plugin->layouts->get($theme, 'product', $e->element->getType()->uid);
+                $e->layout = Themes::$plugin->layouts->get($e->theme, 'product', $e->element->getType()->uid);
             }
         });
         // Add product type behavior, this won't have any effect before commerce 3.4.12
