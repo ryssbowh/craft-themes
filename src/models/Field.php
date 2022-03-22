@@ -255,7 +255,7 @@ abstract class Field extends DisplayItem implements FieldInterface
      */
     public static function delete(FieldInterface $field): bool
     {
-        foreach ($this->getChildren() as $child) {
+        foreach ($field->getChildren() as $child) {
             Themes::$plugin->fields->delete($child);
         }
         \Craft::$app->getProjectConfig()->remove(FieldsService::CONFIG_KEY . '.' . $field->uid);

@@ -140,13 +140,10 @@ class DisplayService extends Service
             'display' => $display
         ]));
 
-        try {
-            if ($display->type == self::TYPE_FIELD) {
-                $this->fieldsService()->delete($display->item);
-            } else {
-                $this->groupsService()->delete($display->item);
-            }
-        } catch (\Throwable $e) {
+        if ($display->type == self::TYPE_FIELD) {
+            $this->fieldsService()->delete($display->item);
+        } else {
+            $this->groupsService()->delete($display->item);
         }
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
@@ -428,12 +425,7 @@ class DisplayService extends Service
 
         return $displays;
     }
-
-    protected function createDisplay()
-    {
-
-    }
-
+    
     /**
      * Clean up for view mode, deletes old displays
      *
