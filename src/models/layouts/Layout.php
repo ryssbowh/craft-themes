@@ -140,7 +140,7 @@ class Layout extends Model implements LayoutInterface
         if ($this->type == 'custom') {
             foreach (Themes::$plugin->layouts->getAll() as $layout) {
                 if ($layout->id != $this->id and $layout->elementUid == $this->elementUid and $layout->themeHandle == $this->themeHandle) {
-                    $this->addError('elementUid', \Craft::t('themes', 'Handle "' . $this->elementUid . '" already exists'));
+                    $this->addError('elementUid', \Craft::t('themes', 'Handle {handle} already exists', ['handle' => $this->elementUid]));
                 }
             }
         }

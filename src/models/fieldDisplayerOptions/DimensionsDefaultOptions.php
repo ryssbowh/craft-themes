@@ -25,7 +25,7 @@ class DimensionsDefaultOptions extends FieldDisplayerOptions
             ],
             'showUnit' => [
                 'field' => 'lightswitch',
-                'label' => \Craft::t('themes', 'Show unit (mm)')
+                'label' => \Craft::t('themes', 'Show unit')
             ],
             'decimals' => [
                 'field' => 'text',
