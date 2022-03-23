@@ -39,7 +39,7 @@ class DimensionsDefault extends FieldDisplayer
     public function beforeRender(&$value): bool
     {
         if (Themes::$plugin->settings->hideEmptyFields) {
-            if (!empty($value['width'] ?? null) and !empty($value['length'] ?? null) and !empty($value['length'] ?? null)) {
+            if (empty($value['width'] ?? null) and empty($value['length'] ?? null) and empty($value['length'] ?? null)) {
                 return false;
             }
         }
