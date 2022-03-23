@@ -611,7 +611,8 @@ class LayoutService extends Service
         }
         $event = new ResolveRequestLayoutEvent([
             'element' => $element,
-            'layout' => $layout
+            'layout' => $layout,
+            'theme' => Themes::$plugin->registry->current
         ]);
         $this->triggerEvent(self::EVENT_RESOLVE_REQUEST_LAYOUT, $event);
         return $event->layout;

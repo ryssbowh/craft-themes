@@ -10,9 +10,9 @@
 - Twig tests `is instanceof` and `is numeric`
 - [Super Table](https://github.com/verbb/super-table) support
 - Nested multi fields (matrix, super table) support
-- LayoutService::EVENT_REGISTER_TYPES to register layout types
-- LayoutService::EVENT_AVAILABLE_LAYOUTS to add layouts when rebuilding
-- LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT to resolve the current layout on a web request
+- `LayoutService::EVENT_REGISTER_TYPES` to register layout types
+- `LayoutService::EVENT_AVAILABLE_LAYOUTS` to add layouts when rebuilding
+- `LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT` to resolve the current layout on a web request
 - The themes folder can now be changed in settings
 
 ### Fixed
@@ -22,6 +22,7 @@
 - Fixed issues with fields not properly rebuilt
 - Fixed issues with missing fields
 - Fixed issues when (un)installing other plugins related to themes
+- Fixed command `themes/install`
 
 ### Changed
 - Installing a theme will fail if this plugin is not installed
@@ -36,6 +37,16 @@
 - Matrix service
 - `ThemePlugin::hasDataInstalled()` replaced by `Themes::$plugin->registry->isInstalled($theme)`
 - Removed all `LayoutService::{type}_HANDLE`. Types are now defined through the event `LayoutService::EVENT_REGISTER_TYPES`
+
+## 3.0.3 - 2022-02-24
+
+### Fixed
+- proprietary licence in composer.json
+
+## 3.0.2 - 2022-02-21
+
+### Fixed
+- changed Craft requirement to ^3.7
 
 ## 3.0.1 - 2022-02-15
 

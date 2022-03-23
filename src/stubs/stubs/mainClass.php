@@ -42,9 +42,6 @@ class $MAINCLASS extends ThemePlugin
      */
     public function afterThemeInstall()
     {
-        if ($this->hasDataInstalled()) {
-            return;
-        }
     }
 
     /**
