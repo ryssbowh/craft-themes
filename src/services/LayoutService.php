@@ -41,10 +41,19 @@ class LayoutService extends Service
     const EVENT_BEFORE_APPLY_DELETE = 'before_apply_delete';
     const EVENT_AFTER_DELETE = 'after_delete';
     const EVENT_BEFORE_DELETE = 'before_delete';
-    const EVENT_REGISTER_TYPES = 'register_types';
-    const EVENT_AVAILABLE_LAYOUTS = 'available_layouts';
-    const EVENT_RESOLVE_REQUEST_LAYOUT = 'resolve_request_layout';
     const CONFIG_KEY = 'themes.layouts';
+    /**
+     * @since 3.1.0
+     */
+    const EVENT_REGISTER_TYPES = 'register_types';
+    /**
+     * @since 3.1.0
+     */
+    const EVENT_AVAILABLE_LAYOUTS = 'available_layouts';
+    /**
+     * @since 3.1.0
+     */
+    const EVENT_RESOLVE_REQUEST_LAYOUT = 'resolve_request_layout';
 
     /**
      * @var Collection
@@ -53,6 +62,7 @@ class LayoutService extends Service
 
     /**
      * @var array
+     * @since 3.1.0
      */
     protected $_types;
 

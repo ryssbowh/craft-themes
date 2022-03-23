@@ -31,6 +31,8 @@ use craft\commerce\services\ProductTypes;
 use yii\base\Event;
 
 /**
+ * Integrates with commerce plugin
+ * 
  * @since 3.1.0
  */
 trait Ecommerce

@@ -10,6 +10,8 @@ use Ryssbowh\CraftThemes\services\FieldsService;
 use yii\base\Event;
 
 /**
+ * Integrates with super table plugin
+ * 
  * @since 3.1.0
  */
 trait SuperTable

@@ -46,8 +46,20 @@ class Themes extends \craft\base\Plugin
 {
     use Ecommerce, SuperTable;
 
+    /**
+     * @var string
+     */
     const EDITION_LITE = 'lite';
+
+    /**
+     * @var string
+     */
     const EDITION_PRO = 'pro';
+
+    /**
+     * @var string
+     * @since 3.1.0
+     */
     const EVENT_RELATED_PLUGINS = 'related_plugins';
 
     /**
@@ -74,6 +86,7 @@ class Themes extends \craft\base\Plugin
      * Plugins related to themes (which define displayers/fields etc)
      * This is used to rebuild layouts/displays when such a plugin is installed/uninstalled
      * @var array
+     * @since 3.1.0
      */
     protected $_relatedPlugins;
 
