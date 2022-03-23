@@ -15,7 +15,7 @@ class RelatedPluginsEvent extends Event
     /**
      * @var array
      */
-    protected $_related = ['super-table', 'commerce'];
+    protected $_related = ['super-table', 'commerce', 'typedlinkfield'];
 
     /**
      * Add a related plugin's handle

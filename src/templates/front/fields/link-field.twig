@@ -1,0 +1,11 @@
+{% extends "fields/_field" %}
+
+{% block content %}
+    {% set label = options.custom %}
+    {% if options.label == 'title' %}
+        {% set label = value.text %}
+    {% endif %}
+    <a href="{{ value }}"{% if value.target %} target="{{ value.target }}"{% endif %}{% if value.linkField.autoNoReferrer %} rel="noreferrer"{% endif %}>
+        {{ label }}
+    </a>
+{% endblock %}

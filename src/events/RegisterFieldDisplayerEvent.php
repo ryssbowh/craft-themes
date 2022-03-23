@@ -21,6 +21,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\EntryRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\EntrySlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\FileFile;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\LightswitchLabel;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\LinkFieldDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixSlick;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectLabel;
@@ -77,6 +78,7 @@ class RegisterFieldDisplayerEvent extends Event
             EntrySlick::class,
             FileFile::class,
             LightswitchLabel::class,
+            LinkFieldDefault::class,
             MatrixDefault::class,
             MatrixSlick::class,
             MultiSelectLabel::class,
