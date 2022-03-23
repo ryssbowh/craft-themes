@@ -1,11 +1,9 @@
 {% set canEditBlocks = currentUser.can('manageThemesBlocks') %}
 {% set canEditDisplays = currentUser.can('manageThemesDisplays') %}
-{% set hasTopMargin = hasTopMargin ?? false %}
-{% set showBlocks = showBlocks ?? true %}
 
 {% if canEditDisplays or canEditBlocks %}
     {% do craft.app.view.registerAssetBundle('Ryssbowh\\CraftThemes\\assets\\ElementsAssets') %}
-    <div id="theme-details"{{ hasTopMargin ? 'class="top-margin"' }}>
+    <div id="theme-details">
         {% for theme in craft.themes.registry.nonPartials %}
             <div class="field">
                 <div class="heading">
@@ -13,14 +11,28 @@
                 </div>
                 <div class="input ltr flex">
                     {% if canEditDisplays %}
-                        <div class="btngroup">
+                        <div>
                             <button type="button" class="btn menubtn" aria-haspopup="listbox" aria-expanded="false">
-                                <span>{{ 'Edit displays' }}</span>
+                                <span>{{ 'Edit product displays' }}</span>
                             </button>
                             <div class="menu">
                                 <ul class="padded" role="listbox" aria-hidden="true">
                                     <li>
-                                        {% for viewMode in element.getLayout(theme).viewModes %}
+                                        {% for viewMode in craft.themes.layouts.get(theme, 'product', element.uid).viewModes %}
+                                            <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                        {% endfor %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn menubtn" aria-haspopup="listbox" aria-expanded="false">
+                                <span>{{ 'Edit variant displays' }}</span>
+                            </button>
+                            <div class="menu">
+                                <ul class="padded" role="listbox" aria-hidden="true">
+                                    <li>
+                                        {% for viewMode in craft.themes.layouts.get(theme, 'variant', element.uid).viewModes %}
                                             <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
                                         {% endfor %}
                                     </li>
@@ -28,7 +40,7 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if canEditBlocks and showBlocks %}
+                    {% if canEditBlocks %}
                         <a class="btn" href="{{ element.getLayout(theme).getEditBlocksUrl() }}">
                             <span>{{ 'Edit Blocks'|t('themes') }}</span>
                         </a>

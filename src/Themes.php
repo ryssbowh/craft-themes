@@ -506,17 +506,24 @@ class Themes extends \craft\base\Plugin
             Craft::$app->view->hook('cp.globals.edit.content', function (array &$context) {
                 return \Craft::$app->view->renderTemplate('themes/cp/editelement', [
                     'element' => $context['globalSet'],
-                    'hasTopMargin' => true
+                    'hasTopMargin' => true,
+                    'showBlocks' => false
                 ]);
             });
             Craft::$app->view->hook('cp.categories.edit.details', function (array &$context) {
                 return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['group']]);
             });
             Craft::$app->view->hook('cp.assets.edit.details', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['volume']]);
+                return \Craft::$app->view->renderTemplate('themes/cp/editelement', [
+                    'element' => $context['volume'],
+                    'showBlocks' => false
+                ]);
             });
             Craft::$app->view->hook('cp.users.edit.details', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['user']]);
+                return \Craft::$app->view->renderTemplate('themes/cp/editelement', [
+                    'element' => $context['user'],
+                    'showBlocks' => false
+                ]);
             });
         }
     }

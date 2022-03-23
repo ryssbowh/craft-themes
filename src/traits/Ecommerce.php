@@ -116,5 +116,8 @@ trait Ecommerce
                 ]
             ]);
         });
+        \Craft::$app->view->hook('cp.commerce.product.edit.details', function (array &$context) {
+            return \Craft::$app->view->renderTemplate('themes/cp/editproduct', ['element' => $context['productType']]);
+        });
     }
 }
