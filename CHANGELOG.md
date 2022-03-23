@@ -1,6 +1,6 @@
 # ryssbowh/craft-themes Changelog
 
-## 3.1.0 - unreleased
+## 3.1.0 - 2022-03-23
 
 ### Added
 - Integration to commerce
