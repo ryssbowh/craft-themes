@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.1 - 2022-03-24
+
+### Fixed
+- Trying to fix changelog
+
 ## 3.1.0 - 2022-03-23
 
 ### Added
@@ -64,13 +69,7 @@
 - Scss compiler
 - Asset bundle can be registered as regex
 - Themes can be set for CP/Console requests
-- Pro version:
-  - Layouts
-  - View modes
-  - Regions
-  - Blocks
-  - Field displayers
-  - File displayers
+- Pro version
 
 ### Changed
 - Rules have their own section in CP
@@ -119,7 +118,8 @@
 - Typo in method name
 
 ## 2.0.0 - 2021-02-16
-> :warning: If you're updating from 1.x please read the breaking changes included in 2.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)
+
+> {warning} If you're updating from 1.x please read the breaking changes included in 2.0 in the [docs](https://github.com/ryssbowh/craft-themes/blob/master/README.md)
 
 ### Changed
 - Themes are now regular plugins
