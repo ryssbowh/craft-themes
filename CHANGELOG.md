@@ -14,10 +14,11 @@
 - Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
 - Twig tests `is instanceof` and `is numeric`
 - [Super Table](https://github.com/verbb/super-table) support
+- [Typed link](https://plugins.craftcms.com/typedlinkfield) support
 - Nested multi fields (matrix, super table) support
-- `LayoutService::EVENT_REGISTER_TYPES` to register layout types
-- `LayoutService::EVENT_AVAILABLE_LAYOUTS` to add layouts when rebuilding
-- `LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT` to resolve the current layout on a web request
+- Layout types now registered through event `LayoutService::EVENT_REGISTER_TYPES`
+- Available layouts now registered through event `LayoutService::EVENT_AVAILABLE_LAYOUTS`
+- Layout for current request can now be resolved through event `LayoutService::EVENT_RESOLVE_REQUEST_LAYOUT`
 - The themes folder can now be changed in settings
 
 ### Fixed
@@ -38,9 +39,9 @@
 - Changed how layout types are defined
 
 ### Removed
-- Themes installer
+- Themes installer module
 - Matrix service
-- `ThemePlugin::hasDataInstalled()` replaced by `Themes::$plugin->registry->isInstalled($theme)`
+- `ThemePlugin::hasDataInstalled()` (replaced by `Themes::$plugin->registry->isInstalled($theme)`)
 - Removed all `LayoutService::{type}_HANDLE`. Types are now defined through the event `LayoutService::EVENT_REGISTER_TYPES`
 
 ## 3.0.3 - 2022-02-24
@@ -70,6 +71,12 @@
 - Asset bundle can be registered as regex
 - Themes can be set for CP/Console requests
 - Pro version
+- Layouts (Pro)
+- View modes (Pro)
+- Regions (Pro)
+- Blocks (Pro)
+- Field displayers (Pro)
+- File displayers (Pro)
 
 ### Changed
 - Rules have their own section in CP
