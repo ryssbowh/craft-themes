@@ -5,6 +5,7 @@ namespace Ryssbowh\CraftThemes;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use craft\base\Plugin;
+use craft\helpers\StringHelper;
 
 abstract class ThemePlugin extends Plugin implements ThemeInterface
 {
@@ -21,13 +22,16 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 	protected $inheritsAssetBundles = true;
 
 	/**
-	 * Bundle assets defined by this theme, keyed by the url path. '*' for all paths :
+	 * Bundle assets defined by this theme, keyed by the url path. '*' for all paths, '' for homepage. Wrap with // for regular expressions :
 	 * [
 	 * 		'*' => [
 	 *   		CommonAssets::class
 	 *   	],
 	 *    	'blog' => [
 	 *     		BlogAsset::class
+	 *      ],
+	 *      '' => [
+	 *     		HomeAsset::class
 	 *      ]
 	 * ]
 	 * @var array
@@ -135,6 +139,16 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
 	 */
 	protected function getAssetBundles(string $urlPath): array
 	{
-		return array_merge($this->assetBundles['*'] ?? [], $this->assetBundles[$urlPath] ?? []);
+		$pathBundles = [];
+        foreach ($this->assetBundles as $path => $bundles) {
+            if (StringHelper::startsWith($path, '/') and StringHelper::endsWith($path, '/')) {
+                if (preg_match($path, $urlPath)) {
+                    $pathBundles = array_merge($pathBundles, $bundles);
+                }
+            } else if ($path == $urlPath) {
+                $pathBundles = array_merge($pathBundles, $bundles);
+            }
+        }
+        return array_merge($this->assetBundles['*'] ?? [], $pathBundles);
 	}
 }
