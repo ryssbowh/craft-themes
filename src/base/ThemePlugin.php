@@ -13,6 +13,7 @@ use Ryssbowh\CraftThemes\scss\plugins\ThemeFileLoader;
 use Ryssbowh\ScssPhp\Compiler;
 use Ryssbowh\ScssPhp\plugins\JsonManifest;
 use craft\base\Plugin;
+use craft\helpers\StringHelper;
 use yii\base\ArrayableTrait;
 
 /**
@@ -47,10 +48,13 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     protected $inheritsAssetBundles = true;
 
     /**
-     * Bundle assets defined by this theme, keyed by the url path. '*' for all paths :
+     * Bundle assets defined by this theme, keyed by the url path. '*' for all paths, '' for homepage. Wrap key with // for regular expression :
      * [
      *      '*' => [
      *          CommonAssets::class
+     *      ],
+     *      '' => [
+     *          HomeAssets::class
      *      ],
      *      'blog' => [
      *          BlogAsset::class
@@ -383,7 +387,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     {
         $pathBundles = [];
         foreach ($this->assetBundles as $path => $bundles) {
-            if (substr($path, 0, 1) == '/' and substr($path, -1, 1) == '/' and $path != '/') {
+            if (StringHelper::startsWith($path, '/') and StringHelper::endsWith($path, '/')) {
                 if (preg_match($path, $urlPath)) {
                     $pathBundles = array_merge($pathBundles, $bundles);
                 }

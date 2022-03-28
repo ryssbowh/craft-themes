@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.2 - 2022-03-28
+
+### Fixed
+- Asset bundles not registered on homepage
+
 ## 3.1.1 - 2022-03-24
 
 ### Fixed
