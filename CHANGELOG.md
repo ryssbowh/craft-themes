@@ -93,6 +93,11 @@
 - Twig variable `themesRegistry`
 - Twig variable `theme`
 
+## 2.1.6 - 2022-03-28
+
+### Fixed
+- Allow regular expressions to register asset bundles
+
 ## 2.1.5 - 2021-08-17
 
 ### Fixed
