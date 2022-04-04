@@ -29,7 +29,7 @@ class PluginsHelper
      */
     public static function onThemesEditionChanged(string $oldEdition, string $newEdition)
     {
-        if (\Craft::$app->projectConfig->isApplyingYamlChanges) {
+        if (\Craft::$app->projectConfig->isApplyingExternalChanges) {
             return;
         }
         if ($oldEdition != $newEdition) {

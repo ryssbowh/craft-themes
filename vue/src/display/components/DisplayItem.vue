@@ -1,11 +1,27 @@
 <template>
-    <component :is="type" :display="display" :item="display.item" :identation-level="identationLevel" @updateItem="updateItem({displayUid: display.uid, data: $event})"/>
+    <component
+        :is="type"
+        :display="display"
+        :item="display.item"
+        :identation-level="identationLevel"
+        @updateItem="updateItem({displayUid: display.uid, data: $event})"
+    />
 </template>
 
 <script>
 import { mapMutations } from 'vuex';
 
 export default {
+    props: {
+        display: {
+            type: Object,
+            default: null
+        },
+        identationLevel: {
+            type: Number,
+            default: null
+        }
+    },
     computed: {
         type: function () {
             if (this.display.type == 'group') {
@@ -14,13 +30,8 @@ export default {
             return this.fieldComponent(this.display.item.type);
         }
     },
-    props: {
-        display: Object,
-        identationLevel: Number
-    },
     methods: {
         ...mapMutations(['updateItem'])
-    },
-    emits: []
+    }
 };
 </script>

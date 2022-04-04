@@ -168,7 +168,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return ['name', 'handle', 'regions'];
     }
@@ -226,16 +226,6 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     public function afterSet()
     {
-    }
-
-    /**
-     * Make sure themes plugin is installed before installing
-     *
-     * @since  3.1.0
-     */
-    protected function beforeInstall(): bool
-    {
-        return (\Craft::$app->plugins->getPlugin('themes') != null);
     }
 
     /**

@@ -127,7 +127,7 @@ abstract class DisplayItem extends Model implements DisplayItemInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['errors']);
     }

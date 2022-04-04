@@ -28,7 +28,7 @@ class ThemePreferences extends Component implements ThemePreferencesInterface
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         $this->view = Themes::$plugin->view;
     }

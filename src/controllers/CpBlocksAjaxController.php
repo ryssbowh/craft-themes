@@ -14,7 +14,7 @@ class CpBlocksAjaxController extends Controller
     /**
      * @inheritDoc
      */
-    public function beforeAction($action) 
+    public function beforeAction($action): bool
     {
         $this->requirePermission('manageThemesBlocks');
         $this->requireAcceptsJson();

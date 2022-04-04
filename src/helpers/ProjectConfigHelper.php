@@ -31,7 +31,7 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (static::$_processedDisplays || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+        if (static::$_processedDisplays || (!$force && !$projectConfig->isApplyingExternalChanges)) {
             return;
         }
 
@@ -53,7 +53,7 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (!$force && !$projectConfig->getIsApplyingYamlChanges()) {
+        if (!$force && !$projectConfig->isApplyingExternalChanges) {
             return;
         }
 
@@ -77,7 +77,7 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (!$force && !$projectConfig->getIsApplyingYamlChanges()) {
+        if (!$force && !$projectConfig->isApplyingExternalChanges) {
             return;
         }
 
@@ -99,7 +99,7 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (static::$_processedGroups || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+        if (static::$_processedGroups || (!$force && !$projectConfig->isApplyingExternalChanges)) {
             return;
         }
 
@@ -121,7 +121,7 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (static::$_processedBlocks || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+        if (static::$_processedBlocks || (!$force && !$projectConfig->isApplyingExternalChanges)) {
             return;
         }
 
@@ -143,7 +143,7 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (static::$_processedLayouts || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+        if (static::$_processedLayouts || (!$force && !$projectConfig->isApplyingExternalChanges)) {
             return;
         }
 
@@ -165,7 +165,7 @@ class ProjectConfigHelper
     {
         $projectConfig = \Craft::$app->getProjectConfig();
 
-        if (static::$_processedViewModes || (!$force && !$projectConfig->getIsApplyingYamlChanges())) {
+        if (static::$_processedViewModes || (!$force && !$projectConfig->isApplyingExternalChanges)) {
             return;
         }
 

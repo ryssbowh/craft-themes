@@ -1,12 +1,28 @@
 <template>
     <div class="group line has-sub-fields">
         <div :class="classes">
-            <div class="move col"><div class="move icon"></div></div>
+            <div class="move col">
+                <div class="move icon" />
+            </div>
             <div class="title col">
                 <span class="name">{{ item.name }}</span>
-                <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="showFieldHandles" @click="copyValue">
-                    <input type="text" :value="'group-' + item.handle" readonly="" :size="('group-' + item.handle).length">
-                    <span data-icon="clipboard" aria-hidden="true"></span>
+                <div
+                    v-if="showFieldHandles"
+                    class="code small light copytextbtn"
+                    title="Copy to clipboard"
+                    role="button"
+                    @click="copyValue"
+                >
+                    <input
+                        type="text"
+                        :value="'group-' + item.handle"
+                        readonly=""
+                        :size="('group-' + item.handle).length"
+                    >
+                    <span
+                        data-icon="clipboard"
+                        aria-hidden="true"
+                    />
                 </div>
             </div>
             <div class="type col code">
@@ -15,9 +31,24 @@
             <div class="label col">
                 <div class="select">
                     <select @change="updateLabelVisibility">
-                        <option value="hidden" :selected="item.labelHidden">{{ t('Hidden') }}</option>
-                        <option value="visuallyHidden" :selected="item.labelVisuallyHidden">{{ t('Visually hidden') }}</option>
-                        <option value="visible" :selected="labelVisible">{{ t('Visible') }}</option>
+                        <option
+                            value="hidden"
+                            :selected="item.labelHidden"
+                        >
+                            {{ t('Hidden') }}
+                        </option>
+                        <option
+                            value="visuallyHidden"
+                            :selected="item.labelVisuallyHidden"
+                        >
+                            {{ t('Visually hidden') }}
+                        </option>
+                        <option
+                            value="visible"
+                            :selected="labelVisible"
+                        >
+                            {{ t('Visible') }}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -25,21 +56,51 @@
                 <slot name="visibility">
                     <div class="select">
                         <select @change="updateVisibility">
-                            <option value="hidden" :selected="item.hidden">{{ t('Hidden') }}</option>
-                            <option value="visuallyHidden" :selected="item.visuallyHidden">{{ t('Visually hidden') }}</option>
-                            <option value="visible" :selected="visible">{{ t('Visible') }}</option>
+                            <option
+                                value="hidden"
+                                :selected="item.hidden"
+                            >
+                                {{ t('Hidden') }}
+                            </option>
+                            <option
+                                value="visuallyHidden"
+                                :selected="item.visuallyHidden"
+                            >
+                                {{ t('Visually hidden') }}
+                            </option>
+                            <option
+                                value="visible"
+                                :selected="visible"
+                            >
+                                {{ t('Visible') }}
+                            </option>
                         </select>
                     </div>
                 </slot>
             </div>
-            <div class="displayer col">
-            </div>
+            <div class="displayer col" />
             <div class="options col">
-                <a href="#" @click.prevent="editGroup"><span class="icon settings"></span></a>
-                <a href="#" @click.prevent="deleteGroup" class="delete"><span class="icon delete"></span></a>
+                <a
+                    href="#"
+                    @click.prevent="editGroup"
+                >
+                    <span class="icon settings" />
+                </a>
+                <a
+                    href="#"
+                    class="delete"
+                    @click.prevent="deleteGroup"
+                >
+                    <span class="icon delete" />
+                </a>
             </div>
         </div>
-        <span v-if="!groupDisplays.length" class="no-displays"><i>{{ t('This group is empty') }}</i></span>
+        <span
+            v-if="!groupDisplays.length"
+            class="no-displays"
+        >
+            <i>{{ t('This group is empty') }}</i>
+        </span>
         <draggable
             class="sub-fields"
             item-key="uid"
@@ -48,9 +109,13 @@
             swapThreshold="1.2"
             handle=".move"
             @change="onDragChange"
-            >
+        >
             <template #item="{element}">
-                <display-item :display="element" :identation-level="identationLevel + 1" @updateItem="updateItem($event, element.uid)"/>
+                <display-item
+                    :display="element"
+                    :identation-level="identationLevel + 1"
+                    @updateItem="updateItem($event, element.uid)"
+                />
             </template>
         </draggable>
     </div>
@@ -61,6 +126,23 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 import { sortBy } from 'lodash';
 
 export default {
+    props: {
+        item: {
+            type: Object,
+            default: null
+        },
+        identationLevel: {
+            type: Number,
+            default: 0
+        },
+        display: {
+            type: Object,
+            default: function () {
+                return {};
+            }
+        }
+    },
+    emits: ['updateItem', 'delete'],
     computed: {
         classes: function () {
             return {
@@ -78,16 +160,6 @@ export default {
             return sortBy(this.item.displays, 'order');
         },
         ...mapState(['showFieldHandles', 'labelsVisibility', 'itemsVisibility', 'viewMode', 'switchLabelsVisibility', 'switchItemsVisibility'])
-    },
-    props: {
-        item: Object,
-        identationLevel: Number,
-        display: {
-            type: Object,
-            default: function () {
-                return {};
-            }
-        }
     },
     watch: {
         switchItemsVisibility: function () {
@@ -199,8 +271,7 @@ export default {
         },
         ...mapMutations(['setShowGroupModal', 'addDisplayToGroup', 'removeDisplayFromGroup', 'removeDisplay', 'addDisplay']),
         ...mapActions([]),
-    },
-    emits: ['updateItem', 'delete'],
+    }
 };
 </script>
 <style lang="scss" scoped>

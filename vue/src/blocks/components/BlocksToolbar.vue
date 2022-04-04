@@ -1,22 +1,68 @@
 <template>
-  <div id="action-buttons" class="flex" v-if="layouts.length">
-    <div class="btngroup submit">
-      <button href="#" class="btn submit menubtn" ref="menu" v-if="!isCopying" :disabled="!canCopy" @click.prevent="">{{ t('Copy To') }}</button>
-      <div class="menu" data-align="right">
-        <ul>
-          <li v-for="elem, index in layoutsWithoutBlocks" v-bind:key="index">
-              <a href="#" @click.prevent="checkAndCopy(elem)">{{ elem.description }}</a>
-          </li>
-          <li>
-              <a href="#" @click.prevent="setShowLayoutModal({show: true})">{{ t('Create custom') }}</a>
-          </li>
-        </ul>
-      </div>
+    <div
+        v-if="layouts.length"
+        id="action-buttons"
+        class="flex"
+    >
+        <div class="btngroup submit">
+            <button
+                v-if="!isCopying"
+                ref="menu"
+                href="#"
+                class="btn submit menubtn"
+                :disabled="!canCopy"
+                @click.prevent=""
+            >
+                {{ t('Copy To') }}
+            </button>
+            <div
+                class="menu"
+                data-align="right"
+            >
+                <ul>
+                    <li
+                        v-for="elem, index in layoutsWithoutBlocks"
+                        :key="index"
+                    >
+                        <a
+                            href="#"
+                            @click.prevent="checkAndCopy(elem)"
+                        >{{ elem.description }}</a>
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            @click.prevent="setShowLayoutModal({show: true})"
+                        >{{ t('Create custom') }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <button
+            v-if="!isCopying && layout.type != 'default'"
+            href="#"
+            class="btn submit"
+            @click.prevent="checkAndDelete"
+        >
+            {{ t('Delete', {}, 'app') }}
+        </button>
+        <button
+            v-if="layout.type == 'custom' && layout.id"
+            href="#"
+            class="btn submit"
+            @click.prevent="setShowLayoutModal({show: true, editUid: layout.uid})"
+        >
+            {{ t('Edit', {}, 'app') }}
+        </button>
+        <button
+            href="#"
+            class="btn submit"
+            :disabled="!canSave"
+            @click.prevent="save"
+        >
+            {{ t('Save', {}, 'app') }}
+        </button>
     </div>
-    <button href="#" class="btn submit" v-if="!isCopying && layout.type != 'default'" @click.prevent="checkAndDelete">{{ t('Delete', {}, 'app') }}</button>
-    <button href="#" class="btn submit" v-if="layout.type == 'custom' && layout.id" @click.prevent="setShowLayoutModal({show: true, editUid: layout.uid})">{{ t('Edit', {}, 'app') }}</button>
-    <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
-  </div>
 </template>
 
 <script>

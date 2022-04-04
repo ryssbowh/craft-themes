@@ -162,7 +162,7 @@ abstract class DefinableOptions extends Model
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return ['definitions', 'defaultValues'];
     }

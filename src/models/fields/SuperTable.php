@@ -35,7 +35,7 @@ class SuperTable extends CraftField
     /**
      * @inheritDoc
      */
-    public function hasErrors($attribute = null)
+    public function hasErrors($attribute = null): bool
     {
         if ($attribute !== null) {
             return parent::hasErrors($attribute);
@@ -167,7 +167,7 @@ class SuperTable extends CraftField
                 'type' => $type,
                 'fields' => array_map(function ($field) {
                     return Themes::$plugin->fields->buildConfig($field);
-                }, $type->getFields())
+                }, $type->getCustomFields())
             ];
         }
         $config['types'] = $types;
@@ -353,7 +353,7 @@ class SuperTable extends CraftField
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['types']);
     }

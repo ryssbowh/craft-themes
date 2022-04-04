@@ -113,7 +113,7 @@ abstract class FileDisplayer extends Model implements FileDisplayerInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['name', 'options', 'handle', 'hasOptions', 'description']);
     }

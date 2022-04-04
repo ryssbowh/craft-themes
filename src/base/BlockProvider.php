@@ -83,7 +83,7 @@ abstract class BlockProvider extends Component implements BlockProviderInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['blocks', 'name', 'handle']);
     }

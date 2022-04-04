@@ -1,10 +1,27 @@
 <template>
     <div class="btngroup">
-        <button v-if="theme" type="button" class="btn menubtn" data-icon="brush">{{ themes[theme].name }}</button>
-        <div v-if="theme" class="menu">
+        <button
+            v-if="theme"
+            type="button"
+            class="btn menubtn"
+            data-icon="brush"
+        >
+            {{ themes[theme].name }}
+        </button>
+        <div
+            v-if="theme"
+            class="menu"
+        >
             <ul class="padded">
-                <li v-for="theme2 in themes" v-bind:key="theme2.handle">
-                    <a :class="{sel: theme == theme2.handle}" href="#" @click.prevent="changeTheme(theme2.handle)">{{ theme2.name }}</a>
+                <li
+                    v-for="theme2 in themes"
+                    :key="theme2.handle"
+                >
+                    <a
+                        :class="{sel: theme == theme2.handle}"
+                        href="#"
+                        @click.prevent="changeTheme(theme2.handle)"
+                    >{{ theme2.name }}</a>
                 </li>
             </ul>
         </div>
@@ -15,16 +32,34 @@
 import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
+    props: {
+        initialTheme: {
+            type: String,
+            default: null
+        },
+        themes: {
+            type: Object,
+            default: null
+        },
+        allLayouts: {
+            type: Object,
+            default: null
+        },
+        currentLayout: {
+            type: Number,
+            default: null
+        },
+        currentViewModeHandle: {
+            type: String,
+            default: null
+        },
+        showFieldHandles: {
+            type: Number,
+            default: null
+        }
+    },
     computed: {
         ...mapState(['theme', 'layouts', 'layout', 'viewMode'])
-    },
-    props: {
-        initialTheme: String,
-        themes: Object,
-        allLayouts: Object,
-        currentLayout: Number,
-        currentViewModeHandle: String,
-        showFieldHandles: Number
     },
     created () {
         this.setShowFieldHandles(this.showFieldHandles);

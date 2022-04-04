@@ -1,12 +1,28 @@
 <template>
     <nav id="notification-nav">
         <ul>
-            <li class="heading"><span>{{ t('Layouts') }}</span></li>
-            <li v-for="layout2 in rootLayouts" v-bind:key="layout2.id">
-                <a :href="getUrl(layout2)" :class="{'sel': layout.id === layout2.id}" @click.prevent="confirmAndChangeLayout(layout2.id)">{{ layout2.description }}</a>
+            <li class="heading">
+                <span>{{ t('Layouts') }}</span>
+            </li>
+            <li
+                v-for="layout2 in rootLayouts"
+                :key="layout2.id"
+            >
+                <a
+                    :href="getUrl(layout2)"
+                    :class="{'sel': layout.id === layout2.id}"
+                    @click.prevent="confirmAndChangeLayout(layout2.id)"
+                >{{ layout2.description }}</a>
                 <ul v-if="getChildren(layout2)">
-                    <li v-for="layout3 in getChildren(layout2)" v-bind:key="layout3.id">
-                        <a :href="getUrl(layout3)" :class="{'sel': layout.id === layout3.id}" @click.prevent="confirmAndChangeLayout(layout3.id)">{{ layout3.description }}</a>
+                    <li
+                        v-for="layout3 in getChildren(layout2)"
+                        :key="layout3.id"
+                    >
+                        <a
+                            :href="getUrl(layout3)"
+                            :class="{'sel': layout.id === layout3.id}"
+                            @click.prevent="confirmAndChangeLayout(layout3.id)"
+                        >{{ layout3.description }}</a>
                     </li>
                 </ul>
             </li>

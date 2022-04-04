@@ -30,7 +30,7 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
-    public function hasErrors($attribute = null)
+    public function hasErrors($attribute = null): bool
     {
         if ($attribute !== null) {
             return parent::hasErrors($attribute);
@@ -253,7 +253,7 @@ class Table extends CraftField
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['fields']);
     }

@@ -1,28 +1,70 @@
 <template>
     <div class="pane-header">
-        <nav id="tabs" class="pane-tabs">
+        <nav
+            id="tabs"
+            class="pane-tabs"
+        >
             <div class="heading">
                 <span>{{ t('View modes') }}</span>
-                <a href="#" class="add-viewmode" @click.prevent="addViewMode" :title="t('New View Mode')">
-                    <span class="icon add"></span>
+                <a
+                    href="#"
+                    class="add-viewmode"
+                    :title="t('New View Mode')"
+                    @click.prevent="addViewMode"
+                >
+                    <span class="icon add" />
                 </a>
             </div>
             <ul>
-                <li v-for="mode, index in viewModes" v-bind:key="index">
-                    <a :class="{'sel': viewMode.handle === mode.handle}" @click.prevent="" href="#" :data-viewmode="mode.id">
-                        <span class="error" data-icon="alert" aria-label="Error" v-if="mode.hasErrors"></span>
+                <li
+                    v-for="mode, index in viewModes"
+                    :key="index"
+                >
+                    <a
+                        :class="{'sel': viewMode.handle === mode.handle}"
+                        href="#"
+                        :data-viewmode="mode.id"
+                        @click.prevent=""
+                    >
+                        <span
+                            v-if="mode.hasErrors"
+                            class="error"
+                            data-icon="alert"
+                            aria-label="Error"
+                        />
                         <span v-if="mode.hasErrors">&nbsp;</span>
                         <span @click.prevent="setViewMode2(mode)">{{ mode.name }}</span>
-                        <span class="icon edit" @click.prevent="editViewMode(mode)" :title="t('Edit view mode')" v-if="viewMode.handle === mode.handle"></span>
-                        <span v-if="mode.handle != 'default' && viewMode.handle === mode.handle" class="icon delete" @click.prevent="confirmAndDeleteViewMode(mode)"></span>
+                        <span
+                            v-if="viewMode.handle === mode.handle"
+                            class="icon edit"
+                            :title="t('Edit view mode')"
+                            @click.prevent="editViewMode(mode)"
+                        />
+                        <span
+                            v-if="mode.handle != 'default' && viewMode.handle === mode.handle"
+                            class="icon delete"
+                            @click.prevent="confirmAndDeleteViewMode(mode)"
+                        />
                     </a>
                 </li>
             </ul>
-            <button type="button" id="overflow-tab-btn" data-icon="ellipsis" class="btn menubtn hidden"></button>
-            <div id="overflow-tab-menu" class="menu">
-                <ul role="listbox"></ul>
+            <button
+                id="overflow-tab-btn"
+                type="button"
+                data-icon="ellipsis"
+                class="btn menubtn hidden"
+            />
+            <div
+                id="overflow-tab-menu"
+                class="menu"
+            >
+                <ul role="listbox" />
             </div>
-            <view-mode-modal :show-modal="showModal" :editedViewMode="editedViewMode" @closeModal="onCloseModal"/>
+            <view-mode-modal
+                :show-modal="showModal"
+                :editedViewMode="editedViewMode"
+                @closeModal="onCloseModal"
+            />
         </nav>
     </div>
 </template>
@@ -31,9 +73,6 @@
 import { mapState, mapActions } from 'vuex';
 
 export default {
-    computed: {
-        ...mapState(['viewModes', 'viewMode'])
-    },
     data() {
         return {
             showModal: false,
@@ -41,6 +80,9 @@ export default {
             tabsInited: false,
             overflowTabBtn: null
         }
+    },
+    computed: {
+        ...mapState(['viewModes', 'viewMode'])
     },
     updated () {
         if (!this.tabsInited) {

@@ -35,45 +35,45 @@ class Layout extends Model implements LayoutInterface
     public $id;
 
     /**
-     * @var int
+     * @var string
      */
-    public $themeHandle;
+    public string $themeHandle;
 
     /**
      * @var string
      */
-    public $elementUid;
+    public string $elementUid;
 
     /**
      * @var boolean
      */
-    public $hasBlocks = false;
+    public bool $hasBlocks = false;
 
     /**
      * @var string
      */
-    public $uid;
+    public string $uid;
 
     /**
      * Only used for custom layouts
-     * @var string
+     * @var ?string
      */
     public $name;
 
     /**
-     * @var integer
+     * @var ?integer
      */
     public $parent_id;
 
     /**
      * @var \DateTime
      */
-    public $dateCreated;
+    public \DateTime $dateCreated;
 
     /**
      * @var \DateTime
      */
-    public $dateUpdated;
+    public \DateTime $dateUpdated;
 
     /**
      * Element associated with this layout (entry type, user, category group etc)
@@ -100,7 +100,7 @@ class Layout extends Model implements LayoutInterface
      * Attribute that stores the field layout id
      * @var string
      */
-    protected $fieldLayoutIdAttribute = 'fieldLayoutId';
+    protected string $fieldLayoutIdAttribute = 'fieldLayoutId';
 
     /**
      * @inheritDoc
@@ -160,7 +160,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function hasErrors($attribute = null)
+    public function hasErrors($attribute = null): bool
     {
         if ($attribute !== null) {
             return parent::hasErrors($attribute);
@@ -398,7 +398,7 @@ class Layout extends Model implements LayoutInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['type', 'description']);
     }

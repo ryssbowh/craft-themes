@@ -1,37 +1,98 @@
 <template>
-    <div class="modal elementselectormodal themes-modal-options" style="display:none" ref="modal">
-        <div class="header" v-if="editedBlock">
-            <h3>{{ t('Edit block {block} options', {block: this.editedBlock.name}) }}</h3>
+    <div
+        ref="modal"
+        class="modal elementselectormodal themes-modal-options"
+        style="display:none"
+    >
+        <div
+            v-if="editedBlock"
+            class="header"
+        >
+            <h3>{{ t('Edit block {block} options', {block: editedBlock.name}) }}</h3>
         </div>
-        <div class="body" v-if="editedBlock">
-            <formfield-lightswitch :value="active ? true : false" :definition="{label: t('Active', {}, 'app')}" @change="active = $event" :name="'active'">
-            </formfield-lightswitch>
+        <div
+            v-if="editedBlock"
+            class="body"
+        >
+            <formfield-lightswitch
+                :value="active ? true : false"
+                :definition="{label: t('Active', {}, 'app')}"
+                :name="'active'"
+                @change="active = $event"
+            />
             <div v-if="editedBlock.canBeCached || isContentBlock">
                 <div class="field">
                     <div class="heading">
                         <label>{{ t('Caching') }}</label>                                    
                     </div>
-                    <div class="instructions">{{ strategyDescription }}</div>
+                    <div class="instructions">
+                        {{ strategyDescription }}
+                    </div>
                     <div class="input ltr">
                         <div class="select">
-                            <select id="type" @change="updateCacheStrategy($event.target.value)" v-model="cacheStrategy.handle">
-                                <option value="">{{ t('No cache') }}</option>
-                                <option :value="strategy.handle" v-for="strategy in cacheStrategies" v-bind:key="strategy.handle">{{ strategy.name }}</option>
+                            <select
+                                id="type"
+                                v-model="cacheStrategy.handle"
+                                @change="updateCacheStrategy($event.target.value)"
+                            >
+                                <option value="">
+                                    {{ t('No cache') }}
+                                </option>
+                                <option
+                                    v-for="strategy in cacheStrategies"
+                                    :key="strategy.handle"
+                                    :value="strategy.handle"
+                                >
+                                    {{ strategy.name }}
+                                </option>
                             </select>
                         </div>
                     </div>
-                    <div class="warning" v-if="isContentBlock && cacheStrategy.handle == 'global'">
+                    <div
+                        v-if="isContentBlock && cacheStrategy.handle == 'global'"
+                        class="warning"
+                    >
                         {{ t('This is really not recommended, all your pages will display the same content') }}
                     </div>
                 </div>
-                <component v-for="definition, name in strategyFieldsDefinitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="cacheStrategy.options[name] ?? null" :errors="getCacheStrategyErrors(name)" @change="updateStrategyOption(name, $event)" :key="name"></component>
+                <component
+                    :is="formFieldComponent(definition.field)"
+                    v-for="definition, name in strategyFieldsDefinitions"
+                    :key="name"
+                    :name="name"
+                    :definition="definition"
+                    :value="cacheStrategy.options[name] ?? null"
+                    :errors="getCacheStrategyErrors(name)"
+                    @change="updateStrategyOption(name, $event)"
+                />
             </div>
-            <component v-for="definition, name in editedBlock.optionsDefinitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="options[name] ?? null" :errors="getOptionErrors(name)" @change="updateOption(name, $event)" :key="name"></component>
+            <component
+                :is="formFieldComponent(definition.field)"
+                v-for="definition, name in editedBlock.optionsDefinitions"
+                :key="name"
+                :name="name"
+                :definition="definition"
+                :value="options[name] ?? null"
+                :errors="getOptionErrors(name)"
+                @change="updateOption(name, $event)"
+            />
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="closeModal">{{ t('Close', {}, 'app') }}</button>
-                <button type="button" class="btn submit" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
+                <button
+                    type="button"
+                    class="btn"
+                    @click="closeModal"
+                >
+                    {{ t('Close', {}, 'app') }}
+                </button>
+                <button
+                    type="button"
+                    class="btn submit"
+                    @click.prevent="save"
+                >
+                    {{ t('Save', {}, 'app') }}
+                </button>
             </div>
         </div>
     </div>
@@ -42,6 +103,15 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 import { merge } from 'lodash';
 
 export default {
+    data() {
+        return {
+            modal: null,
+            options: {},
+            errors: {},
+            active: null,
+            cacheStrategy: null
+        }
+    },
     computed: {
         machineName: function () {
             return this.editedBlock.provider + '_' + this.editedBlock.handle;
@@ -64,15 +134,6 @@ export default {
             return strategy.options.definitions;
         },
         ...mapState(['cacheStrategies', 'showOptionsModal', 'editedBlock'])
-    },
-    data() {
-        return {
-            modal: null,
-            options: {},
-            errors: {},
-            active: null,
-            cacheStrategy: null
-        }
     },
     watch: {
         showOptionsModal: function () {

@@ -36,7 +36,7 @@ trait ElementLayout
      */
     public function getCraftFields(): array
     {
-        return $this->fieldLayout->getFields();
+        return $this->fieldLayout->getCustomFields();
     }
 
     /**

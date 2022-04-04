@@ -99,7 +99,7 @@ class ViewService extends Service
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         if (getenv('ENVIRONMENT') == 'production') {

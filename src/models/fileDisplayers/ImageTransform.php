@@ -59,7 +59,7 @@ class ImageTransform extends FileDisplayer
     public function getImageTransforms(): array
     {
         $out = [];
-        foreach (\Craft::$app->assetTransforms->getAllTransforms() as $transform) {
+        foreach (\Craft::$app->imageTransforms->getAllTransforms() as $transform) {
             $out[$transform->handle] = $transform->name;
         }
         return $out;
@@ -68,7 +68,7 @@ class ImageTransform extends FileDisplayer
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['imageTransforms']);
     }

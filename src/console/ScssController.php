@@ -117,7 +117,7 @@ class ScssController extends Controller
     /**
      * @inheritDoc
      */
-    public function options($actionID)
+    public function options($actionID): array
     {
         return array_merge(parent::options($actionID), $this->compilerOptions());
     }

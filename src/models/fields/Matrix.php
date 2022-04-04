@@ -37,7 +37,7 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public function hasErrors($attribute = null)
+    public function hasErrors($attribute = null): bool
     {
         if ($attribute !== null) {
             return parent::hasErrors($attribute);
@@ -123,7 +123,7 @@ class Matrix extends CraftField implements MatrixInterface
                 ]);
             }
             $fields = [];
-            foreach ($craftType->fields as $craftField) {
+            foreach ($craftType->getCustomFields() as $craftField) {
                 $oldField = null;
                 try {
                     $oldField = $type->getFieldById($craftField->id);
@@ -180,7 +180,7 @@ class Matrix extends CraftField implements MatrixInterface
                 'type' => $type,
                 'fields' => array_map(function ($field) {
                     return Themes::$plugin->fields->buildConfig($field);
-                }, $type->getFields())
+                }, $type->getCustomFields())
             ];
         }
         $config['types'] = $types;
@@ -244,7 +244,7 @@ class Matrix extends CraftField implements MatrixInterface
             $this->_types = [];
             foreach ($this->craftField->getBlockTypes() as $type) {
                 $fields = [];
-                foreach ($type->fields as $field) {
+                foreach ($type->getCustomFields() as $field) {
                     if ($field = Themes::$plugin->fields->getChild($this, $field)) {
                         $fields[] = $field;
                     }
@@ -353,7 +353,7 @@ class Matrix extends CraftField implements MatrixInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['types']);
     }

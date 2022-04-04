@@ -1,25 +1,41 @@
 <template>
     <div class="blocks">
-        <div class="spinner-wrapper" v-if="isLoading">
-            <div class="spinner"></div>
+        <div
+            v-if="isLoading"
+            class="spinner-wrapper"
+        >
+            <div class="spinner" />
         </div>
         <div class="blocks-sidebar">
             <div class="heading">
                 <h3>{{ t('Blocks') }}</h3>
             </div>
-            <div v-for="provider in providers" v-bind:key="provider.handle">
-                <h5 class="sub-heading slide" :class="{icon: true, expand: !slideStates[provider.handle], collapse: slideStates[provider.handle]}" @click="slideStates[provider.handle] = !slideStates[provider.handle]">{{ provider.name }}</h5>
+            <div
+                v-for="provider in providers"
+                :key="provider.handle"
+            >
+                <h5
+                    class="sub-heading slide"
+                    :class="{icon: true, expand: !slideStates[provider.handle], collapse: slideStates[provider.handle]}"
+                    @click="slideStates[provider.handle] = !slideStates[provider.handle]"
+                >
+                    {{ provider.name }}
+                </h5>
                 <transition name="slide">
                     <div>
-                        <draggable v-if="slideStates[provider.handle]"
-                          item-key="vueid"
-                          :list="provider.blocks"
-                          :group="{ name: 'blocks', pull: 'clone', put: false }"
-                          :sort="false"
-                          handle=".block"
+                        <draggable
+                            v-if="slideStates[provider.handle]"
+                            item-key="vueid"
+                            :list="provider.blocks"
+                            :group="{ name: 'blocks', pull: 'clone', put: false }"
+                            :sort="false"
+                            handle=".block"
                         >
                             <template #item="{element}">
-                                <block :block="element" :original="true"/>
+                                <block
+                                    :block="element"
+                                    :original="true"
+                                />
                             </template>
                         </draggable>
                     </div>
@@ -30,16 +46,28 @@
             <div class="heading">
                 <h3>{{ t('Regions') }}</h3>
             </div>
-            <div class="region-list" v-if="layouts.length">
-                <region v-for="region in regions" v-bind:key="region.handle" :region="region"/>
-                <p v-if="!regions.length">{{ t('No regions are defined for this theme') }}</p>
+            <div
+                v-if="layouts.length"
+                class="region-list"
+            >
+                <region
+                    v-for="region in regions"
+                    :key="region.handle"
+                    :region="region"
+                />
+                <p v-if="!regions.length">
+                    {{ t('No regions are defined for this theme') }}
+                </p>
             </div>
-            <div class="region-list" v-if="!layouts.length">
+            <div
+                v-if="!layouts.length"
+                class="region-list"
+            >
                 <p>{{ t('No layouts available, you should reinstall the themes data in the settings') }}</p>
             </div>
         </div>
-        <layout-modal/>
-        <options-modal/>
+        <layout-modal />
+        <options-modal />
     </div>
 </template>
 
@@ -52,6 +80,17 @@ import Draggable from 'vuedraggable';
 import { reduce } from 'lodash';
 
 export default {
+    components: {
+        Region,
+        Block,
+        OptionsModal,
+        Draggable
+    },
+    data: function () {
+        return {
+            slideStates: {}
+        }
+    },
     computed: {
         isLoading: function () {
             return reduce(this.isFetching, function (res, elem) {
@@ -59,8 +98,6 @@ export default {
             }, this.isSaving);
         },
         ...mapState(['blocks', 'regions', 'isFetching', 'isSaving', 'blockOptionId', 'providers', 'layouts'])
-    },
-    props: {
     },
     watch: {
         providers: { 
@@ -74,22 +111,11 @@ export default {
             }
         }
     },
-    data: function () {
-        return {
-            slideStates: {}
-        }
-    },
     created: function () {
         this.fetchProviders();
     },
     methods: {
         ...mapActions(['checkChanges', 'fetchProviders'])
-    },
-    components: {
-        Region,
-        Block,
-        OptionsModal,
-        Draggable
     }
 };
 </script>

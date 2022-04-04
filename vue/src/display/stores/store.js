@@ -180,7 +180,7 @@ export const createStore = (app) => {
             }
         },
         actions: {
-            cloneDisplay({}, display) {
+            cloneDisplay(arg, display) {
                 return app.config.globalProperties.cloneDisplay(display);
             },
             setLayout({commit, dispatch}, {layoutId, viewModeHandle}) {

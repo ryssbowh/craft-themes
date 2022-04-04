@@ -1,17 +1,41 @@
 <template>
     <div class="themes-displays">
-        <div class="spinner-wrapper" v-if="isLoading || isSaving">
-          <div class="spinner"></div>
+        <div
+            v-if="isLoading || isSaving"
+            class="spinner-wrapper"
+        >
+            <div class="spinner" />
         </div>
-        <div class="fullwidth display-table" v-if="rootDisplays.length">
+        <div
+            v-if="rootDisplays.length"
+            class="fullwidth display-table"
+        >
             <div class="line head">
-                <div class="handle col"></div>
-                <div class="title col">{{ t('Title', {}, 'app') }}</div>
-                <div class="type col">{{ t('Type') }}</div>
-                <div class="label col"><a href="#" @click.prevent="setLabelsVisibility(!this.allLabelsVisible)" :title="allLabelsVisible ? t('Make all hidden') : t('Make all visible')">{{ t('Label', {}, 'app') }}</a></div>
-                <div class="visibility col"><a href="#" @click.prevent="setItemsVisibility(!this.allItemsVisible)" :title="allItemsVisible ? t('Make all hidden') : t('Make all visible')">{{ t('Visibility') }}</a></div>
-                <div class="displayer col">{{ t('Displayer') }}</div>
-                <div class="options col"></div>
+                <div class="handle col" />
+                <div class="title col">
+                    {{ t('Title', {}, 'app') }}
+                </div>
+                <div class="type col">
+                    {{ t('Type') }}
+                </div>
+                <div class="label col">
+                    <a
+                        href="#"
+                        :title="allLabelsVisible ? t('Make all hidden') : t('Make all visible')"
+                        @click.prevent="setLabelsVisibility(!allLabelsVisible)"
+                    >{{ t('Label', {}, 'app') }}</a>
+                </div>
+                <div class="visibility col">
+                    <a
+                        href="#"
+                        :title="allItemsVisible ? t('Make all hidden') : t('Make all visible')"
+                        @click.prevent="setItemsVisibility(!allItemsVisible)"
+                    >{{ t('Visibility') }}</a>
+                </div>
+                <div class="displayer col">
+                    {{ t('Displayer') }}
+                </div>
+                <div class="options col" />
             </div>
             <div class="body">
                 <draggable
@@ -21,9 +45,12 @@
                     handle=".move"
                     swapThreshold="0.65"
                     @change="onDragChange"
-                    >
+                >
                     <template #item="{element}">
-                        <display-item :display="element" :identation-level="0"/>
+                        <display-item
+                            :display="element"
+                            :identation-level="0"
+                        />
                     </template>
                 </draggable>
             </div>
@@ -34,7 +61,7 @@
         <p v-if="layouts.length == 0 && !isLoading">
             {{ t('No layouts available, you should reinstall the themes data in the settings') }}
         </p>
-        <group-modal @closeModal="setShowGroupModal({show: false})"/>
+        <group-modal @closeModal="setShowGroupModal({show: false})" />
     </div>
 </template>
 
@@ -43,6 +70,12 @@ import { mapMutations, mapState } from 'vuex';
 import { sortBy } from 'lodash';
 
 export default {
+    data: function () {
+        return {
+            allItemsVisible: true,
+            allLabelsVisible: true
+        }
+    },
     computed: {
         isLoading: function () {
             return this.isFetching || this.isSaving;
@@ -74,12 +107,6 @@ export default {
                     }
                 }
             }
-        }
-    },
-    data: function () {
-        return {
-            allItemsVisible: true,
-            allLabelsVisible: true
         }
     },
     methods: {

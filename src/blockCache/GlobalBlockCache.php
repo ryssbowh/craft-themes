@@ -21,7 +21,10 @@ class GlobalBlockCache extends BlockCacheStrategy
      */
     protected $mobileDetect;
 
-    public function init()
+    /**
+     * @inheritDoc
+     */
+    public function init(): void
     {
         parent::init();
         $this->mobileDetect = new MobileDetect;

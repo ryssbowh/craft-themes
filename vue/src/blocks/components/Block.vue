@@ -2,17 +2,54 @@
     <div :class="{'block': true, original: original, active: (block.active && !original)}">
         <div class="inner">
             <div class="description">
-                <div class="name">{{ block.name }} <span class="error" data-icon="alert" aria-label="Error" v-if="hasErrors"></span></div>
-                <div class="small" v-if="original">{{ block.smallDescription }}</div>
-                <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="!original && showFieldHandles" @click="copyValue">
-                    <input type="text" :value="fullName" readonly="" :size="fullName.length">
-                    <span data-icon="clipboard" aria-hidden="true"></span>
+                <div class="name">
+                    {{ block.name }} <span
+                        v-if="hasErrors"
+                        class="error"
+                        data-icon="alert"
+                        aria-label="Error"
+                    />
+                </div>
+                <div
+                    v-if="original"
+                    class="small"
+                >
+                    {{ block.smallDescription }}
+                </div>
+                <div
+                    v-if="!original && showFieldHandles"
+                    class="code small light copytextbtn"
+                    title="Copy to clipboard"
+                    role="button"
+                    @click="copyValue"
+                >
+                    <input
+                        type="text"
+                        :value="fullName"
+                        readonly=""
+                        :size="fullName.length"
+                    >
+                    <span
+                        data-icon="clipboard"
+                        aria-hidden="true"
+                    />
                 </div>
             </div>
-            <span class="info" v-if="original && block.longDescription">{{ block.longDescription }}</span>
+            <span
+                v-if="original && block.longDescription"
+                class="info"
+            >{{ block.longDescription }}</span>
             <div class="actions">
-                <a v-if="!original" :class="{settings: true, icon: true, active: blockOptionId == block.index, error: hasErrors}" @click.prevent="setShowOptionsModal({show:true, block: block})"></a>
-                <a v-if="!original" class="delete icon" @click.prevent="$emit('remove', block)"></a>
+                <a
+                    v-if="!original"
+                    :class="{settings: true, icon: true, active: blockOptionId == block.index, error: hasErrors}"
+                    @click.prevent="setShowOptionsModal({show:true, block: block})"
+                />
+                <a
+                    v-if="!original"
+                    class="delete icon"
+                    @click.prevent="$emit('remove', block)"
+                />
             </div>
         </div>
     </div>
@@ -22,6 +59,14 @@
 import { mapMutations, mapState } from 'vuex';
 
 export default {
+    props: {
+        block: {
+            type: Object,
+            default: null
+        },
+        original: Boolean
+    },
+    emits: ['remove'],
     computed: {
         fullName: function () {
             return this.block.provider + '-' + this.block.handle
@@ -30,10 +75,6 @@ export default {
             return Object.keys(this.block.errors).length > 0;
         },
         ...mapState(['blocks', 'blockOptionId', 'showFieldHandles'])
-    },
-    props: {
-        block: Object,
-        original: Boolean
     },
     mounted () {
         Craft.initUiElements(this.$el);
@@ -47,8 +88,7 @@ export default {
             input.setSelectionRange(0, 0);
         },
         ...mapMutations(['updateBlock', 'setShowOptionsModal']),
-    },
-    emits: ['remove']
+    }
 };
 </script>
 
@@ -118,6 +158,9 @@ export default {
         padding: 0 2px;
         cursor: pointer;
         font-size: 16px;
+    }
+    .icon::before {
+        margin-top: -2px;
     }
 }
 </style>

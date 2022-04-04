@@ -130,7 +130,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function hasErrors($attribute = null)
+    public function hasErrors($attribute = null): bool
     {
         if ($attribute !== null) {
             return parent::hasErrors($attribute);
@@ -393,7 +393,7 @@ abstract class Field extends DisplayItem implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['availableDisplayers', 'name', 'handle', 'displayName', 'displayerHandle', 'options']);
     }

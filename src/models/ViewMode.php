@@ -167,7 +167,7 @@ class ViewMode extends Model implements ViewModeInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['displays', 'hasErrors']);
     }

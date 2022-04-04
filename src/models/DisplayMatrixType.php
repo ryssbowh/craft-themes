@@ -69,7 +69,7 @@ class DisplayMatrixType extends Model
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['type']);
     }

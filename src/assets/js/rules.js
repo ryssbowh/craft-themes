@@ -28,11 +28,11 @@ Craft.Themes.RulesTable = Craft.EditableTable.extend({
     },
 
     onAddRow: function (tr) {
-        let enabled = tr.find('td.enabled .lightswitch');
-        this.disableRow(tr, enabled.hasClass('on'));
+        let lightswitch = tr.find('td.enabled .lightswitch');
+        this.disableRow(tr, lightswitch.hasClass('on'));
         let _this = this;
-        enabled.change(function () {
-            _this.disableRow(tr, enabled.hasClass('on'));
+        lightswitch.change(function () {
+            _this.disableRow(tr, lightswitch.hasClass('on'));
         });
     }
 });

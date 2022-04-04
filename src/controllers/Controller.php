@@ -59,7 +59,7 @@ class Controller extends CraftController
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->registry = Themes::$plugin->registry;

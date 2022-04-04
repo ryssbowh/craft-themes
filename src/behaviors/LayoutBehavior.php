@@ -5,7 +5,6 @@ use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\services\LayoutService;
-use craft\base\Volume;
 use craft\elements\GlobalSet;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;

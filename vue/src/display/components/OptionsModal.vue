@@ -1,20 +1,54 @@
 <template>
-    <div :class="'modal elementselectormodal themes-modal-options displayer-' + displayer.handle" style="display:none" ref="modal">
+    <div
+        ref="modal"
+        :class="'modal elementselectormodal themes-modal-options displayer-' + displayer.handle"
+        style="display:none"
+    >
         <div class="header">
             <h3>{{ t('Edit displayer options') }}</h3>
-            <i class="description" v-if="displayer.description" v-html="displayer.description"></i>
+            <i
+                v-if="displayer.description"
+                class="description"
+            >
+                {{ displayer.description }}
+            </i>
         </div>
         <div class="body">
             <div class="content">
-                <form class="main" @submit.prevent="save">
-                    <component v-for="definition, name in displayer.options.definitions" :name="name" :is="formFieldComponent(definition.field)" :definition="definition" :value="options[name] ?? null" :errors="errors[name] ?? []" @change="updateOption(name, $event)" :key="name"></component>
+                <form
+                    class="main"
+                    @submit.prevent="save"
+                >
+                    <component
+                        :is="formFieldComponent(definition.field)"
+                        v-for="definition, name in displayer.options.definitions"
+                        :key="name"
+                        :name="name"
+                        :definition="definition"
+                        :value="options[name] ?? null"
+                        :errors="errors[name] ?? []"
+                        @change="updateOption(name, $event)"
+                    />
                 </form>
             </div>
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="closeModal" v-if="!displayerHasChanged">{{ t('Close', {}, 'app') }}</button>
-                <button type="button" class="btn submit" @click="save">{{ t('Save', {}, 'app') }}</button>
+                <button
+                    v-if="!displayerHasChanged"
+                    type="button"
+                    class="btn"
+                    @click="closeModal"
+                >
+                    {{ t('Close', {}, 'app') }}
+                </button>
+                <button
+                    type="button"
+                    class="btn submit"
+                    @click="save"
+                >
+                    {{ t('Save', {}, 'app') }}
+                </button>
             </div>
         </div>
     </div>
@@ -24,20 +58,27 @@
 import { merge } from 'lodash';
 
 export default {
-    computed: {
-        
-    },
     props: {
-        displayer: Object,
-        item: Object,
+        displayer: {
+            type: Object,
+            default: null
+        },
+        item: {
+            type: Object,
+            default: null
+        },
         displayerHasChanged: Boolean
     },
+    emits: ['onSave', 'onHide'],
     data() {
         return {
             modal: null,
             options: {},
             errors: {}
         }
+    },
+    computed: {
+        
     },
     created() {
         //we need then to reset the options to the displayer's defaults if it has changed
@@ -94,7 +135,6 @@ export default {
                 this.handleError(err);
             });
         }
-    },
-    emits: ['onSave', 'onHide'],
+    }
 };
 </script>

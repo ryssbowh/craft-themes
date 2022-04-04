@@ -1,5 +1,9 @@
 <template>
-    <div class="modal elementselectormodal modal-layout" style="display:none" ref="modal">
+    <div
+        ref="modal"
+        class="modal elementselectormodal modal-layout"
+        style="display:none"
+    >
         <div class="header">
             <h3>{{ editedLayoutUid ? t('Edit layout') : t('Create layout') }}</h3>
         </div>
@@ -8,23 +12,49 @@
                 <form class="main">
                     <div class="field">
                         <div class="heading">
-                            <label class="required" for="name">{{ t('Name', {}, 'app') }}</label>
+                            <label
+                                class="required"
+                                for="name"
+                            >{{ t('Name', {}, 'app') }}</label>
                         </div>
                         <div class="input ltr">
-                            <input type="text" id="name" :class="{text: true, fullwidth:true, error: nameError}" v-model="name" maxlength="255" required>
+                            <input
+                                id="name"
+                                v-model="name"
+                                type="text"
+                                :class="{text: true, fullwidth:true, error: nameError}"
+                                maxlength="255"
+                                required
+                            >
                         </div>
-                        <ul class="errors" v-if="nameError">
+                        <ul
+                            v-if="nameError"
+                            class="errors"
+                        >
                             <li>{{ nameError }}</li>
                         </ul>
                     </div>
                     <div class="field">
                         <div class="heading">
-                            <label class="required" for="handle">{{ t('Handle', {}, 'app') }}</label>
+                            <label
+                                class="required"
+                                for="handle"
+                            >{{ t('Handle', {}, 'app') }}</label>
                         </div>
                         <div class="input ltr">
-                            <input type="text" id="handle" :class="{text: true, fullwidth:true, error: handleError}" v-model="handle" maxlength="255" required>
+                            <input
+                                id="handle"
+                                v-model="handle"
+                                type="text"
+                                :class="{text: true, fullwidth:true, error: handleError}"
+                                maxlength="255"
+                                required
+                            >
                         </div>
-                        <ul class="errors" v-if="handleError">
+                        <ul
+                            v-if="handleError"
+                            class="errors"
+                        >
                             <li>{{ handleError }}</li>
                         </ul>
                     </div>
@@ -33,8 +63,20 @@
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="closeModal">{{ t('Close', {}, 'app') }}</button>
-                <button type="button" class="btn submit" @click="save">{{ t('Save', {}, 'app') }}</button>
+                <button
+                    type="button"
+                    class="btn"
+                    @click="closeModal"
+                >
+                    {{ t('Close', {}, 'app') }}
+                </button>
+                <button
+                    type="button"
+                    class="btn submit"
+                    @click="save"
+                >
+                    {{ t('Save', {}, 'app') }}
+                </button>
             </div>
         </div>
     </div>
@@ -47,6 +89,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { HandleGenerator } from '../../Helpers';
 
 export default {
+    data() {
+        return {
+            modal: null,
+            name: '',
+            handle: '',
+            nameError: false,
+            handleError: false,
+            handleGenerator: null
+        }
+    },
     computed: {
         editedLayout: function () {
             for (let i in this.layouts) {
@@ -63,16 +115,6 @@ export default {
             return this.handleError || this.nameError;
         },
         ...mapState(['layouts', 'showLayoutModal', 'editedLayoutUid', 'theme'])
-    },
-    data() {
-        return {
-            modal: null,
-            name: '',
-            handle: '',
-            nameError: false,
-            handleError: false,
-            handleGenerator: null
-        }
     },
     watch: {
         showLayoutModal: function () {

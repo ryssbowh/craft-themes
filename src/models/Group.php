@@ -123,7 +123,7 @@ class Group extends DisplayItem implements GroupInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['displays']);
     }

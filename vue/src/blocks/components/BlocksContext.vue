@@ -1,9 +1,28 @@
 <template>
     <div class="btngroup">
-        <button v-if="theme" type="button" class="btn menubtn" data-icon="brush">{{ themes[theme].name }}</button>
-        <div v-if="theme" class="menu">
+        <button
+            v-if="theme"
+            type="button"
+            class="btn menubtn"
+            data-icon="brush"
+        >
+            {{ themes[theme].name }}
+        </button>
+        <div
+            v-if="theme"
+            class="menu"
+        >
             <ul class="padded">
-                <li v-for="theme2 in themes" v-bind:key="theme2.handle"><a :class="{sel: theme == theme2.handle}" href="#" @click.prevent="checkAndSetTheme(theme2.handle)">{{ theme2.name }}</a></li>
+                <li
+                    v-for="theme2 in themes"
+                    :key="theme2.handle"
+                >
+                    <a
+                        :class="{sel: theme == theme2.handle}"
+                        href="#"
+                        @click.prevent="checkAndSetTheme(theme2.handle)"
+                    >{{ theme2.name }}</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -13,17 +32,38 @@
 import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
+    props: {
+        initialTheme: {
+            type: String,
+            default: null
+        },
+        initialLayout: {
+            type: Number,
+            default: null
+        },
+        themes: {
+            type: Object,
+            default: null
+        },
+        availableLayouts: {
+            type: Object,
+            default: null
+        },
+        allLayouts: {
+            type: Object,
+            default: null
+        },
+        allStrategies: {
+            type: Object,
+            default: null
+        },
+        showFieldHandles: {
+            type: Number,
+            default: null
+        }
+    },
     computed: {
         ...mapState(['layouts', 'layout', 'theme'])
-    },
-    props: {
-        initialTheme: String,
-        initialLayout: Number,
-        themes: Object,
-        availableLayouts: Object,
-        allLayouts: Object,
-        allStrategies: Object,
-        showFieldHandles: Number
     },
     created () {
         this.setShowFieldHandles(this.showFieldHandles);

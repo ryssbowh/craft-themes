@@ -1,7 +1,25 @@
 <template>
-    <div id="action-buttons" class="flex" v-if="layouts.length">
-        <button href="#" class="btn" :disabled="!canSave" @click.prevent="setShowGroupModal({show: true})">{{ t('New group') }}</button>
-        <button href="#" class="btn submit" :disabled="!canSave" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
+    <div
+        v-if="layouts.length"
+        id="action-buttons"
+        class="flex"
+    >
+        <button
+            href="#"
+            class="btn"
+            :disabled="!canSave"
+            @click.prevent="setShowGroupModal({show: true})"
+        >
+            {{ t('New group') }}
+        </button>
+        <button
+            href="#"
+            class="btn submit"
+            :disabled="!canSave"
+            @click.prevent="save"
+        >
+            {{ t('Save', {}, 'app') }}
+        </button>
     </div>
 </template>
 

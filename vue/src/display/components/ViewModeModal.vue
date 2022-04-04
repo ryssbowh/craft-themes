@@ -1,5 +1,9 @@
 <template>
-    <div class="modal elementselectormodal modal-viewmode" style="display:none" ref="modal">
+    <div
+        ref="modal"
+        class="modal elementselectormodal modal-viewmode"
+        style="display:none"
+    >
         <div class="header">
             <h3>{{ editedViewMode ? t('Edit view mode') : t('Add view mode') }}</h3>
         </div>
@@ -8,23 +12,54 @@
                 <form @submit.prevent="save">
                     <div class="field width-100">
                         <div class="heading">
-                            <label class="required" for="name">{{ t('Name', {}, 'app') }}</label>
+                            <label
+                                class="required"
+                                for="name"
+                            >
+                                {{ t('Name', {}, 'app') }}
+                            </label>
                         </div>
                         <div class="input ltr">
-                            <input type="text" id="name" :class="{text: true, fullwidth:true, error: nameError}" v-model="name" maxlength="255" required>
+                            <input 
+                                id="name"
+                                v-model="name"
+                                :class="{text: true, fullwidth:true, error: nameError}"
+                                type="text"
+                                maxlength="255"
+                                required
+                            >
                         </div>
-                        <ul class="errors" v-if="nameError">
+                        <ul
+                            v-if="nameError"
+                            class="errors"
+                        >
                             <li>{{ nameError }}</li>
                         </ul>
                     </div>
                     <div class="field width-100">
                         <div class="heading">
-                            <label class="required" for="handle">{{ t('Handle', {}, 'app') }}</label>
+                            <label
+                                class="required"
+                                for="handle"
+                            >
+                                {{ t('Handle', {}, 'app') }}
+                            </label>
                         </div>
                         <div class="input ltr">
-                            <input type="text" id="handle" :class="{text: true, fullwidth:true, error: handleError}" :disabled="mode == 'edit' && editedViewMode.handle == 'default'" v-model="handle" maxlength="255" required>
+                            <input
+                                id="handle"
+                                v-model="handle"
+                                type="text"
+                                :class="{text: true, fullwidth:true, error: handleError}"
+                                :disabled="mode == 'edit' && editedViewMode.handle == 'default'"
+                                maxlength="255"
+                                required
+                            >
                         </div>
-                        <ul class="errors" v-if="handleError">
+                        <ul
+                            v-if="handleError"
+                            class="errors"
+                        >
                             <li>{{ handleError }}</li>
                         </ul>
                     </div>
@@ -33,8 +68,20 @@
         </div>
         <div class="footer">
             <div class="buttons right">
-                <button type="button" class="btn" @click="closeModal">{{ t('Close', {}, 'app') }}</button>
-                <button type="button" class="btn submit" @click.prevent="save">{{ t('Save', {}, 'app') }}</button>
+                <button 
+                    type="button" 
+                    class="btn"
+                    @click="closeModal"
+                >
+                    {{ t('Close', {}, 'app') }}
+                </button>
+                <button 
+                    type="button"
+                    class="btn submit"
+                    @click.prevent="save"
+                >
+                    {{ t('Save', {}, 'app') }}
+                </button>
             </div>
         </div>
     </div>
@@ -45,19 +92,14 @@ import { mapState, mapActions } from 'vuex';
 import { HandleGenerator } from '../../Helpers';
 
 export default {
-    computed: {
-        mode: function () {
-            return (this.editedViewMode === null ? 'add' : 'edit');
-        },
-        hasError: function () {
-            return this.handleError || this.nameError;
-        },
-        ...mapState(['viewModes', 'layout'])
-    },
     props: {
         showModal: Boolean,
-        editedViewMode: null
+        editedViewMode: {
+            type: Object,
+            default: null
+        }
     },
+    emits: ['closeModal'],
     data() {
         return {
             popup: null,
@@ -67,6 +109,15 @@ export default {
             handleError: '',
             handleGenerator: null
         }
+    },
+    computed: {
+        mode: function () {
+            return (this.editedViewMode === null ? 'add' : 'edit');
+        },
+        hasError: function () {
+            return this.handleError || this.nameError;
+        },
+        ...mapState(['viewModes', 'layout'])
     },
     watch: {
         showModal: function () {
@@ -149,8 +200,7 @@ export default {
             this.closeModal();
         },
         ...mapActions(['addViewMode', 'editViewMode']),
-    },
-    emits: ['closeModal'],
+    }
 };
 </script>
 <style lang="scss" scoped>

@@ -20,7 +20,6 @@ use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\TwigTest;
 use craft\base\PluginInterface;
-use craft\base\Volume;
 use craft\commerce\elements\Variant;
 use craft\commerce\models\ProductType;
 use craft\commerce\services\ProductTypes;
@@ -30,6 +29,7 @@ use craft\helpers\Queue;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
 use craft\models\TagGroup;
+use craft\models\Volume;
 use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields, Users, Elements};
 use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
@@ -70,17 +70,17 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '3.1.0';
+    public string $schemaVersion = '3.1.0';
     
     /**
      * @inheritdoc
      */
-    public $hasCpSettings = true;
+    public bool $hasCpSettings = true;
 
     /**
      * @inheritdoc
      */
-    public $hasCpSection = true;
+    public bool $hasCpSection = true;
 
     /**
      * Plugins related to themes (which define displayers/fields etc)
@@ -93,7 +93,7 @@ class Themes extends \craft\base\Plugin
     /**
      * inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -191,7 +191,7 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
         $user = \Craft::$app->user;
         if ($user->checkPermission('accessPlugin-themes')) {
@@ -326,7 +326,7 @@ class Themes extends \craft\base\Plugin
     protected function registerPluginsEvents()
     {
         \Craft::$app->projectConfig
-            ->onUpdate(Plugins::CONFIG_PLUGINS_KEY . '.themes.edition', function (Event $e) {
+            ->onUpdate(ProjectConfig::PATH_PLUGINS . '.themes.edition', function (Event $e) {
                 PluginsHelper::onThemesEditionChanged($e->oldValue, $e->newValue);
             });
 
@@ -569,8 +569,8 @@ class Themes extends \craft\base\Plugin
         Event::on(Globals::class, Globals::EVENT_AFTER_SAVE_GLOBAL_SET, function (Event $e) {
             Themes::$plugin->layouts->onCraftElementSaved('global', $e->globalSet->uid);
         });
-        Craft::$app->projectConfig->onRemove(Globals::CONFIG_GLOBALSETS_KEY.'.{uid}', function(Event $e) {
-            if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
+        Craft::$app->projectConfig->onRemove(ProjectConfig::PATH_GLOBAL_SETS.'.{uid}', function(Event $e) {
+            if (\Craft::$app->getProjectConfig()->isApplyingExternalChanges) {
                 // If Craft is applying Yaml changes it means we have the fields defined
                 // in config, and don't need to respond to these events as it would create duplicates
                 return;
@@ -644,12 +644,15 @@ class Themes extends \craft\base\Plugin
                 UserPermissions::EVENT_REGISTER_PERMISSIONS,
                 function (Event $event) {
                     $perms = [
-                        'manageThemesRules' => [
-                            'label' => \Craft::t('themes', 'Manage rules')
+                        'heading' => \Craft::t('themes', 'Themes'),
+                        'permissions' => [
+                            'manageThemesRules' => [
+                                'label' => \Craft::t('themes', 'Manage rules')
+                            ]
                         ]
                     ];
                     if ($this->is($this::EDITION_PRO)) {
-                        $perms = array_merge($perms, [
+                        $perms[0]['permissions'] = array_merge($perms[0]['permissions'], [
                             'manageThemesBlocks' => [
                                 'label' => \Craft::t('themes', 'Manage blocks')
                             ],
@@ -661,7 +664,7 @@ class Themes extends \craft\base\Plugin
                             ]
                         ]);
                     }
-                    $event->permissions[\Craft::t('themes', 'Themes')] = $perms;
+                    $event->permissions[] = $perms;
                 }
             );
         }
@@ -678,7 +681,7 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
-    protected function afterUninstall()
+    protected function afterUninstall(): void
     {
         \Craft::$app->getProjectConfig()->remove('themes');
     }

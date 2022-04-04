@@ -99,7 +99,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         if (!$this::$handle) {
@@ -197,7 +197,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function hasErrors($attribute = null)
+    public function hasErrors($attribute = null): bool
     {
         if ($attribute == 'options') {
             return $this->options->hasErrors();
@@ -279,7 +279,7 @@ abstract class Block extends Model implements BlockInterface
     /**
      * @inheritDoc
      */
-    public function fields()
+    public function fields(): array
     {
         return array_merge(parent::fields(), ['name', 'handle', 'options', 'errors', 'smallDescription', 'longDescription', 'canBeCached']);
     }

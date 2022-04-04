@@ -16,7 +16,7 @@ class VariantLayout extends Layout
     /**
      * @inheritDoc
      */
-    protected $fieldLayoutIdAttribute = 'variantFieldLayoutId';
+    protected string $fieldLayoutIdAttribute = 'variantFieldLayoutId';
 
     /**
      * @inheritDoc

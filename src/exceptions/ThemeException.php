@@ -40,4 +40,9 @@ class ThemeException extends \Exception
     {
         return new static("the region's handle '$handle' defined in theme ({$theme->handle}) is invalid, it can only contain alphanumeric characters and hyphens");
     }
+
+    public static function themesNotInstalled()
+    {
+        return new static("The plugin Themes must be installed before installing any theme");
+    }
 }
