@@ -1,5 +1,5 @@
 {% macro truncateChars(text, length, suffix) %}
-    {% spaceless %}
+    {% apply spaceless %}
     {% autoescape false %}
     {% if text and length %}
         {% set text = text|striptags %}
@@ -11,7 +11,7 @@
         {{ stringy.safeTruncate(length, suffix) }}
     {% endif %}
     {% endautoescape %}
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro renderAsset(asset, field, options) %}
