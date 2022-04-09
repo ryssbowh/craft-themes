@@ -102,7 +102,7 @@ class Table extends CraftField
     public static function save(FieldInterface $field): bool
     {
         $fieldsToKeep = [];
-        $children = Themes::$plugin->table->getForTable($table);
+        $children = Themes::$plugin->tables->getForTable($field);
         foreach ($field->fields as $tableField) {
             // $tableField->parent = $field;
             Themes::$plugin->fields->save($tableField);
@@ -185,6 +185,7 @@ class Table extends CraftField
             $order++;
         }
         $this->fields = $newFields;
+        return true;
     }
 
     /**
