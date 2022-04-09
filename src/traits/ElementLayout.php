@@ -60,7 +60,7 @@ trait ElementLayout
             ->where(['dateDeleted' => null])
             ->andWhere(['id' => $id])
             ->one();
-            $this->_fieldLayout = new FieldLayout($result);
+            $this->_fieldLayout = new FieldLayout($result ?? []);
         }
         return $this->_fieldLayout;
     }
