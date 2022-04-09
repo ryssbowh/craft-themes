@@ -140,11 +140,13 @@ class DisplayService extends Service
             'display' => $display
         ]));
 
-        if ($display->type == self::TYPE_FIELD) {
-            $this->fieldsService()->delete($display->item);
-        } else {
-            $this->groupsService()->delete($display->item);
-        }
+        try {
+            if ($display->type == self::TYPE_FIELD) {
+                $this->fieldsService()->delete($display->item);
+            } else {
+                $this->groupsService()->delete($display->item);
+            }
+        } catch (\Throwable $e) {}
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
 

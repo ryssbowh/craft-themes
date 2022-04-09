@@ -1,5 +1,11 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.3 - 2022-04-09
+
+### Fixed
+- Fixed an issue with table fields not saving properly
+- Fixed an error when deleting a non existing display item
+
 ## 3.1.2 - 2022-03-28
 
 ### Fixed
