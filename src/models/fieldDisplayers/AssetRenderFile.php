@@ -76,7 +76,7 @@ class AssetRenderFile extends FieldDisplayer
         if ($this->field instanceof UserPhoto) {
             return 1;
         }
-        return $this->field->craftField->limit ?: null;
+        return $this->field->craftField->minRelations;
     }
 
     /**

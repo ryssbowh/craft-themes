@@ -42,7 +42,7 @@ class ElementLinks extends FieldDisplayer
      */
     public function getLimit(): ?int
     {
-        return $this->field->craftField->limit ?: null;
+        return $this->field->craftField->minRelations;
     }
 
     /**
