@@ -50,7 +50,7 @@ trait Ecommerce
             Themes::$plugin->layouts->onCraftElementSaved('product', $e->productType->uid);
         });
         \Craft::$app->projectConfig->onRemove(ProductTypes::CONFIG_PRODUCTTYPES_KEY.'.{uid}', function(Event $e) {
-            if (\Craft::$app->getProjectConfig()->isApplyingYamlChanges) {
+            if (\Craft::$app->getProjectConfig()->isApplyingExternalChanges) {
                 // If Craft is applying Yaml changes it means we have the fields defined
                 // in config, and don't need to respond to these events as it would create duplicates
                 return;
