@@ -2,12 +2,11 @@ columnSuffix: null
 contentColumnType: string(255)
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: urlField
-instructions: ''
+instructions: null
 name: Url
 searchable: false
 settings:
-  maxLength: '255'
-  placeholder: ''
+  maxLength: 255
   types:
     - url
 translationKeyFormat: null

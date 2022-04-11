@@ -11,6 +11,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: f9654b14-d897-40b3-9762-6fa4af161646
             warning: null
             width: 100
           -
@@ -20,26 +21,27 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: bedc8816-bcc8-4698-8a20-b6d9a8e5d9de
             warning: null
             width: 100
         name: Content
-        sortOrder: 1
+        uid: 2b1ae83c-9797-40f3-85de-904272b82d33
 fields:
   c529b2aa-09d4-4732-b24e-e05701b533ca: # Text
     columnSuffix: null
     contentColumnType: text
     fieldGroup: null
     handle: text
-    instructions: ''
+    instructions: null
     name: Text
     searchable: false
     settings:
       byteLimit: null
       charLimit: null
-      code: ''
+      code: false
       columnType: null
-      initialRows: '4'
-      multiline: ''
+      initialRows: 4
+      multiline: false
       placeholder: null
       uiMode: normal
     translationKeyFormat: null
@@ -50,29 +52,32 @@ fields:
     contentColumnType: string
     fieldGroup: null
     handle: assets
-    instructions: ''
+    instructions: null
     name: Assets
     searchable: false
     settings:
       allowSelfRelations: false
+      allowSubfolders: false
       allowUploads: true
       allowedKinds: null
       defaultUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
-      defaultUploadLocationSubpath: ''
-      limit: ''
+      defaultUploadLocationSubpath: null
       localizeRelations: false
+      maxRelations: null
+      minRelations: null
       previewMode: full
-      restrictFiles: ''
-      selectionLabel: ''
+      restrictFiles: false
+      restrictLocation: false
+      restrictedDefaultUploadSubpath: null
+      restrictedLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
+      restrictedLocationSubpath: null
+      selectionLabel: null
       showSiteMenu: true
       showUnpermittedFiles: false
       showUnpermittedVolumes: false
-      singleUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
-      singleUploadLocationSubpath: ''
       source: null
       sources: '*'
       targetSiteId: null
-      useSingleFolder: false
       validateRelatedElements: false
       viewMode: list
     translationKeyFormat: null

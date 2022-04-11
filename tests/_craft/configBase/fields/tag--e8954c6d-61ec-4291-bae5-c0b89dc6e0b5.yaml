@@ -2,18 +2,19 @@ columnSuffix: null
 contentColumnType: string
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: tag
-instructions: ''
+instructions: null
 name: Tag
 searchable: false
 settings:
   allowLimit: false
   allowMultipleSources: false
   allowSelfRelations: false
-  limit: null
   localizeRelations: false
-  selectionLabel: ''
+  maxRelations: null
+  minRelations: null
+  selectionLabel: null
   showSiteMenu: true
-  source: 'taggroup:3bff0462-df76-4382-856c-d1afabc81d3e' # Tag
+  source: 'taggroup:3bff0462-df76-4382-856c-d1afabc81d3e'
   sources: '*'
   targetSiteId: null
   validateRelatedElements: false

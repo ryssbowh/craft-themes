@@ -2,29 +2,32 @@ columnSuffix: null
 contentColumnType: string
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: assets
-instructions: ''
+instructions: null
 name: Assets
 searchable: false
 settings:
   allowSelfRelations: false
+  allowSubfolders: false
   allowUploads: true
   allowedKinds: null
   defaultUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
-  defaultUploadLocationSubpath: ''
-  limit: ''
+  defaultUploadLocationSubpath: null
   localizeRelations: false
+  maxRelations: null
+  minRelations: null
   previewMode: full
-  restrictFiles: ''
-  selectionLabel: ''
+  restrictFiles: false
+  restrictLocation: false
+  restrictedDefaultUploadSubpath: null
+  restrictedLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
+  restrictedLocationSubpath: null
+  selectionLabel: null
   showSiteMenu: true
   showUnpermittedFiles: false
   showUnpermittedVolumes: false
-  singleUploadLocationSource: 'volume:c935455f-deec-494d-804a-1653b824f9af' # Public
-  singleUploadLocationSubpath: ''
   source: null
   sources: '*'
   targetSiteId: null
-  useSingleFolder: false
   validateRelatedElements: false
   viewMode: list
 translationKeyFormat: null

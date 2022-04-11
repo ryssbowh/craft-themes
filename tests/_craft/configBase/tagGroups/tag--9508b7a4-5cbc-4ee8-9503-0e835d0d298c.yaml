@@ -1,5 +1,5 @@
 fieldLayouts:
-  f7a77773-3bad-4b7b-89ab-9f5e032330a4:
+  88259379-1fd2-4421-8354-13776244b584:
     tabs:
       -
         elements:
@@ -24,17 +24,10 @@ fieldLayouts:
             tip: null
             title: null
             type: craft\fieldlayoutelements\TitleField
+            uid: fdbd3539-09c4-4abf-aa02-d29ba21cabdd
             warning: null
             width: 100
         name: Content
-        sortOrder: 1
-handle: category
-name: Category
-siteSettings:
-  add58190-e8f2-483f-8f55-6be4dc9e80e7:
-    hasUrls: true
-    template: null
-    uriFormat: 'category/{slug}'
-structure:
-  maxLevels: null
-  uid: 076ae321-2923-4ae8-99a8-ec56576ce636
+        uid: 0df28199-4c9f-41e9-b9f6-67bd24d0f4d6
+handle: tag
+name: tag

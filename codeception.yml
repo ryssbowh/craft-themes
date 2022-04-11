@@ -16,7 +16,7 @@ modules:
       entryUrl: 'https://your-site-url.test/index.php'
       projectConfig: {
         folder: tests/_craft/configBase,
-        reset: true
+        reset: false
       }
       migrations: []
       cleanup: true

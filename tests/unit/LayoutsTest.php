@@ -6,6 +6,7 @@ use Ryssbowh\CraftThemesTests\fixtures\ThemesFixture;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\exceptions\LayoutException;
 use Ryssbowh\CraftThemes\exceptions\ThemeException;
+use Ryssbowh\CraftThemes\helpers\PluginsHelper;
 use Ryssbowh\CraftThemes\interfaces\LayoutInterface;
 use Ryssbowh\CraftThemes\models\layouts\CategoryLayout;
 use Ryssbowh\CraftThemes\models\layouts\CustomLayout;
@@ -107,6 +108,7 @@ class LayoutsTest extends Unit
 
     public function testUninstallTheme()
     {
+        PluginsHelper::$readFromYaml = false;
         Craft::$app->plugins->uninstallPlugin('child-theme');
         $this->assertCount(11, $this->layouts->all);
         $this->assertCount(0, $this->layouts->getForTheme('child-theme'));
@@ -115,6 +117,7 @@ class LayoutsTest extends Unit
 
     public function testUninstallPartialTheme()
     {
+        PluginsHelper::$readFromYaml = false;
         Craft::$app->plugins->uninstallPlugin('partial-theme');
         $this->assertCount(0, $this->layouts->all);
     }
@@ -242,8 +245,8 @@ class LayoutsTest extends Unit
             $siteSettings = new ProductTypeSite();
             $siteSettings->siteId = $site->id;
             $siteSettings->hasUrls = false;
-            $siteSettings->uriFormat = null;
-            $siteSettings->template = null;
+            $siteSettings->uriFormat = '';
+            $siteSettings->template = '';
             $allSiteSettings[$site->id] = $siteSettings;
         }
         $productType->setSiteSettings($allSiteSettings);

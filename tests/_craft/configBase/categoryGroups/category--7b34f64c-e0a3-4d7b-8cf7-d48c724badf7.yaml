@@ -1,5 +1,6 @@
+defaultPlacement: end
 fieldLayouts:
-  090f683c-6b2a-439d-b701-ba6a5a38ce16:
+  8ef151be-9ccd-42f5-8128-56bdb9f42485:
     tabs:
       -
         elements:
@@ -24,16 +25,18 @@ fieldLayouts:
             tip: null
             title: null
             type: craft\fieldlayoutelements\TitleField
-            uid: 740060c5-f24d-432e-85ba-47ef456bbb1c
+            uid: ffc58da8-9a16-4357-a5e0-ed2d4774801e
             warning: null
             width: 100
         name: Content
-        uid: 7d12912f-bc58-46bf-9fc3-0654fd3d71bd
-fs: public
-handle: public
-name: Public
-sortOrder: 4
-titleTranslationKeyFormat: null
-titleTranslationMethod: site
-transformFs: null
-transformSubpath: ''
+        uid: 2c640bdf-de7e-4440-88e4-4deaad94a17b
+handle: category
+name: Category
+siteSettings:
+  add58190-e8f2-483f-8f55-6be4dc9e80e7: # Craft40
+    hasUrls: true
+    template: null
+    uriFormat: 'test/{slug}'
+structure:
+  maxLevels: null
+  uid: 9e9df0e6-65cb-4698-ae89-6bbb6ed156e9

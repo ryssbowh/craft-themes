@@ -2,13 +2,13 @@ columnSuffix: null
 contentColumnType: string
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: matrix
-instructions: ''
+instructions: null
 name: Matrix
 searchable: false
 settings:
   contentTable: '{{%matrixcontent_matrix}}'
-  maxBlocks: ''
-  minBlocks: ''
+  maxBlocks: null
+  minBlocks: null
   propagationKeyFormat: null
   propagationMethod: all
 translationKeyFormat: null

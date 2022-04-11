@@ -2,8 +2,8 @@ descriptionFormat: ''
 handle: clothing
 hasDimensions: true
 hasProductTitleField: true
-hasVariantTitleField: true
-hasVariants: false
+hasVariantTitleField: false
+hasVariants: true
 name: Clothing
 productFieldLayouts:
   dd28e172-1907-4db0-9e4e-d1a4c70aa450:
@@ -31,6 +31,7 @@ productFieldLayouts:
             tip: null
             title: null
             type: craft\commerce\fieldlayoutelements\ProductTitleField
+            uid: 9f6d5944-4e10-458a-a7cc-96dd3210fa74
             warning: null
             width: 100
           -
@@ -39,14 +40,46 @@ productFieldLayouts:
             required: false
             tip: null
             type: craft\commerce\fieldlayoutelements\VariantsField
+            uid: 02b29685-cb35-4209-b7d7-adc1a96a2630
             warning: null
         name: Content
-        sortOrder: 1
+        uid: 7e3ecd26-b6d9-4014-a651-0f9cf5a4f07c
 productTitleFormat: ''
 siteSettings:
-  add58190-e8f2-483f-8f55-6be4dc9e80e7: # Craft37
+  add58190-e8f2-483f-8f55-6be4dc9e80e7: # Craft40
     hasUrls: true
-    template: shop/products/_product
+    template: themed_page
     uriFormat: 'shop/products/{slug}'
 skuFormat: ''
-titleFormat: '{product.title}'
+variantFieldLayouts:
+  d3cba14d-b28e-4c19-ac68-12f30c3333aa:
+    tabs:
+      -
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            disabled: false
+            id: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            readonly: false
+            requirable: false
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\commerce\fieldlayoutelements\VariantTitleField
+            uid: 630de8e2-3b46-41a2-811f-c9d59525aa28
+            warning: null
+            width: 100
+        name: Content
+        uid: 4593e0eb-20e1-4229-a03e-d487ef63f9fa
+variantTitleFormat: '{product.title}'

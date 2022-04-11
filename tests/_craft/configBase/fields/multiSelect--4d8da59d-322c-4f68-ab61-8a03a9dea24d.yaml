@@ -2,12 +2,10 @@ columnSuffix: null
 contentColumnType: string
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: multiSelect
-instructions: ''
+instructions: null
 name: 'Multi select'
 searchable: false
 settings:
-  multi: true
-  optgroups: true
   options:
     -
       __assoc__:

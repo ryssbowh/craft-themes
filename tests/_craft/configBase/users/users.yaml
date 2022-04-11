@@ -1,0 +1,6 @@
+allowPublicRegistration: false
+deactivateByDefault: false
+defaultGroup: null
+photoSubpath: null
+photoVolumeUid: null
+requireEmailVerification: true

@@ -1,10 +1,13 @@
 dateModified: 1634885634
 plugins:
   commerce:
+    edition: lite
     enabled: true
+    schemaVersion: 4.0.1
 system:
   edition: pro
   live: true
-  name: Craft
-  schemaVersion: 3.7.33
+  name: Craft40
+  retryDuration: null
+  schemaVersion: 4.0.0.8
   timeZone: Europe/London

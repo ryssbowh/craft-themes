@@ -2,19 +2,20 @@ columnSuffix: null
 contentColumnType: string
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: category
-instructions: ''
+instructions: null
 name: Category
 searchable: false
 settings:
   allowLimit: false
   allowMultipleSources: false
   allowSelfRelations: false
-  branchLimit: ''
-  limit: null
+  branchLimit: null
   localizeRelations: false
-  selectionLabel: ''
+  maxRelations: null
+  minRelations: null
+  selectionLabel: null
   showSiteMenu: true
-  source: 'group:dfc2be57-06f6-4818-8c42-295e7b53f75b' # Category
+  source: 'group:7b34f64c-e0a3-4d7b-8cf7-d48c724badf7' # Category
   sources: '*'
   targetSiteId: null
   validateRelatedElements: false

@@ -1,0 +1,39 @@
+columnSuffix: bewtsfsi
+contentColumnType: text
+fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
+handle: table
+instructions: null
+name: Table
+searchable: false
+settings:
+  addRowLabel: 'Add a row'
+  columnType: text
+  columns:
+    __assoc__:
+      -
+        - col1
+        -
+          __assoc__:
+            -
+              - heading
+              - Thing
+            -
+              - handle
+              - thing
+            -
+              - width
+              - ''
+            -
+              - type
+              - singleline
+  defaults:
+    -
+      __assoc__:
+        -
+          - col1
+          - ''
+  maxRows: null
+  minRows: null
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Table

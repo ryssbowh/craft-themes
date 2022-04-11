@@ -2,7 +2,7 @@ columnSuffix: null
 contentColumnType: time
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: time
-instructions: ''
+instructions: null
 name: Time
 searchable: false
 settings:

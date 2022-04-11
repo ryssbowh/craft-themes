@@ -1,0 +1,49 @@
+description: null
+handle: test
+name: Test
+permissions:
+  - accesscp
+  - accesscpwhensystemisoff
+  - accessplugin-themes
+  - accesssitewhensystemisoff
+  - administrateusers
+  - assignuserpermissions
+  - 'createfoldersinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'deletefilesandfoldersinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'deletepeerentrydrafts:8ee76232-b36a-4dc5-a6e1-5c01bcd00a5d' # Single
+  - 'deletepeerfilesinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - deleteusers
+  - 'editcategories:30799eca-8f5a-4178-bcf7-c5f66dcd0041'
+  - 'editimagesinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'editpeerfilesinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'editpeerimagesinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - editusers
+  - impersonateusers
+  - managethemesblocks
+  - managethemesdisplay
+  - managethemesrules
+  - moderateusers
+  - performupdates
+  - registerusers
+  - 'replacefilesinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'replacepeerfilesinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'restrict-asset-delete:skip-restriction'
+  - 'saveassetinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'utility:asset-indexes'
+  - 'utility:clear-caches'
+  - 'utility:db-backup'
+  - 'utility:deprecation-errors'
+  - 'utility:find-replace'
+  - 'utility:migrations'
+  - 'utility:php-info'
+  - 'utility:queue-manager'
+  - 'utility:system-messages'
+  - 'utility:system-report'
+  - 'utility:updates'
+  - 'viewpeerfilesinvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'viewvolume:50db8737-33fb-4bd9-917b-c638f20e8b4c'
+  - 'viewentries:8ee76232-b36a-4dc5-a6e1-5c01bcd00a5d' # Single
+  - 'saveentries:8ee76232-b36a-4dc5-a6e1-5c01bcd00a5d' # Single
+  - 'viewpeerentrydrafts:8ee76232-b36a-4dc5-a6e1-5c01bcd00a5d' # Single
+  - 'savepeerentrydrafts:8ee76232-b36a-4dc5-a6e1-5c01bcd00a5d' # Single
+  - 'assignusergroup:2d56667b-4ede-4227-8914-2134fe040093' # Test

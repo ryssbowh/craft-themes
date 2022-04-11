@@ -2,7 +2,7 @@ columnSuffix: null
 contentColumnType: integer(10)
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: number
-instructions: ''
+instructions: null
 name: Number
 searchable: false
 settings:
@@ -11,7 +11,7 @@ settings:
   max: null
   min: 0
   prefix: £
-  previewCurrency: ''
+  previewCurrency: null
   previewFormat: decimal
   size: null
   suffix: null

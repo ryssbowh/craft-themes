@@ -1,9 +1,10 @@
+defaultPlacement: end
 enableVersioning: true
 handle: single
 name: Single
 propagationMethod: all
 siteSettings:
-  add58190-e8f2-483f-8f55-6be4dc9e80e7:
+  add58190-e8f2-483f-8f55-6be4dc9e80e7: # Craft40
     enabledByDefault: true
     hasUrls: true
     template: themed_page

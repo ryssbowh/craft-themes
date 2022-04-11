@@ -4,6 +4,16 @@ fieldLayouts:
       -
         elements:
           -
+            fieldUid: 25f5cf5a-c4ea-4ddf-9add-09ff6ca8b553 # Table
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: a4938df7-81fe-4cda-b2d5-80c1f1ed46cf
+            warning: null
+            width: 100
+          -
             autocapitalize: true
             autocomplete: false
             autocorrect: true
@@ -23,7 +33,8 @@ fieldLayouts:
             step: null
             tip: null
             title: null
-            type: craft\fieldlayoutelements\EntryTitleField
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: ab4f1f79-9c23-49e5-9e6e-cc0fff8ffdad
             warning: null
             width: 100
           -
@@ -33,6 +44,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 06925f8f-96c9-45c8-a2eb-9a730ca24a34
             warning: null
             width: 100
           -
@@ -42,6 +54,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 15f4f435-f346-4ebd-8911-69fca482a72e
             warning: null
             width: 100
           -
@@ -51,6 +64,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 12969ac5-feab-4288-b613-f218efaf69c9
             warning: null
             width: 100
           -
@@ -60,6 +74,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 03364ba1-8557-454d-9f41-78bd34c9d28a
             warning: null
             width: 100
           -
@@ -69,6 +84,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: ba45ad7a-6f8d-4046-b796-dd33cb63cf49
             warning: null
             width: 100
           -
@@ -78,6 +94,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: af391366-f862-4302-9262-1e91420d30a4
             warning: null
             width: 100
           -
@@ -87,6 +104,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 459517f5-e227-4485-8332-4d7a632a7113
             warning: null
             width: 100
           -
@@ -96,6 +114,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 3fa98150-d1c5-4779-8675-125fc6592638
             warning: null
             width: 100
           -
@@ -105,6 +124,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 6fd7ebd0-c915-43fa-983a-82953ec42ccf
             warning: null
             width: 100
           -
@@ -114,6 +134,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 5992e131-561b-4db4-8de3-c8805f07f143
             warning: null
             width: 100
           -
@@ -123,6 +144,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: f8129e4a-e660-4e42-b8c6-cf5942705aef
             warning: null
             width: 100
           -
@@ -132,6 +154,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: b0c1af9c-888c-4ce6-be54-0cea5a28578d
             warning: null
             width: 100
           -
@@ -141,6 +164,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: bd526e19-3d81-4df5-bb48-7f7330353435
             warning: null
             width: 100
           -
@@ -150,6 +174,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: f981e28c-9407-4c2a-b71a-9cf666a01985
             warning: null
             width: 100
           -
@@ -159,6 +184,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: f75e4fe8-fb19-4b30-8a29-62939b77a1e8
             warning: null
             width: 100
           -
@@ -168,6 +194,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 538e6c2e-9840-4f01-98c5-17a6a2c93c8b
             warning: null
             width: 100
           -
@@ -177,6 +204,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: abf56951-e837-44bb-b1b6-e6fab34252b2
             warning: null
             width: 100
           -
@@ -186,6 +214,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 2b31859e-61ca-4234-b121-3325cc404a39
             warning: null
             width: 100
           -
@@ -195,6 +224,7 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: eb154794-063a-411b-9620-15e1fb569f73
             warning: null
             width: 100
           -
@@ -204,10 +234,11 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: b3c15837-526c-403f-8f83-f7ccae98ccb7
             warning: null
             width: 100
         name: Content
-        sortOrder: 1
+        uid: 330b8e04-1733-4f0e-a2c7-eabeafded99f
 handle: channel
 hasTitleField: true
 name: Channel

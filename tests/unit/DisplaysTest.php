@@ -32,19 +32,19 @@ class DisplaysTest extends Unit
     }
 
     /**
-     * Single : 25
-     *     - 20 fields
+     * Single : 26
+     *     - 21 fields
      *     - date updated/created/posted
      *     - url
      *     - title
-     * Channel : 27
-     *     - 20 fields
+     * Channel : 28
+     *     - 21 fields
      *     - date updated/created/posted/expiry
      *     - author
      *     - url
      *     - title
-     * Structure : 27
-     *     - 20 fields
+     * Structure : 28
+     *     - 21 fields
      *     - date updated/created/posted/expiry
      *     - author
      *     - url
@@ -56,9 +56,10 @@ class DisplaysTest extends Unit
      *     - photo
      *     - email
      *     - date updated/created/last login
-     * Global : 3
+     * Global : 4
      *     - date updated/created
      *     - asset field
+     *     - category field
      * Category : 4
      *     - title
      *     - date updated/created
@@ -86,19 +87,19 @@ class DisplaysTest extends Unit
      *     - weight
      *     - allowed quantity
      *
-     * Total : 118
+     * Total : 122
      *
-     * 2 non-partial themes 118*2 = 236 displays in total
+     * 2 non-partial themes 122*2 = 244 displays in total
      *
      * There's 8 file displayers defined by the system
-     * There's 47 field displayers defined by the system
+     * There's 48 field displayers defined by the system
      * 
      */
     public function testDisplaysAreInstalled()
     {
         $this->assertCount(8, $this->fileDisplayers->all);
-        $this->assertCount(47, $this->fieldDisplayers->all);
-        $this->assertCount(236, $this->displays->all);
+        $this->assertCount(48, $this->fieldDisplayers->all);
+        $this->assertCount(244, $this->displays->all);
 
         //User layouts
         $layout = $this->layouts->get('child-theme', 'user');
@@ -115,23 +116,23 @@ class DisplaysTest extends Unit
         $section = \Craft::$app->sections->getSectionByHandle('channel');
         $layout = $this->layouts->get('child-theme', 'entry', $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(27, $displays);
+        $this->assertCount(28, $displays);
 
         $section = \Craft::$app->sections->getSectionByHandle('structure');
         $layout = $this->layouts->get('child-theme', 'entry', $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(27, $displays);
+        $this->assertCount(28, $displays);
 
         $section = \Craft::$app->sections->getSectionByHandle('single');
         $layout = $this->layouts->get('child-theme', 'entry', $section->entryTypes[0]->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(25, $displays);
+        $this->assertCount(26, $displays);
 
         //globals layouts
         $global = \Craft::$app->globals->getSetByHandle('global');
         $layout = $this->layouts->get('child-theme', 'global', $global->uid);
         $displays = $layout->getViewMode('default')->displays;
-        $this->assertCount(3, $displays);
+        $this->assertCount(4, $displays);
 
         //Tags layouts
         $group = \Craft::$app->tags->getTagGroupByHandle('tag');

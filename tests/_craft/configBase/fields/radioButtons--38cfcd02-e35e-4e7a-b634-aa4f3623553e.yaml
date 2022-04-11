@@ -2,7 +2,7 @@ columnSuffix: null
 contentColumnType: string
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: radioButtons
-instructions: ''
+instructions: null
 name: 'Radio buttons'
 searchable: false
 settings:

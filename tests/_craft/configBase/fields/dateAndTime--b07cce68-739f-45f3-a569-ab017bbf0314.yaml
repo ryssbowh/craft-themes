@@ -2,13 +2,13 @@ columnSuffix: null
 contentColumnType: datetime
 fieldGroup: 1122b44f-ae71-409e-b766-21e3689c021b # Common
 handle: dateAndTime
-instructions: ''
+instructions: null
 name: 'Date and time'
 searchable: false
 settings:
   max: null
   min: null
-  minuteIncrement: '5'
+  minuteIncrement: 5
   showDate: true
   showTime: true
   showTimeZone: false
