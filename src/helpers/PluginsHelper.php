@@ -19,7 +19,24 @@ use craft\helpers\Queue;
  */
 class PluginsHelper
 {
-    private static $reinstallQueued = false;
+    /**
+     * This is needed to know where we should look for project config, either in yaml or in internal config.
+     * In a test environment, project config is not written to yaml files so we need to force looking into internal one.
+     * @var boolean
+     */
+    public static bool $readFromYaml = true;
+
+    /**
+     * Has a reinstall job been queued
+     * @var boolean
+     */
+    private static bool $reinstallQueued = false;
+
+    /**
+     * Copy of the config plugins.themes.themesInstalled to track it internally
+     * @var array
+     */
+    private static $installed;
 
     /**
      * When themes edition is changed
@@ -33,6 +50,9 @@ class PluginsHelper
             return;
         }
         if ($oldEdition != $newEdition) {
+            if (static::$installed === null) {
+                static::$installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', static::$readFromYaml) ?? [];
+            }
             if ($newEdition == Themes::EDITION_PRO) {
                 //Change the edition on the plugin, it's not done at this point as the plugin service does it after the project config change
                 Themes::$plugin->edition = $newEdition;
@@ -44,8 +64,6 @@ class PluginsHelper
                     static::uninstallTheme($theme);
                 }
             }
-        } else if ($schemaChanged) {
-            static::reinstallLayouts();
         }
     }
 
@@ -56,10 +74,13 @@ class PluginsHelper
      */
     public static function beforeInstall(PluginInterface $plugin)
     {
-        $config = \Craft::$app->projectConfig->get('plugins.' . $plugin->handle, true);
+        $config = \Craft::$app->projectConfig->get('plugins.' . $plugin->handle, static::$readFromYaml);
         if ($config) {
             //Already done in config, we must be applying config changes, abort
             return;
+        }
+        if (static::$installed === null) {
+            static::$installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', static::$readFromYaml) ?? [];
         }
         if ($plugin instanceof ThemeInterface) {
             $extends = $plugin->extends;
@@ -90,10 +111,13 @@ class PluginsHelper
      */
     public static function beforeUninstall(PluginInterface $plugin)
     {
-        $config = \Craft::$app->projectConfig->get('plugins.' . $plugin->handle, true);
+        $config = \Craft::$app->projectConfig->get('plugins.' . $plugin->handle, static::$readFromYaml);
         if (!$config) {
             //Already done in config, we must be applying config changes, abort
             return;
+        }
+        if (static::$installed === null) {
+            static::$installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', static::$readFromYaml) ?? [];
         }
         if ($plugin instanceof ThemeInterface) {
             foreach (Themes::$plugin->registry->getDependencies($plugin) as $theme) {
@@ -185,29 +209,39 @@ class PluginsHelper
         }
     }
 
+    /**
+     * Install a theme's data
+     * 
+     * @param ThemeInterface $theme
+     */
     private static function installTheme(ThemeInterface $theme)
     {
         Themes::$plugin->registry->resetThemes();
-        if (Themes::$plugin->is(Themes::EDITION_PRO) and !Themes::$plugin->registry->isInstalled($theme)) {
+        $isInstalled = in_array($theme->handle, static::$installed);
+        if (Themes::$plugin->is(Themes::EDITION_PRO) and !$isInstalled) {
             Themes::$plugin->layouts->installForTheme($theme);
-            $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
-            $installed[] = $theme->handle;
-            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
             $theme->afterThemeInstall();
+            static::$installed[] = $theme->handle;
+            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', static::$installed, null, false);
         }
     }
 
+    /**
+     * Uninstall a theme's data
+     * 
+     * @param ThemeInterface $theme
+     */
     private static function uninstallTheme(ThemeInterface $theme)
     {
         Themes::$plugin->registry->resetThemes();
-        if (Themes::$plugin->is(Themes::EDITION_PRO) and Themes::$plugin->registry->isInstalled($theme)) {
+        $isInstalled = in_array($theme->handle, static::$installed);
+        if (Themes::$plugin->is(Themes::EDITION_PRO) and $isInstalled) {
             Themes::$plugin->layouts->uninstallForTheme($theme);
-            $installed = \Craft::$app->projectConfig->get('plugins.themes.themesInstalled', true) ?? [];
-            $installed = array_filter($installed, function ($handle) use ($theme) {
-                return $theme->handle != $handle;
-            });
-            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', $installed, null, false);
             $theme->afterThemeUninstall();
+            static::$installed = array_filter(static::$installed, function ($handle) use ($theme) {
+                return $handle != $theme->handle;
+            });
+            \Craft::$app->projectConfig->set('plugins.themes.themesInstalled', static::$installed, null, false);
         }
     }
 }
