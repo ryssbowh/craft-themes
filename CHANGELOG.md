@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.0.0 - 2022-05-10
+
+### Changed
+- Craft 4 support
+
 ## 3.1.2 - 2022-03-28
 
 ### Fixed
