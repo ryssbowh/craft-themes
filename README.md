@@ -1,6 +1,6 @@
-# Craft themes (v3.x)
+# Craft themes (v3.x, v4.x)
 
-This is a theme engine for [Craft CMS](https://craftcms.com/) 3.7, it allows you to create themes that are reusable and extendable.
+This is a theme engine for [Craft CMS](https://craftcms.com/) 3.7 and 4.0, it allows you to create themes that are reusable and extendable.
 
 Themes are regular plugins, as such they can have their own settings, migrations etc, but now have a set of templates and assets that will inherit themselves, allowing for faster frontend development.
 
@@ -39,7 +39,7 @@ Consult the [documentation](https://github.com/ryssbowh/craft-themes/wiki) for f
 
 ## Requirements
 
-Craft 3.7.*  
+Craft 3.7.* (3.x version) or 4.0.* (4.x versions)  
 PHP 7.3 or over  
 PHP Intl extension
 
