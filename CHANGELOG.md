@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.4 - 2022-05-11
+
+### Fixed
+- Store not picking up version
+
 ## 3.1.3 - 2022-04-09
 
 ### Fixed
