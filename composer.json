@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
+        "php": "^7.2.5|^8.0",
         "ext-intl": "*",
         "craftcms/cms": "^3.7",
         "illuminate/support": "^8.0 || ^9.0",
