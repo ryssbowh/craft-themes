@@ -24,6 +24,7 @@ use Ryssbowh\CraftThemes\models\fieldDisplayers\LightswitchLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\LinkFieldDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MatrixSlick;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\MoneyDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\MultiSelectLabel;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\NumberDefault;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\PlainTextPlain;
@@ -81,6 +82,7 @@ class RegisterFieldDisplayerEvent extends Event
             LinkFieldDefault::class,
             MatrixDefault::class,
             MatrixSlick::class,
+            MoneyDefault::class,
             MultiSelectLabel::class,
             NumberDefault::class,
             PlainTextPlain::class,

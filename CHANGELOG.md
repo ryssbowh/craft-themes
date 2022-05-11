@@ -1,5 +1,13 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.0.1 - 2022-05-11
+
+### Changed
+- removed php requirement
+
+### Added
+- Money fields support
+
 ## 4.0.0 - 2022-05-10
 
 ### Changed
