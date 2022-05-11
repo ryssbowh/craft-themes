@@ -15,7 +15,6 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
         "ext-intl": "*",
         "craftcms/cms": "^4.0",
         "mobiledetect/mobiledetectlib": "^2.8",
