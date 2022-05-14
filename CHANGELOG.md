@@ -1,5 +1,15 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.7 - 2022-05-14
+
+### Fixed
+- Fixed issue in migration
+
+## 3.1.6 - 2022-05-14
+
+### Fixed
+- Fixed issue in migration
+
 ## 3.1.5 - 2022-05-14
 
 ### Fixed
