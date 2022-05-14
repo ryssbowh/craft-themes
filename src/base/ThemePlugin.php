@@ -374,7 +374,13 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
      */
     protected function getPreviewImagePath(): ?string
     {
-        return glob($this->basePath . "/preview.{png,svg,jpeg,jpg}", GLOB_BRACE)[0] ?? null;
+        foreach (['png', 'jpg', 'jpeg', 'svg'] as $ext) {
+            $file = $this->basePath . '/preview.' . $ext;
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+        return null;
     }
 
     /**
