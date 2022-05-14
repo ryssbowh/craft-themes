@@ -2,6 +2,7 @@ import './main.scss';
 import Matrix from './components/Matrix.js';
 import Table from './components/Table.js';
 import SuperTable from './components/SuperTable.js';
+import Neo from './components/Neo.js';
 import { merge } from 'lodash';
 
 window.CraftThemes.fieldComponents['matrix'] = {
@@ -30,6 +31,19 @@ window.CraftThemes.fieldComponents['table'] = {
 
 window.CraftThemes.fieldComponents['super-table'] = {
     component : SuperTable,
+    clone: function (field, app) {
+        let newField = merge({}, field);
+        for (let i in field.types) {
+            for (let j in field.types[i].fields) {
+                newField.types[i].fields[j] = app.config.globalProperties.cloneField(field.types[i].fields[j]);
+            }
+        }
+        return newField;
+    }
+}
+
+window.CraftThemes.fieldComponents['neo'] = {
+    component : Neo,
     clone: function (field, app) {
         let newField = merge({}, field);
         for (let i in field.types) {
