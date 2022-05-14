@@ -1,5 +1,15 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.0.2 - 2022-05-14
+
+### Fixed
+- Fixed issue in migration
+
+## 3.1.5 - 2022-05-14
+
+### Fixed
+- Fixed issue in migration
+
 ## 4.0.1 - 2022-05-11
 
 ### Changed
@@ -12,6 +22,17 @@
 
 ### Changed
 - Craft 4 support
+
+## 3.1.4 - 2022-05-11
+
+### Fixed
+- Store not picking up version
+
+## 3.1.3 - 2022-04-09
+
+### Fixed
+- Fixed an issue with table fields not saving properly
+- Fixed an error when deleting a non existing display item
 
 ## 3.1.2 - 2022-03-28
 

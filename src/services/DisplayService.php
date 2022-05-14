@@ -146,8 +146,7 @@ class DisplayService extends Service
             } else {
                 $this->groupsService()->delete($display->item);
             }
-        } catch (\Throwable $e) {
-        }
+        } catch (\Throwable $e) {}
 
         \Craft::$app->getProjectConfig()->remove(self::CONFIG_KEY . '.' . $display->uid);
 

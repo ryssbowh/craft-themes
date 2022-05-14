@@ -3,6 +3,7 @@
 namespace Ryssbowh\CraftThemes\migrations;
 
 use Craft;
+use Ryssbowh\CraftThemes\records\FieldRecord;
 use Ryssbowh\CraftThemes\records\ParentPivotRecord;
 use craft\db\Migration;
 
@@ -32,21 +33,21 @@ class m220303_071106_AddParentTable extends Migration
         $matrixPivots = (new \craft\db\Query())->select('*')->from('themes_pivot_matrix')->all();
         foreach ($matrixPivots as $pivot) {
             $parentPivot = new ParentPivotRecord([
-                'uid' => $pivot->uid,
-                'parent_id' => $pivot->parent_id,
-                'field_id' => $pivot->field_id,
-                'order' => $pivot->order,
-                'dateCreated' => $pivot->dateCreated,
-                'dateUpdated' => $pivot->dateUpdated
+                'uid' => $pivot['uid'],
+                'parent_id' => $pivot['parent_id'],
+                'field_id' => $pivot['field_id'],
+                'order' => $pivot['order'],
+                'dateCreated' => $pivot['dateCreated'],
+                'dateUpdated' => $pivot['dateUpdated']
             ]);
             $parentPivot->save(false);
         }
 
         //Change all 'matrix-field' types into 'field'
-        $matrixFields = (new \craft\db\Query())->select('*')->from('themes_fields')->where(['type' => 'matrix-field'])->all();
-        foreach ($matrixFields as $field) {
-            $field->type = 'field';
-            $field->save(false);
+        $lines = FieldRecord::find()->where(['type' => 'matrix-field'])->all();
+        foreach ($lines as $line) {
+            $line->type = 'field';
+            $line->save(false);
         }
 
         $this->dropForeignKey('themes_pivot_matrix_field', '{{%themes_pivot_matrix}}');

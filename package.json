@@ -54,7 +54,5 @@
     "last 2 versions",
     "not dead"
   ],
-  "dependencies": {
-    "remove": "^0.1.5"
-  }
+  "dependencies": {}
 }
