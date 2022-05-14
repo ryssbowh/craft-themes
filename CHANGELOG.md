@@ -1,5 +1,17 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.0.5 - 2022-05-14
+
+### Fixed
+- Removed GLOB_BRACE which doesn't exist on some OS
+- Added missing exception
+
+## 3.1.8 - 2022-05-14
+
+### Fixed
+- Removed GLOB_BRACE which doesn't exist on some OS
+- Added missing exception
+
 ## 4.0.4 - 2022-05-14
 
 ### Fixed
