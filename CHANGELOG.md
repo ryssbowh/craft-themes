@@ -1,9 +1,16 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.0.7 - 2022-05-15
+
+### Changed
+- Removed ecommerce product cp hook
+
 ## 4.0.6 - 2022-05-15
 
-### Fixed
+### Changed
 - Removed elements shortcuts as hooks not defined in Craft 4 anymore
+
+### Fixed
 - Fixed permissions issue
 
 ## 3.1.9 - 2022-05-15
