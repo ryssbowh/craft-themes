@@ -17,11 +17,14 @@
                             </button>
                             <div class="menu">
                                 <ul class="padded" role="listbox" aria-hidden="true">
-                                    <li>
-                                        {% for viewMode in craft.themes.layouts.get(theme, 'product', element.uid).viewModes %}
-                                            <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                    {% set layout = craft.themes.layouts.get(theme, 'product', element.uid) %}
+                                    {% if layout %}
+                                        {% for viewMode in layout.viewModes %}
+                                            <li>
+                                                <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                            </li>
                                         {% endfor %}
-                                    </li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </div>
@@ -31,11 +34,14 @@
                             </button>
                             <div class="menu">
                                 <ul class="padded" role="listbox" aria-hidden="true">
-                                    <li>
-                                        {% for viewMode in craft.themes.layouts.get(theme, 'variant', element.uid).viewModes %}
-                                            <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                    {% set layout = craft.themes.layouts.get(theme, 'variant', element.uid) %}
+                                    {% if layout %}
+                                        {% for viewMode in layout.viewModes %}
+                                            <li>
+                                                <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                            </li>
                                         {% endfor %}
-                                    </li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </div>

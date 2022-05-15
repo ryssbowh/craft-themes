@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.1.9 - 2022-05-15
+
+### Fixed
+- Fixed elements shortcuts twig error
+
 ## 3.1.8 - 2022-05-14
 
 ### Fixed

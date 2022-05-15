@@ -19,11 +19,14 @@
                             </button>
                             <div class="menu">
                                 <ul class="padded" role="listbox" aria-hidden="true">
-                                    <li>
-                                        {% for viewMode in element.getLayout(theme).viewModes %}
-                                            <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                    {% set layout = element.getLayout(theme) %}
+                                    {% if layout %}
+                                        {% for viewMode in layout.viewModes %}
+                                            <li>
+                                                <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                            </li>
                                         {% endfor %}
-                                    </li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </div>
