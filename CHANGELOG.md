@@ -1,5 +1,16 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.0.6 - 2022-05-15
+
+### Fixed
+- Removed elements shortcuts as hooks not defined in Craft 4 anymore
+- Fixed permissions issue
+
+## 3.1.9 - 2022-05-15
+
+### Fixed
+- Fixed elements shortcuts twig error
+
 ## 4.0.5 - 2022-05-14
 
 ### Fixed

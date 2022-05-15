@@ -513,31 +513,6 @@ class Themes extends \craft\base\Plugin
             Craft::$app->view->hook('cp.users.edit.prefs', function (array &$context) {
                 return \Craft::$app->view->renderTemplate('themes/cp/userprefs', ['user' => $context['currentUser']]);
             });
-            Craft::$app->view->hook('cp.entries.edit.details', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['entryType']]);
-            });
-            Craft::$app->view->hook('cp.globals.edit.content', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/editelement', [
-                    'element' => $context['globalSet'],
-                    'hasTopMargin' => true,
-                    'showBlocks' => false
-                ]);
-            });
-            Craft::$app->view->hook('cp.categories.edit.details', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/editelement', ['element' => $context['group']]);
-            });
-            Craft::$app->view->hook('cp.assets.edit.details', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/editelement', [
-                    'element' => $context['volume'],
-                    'showBlocks' => false
-                ]);
-            });
-            Craft::$app->view->hook('cp.users.edit.details', function (array &$context) {
-                return \Craft::$app->view->renderTemplate('themes/cp/editelement', [
-                    'element' => $context['user'],
-                    'showBlocks' => false
-                ]);
-            });
         }
     }
 
@@ -652,7 +627,7 @@ class Themes extends \craft\base\Plugin
                         ]
                     ];
                     if ($this->is($this::EDITION_PRO)) {
-                        $perms[0]['permissions'] = array_merge($perms[0]['permissions'], [
+                        $perms['permissions'] = array_merge($perms['permissions'], [
                             'manageThemesBlocks' => [
                                 'label' => \Craft::t('themes', 'Manage blocks')
                             ],
