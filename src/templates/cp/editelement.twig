@@ -7,32 +7,30 @@
     {% do craft.app.view.registerAssetBundle('Ryssbowh\\CraftThemes\\assets\\ElementsAssets') %}
     <div id="theme-details"{{ hasTopMargin ? 'class="top-margin"' }}>
         {% for theme in craft.themes.registry.nonPartials %}
+            {% set layout = element.getLayout(theme) %}
             <div class="field">
                 <div class="heading">
                     <label>{{ theme.name }}</label>
                 </div>
                 <div class="input ltr flex">
-                    {% if canEditDisplays %}
+                    {% if canEditDisplays and layout %}
                         <div class="btngroup">
                             <button type="button" class="btn menubtn" aria-haspopup="listbox" aria-expanded="false">
                                 <span>{{ 'Edit displays' }}</span>
                             </button>
                             <div class="menu">
                                 <ul class="padded" role="listbox" aria-hidden="true">
-                                    {% set layout = element.getLayout(theme) %}
-                                    {% if layout %}
-                                        {% for viewMode in layout.viewModes %}
-                                            <li>
-                                                <a href="{{ element.getLayout(theme).getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% for viewMode in layout.viewModes %}
+                                        <li>
+                                            <a href="{{ layout.getEditDisplaysUrl(viewMode) }}" role="option" tabindex="-1">{{ viewMode.name }}</a>
+                                        </li>
+                                    {% endfor %}
                                 </ul>
                             </div>
                         </div>
                     {% endif %}
-                    {% if canEditBlocks and showBlocks %}
-                        <a class="btn" href="{{ element.getLayout(theme).getEditBlocksUrl() }}">
+                    {% if canEditBlocks and showBlocks and layout %}
+                        <a class="btn" href="{{ layout.getEditBlocksUrl() }}">
                             <span>{{ 'Edit Blocks'|t('themes') }}</span>
                         </a>
                     {% endif %}
