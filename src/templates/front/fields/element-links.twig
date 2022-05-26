@@ -1,8 +1,8 @@
 {% extends "fields/_field" %}
 
 {% macro element_link(element, options) %}
-    <a href="{{ element.url }}"{% if options.newTab %} target="_blank"{% endif %}{% if options.hasOption('download') and options.download %} download{% endif %}>
-        {{ options.label == 'title' ? element.title : (options.label == 'filename' ? element.filename : options.custom) }}
+    <a href="{{ element.url }}"{% if options.newTab %} target="_blank"{% endif %}>
+        {{ options.label == 'title' ? element.title : options.custom }}
     </a>
 {% endmacro %}
 

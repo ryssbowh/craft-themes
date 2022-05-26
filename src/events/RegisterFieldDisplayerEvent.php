@@ -3,6 +3,7 @@ namespace Ryssbowh\CraftThemes\events;
 
 use Ryssbowh\CraftThemes\exceptions\FieldDisplayerException;
 use Ryssbowh\CraftThemes\interfaces\FieldDisplayerInterface;
+use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetLinks;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRenderFile;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetRendered;
 use Ryssbowh\CraftThemes\models\fieldDisplayers\AssetSlick;
@@ -60,6 +61,7 @@ class RegisterFieldDisplayerEvent extends Event
     {
         parent::init();
         $this->registerMany([
+            AssetLinks::class,
             AssetSlick::class,
             AssetRendered::class,
             AssetRenderFile::class,

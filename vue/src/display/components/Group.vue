@@ -50,7 +50,7 @@
             @change="onDragChange"
             >
             <template #item="{element}">
-                <display-item :display="element" :identation-level="identationLevel + 1" @updateItem="updateItem($event, element.uid)"/>
+                <display-item :display="element" :indentation-level="indentationLevel + 1" @updateItem="updateItem($event, element.uid)"/>
             </template>
         </draggable>
     </div>
@@ -81,7 +81,7 @@ export default {
     },
     props: {
         item: Object,
-        identationLevel: Number,
+        indentationLevel: Number,
         display: {
             type: Object,
             default: function () {

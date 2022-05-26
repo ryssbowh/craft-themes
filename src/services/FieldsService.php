@@ -75,7 +75,9 @@ class FieldsService extends Service
     }
 
     /**
-     * Get the child of a field related to a Craft field
+     * Get the child of a field related to a Craft field.
+     * Warning, if the parent could contain the same Craft field more than once
+     * you may get a wrong result here.
      * 
      * @param  FieldInterface $field
      * @param  Field          $craftField

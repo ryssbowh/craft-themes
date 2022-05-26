@@ -14,6 +14,7 @@ use Ryssbowh\CraftThemes\jobs\InstallThemesDataJob;
 use Ryssbowh\CraftThemes\models\Settings;
 use Ryssbowh\CraftThemes\services\{BlockProvidersService, BlockService, FieldDisplayerService, LayoutService, FieldsService, RulesService, ViewModeService, ViewService, ThemesRegistry, CacheService, DisplayService, GroupService, TablesService, FileDisplayerService, BlockCacheService, GroupsService, ShortcutsService, DisplayerCacheService, EagerLoadingService, CreatorService, ScssService};
 use Ryssbowh\CraftThemes\traits\Ecommerce;
+use Ryssbowh\CraftThemes\traits\Neo;
 use Ryssbowh\CraftThemes\traits\SuperTable;
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
@@ -44,7 +45,7 @@ use yii\base\Event;
  */
 class Themes extends \craft\base\Plugin
 {
-    use Ecommerce, SuperTable;
+    use Ecommerce, SuperTable, Neo;
 
     /**
      * @var string
@@ -70,7 +71,7 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '3.1.0';
+    public $schemaVersion = '3.2.0';
     
     /**
      * @inheritdoc
@@ -118,6 +119,7 @@ class Themes extends \craft\base\Plugin
         $this->registerCpHooks();
         $this->initEcommerce();
         $this->initSuperTable();
+        $this->initNeo();
 
         Event::on(
             View::class, 

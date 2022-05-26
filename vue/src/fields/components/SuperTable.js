@@ -2,7 +2,7 @@ export default {
     props: {
         item: Object,
         display: Object,
-        identationLevel: Number
+        indentationLevel: Number
     },
     computed: {
         fields: function () {
@@ -32,7 +32,7 @@ export default {
     },
     template: `
     <div class="line has-sub-fields bg-grey">
-        <field :item="item" :identation-level="identationLevel" @updateItem="$emit('updateItem', $event)"></field>
+        <field :item="item" :indentation-level="indentationLevel" @updateItem="$emit('updateItem', $event)"></field>
         <draggable
             item-key="id"
             :list="fields"
@@ -41,7 +41,7 @@ export default {
             class="sub-fields"
             >
             <template #item="{element}">
-                <component :is="fieldComponent(element.type)" :item="element" :identation-level="identationLevel + 1" @updateItem="updateItem(element.uid, $event)"/>
+                <component :is="fieldComponent(element.type)" :item="element" :indentation-level="indentationLevel + 1" @updateItem="updateItem(element.uid, $event)"/>
             </template>
         </draggable>
     </div>`

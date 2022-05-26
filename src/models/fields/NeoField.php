@@ -2,24 +2,23 @@
 namespace Ryssbowh\CraftThemes\models\fields;
 
 use Ryssbowh\CraftThemes\Themes;
-use Ryssbowh\CraftThemes\exceptions\DisplayMatrixException;
-use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
-use Ryssbowh\CraftThemes\models\DisplayMatrixType;
-use Ryssbowh\CraftThemes\records\DisplayRecord;
-use Ryssbowh\CraftThemes\records\FieldRecord;
-use Ryssbowh\CraftThemes\records\ParentPivotRecord;
+use Ryssbowh\CraftThemes\models\DisplayNeoType;
 use Ryssbowh\CraftThemes\services\DisplayerCacheService;
+use benf\neo\Field as BaseNeoField;
+use benf\neo\Plugin;
+use benf\neo\elements\Block;
 use craft\base\Field as BaseField;
-use craft\elements\MatrixBlock;
-use craft\fields\Matrix as CraftMatrix;
+use craft\fieldlayoutelements\CustomField;
 use craft\helpers\StringHelper;
 
 /**
- * Handles a Craft matrix field
+ * Handles a Neo field
+ *
+ * @since 3.2.0
  */
-class Matrix extends CraftField
+class NeoField extends CraftField
 {
     private $_types;
 
@@ -67,9 +66,37 @@ class Matrix extends CraftField
     /**
      * @inheritDoc
      */
+    public function getChildFieldName(FieldInterface $field): string
+    {
+        //Search for the block type that contains this field
+        $typeWithField = null;
+        foreach ($this->types as $type) {
+            foreach ($type->fields as $field2) {
+                if ($field->id == $field2->id) {
+                    $typeWithField = $type->type;
+                    break 2;
+                }
+            }
+        }
+        //Search in the block type tabs for a custom name for that field
+        if ($typeWithField) {
+            foreach ($typeWithField->fieldLayout->tabs as $tab) {
+                foreach ($tab->elements as $element) {
+                    if (get_class($element) == CustomField::class and $element->field->id == $field->craftField->id) {
+                        return $element->label ?: $element->field->name;
+                    }
+                }
+            }
+        }
+        return $field->craftField->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getType(): string
     {
-        return 'matrix';
+        return 'neo';
     }
 
     /**
@@ -77,7 +104,7 @@ class Matrix extends CraftField
      */
     public static function forField(): string
     {
-        return CraftMatrix::class;
+        return BaseNeoField::class;
     }
 
     /**
@@ -111,22 +138,24 @@ class Matrix extends CraftField
         $oldTypes = $this->types;
         $newTypes = [];
         $fieldIdsToKeep = [];
-        foreach ($this->craftField->getBlockTypes() as $craftType) {
-            if (isset($oldTypes[$craftType->handle])) {
-                $type = $oldTypes[$craftType->handle];
+        foreach ($this->craftField->getBlockTypes() as $blockType) {
+            if (isset($oldTypes[$blockType->handle])) {
+                $type = $oldTypes[$blockType->handle];
             } else {
-                //Type doesn't exist on the Matrix, creating a new one
-                $type = new DisplayMatrixType([
-                    'type' => $craftType,
+                //Type doesn't exist on the Neo, creating a new one
+                $type = new DisplayNeoType([
+                    'type' => $blockType,
                     'fields' => []
                 ]);
             }
             $fields = [];
-            foreach ($craftType->fields as $craftField) {
-                $oldField = null;
+            $fieldLayout = $blockType->getFieldLayout();
+            foreach ($fieldLayout->fields as $craftField) {
                 try {
                     $oldField = $type->getFieldById($craftField->id);
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) {
+                    $oldField = null;
+                }
                 if (!$oldField) {
                     //New field was added to the block type, creating new field
                     $field = Themes::$plugin->fields->createFromField($craftField);
@@ -150,21 +179,9 @@ class Matrix extends CraftField
                 $fields[] = $field;
             }
             $type->fields = $fields;
-            $newTypes[$craftType->handle] = $type;
+            $newTypes[$blockType->handle] = $type;
         }
         $this->types = $newTypes;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function populateFromData(array $data)
-    {
-        $data = array_intersect_key($data, array_flip($this->safeAttributes()));
-        if ($data['types'] ?? null) {
-            $data['types'] = $this->buildMatrixTypes($data['types']);
-        }
-        $this->setAttributes($data);
     }
 
     /**
@@ -189,12 +206,26 @@ class Matrix extends CraftField
     /**
      * @inheritDoc
      */
+    public function populateFromData(array $data)
+    {
+        $attributes = $this->safeAttributes();
+        $data = array_intersect_key($data, array_flip($attributes));
+        if ($data['types'] ?? null) {
+            $data['types'] = $this->buildNeoTypes($data['types'], $this);
+        }
+        $this->setAttributes($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getChildren(): array
     {
         $children = [];
         foreach ($this->types as $type) {
             foreach ($type->fields as $field) {
                 $children[] = $field;
+                $children = array_merge($children, $field->children);
             }
         }
         return $children;
@@ -206,14 +237,17 @@ class Matrix extends CraftField
     public static function handleChanged(string $uid, array $data)
     {
         parent::handleChanged($uid, $data);
-        $matrix = Themes::$plugin->fields->getRecordByUid($uid);
-        foreach ($data['types'] as $typeData) {
+        $neo = Themes::$plugin->fields->getRecordByUid($uid);
+        foreach ($data['types'] ?? [] as $typeData) {
             $fields = $typeData['fields'] ?? [];
             ProjectConfigHelper::ensureFieldsProcessed($fields);
             foreach ($fields as $order => $fieldUid) {
                 $field = Themes::$plugin->fields->getRecordByUid($fieldUid);
-                $pivot = Themes::$plugin->fields->getParentPivotRecord($matrix->id, $field->id);
+                $pivot = Themes::$plugin->fields->getParentPivotRecord($neo->id, $field->id);
                 $pivot->order = $order;
+                $pivot->data = [
+                    'type_uid' => $typeData['type_uid']
+                ];
                 $pivot->save(false);
             }
         }
@@ -241,17 +275,21 @@ class Matrix extends CraftField
                 throw DisplayException::noCraftField($this);
             }
             $this->_types = [];
-            $children = Themes::$plugin->fields->getChildren($this);
+            $children = Themes::$plugin->fields->getChildrenPivots($this->id);
             foreach ($this->craftField->getBlockTypes() as $type) {
-                $fields = array_filter($children, function ($field) use ($type) {
-                    foreach ($type->fields as $craftField) {
-                        if ($craftField->id == $field->craft_field_id) {
-                            return true;
-                        }
+                $fieldIds = array_map(function ($field) {
+                    return $field->id;
+                }, $type->fields);
+                $pivots = array_filter($children, function ($pivot) use ($type, $fieldIds) {
+                    if (($pivot->decodedData['type_uid'] ?? '') != $type->uid or !in_array($pivot->field->craft_field_id, $fieldIds)) {
+                        return false;
                     }
-                    return false;
+                    return true;
                 });
-                $this->_types[$type->handle] = new DisplayMatrixType([
+                $fields = array_map(function ($pivot) {
+                    return Themes::$plugin->fields->getById($pivot->field_id);
+                }, $pivots);
+                $this->_types[$type->handle] = new DisplayNeoType([
                     'type' => $type,
                     'fields' => array_values($fields)
                 ]);
@@ -263,15 +301,7 @@ class Matrix extends CraftField
     /**
      * @inheritDoc
      */
-    public function setTypes(array $types)
-    {
-        $this->_types = $types;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getVisibleFields(MatrixBlock $block): array
+    public function getVisibleFields(Block $block): array
     {
         if (!isset($this->types[$block->type->handle])) {
             return [];
@@ -355,23 +385,32 @@ class Matrix extends CraftField
     /**
      * @inheritDoc
      */
+    public function setTypes(array $types)
+    {
+        $this->_types = $types;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function fields()
     {
         return array_merge(parent::fields(), ['types']);
     }
 
     /**
-     * Build matrix types from an array of data
+     * Build neo block types from an array of data
      * 
-     * @param  array  $data
+     * @param  array    $data
+     * @param  NeoField $neoField
      * @return array
      */
-    protected function buildMatrixTypes(array $data): array
+    protected static function buildNeoTypes(array $data, NeoField $neoField): array
     {
         $types = [];
         foreach ($data as $typeData) {
             $type_id = $typeData['type_id'] ?? $typeData['type']['id'];
-            $type = \Craft::$app->matrix->getBlockTypeById($type_id);
+            $type = Plugin::$plugin->blockTypes->getById($type_id);
             $fields = [];
             foreach ($typeData['fields'] as $fieldData) {
                 if ($fieldData['id'] ?? null) {
@@ -379,14 +418,14 @@ class Matrix extends CraftField
                     $field->populateFromData($fieldData);
                 } else {
                     $field = Themes::$plugin->fields->create($fieldData);
-                    $field->parent = $this;
+                    $field->parent = $neoField;
                 }
                 if (!isset($fieldData['options']) and $field->displayer) {
                     $field->options = $field->displayer->options->toArray();
                 }
                 $fields[] = $field;
             }
-            $types[$type->handle] = new DisplayMatrixType([
+            $types[$type->handle] = new DisplayNeoType([
                 'type' => $type,
                 'fields' => $fields
             ]);

@@ -9,7 +9,7 @@ export default {
         },
     },
     methods: {
-        updateMatrixItem: function (fieldUid, typeId, data) {
+        updateNeoItem: function (fieldUid, typeId, data) {
             outerLoop:
             for (let i in this.item.types) {
                 let type = this.item.types[i];
@@ -29,7 +29,7 @@ export default {
             }
         },
         sortableGroup: function (type) {
-            return 'matrix-' + type.type_id;
+            return 'neo-' + type.type_id;
         }
     },
     template: `
@@ -48,7 +48,7 @@ export default {
                     handle=".move"
                     >
                     <template #item="{element}">
-                        <component :is="fieldComponent(element.type)" :item="element" :indentation-level="indentationLevel + 1" @updateItem="updateMatrixItem(element.uid, type.type_id, $event)"/>
+                        <component :is="fieldComponent(element.type)" :item="element" :classes="'no-padding'" :indentation-level="indentationLevel + 1" @updateItem="updateNeoItem(element.uid, type.type_id, $event)"/>
                     </template>
                 </draggable>
             </div>

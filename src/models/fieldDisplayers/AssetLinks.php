@@ -3,20 +3,18 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
-use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\ElementLinksOptions;
-use Ryssbowh\CraftThemes\models\fields\ElementUrl;
-use craft\fields\Categories;
-use craft\fields\Entries;
+use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\AssetLinksOptions;
+use craft\fields\Assets;
 
 /**
- * Renders some elements as links
+ * Renders some assets as links
  */
-class ElementLinks extends FieldDisplayer
+class AssetLinks extends FieldDisplayer
 {
     /**
      * @inheritDoc
      */
-    public static $handle = 'element-links';
+    public static $handle = 'asset-links';
 
     /**
      * @inheritDoc
@@ -49,7 +47,7 @@ class ElementLinks extends FieldDisplayer
      */
     public static function getFieldTargets(): array
     {
-        return [Entries::class, Categories::class];
+        return [Assets::class];
     }
 
     /**
@@ -57,6 +55,6 @@ class ElementLinks extends FieldDisplayer
      */
     protected function getOptionsModel(): string
     {
-        return ElementLinksOptions::class;
+        return AssetLinksOptions::class;
     }
 }
