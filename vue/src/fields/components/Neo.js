@@ -2,7 +2,11 @@ export default {
     props: {
         item: Object,
         display: Object,
-        identationLevel: Number
+        indentationLevel: Number,
+        classes: {
+            type: String,
+            default: () => ''
+        },
     },
     methods: {
         updateNeoItem: function (fieldUid, typeId, data) {
@@ -25,14 +29,18 @@ export default {
             }
         },
         sortableGroup: function (type) {
-            return 'matrix-' + type.type_id;
+            return 'neo-' + type.type_id;
         }
     },
     template: `
-        <div class="line has-sub-fields bg-grey">
-            <field :identation-level="identationLevel" :item="item" @updateItem="$emit('updateItem', $event)"></field>
-            <div class="matrix-type sub-fields" v-for="type, index in item.types" v-bind:key="index">
-                <div class="matrix-type-name"><i>{{ t('Type {type}', {type: type.type.name}) }}</i></div>
+        <div :class="classes + ' line has-sub-fields bg-grey'">
+            <field :indentation-level="indentationLevel" :classes="'no-margin'" :item="item" @updateItem="$emit('updateItem', $event)"></field>
+            <div class="sub-fields" v-for="type, index in item.types" v-bind:key="index">
+                <div :class="'line no-margin no-padding flex indented-' + (indentationLevel + 1)">
+                    <div class="block-type-name">
+                        <div class="indented"><i>{{ t('Type {type}', {type: type.type.name}) }}</i></div>
+                    </div>
+                </div>
                 <draggable
                     item-key="id"
                     :list="type.fields"
@@ -40,7 +48,7 @@ export default {
                     handle=".move"
                     >
                     <template #item="{element}">
-                        <component :is="fieldComponent(element.type)" :item="element" :identation-level="identationLevel + 1" @updateItem="updateNeoItem(element.uid, type.type_id, $event)"/>
+                        <component :is="fieldComponent(element.type)" :item="element" :classes="'no-padding'" :indentation-level="indentationLevel + 1" @updateItem="updateNeoItem(element.uid, type.type_id, $event)"/>
                     </template>
                 </draggable>
             </div>

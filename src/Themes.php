@@ -71,7 +71,7 @@ class Themes extends \craft\base\Plugin
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '3.1.0';
+    public $schemaVersion = '3.2.0';
     
     /**
      * @inheritdoc

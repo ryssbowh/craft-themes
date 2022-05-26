@@ -8,11 +8,13 @@ use Ryssbowh\CraftThemes\models\DisplayNeoType;
 use Ryssbowh\CraftThemes\services\DisplayerCacheService;
 use benf\neo\Field as BaseNeoField;
 use benf\neo\Plugin;
+use benf\neo\elements\Block;
 use craft\base\Field as BaseField;
+use craft\fieldlayoutelements\CustomField;
 use craft\helpers\StringHelper;
 
 /**
- * Handles a Super table field
+ * Handles a Neo field
  *
  * @since 3.2.0
  */
@@ -64,6 +66,34 @@ class NeoField extends CraftField
     /**
      * @inheritDoc
      */
+    public function getChildFieldName(FieldInterface $field): string
+    {
+        //Search for the block type that contains this field
+        $typeWithField = null;
+        foreach ($this->types as $type) {
+            foreach ($type->fields as $field2) {
+                if ($field->id == $field2->id) {
+                    $typeWithField = $type->type;
+                    break 2;
+                }
+            }
+        }
+        //Search in the block type tabs for a custom name for that field
+        if ($typeWithField) {
+            foreach ($typeWithField->fieldLayout->tabs as $tab) {
+                foreach ($tab->elements as $element) {
+                    if (get_class($element) == CustomField::class and $element->field->id == $field->craftField->id) {
+                        return $element->label ?: $element->field->name;
+                    }
+                }
+            }
+        }
+        return $field->craftField->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getType(): string
     {
         return 'neo';
@@ -91,10 +121,10 @@ class NeoField extends CraftField
         }
         $with = [$prefix . $this->craftField->handle];
         foreach ($this->getTypes() as $type) {
-            $tablePrefix = $prefix . $this->craftField->handle . '.';
+            $typePrefix = $prefix . $this->craftField->handle . '.' . $type->type->handle . ':';
             foreach ($type->fields as $field) {
                 $dependencies[] = DisplayerCacheService::DISPLAYER_CACHE_TAG . '::' . $field->id;
-                $with = array_merge($with, $field->eagerLoad($tablePrefix, $level + 1));
+                $with = array_merge($with, $field->eagerLoad($typePrefix, $level + 1));
             }
         }
         return $with;
@@ -195,6 +225,7 @@ class NeoField extends CraftField
         foreach ($this->types as $type) {
             foreach ($type->fields as $field) {
                 $children[] = $field;
+                $children = array_merge($children, $field->children);
             }
         }
         return $children;
@@ -206,14 +237,17 @@ class NeoField extends CraftField
     public static function handleChanged(string $uid, array $data)
     {
         parent::handleChanged($uid, $data);
-        $superTable = Themes::$plugin->fields->getRecordByUid($uid);
+        $neo = Themes::$plugin->fields->getRecordByUid($uid);
         foreach ($data['types'] ?? [] as $typeData) {
             $fields = $typeData['fields'] ?? [];
             ProjectConfigHelper::ensureFieldsProcessed($fields);
             foreach ($fields as $order => $fieldUid) {
                 $field = Themes::$plugin->fields->getRecordByUid($fieldUid);
-                $pivot = Themes::$plugin->fields->getParentPivotRecord($superTable->id, $field->id);
+                $pivot = Themes::$plugin->fields->getParentPivotRecord($neo->id, $field->id);
                 $pivot->order = $order;
+                $pivot->data = [
+                    'type_uid' => $typeData['type_uid']
+                ];
                 $pivot->save(false);
             }
         }
@@ -241,16 +275,23 @@ class NeoField extends CraftField
                 throw DisplayException::noCraftField($this);
             }
             $this->_types = [];
+            $children = Themes::$plugin->fields->getChildrenPivots($this->id);
             foreach ($this->craftField->getBlockTypes() as $type) {
-                $fields = [];
-                foreach ($type->fields as $field) {
-                    if ($field = Themes::$plugin->fields->getChild($this, $field)) {
-                        $fields[] = $field;
+                $fieldIds = array_map(function ($field) {
+                    return $field->id;
+                }, $type->fields);
+                $pivots = array_filter($children, function ($pivot) use ($type, $fieldIds) {
+                    if (($pivot->decodedData['type_uid'] ?? '') != $type->uid or !in_array($pivot->field->craft_field_id, $fieldIds)) {
+                        return false;
                     }
-                }
+                    return true;
+                });
+                $fields = array_map(function ($pivot) {
+                    return Themes::$plugin->fields->getById($pivot->field_id);
+                }, $pivots);
                 $this->_types[$type->handle] = new DisplayNeoType([
                     'type' => $type,
-                    'fields' => $fields
+                    'fields' => array_values($fields)
                 ]);
             }
         }
@@ -260,7 +301,7 @@ class NeoField extends CraftField
     /**
      * @inheritDoc
      */
-    public function getVisibleFields(SuperTableBlockElement $block): array
+    public function getVisibleFields(Block $block): array
     {
         if (!isset($this->types[$block->type->handle])) {
             return [];
@@ -360,7 +401,7 @@ class NeoField extends CraftField
     /**
      * Build neo block types from an array of data
      * 
-     * @param  array      $data
+     * @param  array    $data
      * @param  NeoField $neoField
      * @return array
      */
@@ -369,7 +410,7 @@ class NeoField extends CraftField
         $types = [];
         foreach ($data as $typeData) {
             $type_id = $typeData['type_id'] ?? $typeData['type']['id'];
-            $type = Plugin::$plugin->blocks->getBlockById($type_id);
+            $type = Plugin::$plugin->blockTypes->getById($type_id);
             $fields = [];
             foreach ($typeData['fields'] as $fieldData) {
                 if ($fieldData['id'] ?? null) {

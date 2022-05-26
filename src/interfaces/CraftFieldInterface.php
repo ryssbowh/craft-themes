@@ -22,4 +22,12 @@ interface CraftFieldInterface extends FieldInterface
      * @return array
      */
     public static function buildConfig(Field $craftField): array;
+
+    /**
+     * Get the name of a field child of this field. This would only be used for fields that have children (Neo, Matrix etc)
+     * 
+     * @param  FieldInterface $field
+     * @return string
+     */
+    public function getChildFieldName(FieldInterface $field): string;
 }

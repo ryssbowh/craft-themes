@@ -64,10 +64,10 @@ class CraftField extends Field implements CraftFieldInterface
      */
     public function getName(): string
     {
-        if ($this->parent) {
+        if ($parent = $this->parent) {
             //if the field has a parent it's inside a multi-field (matrix, super table etc)
-            //we're good to simply return the name of the field
-            return $this->craftField->name;
+            //we'll ask the parent for its name
+            return $parent->getChildFieldName($this);
         }
         foreach ($this->layout->fieldLayout->tabs as $tab) {
             foreach ($tab->elements as $element) {
@@ -77,6 +77,14 @@ class CraftField extends Field implements CraftFieldInterface
             }
         }
         return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getChildFieldName(FieldInterface $field): string
+    {
+        return $field->craftField->name;
     }
 
     /**

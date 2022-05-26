@@ -1,5 +1,19 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.2.0 - 2022-05-26
+
+### Added
+- [Neo](https://plugins.craftcms.com/neo) fields support
+
+### Fixed
+- Fixed issue where matrix fields would not be ordered correctly
+- Asset render file displayer now the default for UserPhoto fields
+- Matrix slick field displayer now not the default for Matrix fields
+- Fixed npm vulnerabilities
+
+### Changed
+- Assets fields now have their own links displayer
+
 ## 3.1.7 - 2022-05-14
 
 ### Fixed
@@ -44,7 +58,7 @@
 - Layouts can now have parents
 - Allowed 'onLabel' and 'offLabel' on lightswitch Vue component
 - Twig tests `is instanceof` and `is numeric`
-- [Super Table](https://github.com/verbb/super-table) support
+- [Super Table](https://plugins.craftcms.com/super-table) support
 - [Typed link](https://plugins.craftcms.com/typedlinkfield) support
 - Nested multi fields (matrix, super table) support
 - Layout types now registered through event `LayoutService::EVENT_REGISTER_TYPES`
