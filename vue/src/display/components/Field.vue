@@ -1,9 +1,11 @@
 <template>
-    <div :class="classes">
-        <div class="move col"><div class="move icon" v-if="moveable"></div></div>
+    <div :class="containerClasses">
+        <div class="move col"><div class="indented"></div><div class="move icon" v-if="moveable"></div></div>
         <div class="title col">
-            <span class="name">{{ item.name }} <span class="error" data-icon="alert" aria-label="Error" v-if="hasErrors"></span></span>
-            <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="showFieldHandles && fullHandle" @click="copyValue">
+            {{ item.name }}
+        </div>
+        <div v-if="showFieldHandles" class="handle col">
+            <div class="code small light copytextbtn" title="Copy to clipboard" role="button" v-if="fullHandle" @click="copyValue">
                 <input type="text" :value="fullHandle" readonly="" :size="fullHandle.length">
                 <span data-icon="clipboard" aria-hidden="true"></span>
             </div>
@@ -52,13 +54,14 @@ import { mapState } from 'vuex';
 
 export default {
     computed: {
-        classes: function () {
-            let classes = {
-                line: true, 
-                opaque: this.isOpaque,
-            };
-            classes[this.item.type] = true;
-            classes['idented-' + this.identationLevel] = true;
+        containerClasses: function () {
+            let classes = this.classes + ' line indented-' + (this.indentationLevel);
+            if (this.isOpaque) {
+                classes += ' opaque';
+            }
+            if (this.showFieldHandles) {
+                classes += ' with-handles';
+            }
             return classes;
         },
         hasErrors: function () {
@@ -95,7 +98,11 @@ export default {
     },
     props: {
         item: Object,
-        identationLevel: Number,
+        indentationLevel: Number,
+        classes: {
+            type: String,
+            default: () => ''
+        },
         display: {
             type: Object,
             default: () => {}

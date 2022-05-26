@@ -4,9 +4,10 @@
           <div class="spinner"></div>
         </div>
         <div class="fullwidth display-table" v-if="rootDisplays.length">
-            <div class="line head">
+            <div :class="{line: true, head: true, 'with-handles': showFieldHandles}">
                 <div class="handle col"></div>
                 <div class="title col">{{ t('Title', {}, 'app') }}</div>
+                <div class="handle col" v-if="showFieldHandles">{{ t('Handle', {}, 'app') }}</div>
                 <div class="type col">{{ t('Type') }}</div>
                 <div class="label col"><a href="#" @click.prevent="setLabelsVisibility(!this.allLabelsVisible)" :title="allLabelsVisible ? t('Make all hidden') : t('Make all visible')">{{ t('Label', {}, 'app') }}</a></div>
                 <div class="visibility col"><a href="#" @click.prevent="setItemsVisibility(!this.allItemsVisible)" :title="allItemsVisible ? t('Make all hidden') : t('Make all visible')">{{ t('Visibility') }}</a></div>
@@ -23,7 +24,7 @@
                     @change="onDragChange"
                     >
                     <template #item="{element}">
-                        <display-item :display="element" :identation-level="0"/>
+                        <display-item :display="element" :indentation-level="0"/>
                     </template>
                 </draggable>
             </div>
@@ -53,7 +54,7 @@ export default {
             }
             return sortBy(this.viewMode.displays, 'order');
         },
-        ...mapState(['viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes', 'layouts'])
+        ...mapState(['viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes', 'layouts', 'showFieldHandles'])
     },
     watch: {
         viewMode: {
@@ -127,14 +128,23 @@ export default {
 <style lang="scss">
 @import '~craftcms-sass/_mixins';
 
-.content-pane {
-    border-top-left-radius: 0;
-}
 .display-table {
+    .col {
+        &.options {
+            display: flex;
+        }
+        &.move {
+            padding-left: 5px;
+            display:flex;
+        }
+    }
     .head {
         font-weight: bold;
         background: $grey050;
         border-radius: 5px;
+        .col {
+            padding: 7px 8px;
+        }
     }
     .line {
         display: grid;
@@ -142,18 +152,36 @@ export default {
         align-items: center;
         margin: 0 0 7px 0;
         width: 100%;
+        &.flex {
+            display: flex;
+        }
         &.opaque, &.opaque ~ .sub-fields {
             opacity: 0.5;
         }
+        &.bg-grey {
+            background: $grey050;
+        }
+        &.with-handles {
+            grid-template-columns: 5% 14% 13% 14% 16% 16% 16% 6%;
+        }
+        &.has-sub-fields {
+            display: flex;
+            flex-direction: column;
+            border-radius: 5px;
+            padding: 7px 0;
+        }
+        &.no-margin {
+            margin: 0;
+        }
+        &.no-padding {
+            padding: 0;
+        }
     }
-    .line.bg-grey {
-        background: $grey050;
-    }
-    .line.has-sub-fields {
-        display: flex;
-        flex-direction: column;
-        border-radius: 5px;
-        padding: 7px 0;
+    .block-type-name {
+        width: 5%;
+        opacity: 0.7;
+        white-space: nowrap;
+        margin-bottom: 0;
     }
     .sub-fields {
         width: 100%;
@@ -162,20 +190,17 @@ export default {
            margin-bottom: 0;
         }
     }
-    .idented-1 .move.icon {
-       padding-left: 7px;
+    .indented-1 .indented {
+       padding-left: 20%;
     }
-    .idented-2 .move.icon {
-       padding-left: 14px;
+    .indented-2 .indented {
+       padding-left: 40%;
     }
-    .idented-3 .move.icon {
-       padding-left: 21px;
+    .indented-3 .indented {
+       padding-left: 60%;
     }
-    .idented-3 .move.icon {
-       padding-left: 28px;
-    }
-    .head .col {
-        padding: 7px 8px;
+    .indented-3 .indented {
+       padding-left: 80%;
     }
     .body {
         .col:not(.move) {
@@ -184,17 +209,6 @@ export default {
         .col.move, .col.options {
             padding-bottom: 4px;
         }
-    }
-    .col.options {
-        display: flex;
-    }
-    .col.move {
-        padding-left: 5px;
-        display:flex;
-    }
-    .col.title {
-        display: flex;
-        flex-wrap: wrap;
     }
 }
 .themes-displays {

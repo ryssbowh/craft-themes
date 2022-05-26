@@ -1,5 +1,5 @@
 <template>
-    <component :is="type" :display="display" :item="display.item" :identation-level="identationLevel" @updateItem="updateItem({displayUid: display.uid, data: $event})"/>
+    <component :is="type" :display="display" :item="display.item" :indentation-level="indentationLevel" @updateItem="updateItem({displayUid: display.uid, data: $event})"/>
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default {
     },
     props: {
         display: Object,
-        identationLevel: Number
+        indentationLevel: Number
     },
     methods: {
         ...mapMutations(['updateItem'])
