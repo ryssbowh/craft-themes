@@ -6,7 +6,6 @@ use Ryssbowh\CraftThemes\exceptions\DisplayMatrixException;
 use Ryssbowh\CraftThemes\exceptions\FieldException;
 use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\FieldInterface;
-use Ryssbowh\CraftThemes\interfaces\MatrixInterface;
 use Ryssbowh\CraftThemes\models\DisplayMatrixType;
 use Ryssbowh\CraftThemes\records\DisplayRecord;
 use Ryssbowh\CraftThemes\records\FieldRecord;
@@ -20,7 +19,7 @@ use craft\helpers\StringHelper;
 /**
  * Handles a Craft matrix field
  */
-class Matrix extends CraftField implements MatrixInterface
+class Matrix extends CraftField
 {
     private $_types;
 
@@ -242,16 +241,19 @@ class Matrix extends CraftField implements MatrixInterface
                 throw DisplayException::noCraftField($this);
             }
             $this->_types = [];
+            $children = Themes::$plugin->fields->getChildren($this);
             foreach ($this->craftField->getBlockTypes() as $type) {
-                $fields = [];
-                foreach ($type->fields as $field) {
-                    if ($field = Themes::$plugin->fields->getChild($this, $field)) {
-                        $fields[] = $field;
+                $fields = array_filter($children, function ($field) use ($type) {
+                    foreach ($type->fields as $craftField) {
+                        if ($craftField->id == $field->craft_field_id) {
+                            return true;
+                        }
                     }
-                }
+                    return false;
+                });
                 $this->_types[$type->handle] = new DisplayMatrixType([
                     'type' => $type,
-                    'fields' => $fields
+                    'fields' => array_values($fields)
                 ]);
             }
         }
