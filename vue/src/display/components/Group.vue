@@ -113,7 +113,7 @@
             <template #item="{element}">
                 <display-item
                     :display="element"
-                    :identation-level="identationLevel + 1"
+                    :indentation-level="indentationLevel + 1"
                     @updateItem="updateItem($event, element.uid)"
                 />
             </template>
@@ -131,7 +131,7 @@ export default {
             type: Object,
             default: null
         },
-        identationLevel: {
+        indentationLevel: {
             type: Number,
             default: 0
         },

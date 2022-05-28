@@ -10,6 +10,11 @@ class ParentPivotRecord extends ActiveRecord
         return '{{%themes_pivot_parents}}';
     }
 
+    public function getDecodedData()
+    {
+        return json_decode($this->data, true);
+    }
+
     public function getParent()
     {
         return $this->hasOne(FieldRecord::className(), ['id' => 'parent_id']);

@@ -1,0 +1,27 @@
+{% extends "fields/_field" %}
+
+{% macro neoBlock(block, level, field) %}
+    {% if block.level == level %}
+        <div class="neo-block {{ block.type.handle }}">
+            {% for neoField in field.visibleFields(block) %}
+                {{ neoField.render(block[neoField.handle]) }}
+            {% endfor %}
+            {% if block.children %}
+                <div class="neo-block-children">
+                    {% for child in block.children %}
+                        {{ _self.neoBlock(child, level + 1, field)}}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {% for neoBlock in value %}
+        {% do neoBlock.useMemoized(value.all()) %}
+    {% endfor %}
+    {% for neoBlock in value %}
+        {{ _self.neoBlock(neoBlock, 1, field)}}
+    {% endfor %}
+{% endblock %}

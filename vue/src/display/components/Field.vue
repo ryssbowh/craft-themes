@@ -1,6 +1,7 @@
 <template>
-    <div :class="classes">
+    <div :class="containerClasses">
         <div class="move col">
+            <div class="indented"></div>
             <div
                 v-if="moveable"
                 class="move icon"
@@ -13,24 +14,24 @@
                 data-icon="alert"
                 aria-label="Error"
             /></span>
-            <div
-                v-if="showFieldHandles && fullHandle"
-                class="code small light copytextbtn"
-                title="Copy to clipboard"
-                role="button"
-                @click="copyValue"
+        </div>
+        <div
+            v-if="showFieldHandles && fullHandle"
+            class="code small light copytextbtn"
+            title="Copy to clipboard"
+            role="button"
+            @click="copyValue"
+        >
+            <input
+                type="text"
+                :value="fullHandle"
+                readonly=""
+                :size="fullHandle.length"
             >
-                <input
-                    type="text"
-                    :value="fullHandle"
-                    readonly=""
-                    :size="fullHandle.length"
-                >
-                <span
-                    data-icon="clipboard"
-                    aria-hidden="true"
-                />
-            </div>
+            <span
+                data-icon="clipboard"
+                aria-hidden="true"
+            />
         </div>
         <div class="type col code">
             {{ item.displayName }}
@@ -140,7 +141,7 @@ export default {
             type: Object,
             default: null
         },
-        identationLevel: {
+        indentationLevel: {
             type: Number,
             default: null
         },
@@ -155,7 +156,11 @@ export default {
         hasLabel: {
             type: Boolean,
             default: true
-        }
+        },
+        classes: {
+            type: String,
+            default: () => ''
+        },
     },
     emits: ['updateItem'],
     data() {
@@ -166,13 +171,14 @@ export default {
         }
     },
     computed: {
-        classes: function () {
-            let classes = {
-                line: true, 
-                opaque: this.isOpaque,
-            };
-            classes[this.item.type] = true;
-            classes['idented-' + this.identationLevel] = true;
+        containerClasses: function () {
+            let classes = this.classes + ' line indented-' + (this.indentationLevel);
+            if (this.isOpaque) {
+                classes += ' opaque';
+            }
+            if (this.showFieldHandles) {
+                classes += ' with-handles';
+            }
             return classes;
         },
         hasErrors: function () {

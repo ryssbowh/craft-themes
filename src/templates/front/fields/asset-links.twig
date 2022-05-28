@@ -1,0 +1,25 @@
+{% extends "fields/_field" %}
+
+{% macro asset_link(asset, options) %}
+    <a href="{{ asset.url }}"{% if options.newTab %} target="_blank"{% endif %}{% if options.download %} download{% endif %}>
+        {{ options.label == 'title' ? asset.title : (options.label == 'filename' ? asset.filename : options.custom) }}
+    </a>
+{% endmacro %}
+
+{% block content %}
+    {% if displayer.limit == 1 %}
+        {% if value.0.url ?? false %}
+            {{ _self.asset_link(value.0, options) }}
+        {% endif %}
+    {% else %}
+        {% for asset in value %}
+            {% if asset.url %}
+                <ul class="element-list">
+                    <li class="element-list-item">
+                        {{ _self.asset_link(asset, options) }}
+                    </li>
+                </ul>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

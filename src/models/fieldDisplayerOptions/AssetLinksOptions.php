@@ -4,7 +4,7 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use craft\fields\Assets;
 
-class ElementLinksOptions extends FieldDisplayerOptions
+class AssetLinksOptions extends FieldDisplayerOptions
 {
     /**
      * @inheritDoc
@@ -15,7 +15,8 @@ class ElementLinksOptions extends FieldDisplayerOptions
             'label' => [
                 'field' => 'select',
                 'options' => [
-                    'title' => \Craft::t('themes', 'Element title'),
+                    'title' => \Craft::t('themes', 'Asset title'),
+                    'filename' => \Craft::t('themes', 'Filename'),
                     'custom' => \Craft::t('themes', 'Custom'),
                 ],
                 'label' => \Craft::t('app', 'Label')
@@ -27,6 +28,10 @@ class ElementLinksOptions extends FieldDisplayerOptions
             'newTab' => [
                 'field' => 'lightswitch',
                 'label' => \Craft::t('themes', 'Open in new tab')
+            ],
+            'download' => [
+                'field' => 'lightswitch',
+                'label' => \Craft::t('themes', 'Download link')
             ]
         ];
     }
@@ -39,7 +44,8 @@ class ElementLinksOptions extends FieldDisplayerOptions
         return [
             'label' => 'title',
             'custom' => '',
-            'newTab' => false
+            'newTab' => false,
+            'download' => false
         ];
     }
 
@@ -55,6 +61,7 @@ class ElementLinksOptions extends FieldDisplayerOptions
             ['custom', 'required', 'when' => function ($model) {
                 return $model->label == 'custom';
             }],
+            ['download', 'boolean', 'trueValue' => true, 'falseValue' => false]
         ];
     }
 }

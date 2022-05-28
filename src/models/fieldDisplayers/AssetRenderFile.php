@@ -36,6 +36,14 @@ class AssetRenderFile extends FieldDisplayer
     /**
      * @inheritDoc
      */
+    public static function isDefault(string $fieldClass): bool
+    {
+        return $fieldClass == UserPhoto::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
         foreach ($this->options->displayers as $kind => $options) {
