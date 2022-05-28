@@ -8,7 +8,9 @@ use craft\base\Model;
 use craft\helpers\StringHelper;
 
 /**
- * Class that handles a block type inside a super table
+ * Class that handles a block type inside a neo field
+ *
+ * @since 3.2.0
  */
 class DisplayNeoType extends Model
 {

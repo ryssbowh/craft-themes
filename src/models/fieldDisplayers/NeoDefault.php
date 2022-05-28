@@ -7,6 +7,8 @@ use benf\neo\Field;
 
 /**
  * Renders a Neo field
+ *
+ * @since 3.2.0
  */
 class NeoDefault extends FieldDisplayer
 {

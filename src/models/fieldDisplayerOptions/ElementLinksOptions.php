@@ -4,6 +4,9 @@ namespace Ryssbowh\CraftThemes\models\fieldDisplayerOptions;
 use Ryssbowh\CraftThemes\models\FieldDisplayerOptions;
 use craft\fields\Assets;
 
+/**
+ * @since 3.2.0
+ */
 class ElementLinksOptions extends FieldDisplayerOptions
 {
     /**
