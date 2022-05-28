@@ -8,6 +8,8 @@ use craft\fields\Assets;
 
 /**
  * Renders some assets as links
+ *
+ * @since 4.1.0
  */
 class AssetLinks extends FieldDisplayer
 {

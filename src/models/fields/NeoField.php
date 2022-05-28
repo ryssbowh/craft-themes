@@ -16,7 +16,7 @@ use craft\helpers\StringHelper;
 /**
  * Handles a Neo field
  *
- * @since 3.2.0
+ * @since 4.1.0
  */
 class NeoField extends CraftField
 {

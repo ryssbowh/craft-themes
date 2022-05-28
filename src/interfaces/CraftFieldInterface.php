@@ -28,6 +28,7 @@ interface CraftFieldInterface extends FieldInterface
      * 
      * @param  FieldInterface $field
      * @return string
+     * @since  4.1.0
      */
     public function getChildFieldName(FieldInterface $field): string;
 }

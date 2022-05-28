@@ -11,7 +11,7 @@ use yii\base\Event;
 /**
  * Integrates with super table plugin
  * 
- * @since 3.2.0
+ * @since 4.1.0
  */
 trait Neo
 {
