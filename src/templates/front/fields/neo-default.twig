@@ -9,7 +9,7 @@
             {% set children = block.children.all() %}
             {% if children %}
                 <div class="neo-block-children">
-                    {% for child in block.children.all() %}
+                    {% for child in children %}
                         {{ _self.neoBlock(child, level + 1, field)}}
                     {% endfor %}
                 </div>
@@ -20,7 +20,7 @@
 
 {% block content %}
     {% for neoBlock in value %}
-        {% do neoBlock.useMemoized(field.craftField) %}
+        {% do neoBlock.useMemoized(value) %}
     {% endfor %}
     {% for neoBlock in value %}
         {{ _self.neoBlock(neoBlock, 1, field)}}
