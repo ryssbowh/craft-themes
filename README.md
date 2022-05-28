@@ -51,7 +51,7 @@ This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.7 and php 7.
 
 - Please consult the [wiki](https://github.com/ryssbowh/craft-themes/wiki)
 - Or the [developers wiki](https://github.com/ryssbowh/craft-themes/wiki/developers)
-- [Class reference](https://ryssbowh.github.io/docs/craft-themes/namespaces/ryssbowh-craftthemes.html) (from 3.0.0 only)
+- [Class reference](https://ryssbowh.github.io/docs/craft-themes3/namespaces/ryssbowh-craftthemes.html) (from 3.0.0 only)
 - 1.x documentation [there](README1.md)
 - 2.x documentation [there](README2.md)
 
