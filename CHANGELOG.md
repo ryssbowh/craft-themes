@@ -1,5 +1,16 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.1.1 - 2022-05-29
+
+### Fixed
+- Fixed overflow on block options modal
+
+## 3.2.1 - 2022-05-29
+
+### Fixed
+- Fixed neo fields eager loading issue
+- Fixed overflow on block options modal
+
 ## 4.1.0 - 2022-05-27
 
 ### Added
