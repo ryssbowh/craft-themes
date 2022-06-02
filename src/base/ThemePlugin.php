@@ -383,7 +383,7 @@ abstract class ThemePlugin extends Plugin implements ThemeInterface
     {
         $pathBundles = [];
         foreach ($this->assetBundles as $path => $bundles) {
-            if (StringHelper::startsWith($path, '/') and StringHelper::endsWith($path, '/')) {
+            if (StringHelper::startsWith($path, '/') and StringHelper::endsWith($path, '/') and $path != '/') {
                 if (preg_match($path, $urlPath)) {
                     $pathBundles = array_merge($pathBundles, $bundles);
                 }

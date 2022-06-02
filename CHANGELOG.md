@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.1.2 - 2022-06-02
+
+### Fixed
+- Fixed issue when registering asset on homepage (/)
+
 ## 4.1.1 - 2022-05-29
 
 ### Fixed
