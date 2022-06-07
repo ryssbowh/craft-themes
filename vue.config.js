@@ -30,6 +30,11 @@ module.exports = {
         output: {
             filename: "js/[name].js"
         },
+        optimization: {
+            concatenateModules: false,
+            providedExports: false,
+            usedExports: false
+        },
         resolve: {
           alias: {
             vue: path.resolve('./node_modules/vue')

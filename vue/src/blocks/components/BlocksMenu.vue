@@ -28,6 +28,19 @@ export default {
         },
         ...mapState(['layout', 'layouts'])
     },
+    watch: {
+        layout: function () {
+            $('#selected-sidebar-item-label').html(this.layout.description);
+        }
+    },
+    created() {
+        this.$nextTick(() => {
+            Craft.cp.addListener($('#sidebar-toggle'), 'click', 'toggleSidebar');
+            if (this.layout) {
+                $('#selected-sidebar-item-label').html(this.layout.description);
+            };
+        });
+    },
     methods: {
         confirmAndChangeLayout: function (id) {
             if (confirm(this.t('You will loose unsaved changes, continue anyway ?'))) {

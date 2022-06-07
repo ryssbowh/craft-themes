@@ -1,7 +1,7 @@
 <template>
     <div :class="containerClasses">
         <div class="move col">
-            <div class="indented"></div>
+            <div class="indented" />
             <div
                 v-if="moveable"
                 class="move icon"

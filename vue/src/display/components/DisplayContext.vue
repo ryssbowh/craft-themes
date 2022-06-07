@@ -63,6 +63,7 @@ export default {
     },
     created () {
         this.setShowFieldHandles(this.showFieldHandles);
+        this.setThemes(this.themes);
         this.setAllLayouts(this.allLayouts);
         this.setTheme(this.initialTheme);
         let layoutExists = (this.currentLayout && this.allLayouts[this.initialTheme].filter((l) => l.id == this.currentLayout).length);
@@ -113,7 +114,7 @@ export default {
             }
             this.setLayout({layoutId: this.layouts[0].id});
         },
-        ...mapMutations(['setTheme', 'setAllLayouts', 'setShowFieldHandles']),
+        ...mapMutations(['setThemes', 'setTheme', 'setAllLayouts', 'setShowFieldHandles']),
         ...mapActions(['setLayout', 'setViewModeByHandle']),
     }
 };

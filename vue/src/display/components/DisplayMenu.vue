@@ -40,6 +40,19 @@ export default {
         },
         ...mapState(['layout', 'layouts', 'theme'])
     },
+    watch: {
+        layout: function () {
+            $('#selected-sidebar-item-label').html(this.layout.description);
+        }
+    },
+    created() {
+        this.$nextTick(() => {
+            Craft.cp.addListener($('#sidebar-toggle'), 'click', 'toggleSidebar');
+            if (this.layout) {
+                $('#selected-sidebar-item-label').html(this.layout.description);
+            };
+        });
+    },
     methods: {
         getChildren(layout) {
             return this.layouts.filter((layout2) => layout2.parent_id == layout.id);

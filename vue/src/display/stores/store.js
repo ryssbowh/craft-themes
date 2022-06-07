@@ -44,6 +44,7 @@ export const createStore = (app) => {
         state () {
             return {
                 theme: null,
+                themes: {},
                 layout: {},
                 layouts: [],
                 allLayouts: {},
@@ -67,6 +68,9 @@ export const createStore = (app) => {
             setTheme (state, value) {
                 state.theme = value;
                 state.layouts = state.allLayouts[value];
+            },
+            setThemes (state, value) {
+                state.themes = value;
             },
             setLayout (state, id) {
                 for (let i in state.layouts) {

@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.1.3 - unreleased
+### Fixed
+- Fixed issue with view modes tabs on displays
+- Fixed issue with Vue sidebars
+
 ## 4.1.2 - 2022-06-02
 
 ### Fixed

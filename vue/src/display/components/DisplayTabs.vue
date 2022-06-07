@@ -1,6 +1,6 @@
 <template>
-    <div class="pane-header">
-        <nav
+    <header class="pane-header">
+        <div
             id="tabs"
             class="pane-tabs"
         >
@@ -15,64 +15,88 @@
                     <span class="icon add" />
                 </a>
             </div>
-            <ul>
-                <li
+            <div
+                role="tablist" 
+                class="scrollable"
+            >
+                <a
                     v-for="mode, index in viewModes"
                     :key="index"
+                    :class="{'sel': viewMode.handle === mode.handle}"
+                    href="#"
+                    role="tab"
+                    :data-viewmode="mode.id"
+                    @click.prevent=""
                 >
-                    <a
-                        :class="{'sel': viewMode.handle === mode.handle}"
-                        href="#"
-                        :data-viewmode="mode.id"
-                        @click.prevent=""
+                    <span
+                        v-if="mode.hasErrors"
+                        class="error"
+                        data-icon="alert"
+                        aria-label="Error"
+                    />
+                    <span v-if="mode.hasErrors">&nbsp;</span>
+                    <span
+                        class="name"
+                        @click.prevent="setViewMode2(mode)"
                     >
-                        <span
-                            v-if="mode.hasErrors"
-                            class="error"
-                            data-icon="alert"
-                            aria-label="Error"
-                        />
-                        <span v-if="mode.hasErrors">&nbsp;</span>
-                        <span @click.prevent="setViewMode2(mode)">{{ mode.name }}</span>
-                        <span
-                            v-if="viewMode.handle === mode.handle"
-                            class="icon edit"
-                            :title="t('Edit view mode')"
-                            @click.prevent="editViewMode(mode)"
-                        />
-                        <span
-                            v-if="mode.handle != 'default' && viewMode.handle === mode.handle"
-                            class="icon delete"
-                            @click.prevent="confirmAndDeleteViewMode(mode)"
-                        />
-                    </a>
-                </li>
-            </ul>
+                        {{ mode.name }}
+                    </span>
+                    <span
+                        v-if="viewMode.handle === mode.handle"
+                        class="icon edit"
+                        :title="t('Edit view mode')"
+                        @click.prevent="editViewMode(mode)"
+                    />
+                    <span
+                        v-if="mode.handle != 'default' && viewMode.handle === mode.handle"
+                        class="icon delete"
+                        @click.prevent="confirmAndDeleteViewMode(mode)"
+                    />
+                </a>
+            </div>
             <button
                 id="overflow-tab-btn"
                 type="button"
-                data-icon="ellipsis"
                 class="btn menubtn hidden"
             />
             <div
                 id="overflow-tab-menu"
                 class="menu"
             >
-                <ul role="listbox" />
+                <ul
+                    role="listbox"
+                    class="padded"
+                >
+                    <li
+                        v-for="mode, index in viewModes"
+                        :key="index"
+                    >
+                        <a 
+                            href="#"
+                            role="option"
+                            :class="{'sel': viewMode.handle === mode.handle}"
+                            @click.prevent="setViewMode2(mode)"
+                        >
+                            {{ mode.name }}
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <view-mode-modal
-                :show-modal="showModal"
-                :editedViewMode="editedViewMode"
-                @closeModal="onCloseModal"
-            />
-        </nav>
-    </div>
+        </div>
+        <view-mode-modal
+            :show-modal="showModal"
+            :editedViewMode="editedViewMode"
+            @closeModal="onCloseModal"
+        />
+    </header>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import ViewModeModal from './ViewModeModal.vue';
 
 export default {
+    components: {ViewModeModal},
     data() {
         return {
             showModal: false,
@@ -110,7 +134,7 @@ export default {
         selectViewMode (id) {
             let viewMode = this.viewModes.filter((v) => v.id == id)[0];
             this.setViewMode({viewMode: viewMode});
-            this.overflowTabBtn.data('menubtn').hideMenu();
+            // this.overflowTabBtn.data('menubtn').hideMenu();
         },
         addViewMode: function () {
             this.editedViewMode = null;
@@ -126,38 +150,18 @@ export default {
             }
         },
         initTabs () {
-            let maxWidth = $(this.$el).find('ul').width();
-            let elems = $(this.$el).find('li a:not(.sel)');
-            let showOverflow = false;
-            let overflowMenu = this.overflowTabBtn.data('menubtn').menu.$container.find('> ul');
-            let newOverflow = [];
-            let selectedLink = $(this.$el).find('li a.sel');
-            $(this.$el).find('li').removeClass('hidden');
-            let width = selectedLink.parent().width();
-            let _this = this;
-            $.each(elems, (i, a) => {
-                let li = $(a).parent();
-                width += li.width();
+            let tabList = $(this.$el).find('[role=tablist]');
+            let maxWidth = tabList.width();
+            this.overflowTabBtn.addClass('hidden');
+            let width = 0;
+            $.each(tabList.find('a'), (i, link) => { 
+                link = $(link);
+                width += link.outerWidth();
                 if (width > maxWidth) {
-                    let newLi = li.clone();
-                    newLi.find('a').click(function (e) {
-                        e.preventDefault();
-                        _this.selectViewMode($(this).data('viewmode'));
-                        _this.$nextTick(() => {
-                            _this.initTabs();
-                        });
-                    });
-                    newOverflow.push(newLi);
-                    li.addClass('hidden');
-                    showOverflow = true;
+                    this.overflowTabBtn.removeClass('hidden');
+                    return;
                 }
             });
-            if (showOverflow) {
-                overflowMenu.html(newOverflow);
-                this.overflowTabBtn.removeClass('hidden');
-            } else {
-                this.overflowTabBtn.addClass('hidden');
-            }
         },
         ...mapActions(['deleteViewMode', 'setViewMode'])
     }
@@ -180,6 +184,10 @@ export default {
     ul {
         overflow: hidden;
         flex: 1;
+    }
+    [role=tablist] {
+        padding-left: 2px;
+        margin-left: 10px;
     }
 }
 .add-viewmode {

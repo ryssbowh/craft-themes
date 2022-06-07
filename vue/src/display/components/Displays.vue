@@ -1,69 +1,75 @@
 <template>
-    <div class="themes-displays">
-        <div
-            v-if="isLoading || isSaving"
-            class="spinner-wrapper"
-        >
-            <div class="spinner" />
-        </div>
-        <div
-            v-if="rootDisplays.length"
-            class="fullwidth display-table"
-        >
-            <div class="line head">
-                <div class="handle col" />
-                <div class="title col">
-                    {{ t('Title', {}, 'app') }}
-                </div>
-                <div class="handle col" v-if="showFieldHandles">
-                    {{ t('Handle', {}, 'app') }}
-                </div>
-                <div class="type col">
-                    {{ t('Type') }}
-                </div>
-                <div class="label col">
-                    <a
-                        href="#"
-                        :title="allLabelsVisible ? t('Make all hidden') : t('Make all visible')"
-                        @click.prevent="setLabelsVisibility(!allLabelsVisible)"
-                    >{{ t('Label', {}, 'app') }}</a>
-                </div>
-                <div class="visibility col">
-                    <a
-                        href="#"
-                        :title="allItemsVisible ? t('Make all hidden') : t('Make all visible')"
-                        @click.prevent="setItemsVisibility(!allItemsVisible)"
-                    >{{ t('Visibility') }}</a>
-                </div>
-                <div class="displayer col">
-                    {{ t('Displayer') }}
-                </div>
-                <div class="options col" />
+    <div>
+        <display-tabs v-if="Object.keys(themes)" />
+        <div class="themes-displays">
+            <div
+                v-if="isLoading || isSaving"
+                class="spinner-wrapper"
+            >
+                <div class="spinner" />
             </div>
-            <div class="body">
-                <draggable
-                    item-key="uid"
-                    :list="rootDisplays"
-                    group="displays"
-                    handle=".move"
-                    swapThreshold="0.65"
-                    @change="onDragChange"
-                >
-                    <template #item="{element}">
-                        <display-item
-                            :display="element"
-                            :indentation-level="0"
-                        />
-                    </template>
-                </draggable>
+            <div
+                v-if="rootDisplays.length"
+                class="fullwidth display-table"
+            >
+                <div class="line head">
+                    <div class="handle col" />
+                    <div class="title col">
+                        {{ t('Title', {}, 'app') }}
+                    </div>
+                    <div
+                        v-if="showFieldHandles"
+                        class="handle col"
+                    >
+                        {{ t('Handle', {}, 'app') }}
+                    </div>
+                    <div class="type col">
+                        {{ t('Type') }}
+                    </div>
+                    <div class="label col">
+                        <a
+                            href="#"
+                            :title="allLabelsVisible ? t('Make all hidden') : t('Make all visible')"
+                            @click.prevent="setLabelsVisibility(!allLabelsVisible)"
+                        >{{ t('Label', {}, 'app') }}</a>
+                    </div>
+                    <div class="visibility col">
+                        <a
+                            href="#"
+                            :title="allItemsVisible ? t('Make all hidden') : t('Make all visible')"
+                            @click.prevent="setItemsVisibility(!allItemsVisible)"
+                        >{{ t('Visibility') }}</a>
+                    </div>
+                    <div class="displayer col">
+                        {{ t('Displayer') }}
+                    </div>
+                    <div class="options col" />
+                </div>
+                <div class="body">
+                    <draggable
+                        item-key="uid"
+                        :list="rootDisplays"
+                        group="displays"
+                        handle=".move"
+                        swapThreshold="0.65"
+                        @change="onDragChange"
+                    >
+                        <template #item="{element}">
+                            <display-item
+                                :display="element"
+                                :indentation-level="0"
+                            />
+                        </template>
+                    </draggable>
+                </div>
             </div>
+            <p v-if="layouts.length > 0 && rootDisplays.length == 0 && !isLoading">
+                {{ t('There are no displays for this view mode') }}
+            </p>
+            <p v-if="layouts.length == 0 && !isLoading">
+                {{ t('No layouts available, you should reinstall the themes data in the settings') }}
+            </p>
         </div>
-        <p v-if="layouts.length > 0 && rootDisplays.length == 0 && !isLoading">
-            {{ t('There are no displays for this view mode') }}
-        </p>
-        <p v-if="layouts.length == 0 && !isLoading">
-            {{ t('No layouts available, you should reinstall the themes data in the settings') }}
-        </p>
         <group-modal @closeModal="setShowGroupModal({show: false})" />
     </div>
 </template>
@@ -71,8 +77,10 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import { sortBy } from 'lodash';
+import DisplayTabs from './DisplayTabs.vue';
 
 export default {
+    components: {DisplayTabs},
     data: function () {
         return {
             allItemsVisible: true,
@@ -89,7 +97,7 @@ export default {
             }
             return sortBy(this.viewMode.displays, 'order');
         },
-        ...mapState(['viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes', 'layouts', 'showFieldHandles'])
+        ...mapState(['themes', 'viewMode', 'isSaving', 'isFetching', 'viewMode', 'showGroupModal', 'viewModes', 'layouts', 'showFieldHandles'])
     },
     watch: {
         viewMode: {
