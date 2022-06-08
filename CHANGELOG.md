@@ -1,9 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
-## 4.1.3 - unreleased
+## 4.1.3 - 2022-06-08
 ### Fixed
 - Fixed issue with view modes tabs
 - Fixed issue with Vue sidebars
+- Reinstated cp shortcuts for categories, entries and assets. [#11224](https://github.com/craftcms/cms/issues/11224)
 
 ## 4.1.2 - 2022-06-02
 

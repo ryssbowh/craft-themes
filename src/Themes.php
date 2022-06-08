@@ -20,12 +20,18 @@ use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\TwigTest;
+use craft\base\Element;
 use craft\base\PluginInterface;
 use craft\commerce\elements\Variant;
 use craft\commerce\models\ProductType;
 use craft\commerce\services\ProductTypes;
+use craft\controllers\ElementsController;
+use craft\elements\Asset;
+use craft\elements\Category;
+use craft\elements\Entry;
 use craft\elements\GlobalSet;
 use craft\elements\User;
+use craft\events\DefineHtmlEvent;
 use craft\helpers\Queue;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
@@ -572,6 +578,21 @@ class Themes extends \craft\base\Plugin
                 ];
                 \Craft::$app->users->saveUserPreferences($user, $preferences);
             }
+        });
+        Event::on(Entry::class, Element::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
+            $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                'element' => $e->sender->type
+            ]);
+        });
+        Event::on(Category::class, Element::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
+            $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                'element' => $e->sender->group
+            ]);
+        });
+        Event::on(Asset::class, Asset::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
+            $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                'element' => $e->sender->volume
+            ]);
         });
     }
 
