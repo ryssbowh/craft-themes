@@ -38,7 +38,7 @@ export default {
             Craft.cp.addListener($('#sidebar-toggle'), 'click', 'toggleSidebar');
             if (this.layout) {
                 $('#selected-sidebar-item-label').html(this.layout.description);
-            };
+            }
         });
     },
     methods: {
