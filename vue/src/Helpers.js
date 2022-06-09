@@ -119,6 +119,7 @@ const SelectInput = Craft.BaseElementSelectInput.extend({
 
   init(args) {
     this.base(args);
+    this.$elementsContainer.html('');
     if (this.initialIds.length) {
       Craft.postActionRequest(this.actionUrl, {theme: this.theme, id: this.initialIds}, (response) => {
         let elements = [];
@@ -168,9 +169,14 @@ const SelectInput = Craft.BaseElementSelectInput.extend({
    * Same method but without the animation
    */
   selectElements2: function(elements) {
+    let ids = [];
     for (let i = 0; i < elements.length; i++) {
-      let elementInfo = elements[i],
-        $element = this.createNewElement(elementInfo);
+      let elementInfo = elements[i];
+      if (ids.includes(elementInfo.id)) {
+        continue;
+      }
+      ids.push(elementInfo.id);
+      let $element = this.createNewElement(elementInfo);
 
       this.appendElement($element);
       this.addElements($element);
@@ -203,7 +209,7 @@ const SelectInput = Craft.BaseElementSelectInput.extend({
 
   getSelectedElementIds: function() {
     var ids = [];
-    for (var i = 0; i < this.$elements.length; i++) {
+    for (var i = 0; i < this.getElements().length; i++) {
       ids.push(this.$elements.eq(i).find('.element').data('id'));
     }
     return ids;
@@ -211,8 +217,8 @@ const SelectInput = Craft.BaseElementSelectInput.extend({
 
   getSelectedElementData: function () {
     let data = [];
-    for (var i = 0; i < this.$elements.length; i++) {
-      let elem = this.$elements.eq(i);
+    for (var i = 0; i < this.getElements().length; i++) {
+      let elem = this.getElements().eq(i);
       data.push({
           id: elem.find('.element').data('id'),
           viewMode: elem.find('select').val()

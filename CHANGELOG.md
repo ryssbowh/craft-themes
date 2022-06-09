@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.1.5 - 2022-06-09
+### Fixed
+- Fixed issue with blocks elements field creating duplicates
+- Fixed issue where Vue's bundle names where the same for production and legacy
+
 ## 4.1.4 - 2022-06-09
 ### Fixed
 - Reinstated cp shortcuts for globals, users and products. [#11224](https://github.com/craftcms/cms/issues/11224)
@@ -11,6 +16,11 @@
 - Reinstated cp shortcuts for categories, entries and assets. [#11224](https://github.com/craftcms/cms/issues/11224)
 
 ## 4.1.2 - 2022-06-02
+
+### Fixed
+- Fixed issue when registering asset on homepage (/)
+
+## 3.2.2 - 2022-06-02
 
 ### Fixed
 - Fixed issue when registering asset on homepage (/)

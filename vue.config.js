@@ -1,11 +1,9 @@
-
 const path = require('path')
 
 module.exports = {
     productionSourceMap: false,
     lintOnSave: process.env.NODE_ENV !== 'production',
     runtimeCompiler: true,
-    filenameHashing: false,
     outputDir: 'vue/dist',
     css: {
         extract: false
@@ -28,7 +26,7 @@ module.exports = {
             vue: "./vue/src/vue.js",
         },
         output: {
-            filename: "js/[name].js"
+            filename: () => (process.env.VUE_CLI_MODERN_MODE && !process.env.VUE_CLI_MODERN_BUILD) ? 'js/[name]-modern.js' : 'js/[name].js'
         },
         optimization: {
             concatenateModules: false,
