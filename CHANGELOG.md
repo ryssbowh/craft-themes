@@ -5,6 +5,10 @@
 - Fixed issue with blocks elements field creating duplicates
 - Fixed issue where Vue's bundle names where the same for production and legacy
 
+## 3.2.3 - 2022-06-09
+### Fixed
+- Fixed issue with blocks elements field creating duplicates
+
 ## 4.1.4 - 2022-06-09
 ### Fixed
 - Reinstated cp shortcuts for globals, users and products. [#11224](https://github.com/craftcms/cms/issues/11224)
