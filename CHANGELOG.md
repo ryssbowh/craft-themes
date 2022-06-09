@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.1.4 - 2022-06-09
+### Fixed
+- Reinstated cp shortcuts for globals, users and products. [#11224](https://github.com/craftcms/cms/issues/11224)
+
 ## 4.1.3 - 2022-06-08
 ### Fixed
 - Fixed issue with view modes tabs

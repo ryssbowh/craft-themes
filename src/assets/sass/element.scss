@@ -4,8 +4,16 @@
     .field {
         flex-direction: column;
         align-items: initial;
+        padding-bottom: 10px !important;
         .input {
             width: 100%;
+        }
+    }
+    &.globals {
+        display: inline-block;
+        .meta {
+            background: $grey050;
+            border-radius: $largeBorderRadius;
         }
     }
 }
