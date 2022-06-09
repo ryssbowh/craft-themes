@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.2.3 - 2022-06-09
+### Fixed
+- Fixed issue with blocks elements field creating duplicates
+
 ## 3.2.2 - 2022-06-02
 
 ### Fixed

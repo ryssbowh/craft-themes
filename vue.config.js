@@ -1,4 +1,3 @@
-
 const path = require('path')
 
 module.exports = {
@@ -28,7 +27,12 @@ module.exports = {
             vue: "./vue/src/vue.js",
         },
         output: {
-            filename: "js/[name].js"
+            filename: () => (process.env.VUE_CLI_MODERN_MODE && !process.env.VUE_CLI_MODERN_BUILD) ? 'js/[name]-modern.js' : 'js/[name].js'
+        },
+        optimization: {
+            concatenateModules: false,
+            providedExports: false,
+            usedExports: false
         },
         resolve: {
           alias: {

@@ -119,6 +119,7 @@ const SelectInput = Craft.BaseElementSelectInput.extend({
 
   init(args) {
     this.base(args);
+    this.$elementsContainer.html('');
     if (this.initialIds.length) {
       Craft.postActionRequest(this.actionUrl, {theme: this.theme, id: this.initialIds}, (response) => {
         let elements = [];
@@ -168,9 +169,14 @@ const SelectInput = Craft.BaseElementSelectInput.extend({
    * Same method but without the animation
    */
   selectElements2: function(elements) {
+    let ids = [];
     for (let i = 0; i < elements.length; i++) {
-      let elementInfo = elements[i],
-        $element = this.createNewElement(elementInfo);
+      let elementInfo = elements[i];
+      if (ids.includes(elementInfo.id)) {
+        continue;
+      }
+      ids.push(elementInfo.id);
+      let $element = this.createNewElement(elementInfo);
 
       this.appendElement($element);
       this.addElements($element);
