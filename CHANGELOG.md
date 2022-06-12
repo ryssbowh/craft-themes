@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.1.7 - 2022-06-12
+### Fixed
+- Fixed `ReinstallLayoutsJob::execute()` typing
+
 ## 4.1.6 - 2022-06-12
 ### Fixed
 - Fixed `ReinstallLayoutsJob::getDescription()` typing

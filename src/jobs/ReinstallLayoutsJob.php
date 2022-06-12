@@ -11,7 +11,7 @@ use craft\queue\BaseJob;
  */
 class ReinstallLayoutsJob extends BaseJob
 {
-    public function execute($queue)
+    public function execute($queue): void
     {
         Themes::$plugin->layouts->installAll();
     }
