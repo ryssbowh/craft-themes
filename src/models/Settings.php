@@ -120,19 +120,8 @@ class Settings extends Model
         return [
             [['showCpShortcuts', 'hideEmptyFields'], 'boolean'],
             [['redirectTo', 'menuItemName'], 'string'],
-            ['folder', 'required'],
-            ['folder', 'validateFolder']
+            ['folder', 'required']
         ];
-    }
-
-    /**
-     * Validate the folder setting
-     */
-    public function validateFolder()
-    {
-        if (!file_exists(\Craft::getAlias('@root/' . $this->folder))) {
-            $this->addError('folder', \Craft::t('themes', 'This folder doesn\'t exist'));
-        }
     }
 
     /**

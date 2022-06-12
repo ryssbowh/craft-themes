@@ -1,5 +1,9 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.2.4 - 2022-06-12
+### Fixed
+- Removed folder validation on settings as it messes with saving rules on a fresh install
+
 ## 3.2.3 - 2022-06-09
 ### Fixed
 - Fixed issue with blocks elements field creating duplicates
