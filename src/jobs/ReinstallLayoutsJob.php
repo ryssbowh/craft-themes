@@ -16,7 +16,7 @@ class ReinstallLayoutsJob extends BaseJob
         Themes::$plugin->layouts->installAll();
     }
 
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return \Craft::t('themes', 'Reinstall themes layouts');
     }

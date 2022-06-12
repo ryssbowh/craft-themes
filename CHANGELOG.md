@@ -1,5 +1,14 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.1.6 - 2022-06-12
+### Fixed
+- Fixed `ReinstallLayoutsJob::getDescription()` typing
+- Removed folder validation on settings as it messes with saving rules on a fresh install
+
+## 3.2.4 - 2022-06-12
+### Fixed
+- Removed folder validation on settings as it messes with saving rules on a fresh install
+
 ## 4.1.5 - 2022-06-09
 ### Fixed
 - Fixed issue with blocks elements field creating duplicates
