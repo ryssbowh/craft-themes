@@ -1,6 +1,6 @@
 # ryssbowh/craft-themes Changelog
 
-## 3.3.0 - unreleased
+## 3.3.0 - 2022-06-18
 
 ### Added
 - Utility page to check which templates are overridden for each theme
