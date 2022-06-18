@@ -1,0 +1,33 @@
+@import '../../../node_modules/craftcms-sass/_mixins';
+
+#templates-results {
+    li {
+        display: flex;
+        width: 100%;
+        padding: 5px 0;
+        &.template {
+            &:last-child {
+                padding-bottom: 0;
+            }
+            .source, .overridden {
+                width: 25%;
+                box-sizing: border-box;
+            }
+            .name {
+                width: 50%;
+            }
+        }
+        &.folder {
+            display: flex;
+            flex-direction: column;
+        }
+        &.head {
+            font-weight: bold;
+            border-bottom: 1px solid $grey100;
+            margin-bottom: 5px;
+        }
+        [data-icon]::before {
+            margin-top: -2px;
+        }
+    }
+}

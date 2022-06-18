@@ -1,10 +1,24 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.3.0 - unreleased
+
+### Added
+- Utility page to check which templates are overridden for each theme
+- Field displayer that handle files (assets, user photo etc) must implement `FileFieldDisplayerInterface`
+
+### Fixed
+- Removed Themes icon vertical align
+
+### Changed
+- The twig macro `renderAsset` signature has changed from `renderAsset(asset, field, options)` to `renderAsset(asset, field)` as the file displayer is now coming from the field displayer instead of the options
+
 ## 3.2.4 - 2022-06-12
+
 ### Fixed
 - Removed folder validation on settings as it messes with saving rules on a fresh install
 
 ## 3.2.3 - 2022-06-09
+
 ### Fixed
 - Fixed issue with blocks elements field creating duplicates
 

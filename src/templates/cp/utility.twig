@@ -1,0 +1,30 @@
+<h2>{{ 'Themes templates'|t('themes') }}</h2>
+
+<p>{{ 'This page will tell you which templates are overridden for each theme.'|t('themes') }}</p>
+<p>{{ 'The source will always be the theme where the template was defined first.'|t('themes') }}</p>
+{% if isPro %}
+    <p>{{ 'Every available templates defined by the system for layouts/blocks/fields/files/groups/regions will be checked and their source will show as "System".'|t('themes') }}</p>
+{% endif %}
+
+<div class="field">
+    <div class="heading">
+        <label id="group-label" for="themes-select">{{ 'Theme'|t('themes') }}</label>
+    </div>
+    <div class="input">
+        <div class="select">
+            <select id="themes-select">
+                {% for theme in themes %}
+                    <option value="{{ theme.handle }}">{{ theme.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="result-container">
+    <div class="spinner-wrapper">
+        <div class="spinner"></div>
+    </div>
+    <div id="templates-results">
+    </div>
+</div>
