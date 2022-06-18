@@ -14,9 +14,9 @@
     {% endspaceless %}
 {% endmacro %}
 
-{% macro renderAsset(asset, field, options) %}
+{% macro renderAsset(asset, field) %}
     {% if asset %}
-        {{ craft.themes.view.renderFile(asset, field, options.getDisplayerForKind(asset.kind)) }}
+        {{ craft.themes.view.renderFile(asset, field, field.displayer.getDisplayerForKind(asset.kind)) }}
     {% endif %}
 {% endmacro %}
 

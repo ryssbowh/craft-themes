@@ -3,11 +3,11 @@
 
 {% block content %}
     {% if displayer.limit == 1 %}
-        {{ macros.renderAsset(value.0 ?? null, field, options) }}
+        {{ macros.renderAsset(value.0 ?? null, field) }}
     {% else %}
         <ul class="asset-files">
             {% for asset in value %}
-                <li class="asset-file-item">{{ macros.renderAsset(asset, field, options) }}</li>
+                <li class="asset-file-item">{{ macros.renderAsset(asset, field) }}</li>
             {% endfor %}
         </ul>
     {% endif %}
