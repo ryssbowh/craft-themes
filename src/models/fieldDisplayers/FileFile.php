@@ -2,6 +2,7 @@
 namespace Ryssbowh\CraftThemes\models\fieldDisplayers;
 
 use Ryssbowh\CraftThemes\interfaces\FileDisplayerInterface;
+use Ryssbowh\CraftThemes\interfaces\FileFieldDisplayerInterface;
 use Ryssbowh\CraftThemes\models\FieldDisplayer;
 use Ryssbowh\CraftThemes\models\fieldDisplayerOptions\FileFileOptions;
 use Ryssbowh\CraftThemes\models\fields\File;
@@ -10,7 +11,7 @@ use craft\helpers\Assets;
 /**
  * Renders an asset file
  */
-class FileFile extends FieldDisplayer
+class FileFile extends FieldDisplayer implements FileFieldDisplayerInterface
 {
     /**
      * @inheritDoc
@@ -49,10 +50,18 @@ class FileFile extends FieldDisplayer
     /**
      * @inheritDoc
      */
+    public function getDisplayerForKind(string $kind): ?FileDisplayerInterface
+    {
+        return $this->options->getDisplayerForKind($kind);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function eagerLoad(array $eagerLoad, string $prefix = '', int $level = 0): array
     {
         foreach ($this->options->displayers as $kind => $options) {
-            if ($displayer = $this->options->getDisplayerForKind($kind)) {
+            if ($displayer = $this->getDisplayerForKind($kind)) {
                 $eagerLoad = $displayer->eagerLoad($eagerLoad, $prefix, $level);
             }
         }

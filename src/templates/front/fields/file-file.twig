@@ -1,5 +1,6 @@
 {% extends "fields/_field" %}
+{% import "_includes/macros" as macros %}
 
 {% block content %}
-    {{ craft.themes.view.renderFile(value, field, options.getDisplayerForKind(value.kind)) }}
+    {{ macros.renderAsset(value, field) }}
 {% endblock %}

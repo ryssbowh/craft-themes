@@ -3,8 +3,10 @@ namespace Ryssbowh\CraftThemes\controllers;
 
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\ListAssets;
+use Ryssbowh\CraftThemes\helpers\Templates;
 use Ryssbowh\CraftThemes\scss\Compiler;
 use craft\web\Response;
+use craft\web\View;
 
 /**
  * Controller for actions related to theme list
@@ -43,5 +45,20 @@ class CpThemesController extends Controller
             'themes' => Themes::$plugin->registry->getAll(),
             'isPro' => Themes::$plugin->is(Themes::EDITION_PRO)
         ]);
+    }
+
+    /**
+     * Returns which templates are overriden for a theme
+     *
+     * @since 4.2.0
+     */
+    public function actionOverriddenTemplates()
+    {
+        $theme = $this->request->getRequiredParam('theme');
+        $theme = Themes::$plugin->registry->getTheme($theme);
+        return $this->renderTemplate('themes/cp/theme-templates', [
+            'theme' => $theme,
+            'templates' => Templates::getOverriddenForTheme($theme)
+        ], View::TEMPLATE_MODE_CP);
     }
 }

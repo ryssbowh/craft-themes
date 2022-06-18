@@ -5,6 +5,7 @@ use Craft;
 use Detection\MobileDetect;
 use Ryssbowh\CraftThemes\Themes;
 use Ryssbowh\CraftThemes\assets\SettingsAssets;
+use Ryssbowh\CraftThemes\base\TemplatesUtility;
 use Ryssbowh\CraftThemes\behaviors\LayoutBehavior;
 use Ryssbowh\CraftThemes\behaviors\ProductTypeLayoutBehavior;
 use Ryssbowh\CraftThemes\events\RelatedPluginsEvent;
@@ -31,11 +32,13 @@ use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\GlobalSet;
 use craft\elements\User;
+use craft\events\RegisterComponentTypesEvent;
 use craft\events\DefineHtmlEvent;
 use craft\helpers\Queue;
 use craft\models\CategoryGroup;
 use craft\models\EntryType;
 use craft\models\TagGroup;
+use craft\services\Utilities;
 use craft\models\Volume;
 use craft\services\{Categories, Plugins, ProjectConfig, Sections, Volumes, UserPermissions, Tags, Globals, Fields, Users, Elements};
 use craft\utilities\ClearCaches;
@@ -123,6 +126,7 @@ class Themes extends \craft\base\Plugin
         $this->registerShortcuts();
         $this->registerElementsEvents();
         $this->registerCpHooks();
+        $this->registerUtility();
         $this->initEcommerce();
         $this->initSuperTable();
         $this->initNeo();
@@ -237,6 +241,22 @@ class Themes extends \craft\base\Plugin
             }
         }
         return $item ?? null;
+    }
+
+    /**
+     * Register templates utility
+     *
+     * @since 4.2.0
+     */
+    protected function registerUtility()
+    {
+        Event::on(
+            Utilities::class, 
+            Utilities::EVENT_REGISTER_UTILITY_TYPES,
+            function (RegisterComponentTypesEvent $event) {
+                $event->types[] = TemplatesUtility::class;
+            }
+        );
     }
 
     /**

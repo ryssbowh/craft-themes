@@ -1,0 +1,51 @@
+{% macro fileTemplate(template, theme) %}
+    <li class="template">
+        <div class="name">
+            <div class="padded">
+                <span class="icon" aria-hidden="true" data-icon="draft"></span>
+                <span class="name">{{ template.name }}</span>
+            </div>
+        </div>
+        <div class="source">{{ template.source }}</div>
+        <div class="overridden">{{ template.overriddenBy }}</div>
+    </li>
+{% endmacro %}
+
+{% macro folderTemplate(template, theme) %}
+    <li class="folder">
+        <div>
+            <div class="padded">
+                <span class="icon" aria-hidden="true" data-icon="folder"></span>
+                <span class="name">{{ template.name }}</span>
+            </div>
+        </div>
+        <ul>
+            {% for child in template.children %}
+                {{ _self.template(child, theme) }}
+            {% endfor %}
+        </ul>
+    </li>
+{% endmacro %}
+
+{% macro template(template, theme) %}
+    {% if template.type == 'folder' %}
+        {{ _self.folderTemplate(template, theme) }}
+    {% else %}
+        {{ _self.fileTemplate(template, theme) }}
+    {% endif %}
+{% endmacro %}
+
+{% if templates %}
+    <ul>
+        <li class="head template">
+            <div class="name">{{ 'Template'|t('themes') }}</div>
+            <div class="source">{{ 'Source'|t('themes') }}</div>
+            <div class="overridden">{{ 'Overridden by'|t('themes') }}</div>
+        </li>
+        {% for template in templates %}
+            {{ _self.template(template, theme) }}
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>{{ 'No templates are overriden by this theme'|t('themes') }}</p>
+{% endif %}
