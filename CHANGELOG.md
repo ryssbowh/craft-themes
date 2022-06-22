@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.1 - 2022-06-22
+
+### Fixed
+- Issue when saving users in a console command
+
 ## 4.2.0 - 2022-06-18
 
 ### Added
