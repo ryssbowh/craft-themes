@@ -609,7 +609,7 @@ class Themes extends \craft\base\Plugin
             Themes::$plugin->fields->onCraftFieldSaved($e);
         });
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(Event $event) {
-            if ($event->element instanceof User) {
+            if ($event->element instanceof User and \Craft::$app->request->getIsCpRequest()) {
                 $user = $event->element;
                 $preferences = [
                     'themesDevMode' => (bool)$this->request->getBodyParam('themesDevMode', $user->getPreference('themesDevMode', false)),
