@@ -599,35 +599,37 @@ class Themes extends \craft\base\Plugin
                 \Craft::$app->users->saveUserPreferences($user, $preferences);
             }
         });
-        Event::on(Entry::class, Element::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
-            $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
-                'element' => $e->sender->type
-            ]);
-        });
-        Event::on(Category::class, Element::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
-            $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
-                'element' => $e->sender->group
-            ]);
-        });
-        Event::on(Asset::class, Asset::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
-            $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
-                'element' => $e->sender->volume,
-                'showBlocks' => false
-            ]);
-        });
-        Craft::$app->view->hook('cp.users.edit.details', function (array &$context) {
-            return \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
-                'element' => $context['user'],
-                'showBlocks' => false
-            ]);
-        });
-        Craft::$app->view->hook('cp.globals.edit.content', function (array &$context) {
-            return \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
-                'element' => $context['globalSet'],
-                'extraClass' => 'globals',
-                'showBlocks' => false
-            ]);
-        });
+        if ($this->is($this::EDITION_PRO) and \Craft::$app->config->getGeneral()->allowAdminChanges and $this->settings->showCpShortcuts) {
+            Event::on(Entry::class, Element::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
+                $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                    'element' => $e->sender->type
+                ]);
+            });
+            Event::on(Category::class, Element::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
+                $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                    'element' => $e->sender->group
+                ]);
+            });
+            Event::on(Asset::class, Asset::EVENT_DEFINE_SIDEBAR_HTML, function(DefineHtmlEvent $e) {
+                $e->html .= \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                    'element' => $e->sender->volume,
+                    'showBlocks' => false
+                ]);
+            });
+            Craft::$app->view->hook('cp.users.edit.details', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                    'element' => $context['user'],
+                    'showBlocks' => false
+                ]);
+            });
+            Craft::$app->view->hook('cp.globals.edit.content', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/element-shortcuts', [
+                    'element' => $context['globalSet'],
+                    'extraClass' => 'globals',
+                    'showBlocks' => false
+                ]);
+            });
+        }
     }
 
     /**

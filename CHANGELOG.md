@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.2 - 2022-08-08
+
+### Fixed
+- Issue where element shortcuts would show for lite versions
+
 ## 4.2.1 - 2022-06-22
 
 ### Fixed
@@ -15,24 +20,29 @@
 - Removed Themes icon vertical align
 
 ## 4.1.7 - 2022-06-12
+
 ### Fixed
 - Fixed `ReinstallLayoutsJob::execute()` typing
 
 ## 4.1.6 - 2022-06-12
+
 ### Fixed
 - Fixed `ReinstallLayoutsJob::getDescription()` typing
 - Removed folder validation on settings as it messes with saving rules on a fresh install
 
 ## 4.1.5 - 2022-06-09
+
 ### Fixed
 - Fixed issue with blocks elements field creating duplicates
 - Fixed issue where Vue's bundle names where the same for production and legacy
 
 ## 4.1.4 - 2022-06-09
+
 ### Fixed
 - Reinstated cp shortcuts for globals, users and products. [#11224](https://github.com/craftcms/cms/issues/11224)
 
 ## 4.1.3 - 2022-06-08
+
 ### Fixed
 - Fixed issue with view modes tabs
 - Fixed issue with Vue sidebars
