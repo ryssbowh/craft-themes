@@ -28,30 +28,32 @@
                     :data-viewmode="mode.id"
                     @click.prevent=""
                 >
-                    <span
-                        v-if="mode.hasErrors"
-                        class="error"
-                        data-icon="alert"
-                        aria-label="Error"
-                    />
-                    <span v-if="mode.hasErrors">&nbsp;</span>
-                    <span
-                        class="name"
-                        @click.prevent="setViewMode2(mode)"
-                    >
-                        {{ mode.name }}
+                    <span class="tab-label">
+                        <span
+                            v-if="mode.hasErrors"
+                            class="error"
+                            data-icon="alert"
+                            aria-label="Error"
+                        />
+                        <span v-if="mode.hasErrors">&nbsp;</span>
+                        <span
+                            class="name"
+                            @click.prevent="setViewMode2(mode)"
+                        >
+                            {{ mode.name }}
+                        </span>
+                        <span
+                            v-if="viewMode.handle === mode.handle"
+                            class="icon edit"
+                            :title="t('Edit view mode')"
+                            @click.prevent="editViewMode(mode)"
+                        />
+                        <span
+                            v-if="mode.handle != 'default' && viewMode.handle === mode.handle"
+                            class="icon delete"
+                            @click.prevent="confirmAndDeleteViewMode(mode)"
+                        />
                     </span>
-                    <span
-                        v-if="viewMode.handle === mode.handle"
-                        class="icon edit"
-                        :title="t('Edit view mode')"
-                        @click.prevent="editViewMode(mode)"
-                    />
-                    <span
-                        v-if="mode.handle != 'default' && viewMode.handle === mode.handle"
-                        class="icon delete"
-                        @click.prevent="confirmAndDeleteViewMode(mode)"
-                    />
                 </a>
             </div>
             <button
@@ -197,6 +199,7 @@ export default {
 .heading {
     text-transform: uppercase;
     padding-right: 10px;
+    padding-left: 15px;
     color: $mediumTextColor;
     font-size: 11px;
     font-weight: bold;

@@ -44,8 +44,6 @@
         "developer": "The Web Puzzlers",
         "developerUrl": "https://github.com/ryssbowh",
         "documentationUrl": "https://github.com/ryssbowh/craft-themes",
-        "developer": "The Web Puzzlers",
-        "developerUrl": "https://github.com/ryssbowh",
         "class": "Ryssbowh\\CraftThemes\\Themes"
     }
 }

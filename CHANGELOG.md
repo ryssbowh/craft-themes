@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.3 - 2022-08-08
+
+### Fixed
+- Fixed display tabs for Craft > 4.2
+
 ## 4.2.2 - 2022-08-08
 
 ### Fixed
