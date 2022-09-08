@@ -1,5 +1,13 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.4 - 2022-09-08
+
+### Fixed
+- Fixed error when changing a field's type
+- Fixed ajax url for overriden templates utility
+- Added missing register form block options
+- Fixed potential issue with block cache strategies
+
 ## 4.2.3 - 2022-08-08
 
 ### Fixed

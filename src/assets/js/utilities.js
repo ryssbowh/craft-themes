@@ -24,12 +24,13 @@ var ThemesUtility = {
         this.$resultContainer.html('');
         this.toggleSpinner(true);
         let data = {
-            theme: this.$select.val()
+            theme: this.$select.val(),
+            action: 'themes/cp-themes/overridden-templates'
         };
         data[Craft.csrfTokenName] = Craft.csrfTokenValue;
         $.ajax({
             method: 'post',
-            url: '/?action=themes/cp-themes/overridden-templates',
+            url: Craft.getActionUrl('/'),
             data: data
         }).done((data) => {
             this.$resultContainer.html(data);

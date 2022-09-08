@@ -44,14 +44,15 @@ class QueryBlockCache extends GlobalBlockCache
     public function buildKey(BlockInterface $block): array
     {
         $key = [self::CACHE_TAG, 'query- ' . \Craft::$app->request->getFullPath() . '?' . \Craft::$app->request->getQueryStringWithoutPath()];
+        $identity = \Craft::$app->user->identity;
         if ($this->options->cachePerAuthenticated) {
-            $key[] = \Craft::$app->user ? 'auth' : 'noauth';
+            $key[] = $identity ? 'auth' : 'noauth';
         }
         if ($this->options->cachePerViewport) {
             $key[] = 'view-port-' . $this->getViewPort();
         }
-        if ($this->options->cachePerUser and $user = \Craft::$app->user) {
-            $key[] = 'user-id-' . $user->getIdentity()->id;
+        if ($this->options->cachePerUser and $identity) {
+            $key[] = 'user-id-' . $identity->id;
         }
         if ($this->options->cachePerSite) {
             $site = \Craft::$app->sites->getCurrentSite();
