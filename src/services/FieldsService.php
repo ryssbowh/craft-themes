@@ -230,7 +230,7 @@ class FieldsService extends Service
                     'visuallyHidden' => $field->labelVisuallyHidden,
                     'labelVisuallyHidden' => $field->labelVisuallyHidden,
                     'hidden' => $newField->hidden ?: $field->hidden,
-                    'display' => $display
+                    'display_id' => $display->id
                 ]);
                 $this->save($newField);
             } else {
