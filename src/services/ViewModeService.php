@@ -347,7 +347,7 @@ class ViewModeService extends Service
             return [];
         }
         return $this->getAll()
-            ->where('layout.id', $layout->id)
+            ->where('layout_id', $layout->id)
             ->values()
             ->all();
     }

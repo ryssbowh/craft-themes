@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.5 - 2022-10-05
+
+### Fixed
+- Fixed issue with layouts for disabled 3rd party plugins
+
 ## 4.2.4 - 2022-09-08
 
 ### Fixed

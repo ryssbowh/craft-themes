@@ -18,7 +18,7 @@ trait SuperTable
 {
     protected function initSuperTable()
     {
-        if (\Craft::$app->plugins->isPluginInstalled('super-table')) {
+        if (\Craft::$app->plugins->isPluginEnabled('super-table')) {
             $this->_initSuperTable();
         }
     }

@@ -42,6 +42,7 @@ class LayoutService extends Service
     const EVENT_AFTER_DELETE = 'after_delete';
     const EVENT_BEFORE_DELETE = 'before_delete';
     const CONFIG_KEY = 'themes.layouts';
+    
     /**
      * @since 3.1.0
      */
@@ -83,7 +84,9 @@ class LayoutService extends Service
             $records = LayoutRecord::find()->all();
             $this->_layouts = collect();
             foreach ($records as $record) {
-                $this->_layouts->push($this->create($record));
+                try {
+                    $this->_layouts->push($this->create($record));
+                } catch (LayoutException $e) {}
             }
         }
         return $this->_layouts;
