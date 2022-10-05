@@ -17,7 +17,7 @@ trait Neo
 {
     protected function initNeo()
     {
-        if (\Craft::$app->plugins->isPluginInstalled('neo')) {
+        if (\Craft::$app->plugins->isPluginEnabled('neo')) {
             $this->_initNeo();
         }
     }

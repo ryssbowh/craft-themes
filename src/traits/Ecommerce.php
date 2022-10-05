@@ -39,7 +39,7 @@ trait Ecommerce
 {
     protected function initEcommerce()
     {
-        if (\Craft::$app->plugins->isPluginInstalled('commerce')) {
+        if (\Craft::$app->plugins->isPluginEnabled('commerce')) {
             $this->_initEcommerce();
         }
     }
