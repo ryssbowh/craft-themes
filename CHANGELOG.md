@@ -1,6 +1,6 @@
 # ryssbowh/craft-themes Changelog
 
-## 3.3.3 - 2022-10-12
+## 3.3.4 - 2022-10-12
 
 ### Changed
 - Changed plugin icons
