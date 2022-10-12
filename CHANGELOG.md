@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.6 - 2022-10-12
+
+### Changed
+- Changed plugin icons
+
 ## 4.2.5 - 2022-10-05
 
 ### Fixed

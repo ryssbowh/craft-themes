@@ -31,7 +31,7 @@ class TemplatesUtility extends Utility
      */
     public static function iconPath(): ?string
     {
-        return \Craft::getAlias('@Ryssbowh/CraftThemes/icon.svg');
+        return \Craft::getAlias('@Ryssbowh/CraftThemes/icon-mask-grey.svg');
     }
 
     /**
