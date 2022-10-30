@@ -30,7 +30,7 @@ var ThemesUtility = {
         data[Craft.csrfTokenName] = Craft.csrfTokenValue;
         $.ajax({
             method: 'post',
-            url: Craft.getActionUrl('/'),
+            url: Craft.getActionUrl(''),
             data: data
         }).done((data) => {
             this.$resultContainer.html(data);
