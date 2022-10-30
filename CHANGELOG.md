@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.3.5 - 2022-10-30
+
+### Fixed
+- Fixed utilities url for sites in subfolders
+
 ## 3.3.4 - 2022-10-12
 
 ### Changed
