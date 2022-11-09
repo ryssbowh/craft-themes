@@ -76,5 +76,8 @@ export default {
     }
     .sidebar nav li ul {
         display: block;
+        a {
+            padding-left: 40px
+        }
     }
 </style>

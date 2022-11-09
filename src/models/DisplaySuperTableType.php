@@ -5,7 +5,7 @@ use Ryssbowh\CraftThemes\interfaces\FieldInterface;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 use verbb\supertable\SuperTable;
-use verbb\supertable\models\SuperTableBlockTypeModel;
+use verbb\supertable\models\SuperTableBlockType;
 
 /**
  * Class that handles a block type inside a super table
@@ -24,7 +24,7 @@ class DisplaySuperTableType extends Model
     public $type_id;
 
     /**
-     * @var SuperTableBlockTypeModel
+     * @var SuperTableBlockType
      */
     private $_type;
 
@@ -46,9 +46,9 @@ class DisplaySuperTableType extends Model
     /**
      * Super table block type getter
      * 
-     * @return SuperTableBlockTypeModel
+     * @return SuperTableBlockType
      */
-    public function getType(): SuperTableBlockTypeModel
+    public function getType(): SuperTableBlockType
     {
         if ($this->_type === null) {
             $this->_type = SuperTable::$plugin->getService()->getBlockTypeById($this->type_id);
@@ -59,9 +59,9 @@ class DisplaySuperTableType extends Model
     /**
      * Super table block type setter
      * 
-     * @param SuperTableBlockTypeModel $type
+     * @param SuperTableBlockType $type
      */
-    public function setType(SuperTableBlockTypeModel $type)
+    public function setType(SuperTableBlockType $type)
     {
         $this->_type = $type;
         $this->type_id = $type->id;

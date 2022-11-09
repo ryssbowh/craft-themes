@@ -121,7 +121,7 @@ class SuperTable extends CraftField
                 ]);
             }
             $fields = [];
-            foreach ($blockType->fields as $craftField) {
+            foreach ($this->craftField->getBlockTypeFields([$blockType->id]) as $craftField) {
                 try {
                     $oldField = $type->getFieldById($craftField->id);
                 } catch (\Throwable $e) {
@@ -242,9 +242,9 @@ class SuperTable extends CraftField
                 throw DisplayException::noCraftField($this);
             }
             $this->_types = [];
-            foreach ($this->craftField->getBlockTypes() as $type) {
+            foreach($this->craftField->getBlockTypes() as $type) {
                 $fields = [];
-                foreach ($type->fields as $field) {
+                foreach ($this->craftField->getBlockTypeFields([$type->id]) as $field) {
                     if ($field = Themes::$plugin->fields->getChild($this, $field)) {
                         $fields[] = $field;
                     }

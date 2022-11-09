@@ -1,5 +1,11 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.8 - 2022-11-09
+
+### Fixed
+- Fixed padding on children layouts
+- Fixed errors with Super Table
+
 ## 4.2.7 - 2022-10-30
 
 ### Fixed
