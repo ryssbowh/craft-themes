@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.9 - 2022-11-11
+
+### Fixed
+- Fixed an issue with commerce products shortcuts for non-pro versions
+
 ## 4.2.8 - 2022-11-09
 
 ### Fixed

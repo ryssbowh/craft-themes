@@ -118,10 +118,12 @@ trait Ecommerce
                 ]
             ]);
         });
-        \Craft::$app->view->hook('cp.commerce.product.edit.details', function (array &$context) {
-            return \Craft::$app->view->renderTemplate('themes/cp/product-shortcuts', [
-                'element' => $context['product']->type
-            ]);
-        });
+        if (Themes::$plugin->is(Themes::EDITION_PRO)) {
+            \Craft::$app->view->hook('cp.commerce.product.edit.details', function (array &$context) {
+                return \Craft::$app->view->renderTemplate('themes/cp/product-shortcuts', [
+                    'element' => $context['product']->type
+                ]);
+            });
+        }
     }
 }
