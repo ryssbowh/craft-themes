@@ -1,5 +1,11 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.3.6 - 2022-11-15
+
+### Fixed
+- Fixed an issue with commerce products shortcuts for non-pro versions
+- Fixed error with author displayer not rendering the right view mode
+
 ## 3.3.5 - 2022-10-30
 
 ### Fixed
