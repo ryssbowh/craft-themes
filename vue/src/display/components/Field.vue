@@ -17,21 +17,24 @@
         </div>
         <div
             v-if="showFieldHandles && fullHandle"
-            class="code small light copytextbtn"
-            title="Copy to clipboard"
-            role="button"
-            @click="copyValue"
         >
-            <input
-                type="text"
-                :value="fullHandle"
-                readonly=""
-                :size="fullHandle.length"
-            >
             <span
-                data-icon="clipboard"
-                aria-hidden="true"
-            />
+                class="code small light copytextbtn"
+                title="Copy to clipboard"
+                role="button"
+                @click="copyValue"
+            >
+                <input
+                    type="text"
+                    :value="fullHandle"
+                    readonly=""
+                    :size="fullHandle.length"
+                >
+                <span
+                    data-icon="clipboard"
+                    aria-hidden="true"
+                />
+            </span>
         </div>
         <div class="type col code">
             {{ item.displayName }}

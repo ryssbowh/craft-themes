@@ -12,7 +12,7 @@
                 v-if="rootDisplays.length"
                 class="fullwidth display-table"
             >
-                <div class="line head">
+                <div :class="{line: true, head: true, 'with-handles': showFieldHandles}">
                     <div class="handle col" />
                     <div class="title col">
                         {{ t('Title', {}, 'app') }}
