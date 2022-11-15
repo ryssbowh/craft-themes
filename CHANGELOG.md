@@ -1,5 +1,11 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.10 - 2022-11-15
+
+### Fixed
+- Fixed displayer handles styling
+- Fixed error with author displayer not rendering the right view mode
+
 ## 4.2.9 - 2022-11-11
 
 ### Fixed
