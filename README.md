@@ -8,7 +8,7 @@ A rule system allows you to define which theme will be used for which site, lang
 
 Make use of the built-in compiler to compile scss files or scss inlined in your templates. Scss will use inheritance too !
 
-Version 3 has brought the pro version which is a big change from the v2 version. You can always use the v3 lite version which is very similar to v2 (make sure you check the breaking changes in the [developers readme](https://github.com/ryssbowh/craft-themes/wiki/Developers#breaking-changes)) with a few other changes.
+Version 3 has brought the pro version which is a big change from the v2 version. You can always use the v3 lite version which is very similar to v2 (make sure you check the breaking changes in the [documentation](https://puzzlers.run/plugins/themes/3.x/update-from-2-0)) with a few other changes.
 
 The pro version aims at taking control over how pages are displayed using an interface in the backend and a theme engine that is reusable, adaptable and easy to use.  
 Themes are regular Craft plugins, as such they can be shared on the store, installed from packagist or created by yourself. They can have settings and migrations and most importantly extend each other.  
@@ -33,15 +33,15 @@ The Pro version will allow you to :
 
 What it doesn't allow you to do :
 - Change the backend look and feel
-- Override plugins templates (unless specific case, see [developers readme](https://github.com/ryssbowh/craft-themes/wiki/Developers#root-templates-folder))
+- Override plugins templates (unless specific case, see [developers readme](https://puzzlers.run/plugins/themes/3.x/templating#root-templates-folder))
 
-Consult the [documentation](https://github.com/ryssbowh/craft-themes/wiki) for further details on how to use those features.
+Consult the [documentation](https://puzzlers.run/plugins/themes/3.x) for further details on how to use those features.
 
 ## Requirements
 
-Craft 3.7.*  
-PHP 7.3 or over  
-PHP Intl extension
+- Craft ^3.7
+- PHP 7.3 or over  
+- PHP Intl extension
 
 ## Testing
 
@@ -49,11 +49,8 @@ This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.7 and php 7.
 
 ## Documentation
 
-- Please consult the [wiki](https://github.com/ryssbowh/craft-themes/wiki)
-- Or the [developers wiki](https://github.com/ryssbowh/craft-themes/wiki/developers)
-- [Class reference](https://ryssbowh.github.io/docs/craft-themes3/namespaces/ryssbowh-craftthemes.html) (from 3.0.0 only)
-- 1.x documentation [there](README1.md)
-- 2.x documentation [there](README2.md)
+- [Plugin documentation website](https://puzzlers.run/plugins/themes/3.x)
+- [Class reference](https://ryssbowh.github.io/docs/craft-themes3/namespaces/ryssbowh-craftthemes.html)
 
 ## Roadmap/Ideas
 

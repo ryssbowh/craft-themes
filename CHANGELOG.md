@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.3.7 - 2022-11-16
+
+### Changed
+- Updated documentation urls
+
 ## 3.3.6 - 2022-11-15
 
 ### Fixed
