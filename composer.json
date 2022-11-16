@@ -42,8 +42,8 @@
         "name": "Themes",
         "handle": "themes",
         "developer": "The Web Puzzlers",
-        "developerUrl": "https://github.com/ryssbowh",
-        "documentationUrl": "https://github.com/ryssbowh/craft-themes",
+        "developerUrl": "https://puzzlers.run",
+        "documentationUrl": "https://puzzlers.run/plugins/themes/4.x",
         "class": "Ryssbowh\\CraftThemes\\Themes"
     }
 }

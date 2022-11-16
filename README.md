@@ -1,14 +1,12 @@
-# Craft themes (v3.x, v4.x)
+# Craft themes (4.x)
 
-This is a theme engine for [Craft CMS](https://craftcms.com/) 3.7 and 4.0, it allows you to create themes that are reusable and extendable.
+This is a theme engine for [Craft CMS](https://craftcms.com/) 4.0, it allows you to create themes that are reusable and extendable.
 
 Themes are regular plugins, as such they can have their own settings, migrations etc, but now have a set of templates and assets that will inherit themselves, allowing for faster frontend development.
 
 A rule system allows you to define which theme will be used for which site, language, view port or url path. Or a mix of those 4.
 
 Make use of the built-in compiler to compile scss files or scss inlined in your templates. Scss will use inheritance too !
-
-Version 3 has brought the pro version which is a big change from the v2 version. You can always use the v3 lite version which is very similar to v2 (make sure you check the breaking changes in the [developers readme](https://github.com/ryssbowh/craft-themes/wiki/Developers#breaking-changes)) with a few other changes.
 
 The pro version aims at taking control over how pages are displayed using an interface in the backend and a theme engine that is reusable, adaptable and easy to use.  
 Themes are regular Craft plugins, as such they can be shared on the store, installed from packagist or created by yourself. They can have settings and migrations and most importantly extend each other.  
@@ -33,27 +31,24 @@ The Pro version will allow you to :
 
 What it doesn't allow you to do :
 - Change the backend look and feel
-- Override plugins templates (unless specific case, see [developers readme](https://github.com/ryssbowh/craft-themes/wiki/Developers#root-templates-folder))
+- Override plugins templates (unless specific case, see [developers readme](https://puzzlers.run/plugins/themes/4.x/templating-pro#root-templates-folder))
 
-Consult the [documentation](https://github.com/ryssbowh/craft-themes/wiki) for further details on how to use those features.
+Consult the [documentation](https://puzzlers.run/plugins/themes/4.x) for further details on how to use those features.
 
 ## Requirements
 
-Craft 3.7.* (3.x version) or 4.0.* (4.x versions)  
-PHP 7.3 or over  
-PHP Intl extension
+- Craft ^4.0
+- PHP 8.0 or over  
+- PHP Intl extension
 
 ## Testing
 
-This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 3.7 and php 7.3, 7.4 and 8.0.
+This plugin is unit tested with mysql 5.7, postgresql 12.8, Craft 4.0 and php 8.0/8.1.
 
 ## Documentation
 
-- Please consult the [wiki](https://github.com/ryssbowh/craft-themes/wiki)
-- Or the [developers wiki](https://github.com/ryssbowh/craft-themes/wiki/developers)
-- [Class reference](https://ryssbowh.github.io/docs/craft-themes/namespaces/ryssbowh-craftthemes.html) (from 3.0.0 only)
-- 1.x documentation [there](README1.md)
-- 2.x documentation [there](README2.md)
+- [Plugin documentation website](https://puzzlers.run/plugins/themes/4.x)
+- [Class reference](https://ryssbowh.github.io/docs/craft-themes/namespaces/ryssbowh-craftthemes.html)
 
 ## Roadmap/Ideas
 
