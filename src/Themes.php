@@ -19,8 +19,6 @@ use Ryssbowh\CraftThemes\traits\Neo;
 use Ryssbowh\CraftThemes\traits\SuperTable;
 use Ryssbowh\CraftThemes\twig\ThemesVariable;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
-use Twig\Extra\Intl\IntlExtension;
-use Twig\TwigTest;
 use craft\base\Element;
 use craft\base\PluginInterface;
 use craft\commerce\elements\Variant;
@@ -287,25 +285,6 @@ class Themes extends \craft\base\Plugin
                 $event->sender->set('themes', ThemesVariable::class);
             }
         );
-        $twig = \Craft::$app->view->twig;
-        //Add the twig test 'is array'
-        $isArray = new TwigTest('array', function ($value) {
-            return is_array($value);
-        });
-        $twig->addTest($isArray);
-        //Add the twig test 'is instanceof'
-        $isInstance = new TwigTest('instanceof', function ($value, $class) {
-            return $value instanceof $class;
-        });
-        $twig->addTest($isInstance);
-        //Add the twig test 'is numeric'
-        $isNumeric = new TwigTest('numeric', function ($value) {
-            return is_numeric($value);
-        });
-        $twig->addTest($isNumeric);
-        // Registers Twig Intl extension to get the filter `format_datetime`
-        // @see https://twig.symfony.com/doc/3.x/filters/format_datetime.html
-        $twig->addExtension(new IntlExtension());
     }
 
     /**
