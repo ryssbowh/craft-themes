@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed issue registering Twig before it was initialised
+- Fixed issue accessing element query before it was initialized
 
 ## 3.3.7 - 2022-11-16
 

@@ -37,11 +37,6 @@ class ViewService extends Service
     /**
      * @var boolean
      */
-    public $devMode;
-
-    /**
-     * @var boolean
-     */
     public $templateCacheEnabled;
 
     /**
@@ -95,6 +90,11 @@ class ViewService extends Service
      * @var array
      */
     protected $pageVariables = [];
+
+    /**
+     * @var boolean
+     */
+    protected $_devMode;
 
     /**
      * @inheritDoc
@@ -508,5 +508,19 @@ class ViewService extends Service
         $variables['region'] = $this->renderingRegion;
         $variables['viewMode'] = $this->renderingViewMode;
         return $variables;
+    }
+
+    /**
+     * Are we in dev mode ?
+     * 
+     * @return bool
+     */
+    protected function getDevMode(): bool
+    {
+        if ($this->_devMode === null) {
+            $user = \Craft::$app->user->getIdentity();
+            $this->_devMode = $user ? $user->getPreference('themesDevMode', false) : false;
+        }
+        return $this->_devMode;
     }
 }

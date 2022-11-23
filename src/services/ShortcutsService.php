@@ -31,7 +31,7 @@ class ShortcutsService extends Service
     /**
      * @var boolean
      */
-    public $showShortcuts;
+    protected $_showShortcuts;
 
     /**
      * Registers a layout
@@ -39,7 +39,7 @@ class ShortcutsService extends Service
      * @param RenderEvent $e
      */
     public function registerLayout(RenderEvent $e) {
-        if (!Themes::$plugin->is(Themes::EDITION_PRO) or !$this->showShortcuts) {
+        if (!$this->showShortcuts) {
             return;
         }
         $this->initShortcuts();
@@ -127,5 +127,21 @@ class ShortcutsService extends Service
         $this->js = "var shortcutData = {
         };";
         $this->inited = true;
+    }
+
+    /**
+     * Should the shortcuts be shown ?
+     * 
+     * @return bool
+     */
+    protected function getShowShortcuts(): bool
+    {
+        if ($this->_showShortcuts === null) {
+            $user = \Craft::$app->user->getIdentity();
+            $showShortcuts = $user ? $user->getPreference('themesShowShorcuts', false) : false;
+            $canViewShortcuts = \Craft::$app->user->checkPermission('viewThemesShortcuts');
+            $this->_showShortcuts = (Themes::$plugin->is(Themes::EDITION_PRO) and $showShortcuts and $canViewShortcuts);
+        }
+        return $this->_showShortcuts;
     }
 }
