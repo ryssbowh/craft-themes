@@ -262,9 +262,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerShortcuts()
     {
-        if (\Craft::$app->request->isSiteRequest and
-            \Craft::$app->user->checkPermission('viewThemesShortcuts')
-        ) {
+        if (\Craft::$app->request->isSiteRequest) {
             Event::on(
                 ViewService::class,
                 ViewService::BEFORE_RENDERING_LAYOUT,
@@ -415,7 +413,7 @@ class Themes extends \craft\base\Plugin
      */
     protected function registerServices()
     {
-        $user = \Craft::$app->user->getIdentity();
+        
         $this->setComponents([
             'registry' => ThemesRegistry::class,
             'rules' => [
@@ -430,10 +428,7 @@ class Themes extends \craft\base\Plugin
                 'setCp' => $this->settings->setCp,
                 'mobileDetect' => new MobileDetect(),
             ],
-            'shortcuts' => [
-                'class' => ShortcutsService::class,
-                'showShortcuts' => $user ? $user->getPreference('themesShowShorcuts', false) : false
-            ],
+            'shortcuts' => ShortcutsService::class,
             'layouts' => LayoutService::class,
             'blockProviders' => BlockProvidersService::class,
             'blocks' => BlockService::class,
@@ -443,7 +438,6 @@ class Themes extends \craft\base\Plugin
                 'class' => ViewService::class,
                 'cache' => \Craft::$app->cache,
                 'eagerLoad' => $this->settings->eagerLoad,
-                'devMode' => $user ? $user->getPreference('themesDevMode', false) : false,
                 'templateCacheEnabled' => $this->settings->templateCacheEnabled
             ],
             'blockCache' => [
