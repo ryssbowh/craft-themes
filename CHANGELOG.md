@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.3.8 - 2022-11-23
+
+### Fixed
+- Fixed issue registering Twig before it was initialised
+
 ## 3.3.7 - 2022-11-16
 
 ### Changed

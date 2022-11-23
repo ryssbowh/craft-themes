@@ -9,6 +9,7 @@ use Ryssbowh\CraftThemes\helpers\ProjectConfigHelper;
 use Ryssbowh\CraftThemes\interfaces\ThemeInterface;
 use Ryssbowh\CraftThemes\jobs\InstallThemeData;
 use Ryssbowh\CraftThemes\twig\TwigTheme;
+use Twig\Extra\Intl\IntlExtension;
 use craft\base\PluginInterface;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\helpers\Queue;
@@ -70,6 +71,7 @@ class ThemesRegistry extends Service
         \Yii::setAlias('@themeWeb', '@themesWeb/' . $theme->handle);
         \Yii::setAlias('@themeWebPath', '@themesWebPath/' . $theme->handle);
         \Craft::$app->view->registerTwigExtension(new TwigTheme);
+        \Craft::$app->view->registerTwigExtension(new IntlExtension);
         $this->currentTheme->afterSet();
         $this->triggerEvent(
             self::EVENT_THEME_SET, 
