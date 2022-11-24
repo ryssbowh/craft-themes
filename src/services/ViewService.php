@@ -103,7 +103,7 @@ class ViewService extends Service
     {
         parent::init();
         if (getenv('ENVIRONMENT') == 'production') {
-            $this->devMode = false;
+            $this->_devMode = false;
         }
     }
 

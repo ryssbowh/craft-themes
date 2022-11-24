@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.13 - 2022-11-24
+
+### Fixed
+- Fixed issue setting dev mode in production mode
+
 ## 4.2.12 - 2022-11-23
 
 ### Fixed
