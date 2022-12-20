@@ -107,6 +107,7 @@ class Install extends Migration
             'id' => $this->primaryKey(),
             'parent_id' => $this->integer(11)->notNull(),
             'field_id' => $this->integer(11)->notNull(),
+            'data' => $this->text(),
             'order' => $this->integer(11),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
