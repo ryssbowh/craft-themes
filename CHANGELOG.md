@@ -1,5 +1,10 @@
 # ryssbowh/craft-themes Changelog
 
+## 3.3.10 - 2022-12-17
+
+### Fixed
+- Fixed missing field in Install migration
+
 ## 3.3.9 - 2022-11-24
 
 ### Fixed
