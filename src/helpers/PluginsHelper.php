@@ -1,4 +1,5 @@
 <?php
+
 namespace Ryssbowh\CraftThemes\helpers;
 
 use Ryssbowh\CraftThemes\Themes;
@@ -40,7 +41,7 @@ class PluginsHelper
 
     /**
      * When themes edition is changed
-     * 
+     *
      * @param  array  $oldEdition
      * @param  array  $newData
      */
@@ -69,7 +70,7 @@ class PluginsHelper
 
     /**
      * Before a plugin is installed
-     * 
+     *
      * @param  PluginInterface $plugin
      */
     public static function beforeInstall(PluginInterface $plugin)
@@ -87,14 +88,14 @@ class PluginsHelper
             if ($extends) {
                 \Craft::$app->plugins->installPlugin($extends);
             }
-        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+        } elseif (Themes::$plugin->isPluginRelated($plugin->handle)) {
             static::reinstallLayouts();
         }
     }
 
     /**
      * After a plugin is installed
-     * 
+     *
      * @param  PluginInterface $plugin
      */
     public static function afterInstall(PluginInterface $plugin)
@@ -106,7 +107,7 @@ class PluginsHelper
 
     /**
      * Before a plugin is uninstalled
-     * 
+     *
      * @param  PluginInterface $plugin
      */
     public static function beforeUninstall(PluginInterface $plugin)
@@ -125,18 +126,18 @@ class PluginsHelper
             }
             static::uninstallTheme($plugin);
             Themes::$plugin->rules->flushCache();
-        } else if ($plugin->handle == 'themes') {
+        } elseif ($plugin->handle == 'themes') {
             foreach (Themes::$plugin->registry->getAll() as $theme) {
                 \Craft::$app->plugins->uninstallPlugin($theme->handle);
             }
-        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+        } elseif (Themes::$plugin->isPluginRelated($plugin->handle)) {
             static::reinstallLayouts();
         }
     }
 
     /**
      * Before a plugin is disabled
-     * 
+     *
      * @param PluginInterface $plugin
      */
     public static function beforeDisable(PluginInterface $plugin)
@@ -151,14 +152,14 @@ class PluginsHelper
                 \Craft::$app->plugins->disablePlugin($theme->handle);
             }
             Themes::$plugin->rules->flushCache();
-        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+        } elseif (Themes::$plugin->isPluginRelated($plugin->handle)) {
             static::reinstallLayouts();
         }
     }
 
     /**
      * After a plugin is disabled
-     * 
+     *
      * @param PluginInterface $plugin
      */
     public static function afterDisable(PluginInterface $plugin)
@@ -170,7 +171,7 @@ class PluginsHelper
 
     /**
      * Before a plugin is enabled
-     * 
+     *
      * @param PluginInterface $plugin
      */
     public static function beforeEnable(PluginInterface $plugin)
@@ -181,14 +182,14 @@ class PluginsHelper
                 \Craft::$app->plugins->enablePlugin($extends);
             }
             static::reinstallLayouts();
-        } else if (Themes::$plugin->isPluginRelated($plugin->handle)) {
+        } elseif (Themes::$plugin->isPluginRelated($plugin->handle)) {
             static::reinstallLayouts();
         }
     }
 
     /**
      * After a plugin is enabled
-     * 
+     *
      * @param PluginInterface $plugin
      */
     public static function afterEnable(PluginInterface $plugin)
@@ -204,19 +205,22 @@ class PluginsHelper
     private static function reinstallLayouts()
     {
         if (Themes::$plugin->is(Themes::EDITION_PRO) and !static::$reinstallQueued) {
-            Queue::push(new ReinstallLayoutsJob);
+            Queue::push(new ReinstallLayoutsJob());
             static::$reinstallQueued = true;
         }
     }
 
     /**
      * Install a theme's data
-     * 
+     *
      * @param ThemeInterface $theme
      */
     private static function installTheme(ThemeInterface $theme)
     {
         Themes::$plugin->registry->resetThemes();
+        if (static::$installed === null) {
+            static::$installed = [];
+        }
         $isInstalled = in_array($theme->handle, static::$installed);
         if (Themes::$plugin->is(Themes::EDITION_PRO) and !$isInstalled) {
             Themes::$plugin->layouts->installForTheme($theme);
@@ -228,12 +232,15 @@ class PluginsHelper
 
     /**
      * Uninstall a theme's data
-     * 
+     *
      * @param ThemeInterface $theme
      */
     private static function uninstallTheme(ThemeInterface $theme)
     {
         Themes::$plugin->registry->resetThemes();
+        if (static::$installed === null) {
+            static::$installed = [];
+        }
         $isInstalled = in_array($theme->handle, static::$installed);
         if (Themes::$plugin->is(Themes::EDITION_PRO) and $isInstalled) {
             Themes::$plugin->layouts->uninstallForTheme($theme);

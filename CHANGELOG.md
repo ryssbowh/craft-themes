@@ -1,5 +1,13 @@
 # ryssbowh/craft-themes Changelog
 
+## 4.2.15 - 2023-02-09
+
+### Fixed
+- Fixed an issue installing themes through project config apply
+
+### Fixed
+- Fixed missing field in Install migration
+
 ## 4.2.14 - 2022-12-20
 
 ### Fixed
